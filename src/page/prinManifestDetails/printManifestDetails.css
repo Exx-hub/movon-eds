@@ -1,0 +1,45 @@
+.print-manifest-details-page{
+    background: #fff;
+    height: 100vh;
+}
+
+.ant-table table{
+    font-size: 10px !important;
+}
+
+.col-title{
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.col-value{
+    font-weight: 100;
+    font-size: 14px;
+}
+
+.print-company-title{
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.print-company-date{
+    font-size: 12px;
+    font-weight: 100;
+}
+
+.print-title-corner{
+    margin-top: 1rem; 
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+}
+
+.print-body{
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.home-header-view{
+    padding: 0px !important;
+}

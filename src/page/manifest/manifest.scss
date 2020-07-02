@@ -1,0 +1,26 @@
+.manifest-page{
+
+    .ant-table table{
+        font-size: 14px !important;
+    }
+
+   margin: 1rem;
+
+   .manifest-search{
+       border-radius: 8px;
+   }
+
+   .manifest-date-range{
+    border-radius: 8px;
+   }
+
+    .content-table-header{
+        padding: 1rem;
+        padding-left: 0;
+    }
+
+    .manifest-table{
+        padding:1rem;
+        overflow: scroll;
+    }
+}

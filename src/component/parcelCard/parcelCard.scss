@@ -1,0 +1,33 @@
+.component-parcel-card{
+    background:#3b5858;
+    border-radius: 10px;
+    margin: 1rem;
+    box-shadow:-6px 5px 8px gray;
+        
+    .parcel-card-top-title{
+        padding-left: .6rem;
+        padding-right:.6rem;
+        display:flex;
+        flex-direction:row;
+        justify-content:space-between;
+        align-items:center;
+        height: 40px;
+    }
+
+    .card-row-text{
+        padding: 1rem;
+        color: white;
+    }
+
+    .card-col-text h5{
+        color: white;
+    }
+
+    .parcel-img-container{
+        background:white; 
+        display:flex; 
+        flex-direction:row;
+        justify-content:center; 
+        align-items:center
+    }
+}

@@ -1,0 +1,13 @@
+.create-parcel-details{
+    background: rgba(0,128,128,.7);
+    margin-top: 0.5rem;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    border-radius: 0px 15px 15px 0px;
+    padding: .5rem;
+    box-shadow: 1px 3px rgba(0,0,0,0.15);
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 1rem;
+}

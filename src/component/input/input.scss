@@ -1,0 +1,15 @@
+
+.component-input{
+   
+    .input-has-error{
+        border-color: red !important;
+        border-right-width: 1px !important;
+    }
+
+    .input-error-message{
+        color: red;
+        font-size: 10px;
+        font-style: italic;
+    }
+    
+}

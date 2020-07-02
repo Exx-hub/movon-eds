@@ -1,0 +1,56 @@
+
+.create-parcel-form{
+    background: white;
+    
+    .gutter-row{
+        padding: .4rem;
+        background: white;
+    }
+    
+    .radio-button-group{
+        padding:.5em;
+        border: 1px solid rgba(0, 0, 0, .1);
+    }
+    
+    .total-shiping-cost{
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid rgba(0, 0, 0, .1);
+    }
+    
+    .txt-total-shiping-cost{
+       font-weight: bold;
+    }
+    
+    .input-container-border{
+        border: 1px solid rgba(0, 0, 0, .1);
+        padding: .5rem;
+        padding-bottom: 1.5rem;
+        background: white;
+    }
+    
+    .calculator-container-border{
+        border: 1px solid rgba(0, 0, 0, .1);
+        padding: .5rem;
+        padding-bottom: 1.5rem;
+        margin: .5rem;
+        background: #fff !important;
+    }
+    
+    .suffix-icon{
+        color:red !important;
+    }
+    
+    .create-group-title{
+        font-weight: bold;
+    }
+    
+    .input-placeholder-title{
+        font-size: 10px;
+        color: rgba(0, 0, 0, 0.5);
+    }
+}
+

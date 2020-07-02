@@ -1,0 +1,83 @@
+.component-ticketview-container{
+    padding:1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;;
+
+    .ant-divider-horizontal{
+        margin:.5rem;
+    }
+
+    .to-bold h5{
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .title h5{
+        font-weight: 100;
+        font-size: 13px;
+    }
+
+    .ticket-details{
+        background: white;
+        display: flex;
+        flex-direction: column;
+        width: 384px;
+        padding:1rem;
+        padding-top: 2rem;
+        border:1px dashed gray;
+
+        h3{
+            margin-left: 1rem;
+        }
+
+        .image-logo-container{
+            margin-bottom: 1rem;
+            margin-left: 1rem;
+    
+            .movon-logo{
+                height: 20px;
+                width: 65px;
+                margin-left: .5rem;
+                margin-right: 1rem;
+            }
+    
+            .partner-logo{
+                height: 30px;
+                width: 110px;
+            }
+        }
+
+        .code-date-container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            .code-date-container-item1{
+                font-size: 20px;
+                font-weight: bold;
+            }
+            .code-date-container-item2{
+                font-size: 16px;
+
+            }
+        }
+
+        .destination-container{
+
+            .destination{
+                color: black;
+                font-size: 20px;
+                font-weight: 200;
+                margin-right: .5rem;
+            }
+            .destination-value{
+                color: black;
+                font-weight: bold;
+                font-size: 20px;
+            }
+        }
+    }
+}

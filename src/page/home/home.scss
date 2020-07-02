@@ -1,0 +1,34 @@
+.home-page-container{
+    background: white;
+
+    .home-header-view{
+        padding-left: 1.5rem !important;
+        padding-Right:1.5rem !important;
+    }
+
+    .home-content{
+        min-height: 75vh !important;
+    }
+    
+    .ant-layout-footer{
+        min-height: 15vh !important;
+        background: rgba(0, 0, 0, 0.09) !important;
+    }
+    
+    .header-nav{
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        float: right;
+    }
+    
+    .home-sider{
+        background: white !important;
+    }
+    
+    .home-nav-link{
+        color: white !important;
+        font-weight: bold !important;
+    }
+}

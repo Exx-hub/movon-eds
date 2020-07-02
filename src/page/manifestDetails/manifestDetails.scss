@@ -1,0 +1,118 @@
+.manifest-details-page{
+    background: #fff;
+    height: 100vh;
+
+    .ant-table table{
+        font-size: 14px !important;
+    }
+
+    .manifest-details-page-body{
+        background: #fff;
+    }
+
+    .manifest-details-sider{
+        border-right: 1px solid #d9d9d9;
+        background: #fff !important;
+        overflow:'scroll';
+        height:'90vh';
+    }
+
+    .manifest-review-details{
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        background: #fff;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        width: 70%;
+        align-items: center;
+        justify-content: center;
+        
+        .manifest-review-details-button-close{
+            margin-top: 2rem;
+            align-self: flex-end;
+        }
+    }
+
+    .home-header-view{
+        padding: 0px;
+    }
+
+    .ant-switch-checked {
+        background-color: teal;
+    }
+   
+    .search-container{
+        padding: 1rem;
+        padding-top: 2rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+   
+
+    .table-view-expand{
+        text-align: center;
+
+        .btn-expand-icon{
+            padding: 0px;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+
+            &:hover{
+                border-color: teal !important;
+                box-shadow: 0 0 3px teal;
+                color: teal;
+            }
+        }
+    }
+
+    .table-view-expand-icon{
+        font-size:'20px';
+        border-radius:'5px';
+        border:'1px solid teal';
+    }
+
+    .manifest-details-search-box{
+        border-radius: 10px;
+        font-size: 28px;
+        width: 450px;
+
+        &:hover{
+            border-color: teal !important;
+            box-shadow: 0 0 3px teal;
+        }
+        &:focus-within{
+            border-color: teal !important;
+            box-shadow: 0 0 5px teal !important;
+        }
+    }
+
+    .manifest-details-select{
+        border-color: teal !important;
+        outline: teal !important;
+
+        .ant-select-selector{
+            &:hover{
+                border-color: teal !important;
+            }
+            &:focus-within{
+                border-color: teal !important;
+                box-shadow: 0 0 3px teal !important;
+            }
+        }
+
+       
+        
+    }
+
+    .manifest-table{
+        width: 100vw;
+        padding:1rem;
+        overflow: scroll;
+    }
+}

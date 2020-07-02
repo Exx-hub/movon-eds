@@ -1,0 +1,112 @@
+.create-parcelview-parent-container{
+  background:white;
+  height: 100vh;
+
+  .home-header-view {
+    color: rgba(240, 240, 240, 0.65) !important;
+    min-height: 10vh !important;
+    background: teal !important;
+    box-shadow: 0px 2px 8px rgba(0,128,128,.5) !important;
+    z-index: 1000;
+}
+
+  .create-content-container{
+    background:white;
+    height: 90vh;
+    overflow: scroll;
+  }
+  
+  .create-side-bar{
+    background: white;
+  }
+  
+  .ant-page-header{
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .ant-page-header-heading{
+    background: rgba(0,128,128,1) !important;
+    min-height: 10vh !important;
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+  
+  .ant-page-header-heading-title{
+    color: white !important;
+  }
+  
+  .ant-page-header-heading-sub-title{
+    color: white !important;
+  }
+  
+  .step-controller-container-item{
+    background: green;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 1rem;
+    background:white;
+
+    .create-btn{
+      background: rgba(0,128,128,1);
+      border-radius: 15px;
+      color: white;
+      font-weight: 200;
+      font-size: 12px;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      margin-left: .5rem;
+    }
+
+    .btn-next{
+      &:hover{
+        color: greenyellow;
+      }
+    }
+
+    .btn-prev{
+      &:hover{
+        color: orange;
+      }
+    }
+
+  }
+
+  .button-steps{
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .on-step4-button-group{
+    float: left;
+    margin:1rem;
+    margin-bottom: 2rem;
+
+    .btn-create-new-parcel{
+      margin-left: .5rem;
+    }
+  }
+
+  .content-section{
+    background: white;
+    padding-top: 1rem;
+  }
+
+  .horizontal-step{
+    background: white;
+    border-bottom: 1px solid #f4f4f4;
+
+  }
+
+  .hide{
+    display: none;
+  }
+
+}
+
+
+
+
+

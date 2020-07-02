@@ -1,0 +1,26 @@
+.component-webcam{
+    padding:2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .photo-webcam-container{
+        height: 400px;
+        width: 400px;
+        background: whitesmoke;
+        margin-bottom: 1rem;
+    }
+
+    .photo-img-container{
+        height: 400px;
+        width: 400px;
+        background: red;
+        margin-bottom: 1rem;
+        
+        .photo-img{
+            height: 100%;
+            width: 100%;
+        }
+    }
+}

@@ -1,0 +1,80 @@
+.component-scheduled-trips{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .details-view-parent-container{
+        margin-bottom: 1.5rem;
+
+        h2{
+            font-size: 26px;
+            color: gray;
+        }
+
+        .details-view-item{
+            background: rgba(0,128,128,.6);
+            padding:1rem;
+            border: 1.5px solid rgba(0,128,128,1);
+            border-radius: 5px;
+            margin:1.5rem;
+            margin-top: 1.8rem;
+            box-shadow: -10px 10px 3px rgba(0,0,0,0.15);
+            cursor: pointer;
+        
+            &:hover {
+                background:rgba(223,78,32,1);
+                border: 1.5px solid rgba(223,78,32,1);
+                box-shadow: -10px 10px 3px rgba(223,78,32,.15);
+                opacity: .8;
+            }
+        }
+    }
+
+    
+    
+    .pagination-container{
+        align-self: center;
+        margin-right: 1rem;
+    }
+    
+    .details-view-item{
+        background:"white";
+        margin-bottom: 1rem;
+    }
+    
+    .h5-title{
+        h5{
+            font-size: 14px;
+            color:white;
+        }
+    }
+    
+    .h5-value{
+        h5{
+            font-size: 14px;
+            color:black;
+        }
+    }
+
+    .list-content{
+        height:100%;
+        display:flex; 
+        flex-direction:column; 
+        justify-content:space-between
+    }
+
+    .list-title{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+   
+}
+
+
+
+
