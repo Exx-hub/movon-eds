@@ -3,6 +3,7 @@ import Login from './page/login'
 import CreateParcel from './page/createParcel'
 import ManifestDetails from './page/manifestDetails'
 import PrinManifestDetails from './page/prinManifestDetails'
+import {getCredential} from './utility'
 import Home from './page/home'
 import 'antd/dist/antd.css';
 import './App.scss';
@@ -14,18 +15,15 @@ import {
 } from "react-router-dom";
 
 function App() {
-  const [state, setState] = useState({isLogin:true});
   return (
     <Router>
       <Switch>
-          <Route exact={true} path="/login" render={props=> <Login {...props}/>} />
-          <Route exact={true} path="/parcel" render={props=> <CreateParcel {...props}/>} />
-          <Route exact={true} path="/manifest/details/:id" render={props=> <ManifestDetails {...props}/>} />
-          <Route exact={true} path="/manifest/print" render={props=> <PrinManifestDetails {...props}/>} />
-          <Route path="/" render={props=> state.isLogin ? <Home {...props}/> : <Redirect to="/login" /> }/>
+          <Route exact={true} path="/login" render={props=> <Login {...props} />} />
+          <Route exact={true} path="/parcel" render={props=> getCredential() ? <CreateParcel {...props}/> : <Redirect to="/login" /> }/>
+          <Route exact={true} path="/manifest/details/:id" render={props=> getCredential() ? <ManifestDetails {...props}/>: <Redirect to="/login" /> }/>
+          <Route exact={true} path="/manifest/print" render={props=> getCredential() ? <PrinManifestDetails {...props}/> : <Redirect to="/login" /> }/>
+          <Route path="/" render={props=> getCredential() ? <Home {...props}/> : <Redirect to="/login" /> }/>
         </Switch>
-        
-        
     </Router>
   );
 }

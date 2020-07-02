@@ -1,7 +1,8 @@
 import React from 'react';
 import Manifest from '../manifest'
 import './home.scss';
-import movonLogo from '../../assets/movoncargo.png'
+import movonLogo from '../../assets/movoncargo.png';
+import {clearCredential,getCredential} from '../../utility'
 
 import {
   Switch,
@@ -30,12 +31,23 @@ const { Header, Footer, Content, Sider } = Layout;
 
 function Home(props) {
 
+  const [state, setState] = React.useState({});
+
+  React.useEffect(() => {
+    if(!state.user){
+      const{user} = getCredential();
+      setState({...state, ...{user}})
+    }
+    console.log('state', state.user)
+  },[state.user]);
+
   const onNavigationMenuChange = (e) =>{
       switch(e.key){
         case '2': props.history.push("/parcel"); break
         case '2': props.history.push("/manifest/list"); break
         case 'drop-down-logout' : 
-          console.log('onNavigationMenuChange e',e); 
+          clearCredential();
+          props.history.push('/')
           break;
         case 'drop-down-setting' : 
           console.log('onNavigationMenuChange e',e); 
@@ -64,16 +76,18 @@ function Home(props) {
           <Col span={12} style={{position:'relative'}}>
             <img src={movonLogo} style={{height:'50px'}} alt="logo"/>  
           </Col>
-          <Col span={12}>
-            <div className={'header-nav'}>
-              <Dropdown overlay={menu} trigger={['click']}>
-                <Button className={'home-nav-link'} type="link" onClick={e => e.preventDefault()}>
-                  Hi Mikee!  
-                  <UserOutlined style={{fontSize:'24px'}}/>
-                </Button>
-              </Dropdown>
-            </div>
-          </Col>
+          {
+            state.user && <Col span={12}>
+              <div className={'header-nav'}>
+                <Dropdown overlay={menu} trigger={['click']}>
+                  <Button className={'home-nav-link'} type="link" onClick={e => e.preventDefault()}>
+                    Hi {state.user.personalInfo.firstName}!  
+                    <UserOutlined style={{fontSize:'24px'}}/>
+                  </Button>
+                </Dropdown>
+              </div>
+            </Col>
+          }
         </Row>
       </Header>
       <Layout>

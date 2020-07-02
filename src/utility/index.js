@@ -40,4 +40,16 @@ export const dataURLtoFile = (dataurl, filename) => {
   return null;
 }
 
+export const getCredential = () =>{
+  const credential = localStorage.getItem('credential') || null;
+  return JSON.parse(credential)
+}
+
+export const setCredential = (data) =>{
+  localStorage.setItem('credential',JSON.stringify(data)) 
+}
+
+export const clearCredential = () =>{
+  localStorage.setItem('credential',null) 
+}
   
