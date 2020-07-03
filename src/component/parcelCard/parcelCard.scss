@@ -1,26 +1,42 @@
 .component-parcel-card{
-    background:#3b5858;
+    background: transparent;
     border-radius: 10px;
     margin: 1rem;
     box-shadow:-6px 5px 8px gray;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
         
     .parcel-card-top-title{
         padding-left: .6rem;
         padding-right:.6rem;
         display:flex;
-        flex-direction:row;
-        justify-content:space-between;
+        flex-direction:column;
+        justify-content:center;
         align-items:center;
-        height: 40px;
+
+        h4{
+            margin-top: .5rem;
+            color: #fff;
+            font-weight: 200;
+            font-size: 20px;
+        }
+        
     }
 
     .card-row-text{
         padding: 1rem;
-        color: white;
+        color: #282828;
     }
 
     .card-col-text h5{
-        color: white;
+        color: #282828;
+    }
+
+    .parcel-card-top-title{
+        color: #282828;
+        background-color: teal;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
     }
 
     .parcel-img-container{

@@ -1,4 +1,7 @@
 import {useEffect,useState} from 'react';
+import {notification} from 'antd';
+import {config} from '../config'
+
 
 export const useWindowSize = () =>{
     const isClient = typeof window === 'object';
@@ -49,7 +52,27 @@ export const setCredential = (data) =>{
   localStorage.setItem('credential',JSON.stringify(data)) 
 }
 
+export const getToken = () =>{
+  let token = null
+  const credential = localStorage.getItem('credential') || null;
+  if(credential){
+    token = (JSON.parse(credential)).token
+  }
+  return token
+}
+
 export const clearCredential = () =>{
   localStorage.setItem('credential',null) 
 }
+
+ /**
+    @param {string} type - success, info, warning, error
+    @param {number} code - 000
+  */
+ export const openNotificationWithIcon = (type, code) => {
+  notification[type]({
+    message: config[code].message || "Configure Failed",
+    description: config[code].description || "setup you mesage to config",
+  });
+};
   

@@ -1,5 +1,6 @@
 import React from 'react';
-import Manifest from '../manifest'
+import Manifest from '../manifest';
+import User from '../../service/User';
 import './home.scss';
 import movonLogo from '../../assets/movoncargo.png';
 import {clearCredential,getCredential} from '../../utility'
@@ -46,8 +47,11 @@ function Home(props) {
         case '2': props.history.push("/parcel"); break
         case '2': props.history.push("/manifest/list"); break
         case 'drop-down-logout' : 
+          const{ token }=getCredential();
+          User.logout(token).then();
           clearCredential();
-          props.history.push('/')
+          props.history.push('/');
+          
           break;
         case 'drop-down-setting' : 
           console.log('onNavigationMenuChange e',e); 

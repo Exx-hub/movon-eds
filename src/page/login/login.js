@@ -2,11 +2,11 @@ import React from 'react';
 import { Form, notification, Input, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { RoundedButton } from '../../component/button'
-import './login.scss'
 import movon from '../../assets/movon3.png';
 import User from '../../service/User';
 import { config } from '../../config';
 import { getCredential, setCredential } from '../../utility'
+import './login.scss'
 
 function Login(props) {
   const [state, setState] = React.useState({
@@ -27,8 +27,8 @@ function Login(props) {
   */
   const openNotificationWithIcon = (type, code) => {
     notification[type]({
-      message: config[code].message,
-      description: config[code].description,
+      message: config[code].message || "Login Failed",
+      description: config[code].description || "username or password isn't correct",
     });
   };
 
@@ -36,20 +36,20 @@ function Login(props) {
     setState({...state, ...{ isLoading: true } });
 
     User.login(state.staffId, state.password).then(e => {
-      console.log('===>e', e)
       const { data, success, errorCode } = e.data;
-      if(!success && errorCode){
-        openNotificationWithIcon("error", errorCode)
-      }else{ 
+      setState({...state, ...{isLoading:false}})
+      if(success){
+        console.log('totke',{ user: data.user, token: data.token})
         setCredential({ user: data.user, token: data.token});
         props.history.push('/')
+        return;
       }
-      setState({...state,...{isLoading:false}})
+      openNotificationWithIcon("error", errorCode)
     })
   };
 
   const onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo);
+    //console.log('Failed:', errorInfo);
   };
 
   return (
@@ -79,7 +79,6 @@ function Login(props) {
                 placeholder="username"
                 disabled={state.isLoading}
                 suffix={<UserOutlined />} />
-
             </Form.Item>
 
             <Form.Item

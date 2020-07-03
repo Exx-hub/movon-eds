@@ -1,0 +1,16 @@
+.table-view-expand{
+    text-align: center;
+
+    .btn-expand-icon{
+        padding: 0px;
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+
+        &:hover{
+            border-color: teal !important;
+            box-shadow: 0 0 3px teal;
+            color: teal;
+        }
+    }
+}

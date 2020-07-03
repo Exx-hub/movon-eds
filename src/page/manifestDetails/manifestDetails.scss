@@ -1,80 +1,85 @@
 .manifest-details-page{
-    background: #fff;
+    display: flex;
     height: 100vh;
+    overflow: hidden;
+
+    .home-header-view{
+        padding: 0px;
+        max-height: 10vh;
+    }
 
     .ant-table table{
         font-size: 14px !important;
     }
 
     .manifest-details-page-body{
-        background: #fff;
-    }
+        height: 90vh;
+        background-color: #fff;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
 
-    .manifest-details-sider{
-        border-right: 1px solid #d9d9d9;
-        background: #fff !important;
-        overflow:'scroll';
-        height:'90vh';
-    }
-
-    .manifest-review-details{
-        margin-top: 2rem;
-        margin-bottom: 2rem;
-        background: #fff;
-        align-self: center;
-        display: flex;
-        flex-direction: column;
-        padding-left: 2rem;
-        padding-right: 2rem;
-        width: 70%;
-        align-items: center;
-        justify-content: center;
-        
-        .manifest-review-details-button-close{
-            margin-top: 2rem;
-            align-self: flex-end;
+        .manifest-details-sider{
+            border-right: 1px solid #d9d9d9;
+            background: transparent;
+            overflow: scroll;
         }
-    }
 
-    .home-header-view{
-        padding: 0px;
+        .right-content-section{
+            overflow: scroll;
+            height: 100%;
+            background-color: #f5f5f5;
+        }
+
+        .manifest-review-details{
+            padding:1rem;
+            padding-top: 0rem;
+            padding-bottom: 2rem;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .manifest-review-details-header{
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding:1rem;
+
+                span{
+                    font-size: 30px;
+                    font-weight: 200;
+                }
+
+                .x-button-close{
+                    font-size:40px;
+                    opacity:.5;
+
+                    &:hover{
+                        color: teal;
+                    }
+                }
+            }
+            
+            .manifest-review-details-button-close{
+                margin-top: 2rem;
+                align-self: flex-end;
+            }
+        }
+
+        .search-container{
+            padding: 1rem;
+            padding-top: 2rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
     }
 
     .ant-switch-checked {
         background-color: teal;
-    }
-   
-    .search-container{
-        padding: 1rem;
-        padding-top: 2rem;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
-
-   
-
-    .table-view-expand{
-        text-align: center;
-
-        .btn-expand-icon{
-            padding: 0px;
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-
-            &:hover{
-                border-color: teal !important;
-                box-shadow: 0 0 3px teal;
-                color: teal;
-            }
-        }
-    }
-
-    .table-view-expand-icon{
-        font-size:'20px';
-        border-radius:'5px';
-        border:'1px solid teal';
     }
 
     .manifest-details-search-box{
@@ -115,4 +120,44 @@
         padding:1rem;
         overflow: scroll;
     }
+
+    .input-box span{
+        color:#282828;
+
+        .input-box-item{
+            color:red !important;
+            opacity: 1;
+        }
+    }
+
+    .sider-content-col{
+        margin-top: 1rem;
+        padding-left: .8rem;
+        padding-right: .8rem
+    }
+
+    .view-toggle-section{
+        display: flex;
+        justify-content: space-between;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .filter-section{
+        padding: 1rem;
+        text-align: center;
+        
+        span{
+            font-size: 20px;
+            font-weight: 200;
+        }
+    }
+
+    .card-view-section{
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        height: 100%;
+    }
+    
 }

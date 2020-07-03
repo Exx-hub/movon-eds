@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {config} from '../config';
+import {getToken} from '../utility'
 
 const BASE_URL = config.BASE_URL;
 
@@ -19,26 +20,26 @@ const User = {
         })
     },
 
-    logout : (token) => {
+    logout : () => {
         return axios({
             method: 'put',
             url: `${BASE_URL}/api/v1/account/delivery-person/home/logout`,
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : token
+                'x-auth-token' : getToken()
             }
         })
     },
 
-    validateToken : (token) => {
+    validateToken : () => {
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/token/`,
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : token
+                'x-auth-token' : getToken()
             }
         })
     }

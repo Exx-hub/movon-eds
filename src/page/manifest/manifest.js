@@ -1,122 +1,115 @@
 import React from 'react';
-import {Table, DatePicker, Button, Row, Col, Layout, Input} from 'antd';
+import { Table, DatePicker, Button, Row, Col, Layout, Input, Alert } from 'antd';
 import './manifest.scss';
 import moment from 'moment';
 import { EyeOutlined, PrinterOutlined } from '@ant-design/icons'
+import ManifestService from '../../service/Manifest';
+import {openNotificationWithIcon} from '../../utility'
 
-const {Search} = Input
+const { Search } = Input
 const { RangePicker } = DatePicker;
 const dateFormat = "MMM DD, YYYY";
 const currentTime = moment()
 const today = currentTime.format(dateFormat)
-const yesterday = currentTime.subtract(1,'d').format(dateFormat);
-
-
-function onChange(pagination, filters, sorter, extra) {
-  console.log('params', pagination, filters, sorter, extra);
-}
+const yesterday = currentTime.subtract(1, 'd').format(dateFormat);
+{/* <RangePicker
+    className="manifest-date-range"
+    onChange={(date, date2) => { console.log('date2', date2) }}
+    defaultValue={[moment(yesterday, dateFormat), moment(today, dateFormat)]}
+    format={dateFormat} /> */}
 
 function Manifest(props) {
 
+  const [state, setState] = React.useState({
+    routes:null
+  });
+
+  React.useEffect(()=>{
+
+    if(!state.routes){
+      ManifestService
+      .getRoutes()
+      .then(e=>{
+        console.log('getRoutes ====> e',e)
+        const{errorCode,success,data}=e.data;
+        if(!success && errorCode){
+          openNotificationWithIcon('error',errorCode);
+        }else{
+          setState({...state,...{routes:data}})
+        }
+      });
+    }
+  },[state.routes])
+
   const columns = [
     {
-      title: 'Routes',
+      title: 'Origin',
       dataIndex: 'startStation',
-      onFilter: (value, record) => record.name.indexOf(value) === 0,
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortDirections: ['descend'],
-    },
-    {
-      title: 'Departure Date',
-      dataIndex: 'departureDate',
       defaultSortOrder: 'descend',
-      sorter: (a, b) => a.departureDate - b.departureDate
+      sorter: (a, b) => a.startStation.length - b.startStation.length
     },
     {
-      title: 'Arrival Date',
-      dataIndex: 'arrival',
+      title: 'Destination',
+      dataIndex: 'endStation',
       defaultSortOrder: 'descend',
-      sorter: (a, b) => a.arrival.length - b.arrival.length
-    },
-    {
-      title: 'Model',
-      dataIndex: 'busModel',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.busModel.length - b.busModel.length,
-    },
-    {
-      title: 'Qty',
-      dataIndex: 'totalParcel',
-      filterMultiple: false,
-      onFilter: (value, record) => record.address.indexOf(value) === 0,
-      sorter: (a, b) => a.totalParcel - b.totalParcel,
-      sortDirections: ['descend', 'ascend'],
+      sorter: (a, b) => a.endStation.length - b.endStation.length
     },
     {
       title: 'Action',
       key: 'action',
       render: (text, record) => (
-      <Layout>
-        <Button 
-          onClick={()=>{props.history.push('/manifest/details/1',{test:"this is a test"})}}>
+        <Layout>
+          <Button
+            onClick={() => { 
+              props.history.push('/manifest/details', { data: state.routes[record.key] }) 
+            }}>
             <EyeOutlined />View
-        </Button>
+          </Button>
 
-        <Button 
-          onClick={()=>{props.history.push('/manifest/print')}}>
-            <PrinterOutlined/> Print
-        </Button>
-      </Layout>),
+          {/* <Button
+            onClick={() => { props.history.push('/manifest/print') }}>
+            <PrinterOutlined /> Print
+        </Button> */}
+        </Layout>),
     },
   ];
-  
-  const data = [
-    {
-      key: '1',
-      startStation: 'Cubao - Naga',
-      departureDate: 'Jun 26, 2020 - 05:30 PM',
-      arrival: 'Jun 26, 2020 - 05:30 PM',
-      totalParcel: 1,
-      type:"Regular",
-      busModel:"Model 1"
-    },
-    {
-      key: '2',
-      startStation: 'Cubao - Tugegarao',
-      departureDate: 'Jun 26, 2020 - 05:30 PM',
-      arrival: 'Jun 26, 2020 - 05:30 PM',
-      totalParcel: 2,
-      type:"Delux",
-      busModel:"Model 2"
-    },
-    
-  ];
+
+  const onChangeTable = (pagination, filters, sorter, extra) =>{
+    console.log('params', pagination, filters, sorter, extra);
+  }
+
+  const getRoutes = () =>{
+    return state.routes.map((e,i)=>{
+      return {
+        key: i,
+        startStation: e.startStationName,
+        endStation: e.endStationName
+      }
+    });
+  }
 
   return (
     <div className="manifest-page">
-      <Row style={{marginTop:'2rem',marginBottom:'1rem'}}>
-        <Col span={12}>
-          <RangePicker  
-              className="manifest-date-range" 
-              onChange={(date,date2)=>{console.log('date2',date2)}}
-              defaultValue={[moment(yesterday, dateFormat), moment(today, dateFormat)]}
-              format={dateFormat} />
-        </Col>
-        <Col offset={4} span={8}>
-          <Search 
-            className="manifest-search" 
-            placeholder="Routes | Departure | Arrival | Model"/>
+      <Row style={{ marginTop: '2rem', marginBottom: '1rem' }}>
+        <Col offset={16} span={8}>
+          <Search
+            className="manifest-search"
+            placeholder="Routes | Departure | Arrival | Model" />
         </Col>
       </Row>
       <Row>
         <Col span={24}>
-           <Table
-              columns={columns} 
-              dataSource={data} 
-              onChange={onChange} />
-          </Col>
+          { 
+            state.routes && 
+            <Table
+              pagination={false}
+              columns={columns}
+              dataSource={getRoutes()}
+              onChange={onChangeTable} /> 
+          }
+        </Col>
       </Row>
-      
+
     </div>
   );
 }
