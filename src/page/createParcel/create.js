@@ -10,6 +10,8 @@ import {useWindowSize} from '../../utility'
 import {Button, PageHeader, Row, Col, message, notification, Layout, Divider } from 'antd';
 import ReactToPrint from 'react-to-print'; 
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import ParcelService from '../../service/Parcel'
+import {getUser} from '../../utility'
 
 const{ Content, Sider, Header }=Layout;
 
@@ -44,8 +46,8 @@ function CreateParcel(props){
 
   const [state,setState] = useState({
     packageImagePreview:null,
-    currentStep:0, 
-    verifiedSteps:0, 
+    currentStep:2, 
+    verifiedSteps:2, 
     page:1,
     stepStatus:"",
     previousButtonName:"Previous",
@@ -53,71 +55,64 @@ function CreateParcel(props){
     details:{
       senderName:{
         name:"senderName",
-        value:'',
+        value:undefined,
         isRequired:true,
         accepted:true
       },
       senderMobile:{
         name:"senderMobile",
-        value:null,
-        isRequired:false,
-        accepted:false
+        value:undefined,
+        isRequired:true,
+        accepted:true
       },
       senderEmail:{
         name:"senderEmail",
-        value:null,
+        value:undefined,
         isRequired:false,
         accepted:true,
         hasError:false
       },
       recieverName:{
         name:"recieverName",
-        value:null,
+        value:undefined,
         isRequired:true,
         accepted:true
       },
       recieverMobile:{
         name:"recieverMobile",
-        value:null,
-        isRequired:false,
+        value:undefined,
+        isRequired:true,
         accepted:true
       },
       recieverEmail:{
         name:"recieverEmail",
-        value:null,
+        value:undefined,
         isRequired:false,
         accepted:true,
         hasError:false
       },
       destination:{
         name:"destination",
-        value:null,
-        isRequired:false,
+        value:undefined,
+        isRequired:true,
         accepted:true,
-        options:[{
-          value:0,
-          name:"value0"
-        },
-        {
-          value:1,
-          name:"value1"
-        }]
+        options:[]
       },
       description:{
         name:"description",
-        value:'',
+        value:undefined,
         isRequired:true,
         accepted:true
       },
       declaredValue:{
         name:"declaredValue",
-        value:null,
+        value:undefined,
         isRequired:true,
         accepted:true
       },
       quantity:{
         name:"quantity",
-        value:null,
+        value:undefined,
         isRequired:true,
         accepted:true
       },
@@ -129,39 +124,39 @@ function CreateParcel(props){
       },
       additionNote:{
         name:"additionNote",
-        value:null,
+        value:undefined,
         isRequired:false,
         accepted:true
       },
       packageInsurance:{
         name:"packageInsurance",
-        value:null,
+        value:undefined,
         isRequired:false,
         accepted:true
       },
       type:{
         name:"type",
-        value:2,
+        value:3,
         isRequired:false,
         accepted:true,
         options:[
         {
-          value:0,
+          value:1,
           name:"Excess AC"
         },
         {
-          value:1,
+          value:2,
           name:"Excess Non AC"
         },
         {
-          value:2,
+          value:3,
           name:"Cargo Padala"
         }
         ]
       },
       packageWeight:{
         name:"packageWeight",
-        value:null,
+        value:undefined,
         isRequired:true,
         accepted:true
       },
@@ -173,21 +168,134 @@ function CreateParcel(props){
       },
       totalShippingCost:{
         name:"totalShippingCost",
-        value:null,
+        value:0,
         isRequired:false,
         accepted:true
       },
       paxs:{
         name:"paxs",
-        value:null,
-        isRequired:true,
-        accepted:true
+        value:undefined,
+        isRequired:false,
+        accepted:true,
+        disabled:false 
       },
-    }
+    },
+    trips:null,
   })
 
-  let createRef = React.useRef(null);
-  
+  const oldPropsRef = React.useRef();
+
+  React.useEffect(()=>{
+
+    if(!oldPropsRef.current){
+      oldPropsRef.current = state;
+    }
+
+    if(state.trips == null){
+      const stationId = getUser().assignedStation._id;
+      ParcelService.getTrips(stationId).
+      then(e=>{
+        console.log('getTrips====>>',e)
+        const{data, success}=e.data;
+        if(success){
+          if(data.trips){
+            const options = [];
+            const map = new Map();
+    
+            for (const station of data.trips.data) {
+                if (!map.has(station.endStation._id)) {
+                    map.set(station.endStation._id, true);
+                    options.push({
+                        value: station.endStation._id,
+                        name: station.endStation.name,
+                        data: station
+                    })
+                }
+            }
+            const item = {...state.details.destination,...{options}}
+            const details = {...state.details, ...{destination:item}}
+            oldPropsRef.current = {...state,...{trips:data.trips.data, details}}
+            setState({...state,...{trips:data.trips.data, details}})
+          }
+        }
+      })
+    }
+
+    let details = state.details;
+
+    if(oldPropsRef.current && oldPropsRef.current.details){
+      const{ destination, packageWeight, declaredValue, paxs }= oldPropsRef.current.details
+      if(details.destination.value !== destination.value 
+          || details.packageWeight.value !== packageWeight.value 
+            || details.declaredValue.value !== declaredValue.value){
+
+              if(details.destination.value 
+                  && details.packageWeight.value 
+                    && details.declaredValue.value){
+
+                      if(details.type.value !== 3 && details.paxs.value === paxs.value){
+                        return;
+                      }
+
+                      computePrice();
+                    }
+            }
+    }
+
+    const total = parseFloat(details.systemFee.value || 0) + parseFloat(details.shippingCost.value) ;
+    const totalShippingCost = details.totalShippingCost.value || 0;
+    if(parseFloat(total).toFixed(2) !== totalShippingCost){
+      const totalShippingCost = {...details.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
+      const _details = {...details, ...{totalShippingCost}}
+      setState({...state,...{details:_details}})
+    }
+
+    console.log('useEffect====>')
+  },[state.details]);
+
+  const getConvinienceFee = async(qty)=>{
+    const res = await ParcelService.getConvenienceFee(qty);
+    const{success, data}=res.data
+    if(success){
+      return data.convenienceFee
+    }
+    return 0;
+  }
+
+  const computePrice = () =>{
+
+    const isNull = (value)=>(value === null || value === undefined || value === ''); 
+    const{ destination, declaredValue, paxs, packageWeight, type }=state.details
+    const busCompanyId = getUser().busCompanyId;
+    const startStation = getUser().assignedStation._id;
+    const endStationOption = destination.options.filter(e=>e.value == destination.value)[0]
+    const endStation = endStationOption ? endStationOption.data.endStation._id : undefined;
+    const decValue =  declaredValue.value ? parseFloat(declaredValue.value).toFixed(2) : undefined;
+    const pax = paxs.value || 0;
+    const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined
+    
+    if(!isNull(busCompanyId) && !isNull(startStation) && !isNull(endStation) && !isNull(weight)){
+      ParcelService.getDynamicPrice(
+        busCompanyId, 
+        decValue, 
+        endStation, 
+        type.value,
+        pax, 
+        startStation, 
+        weight
+      ).then(e => {
+        const{ data, success }=e.data;  
+        if(success){
+          const shippingCost = {...state.details.shippingCost, ...{value:data.totalCost}}
+          const details = {...state.details, ...{shippingCost}}
+          oldPropsRef.current = {...state, ...{details}}
+          setState({...state, ...{details}})
+        }
+        
+      })
+    }
+  }
+
   const onSuccessMsg = (msg) => {
     message.success( msg || 'This is a success message' );
   };
@@ -230,16 +338,23 @@ function CreateParcel(props){
   </div>)
   }
 
-  const ParcelDetailsFormOnChange = (name, value) =>{
+  const ParcelDetailsFormOnChange = async(name, value) =>{
     let item = null;
-    let details = null;
+    let details = state.details;
 
     if(name === 'senderEmail' || name === 'recieverEmail'){
-      item = {...state.details[name], ...{value, hasError:false}}
-      details = {...state.details, ...{[name]:item}}
+      item = {...details[name], ...{value, hasError:false}}
+      details = {...details, ...{[name]:item}}
+
     }else{
-      item = {...state.details[name], ...{value, accepted:true}}
-      details = {...state.details, ...{[name]:item}}
+      item = {...details[name], ...{value, accepted:true}}
+      details = {...details, ...{[name]:item}}
+
+      if(name == 'quantity' && value){
+        const fee = await getConvinienceFee(value);
+        const systemFee = {...details.systemFee,...{value:fee}}
+        details = {...details, ...{systemFee}}
+      }
     }
     setState({...state, ...{details}});
   }
@@ -247,75 +362,67 @@ function CreateParcel(props){
   const onBlurValidation = (name)=>{  
 
     let item;
-    let details;
-
-    if(state.details[name].isRequired && 
-        (state.details[name].value === "" || 
-          state.details[name].value === null) ){
-
-      item = {...state.details[name], ...{ 
-        isRequired:true, 
-        accepted:false, 
-      }}
-      details = {...state.details, ...{[name]:item}}
-      setState({...state, ...{details}});
-
-      return;
-    }
-
+    let details = state.details;
 
     if(name === 'senderEmail' || name === 'recieverEmail'){
-      const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(state.details[name].value)
+      const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details[name].value)
       if(!validEmail){
-        item = {...state.details[name], ...{ 
+        item = {...details[name], ...{ 
           hasError:true,
           isRequired:true,
           errorMessage:"Invalid name!" 
          }}
-        details = {...state.details, ...{[name]:item}}
-        setState({...state, ...{details}});
+        details = {...details, ...{[name]:item}}
       }
-      return;
     }
 
-    console.log('onBlurValidation',name)
-
     if(name === 'senderMobile' || name === 'recieverMobile' ){
-      const validNumber = /^\d+$/.test(state.details[name].value);
-      console.log('validNumber=====>>',validNumber )
-      if(!validNumber || (state.details[name].value.length !== 10)){
-        item = {...state.details[name], ...{
+      const validNumber = /^\d+$/.test(details[name].value);
+      if(!validNumber || !(details[name].value.length === 10)){
+        item = {...details[name], ...{
           isRequired:true, 
           accepted:false, 
           errorMessage:"Invalid phone number!" 
         }}
-        details = {...state.details, ...{[name]:item}}
-        setState({...state, ...{details}});
+        details = {...details, ...{[name]:item}}
       }
-      return;
     }
 
     if(name === 'senderName' || name === 'recieverName' ){
-      const validString = /^[A-Za-z]+$/.test(state.details[name].value);
-      console.log('validNumber=====>>',validString )
+      const validString = /^[A-Za-z]+$/.test(details[name].value);
       if(!validString){
-        item = {...state.details[name], ...{
+        item = {...details[name], ...{
           isRequired:true, 
           accepted:false, 
           errorMessage:"Invalid name!" 
         }}
-        details = {...state.details, ...{[name]:item}}
-        setState({...state, ...{details}});
+        details = {...details, ...{[name]:item}}
       }
-      return;
     }
 
-
+    if(details[name].isRequired && 
+      (details[name].value === "" || 
+        details[name].value === null ||
+          details[name].value === undefined) 
+    ){
+      item = {...details[name], ...{ isRequired:true, accepted:false }}
+      details = {...details, ...{[name]:item}}
+    }
+    setState({...state, ...{details}});
   }
 
   const onSelectChange = (value)=>{
     const destination = {...state.details.destination, ...{value}}
     const details = {...state.details, ...{destination}}
+    setState({...state, ...{details}});
+  }
+  
+  const onTypeChange = (e)=>{
+    const value = e.target.value;
+    let details = state.details;
+    const type = {...details.type, ...{value}}
+    const paxs = {...details.paxs, ...{isRequired: value !== 3, disabled:value === 3 }}
+    details = {...details, ...{type,paxs}}
     setState({...state, ...{details}});
   }
 
@@ -329,6 +436,7 @@ function CreateParcel(props){
             <ParcelDetailsForm 
               onBlur={(name)=>onBlurValidation(name)}
               details={state.details} 
+              onTypeChange={(e)=>onTypeChange(e)}
               onSelectChange={(value)=>onSelectChange(value)}
               onChange={(e)=>ParcelDetailsFormOnChange(e.target.name, e.target.value)} />
             <StepControllerView />
@@ -342,7 +450,7 @@ function CreateParcel(props){
         break;
       case 2:
         view = <>
-            <ScheduledTrips onSelect={(trip)=>{onSelectTrip(trip)}}/>
+            <ScheduledTrips windowSize={size} onSelect={(trip)=>{onSelectTrip(trip)}}/>
             <StepControllerView disableNextButton={true}/>
           </>
         break;
@@ -388,13 +496,23 @@ function CreateParcel(props){
       Object.keys(state.details).map(e=>{
         let value = state.details[e].value;
         let isRequired = state.details[e].isRequired;
-        if(isRequired && (value === null || value === '')){
+        if(isRequired && (value === null || value === '' || value === undefined)){
           hasError = true;
-          console.log('validateStep',e)
         }
       })
       if(hasError){
         openNotificationWithIcon({title:"Parcel Details Validation", type:'error', message:"Please fill up required fields"})
+        let details= state.details;
+        Object.keys(state.details).map(e=>{
+          let value = state.details[e].value;
+          let isRequired = state.details[e].isRequired;
+          
+          if(isRequired && (value === null || value === '' || value === undefined)){
+            let item = {...details[e], ...{accepted:false} }
+            details = {...details, ...{[e]:item}}
+          }
+        });
+        setState({...state,...{details}})
         return;
       }
     }
