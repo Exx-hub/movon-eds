@@ -41,6 +41,7 @@ const STEPS_LIST=[
 function CreateParcel(props){
   let printEl = React.useRef(null);
   const size = useWindowSize();
+
   const [state,setState] = useState({
     packageImagePreview:null,
     currentStep:0, 
@@ -48,8 +49,144 @@ function CreateParcel(props){
     page:1,
     stepStatus:"",
     previousButtonName:"Previous",
-    nextButtonName:"Next"
-  });
+    nextButtonName:"Next",
+    details:{
+      senderName:{
+        name:"senderName",
+        value:'',
+        isRequired:true,
+        accepted:true
+      },
+      senderMobile:{
+        name:"senderMobile",
+        value:null,
+        isRequired:false,
+        accepted:false
+      },
+      senderEmail:{
+        name:"senderEmail",
+        value:null,
+        isRequired:false,
+        accepted:true,
+        hasError:false
+      },
+      recieverName:{
+        name:"recieverName",
+        value:null,
+        isRequired:true,
+        accepted:true
+      },
+      recieverMobile:{
+        name:"recieverMobile",
+        value:null,
+        isRequired:false,
+        accepted:true
+      },
+      recieverEmail:{
+        name:"recieverEmail",
+        value:null,
+        isRequired:false,
+        accepted:true,
+        hasError:false
+      },
+      destination:{
+        name:"destination",
+        value:null,
+        isRequired:false,
+        accepted:true,
+        options:[{
+          value:0,
+          name:"value0"
+        },
+        {
+          value:1,
+          name:"value1"
+        }]
+      },
+      description:{
+        name:"description",
+        value:'',
+        isRequired:true,
+        accepted:true
+      },
+      declaredValue:{
+        name:"declaredValue",
+        value:null,
+        isRequired:true,
+        accepted:true
+      },
+      quantity:{
+        name:"quantity",
+        value:null,
+        isRequired:true,
+        accepted:true
+      },
+      systemFee:{
+        name:"systemFee",
+        value:0,
+        isRequired:false,
+        accepted:true
+      },
+      additionNote:{
+        name:"additionNote",
+        value:null,
+        isRequired:false,
+        accepted:true
+      },
+      packageInsurance:{
+        name:"packageInsurance",
+        value:null,
+        isRequired:false,
+        accepted:true
+      },
+      type:{
+        name:"type",
+        value:2,
+        isRequired:false,
+        accepted:true,
+        options:[
+        {
+          value:0,
+          name:"Excess AC"
+        },
+        {
+          value:1,
+          name:"Excess Non AC"
+        },
+        {
+          value:2,
+          name:"Cargo Padala"
+        }
+        ]
+      },
+      packageWeight:{
+        name:"packageWeight",
+        value:null,
+        isRequired:true,
+        accepted:true
+      },
+      shippingCost:{
+        name:"shippingCost",
+        value:0,
+        isRequired:false,
+        accepted:true
+      },
+      totalShippingCost:{
+        name:"totalShippingCost",
+        value:null,
+        isRequired:false,
+        accepted:true
+      },
+      paxs:{
+        name:"paxs",
+        value:null,
+        isRequired:true,
+        accepted:true
+      },
+    }
+  })
+
+  let createRef = React.useRef(null);
   
   const onSuccessMsg = (msg) => {
     message.success( msg || 'This is a success message' );
@@ -75,9 +212,8 @@ function CreateParcel(props){
 
   const openNotificationWithIcon = props => {
     notification[props.type]({
-      message: 'Notification Title',
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+      message: props.title || 'Notification Title',
+      description: props.message || 'message',
     });
   };
 
@@ -94,6 +230,95 @@ function CreateParcel(props){
   </div>)
   }
 
+  const ParcelDetailsFormOnChange = (name, value) =>{
+    let item = null;
+    let details = null;
+
+    if(name === 'senderEmail' || name === 'recieverEmail'){
+      item = {...state.details[name], ...{value, hasError:false}}
+      details = {...state.details, ...{[name]:item}}
+    }else{
+      item = {...state.details[name], ...{value, accepted:true}}
+      details = {...state.details, ...{[name]:item}}
+    }
+    setState({...state, ...{details}});
+  }
+
+  const onBlurValidation = (name)=>{  
+
+    let item;
+    let details;
+
+    if(state.details[name].isRequired && 
+        (state.details[name].value === "" || 
+          state.details[name].value === null) ){
+
+      item = {...state.details[name], ...{ 
+        isRequired:true, 
+        accepted:false, 
+      }}
+      details = {...state.details, ...{[name]:item}}
+      setState({...state, ...{details}});
+
+      return;
+    }
+
+
+    if(name === 'senderEmail' || name === 'recieverEmail'){
+      const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(state.details[name].value)
+      if(!validEmail){
+        item = {...state.details[name], ...{ 
+          hasError:true,
+          isRequired:true,
+          errorMessage:"Invalid name!" 
+         }}
+        details = {...state.details, ...{[name]:item}}
+        setState({...state, ...{details}});
+      }
+      return;
+    }
+
+    console.log('onBlurValidation',name)
+
+    if(name === 'senderMobile' || name === 'recieverMobile' ){
+      const validNumber = /^\d+$/.test(state.details[name].value);
+      console.log('validNumber=====>>',validNumber )
+      if(!validNumber || (state.details[name].value.length !== 10)){
+        item = {...state.details[name], ...{
+          isRequired:true, 
+          accepted:false, 
+          errorMessage:"Invalid phone number!" 
+        }}
+        details = {...state.details, ...{[name]:item}}
+        setState({...state, ...{details}});
+      }
+      return;
+    }
+
+    if(name === 'senderName' || name === 'recieverName' ){
+      const validString = /^[A-Za-z]+$/.test(state.details[name].value);
+      console.log('validNumber=====>>',validString )
+      if(!validString){
+        item = {...state.details[name], ...{
+          isRequired:true, 
+          accepted:false, 
+          errorMessage:"Invalid name!" 
+        }}
+        details = {...state.details, ...{[name]:item}}
+        setState({...state, ...{details}});
+      }
+      return;
+    }
+
+
+  }
+
+  const onSelectChange = (value)=>{
+    const destination = {...state.details.destination, ...{value}}
+    const details = {...state.details, ...{destination}}
+    setState({...state, ...{details}});
+  }
+
   const stepSelection = (step) =>{
 
     let view = null;
@@ -101,9 +326,13 @@ function CreateParcel(props){
     switch (step) {
       case 0:
         view = <>
-            <ParcelDetailsForm onchange={onchange}/>
+            <ParcelDetailsForm 
+              onBlur={(name)=>onBlurValidation(name)}
+              details={state.details} 
+              onSelectChange={(value)=>onSelectChange(value)}
+              onChange={(e)=>ParcelDetailsFormOnChange(e.target.name, e.target.value)} />
             <StepControllerView />
-          </>
+            </>
         break;
       case 1:
         view = <>
@@ -153,6 +382,30 @@ function CreateParcel(props){
       console.log('already created.. no more modification')
       return;
     }
+
+    if(state.currentStep === 0){
+      let hasError = false;
+      Object.keys(state.details).map(e=>{
+        let value = state.details[e].value;
+        let isRequired = state.details[e].isRequired;
+        if(isRequired && (value === null || value === '')){
+          hasError = true;
+          console.log('validateStep',e)
+        }
+      })
+      if(hasError){
+        openNotificationWithIcon({title:"Parcel Details Validation", type:'error', message:"Please fill up required fields"})
+        return;
+      }
+    }
+
+    if(state.currentStep === 1){
+      if(!state.packageImagePreview || state.packageImagePreview === ''){
+        openNotificationWithIcon({title:"Parcel Image Validation", type:'error', message:"Please take photo and continue"})
+        return;
+      }
+    }
+
     let verifiedSteps = state.currentStep
     if(state.currentStep + 1 > verifiedSteps){
        verifiedSteps = verifiedSteps + 1;

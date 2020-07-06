@@ -11,18 +11,22 @@ function _suffix(props){
 function InputView(props) {
     const isRequired = Boolean(props.isRequired, false)
     let accepted = Boolean(props.accepted, false)
-    let hasError =  Boolean(isRequired && !accepted, false)
+    let hasError = Boolean(isRequired && !accepted)
 
     return (
     <div className="component-input">
         <Input 
-            onClick={props.onBlur}
-            className={[ hasError ? "input-has-error" : ""]}
-            suffix={ hasError && _suffix({ hasError }) }
-            placeholder={props.placeholder || "is required"} 
+            disabled={props.disabled}
+            onBlur={props.onBlur}
+            className={[ (props.showError || hasError) ? "input-has-error" : ""]}
+            prefix={props.prefix}
+            suffix={ hasError ? _suffix({ hasError }) : null }
+            placeholder={props.placeholder} 
             value={props.value} 
+            name={props.name}
+            type={props.type}
             onChange={props.onChange}/>
-        {  hasError && <span className="input-error-message">{props.errorMessage || `${props.placeholder} is required` }</span> }
+        {  (props.showError || hasError) && <span className="input-error-message">{ props.errorMessage || `${props.placeholder} is required` }</span> }
     </div>)
 }
 
