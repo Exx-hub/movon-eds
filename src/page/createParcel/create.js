@@ -46,8 +46,8 @@ function CreateParcel(props){
 
   const [state,setState] = useState({
     packageImagePreview:null,
-    currentStep:2, 
-    verifiedSteps:2, 
+    currentStep:0, 
+    verifiedSteps:0, 
     page:1,
     stepStatus:"",
     previousButtonName:"Previous",
@@ -180,7 +180,8 @@ function CreateParcel(props){
         disabled:false 
       },
     },
-    trips:null,
+    trips:undefined,
+    selectedTrip:undefined
   })
 
   const oldPropsRef = React.useRef();
@@ -193,8 +194,7 @@ function CreateParcel(props){
 
     if(state.trips == null){
       const stationId = getUser().assignedStation._id;
-      ParcelService.getTrips(stationId).
-      then(e=>{
+      ParcelService.getTrips(stationId).then(e=>{
         console.log('getTrips====>>',e)
         const{data, success}=e.data;
         if(success){
@@ -242,16 +242,16 @@ function CreateParcel(props){
             }
     }
 
-    const total = parseFloat(details.systemFee.value || 0) + parseFloat(details.shippingCost.value) ;
-    const totalShippingCost = details.totalShippingCost.value || 0;
+    const total = parseFloat(details.packageInsurance.value || 0) + parseFloat(details.systemFee.value || 0) + parseFloat(details.shippingCost.value) ;
+    const totalShippingCost = parseFloat(details.totalShippingCost.value || 0).toFixed(2) ;
     if(parseFloat(total).toFixed(2) !== totalShippingCost){
       const totalShippingCost = {...details.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
       const _details = {...details, ...{totalShippingCost}}
       setState({...state,...{details:_details}})
     }
 
-    console.log('useEffect====>')
-  },[state.details]);
+    console.log('useEffect====>', oldPropsRef.current)
+  },[state.details, state.selectedTrip]);
 
   const getConvinienceFee = async(qty)=>{
     const res = await ParcelService.getConvenienceFee(qty);
@@ -286,7 +286,8 @@ function CreateParcel(props){
       ).then(e => {
         const{ data, success }=e.data;  
         if(success){
-          const shippingCost = {...state.details.shippingCost, ...{value:data.totalCost}}
+          const value = parseFloat(data.totalCost).toFixed(2)
+          const shippingCost = {...state.details.shippingCost, ...{value}}
           const details = {...state.details, ...{shippingCost}}
           oldPropsRef.current = {...state, ...{details}}
           setState({...state, ...{details}})
@@ -315,6 +316,7 @@ function CreateParcel(props){
   }
 
   const onSelectTrip = trip =>{
+    setState({...state,...{selectedTrip:trip}})
     validateStep()
   }
 
@@ -350,10 +352,16 @@ function CreateParcel(props){
       item = {...details[name], ...{value, accepted:true}}
       details = {...details, ...{[name]:item}}
 
-      if(name == 'quantity' && value){
+      if(name === 'quantity' && value){
         const fee = await getConvinienceFee(value);
         const systemFee = {...details.systemFee,...{value:fee}}
         details = {...details, ...{systemFee}}
+      }
+
+      if(name === 'declaredValue'){
+        const fee = parseFloat(value * 0.1).toFixed(2) 
+        const packageInsurance = {...details.packageInsurance,...{value:fee}}
+        details = {...details, ...{packageInsurance}}
       }
     }
     setState({...state, ...{details}});
@@ -366,10 +374,10 @@ function CreateParcel(props){
 
     if(name === 'senderEmail' || name === 'recieverEmail'){
       const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details[name].value)
+      console.log('validEmail',validEmail, name)
       if(!validEmail){
         item = {...details[name], ...{ 
           hasError:true,
-          isRequired:true,
           errorMessage:"Invalid name!" 
          }}
         details = {...details, ...{[name]:item}}
@@ -412,7 +420,7 @@ function CreateParcel(props){
   }
 
   const onSelectChange = (value)=>{
-    const destination = {...state.details.destination, ...{value}}
+    const destination = {...state.details.destination, ...{value, accepted:true}}
     const details = {...state.details, ...{destination}}
     setState({...state, ...{details}});
   }
@@ -424,6 +432,26 @@ function CreateParcel(props){
     const paxs = {...details.paxs, ...{isRequired: value !== 3, disabled:value === 3 }}
     details = {...details, ...{type,paxs}}
     setState({...state, ...{details}});
+  }
+
+  const getReviewDetails = () =>{
+    return {
+      packageName:state.details.description.value,
+      packageWeight:state.details.packageWeight.value,
+      packageQty: state.details.quantity.value,
+      packageImages: [state.packageImagePreview],
+      recipientName: state.details.recieverName.value,
+      recipientEmail: state.details.recieverEmail.value,
+      recipientPhone: state.details.recieverMobile.value,
+      senderName: state.details.senderName.value,
+      senderEmail: state.details.senderEmail.value,
+      senderPhone: state.details.senderMobile.value,
+      convenienceFee: state.details.systemFee.value,
+      insuranceFee: state.details.packageInsurance.value,
+      price: state.details.shippingCost.value,
+      totalPrice: state.details.totalShippingCost.value,
+      additionalNote:state.details.additionNote.value,
+    }
   }
 
   const stepSelection = (step) =>{
@@ -450,13 +478,16 @@ function CreateParcel(props){
         break;
       case 2:
         view = <>
-            <ScheduledTrips windowSize={size} onSelect={(trip)=>{onSelectTrip(trip)}}/>
+            <ScheduledTrips 
+              onSelect={e=>onSelectTrip(e)}
+              tripShedules={state.trips} 
+              windowSize={size} />
             <StepControllerView disableNextButton={true}/>
           </>
         break;
       case 3:
         view = <>
-            <ReviewDetails />
+            <ReviewDetails value={getReviewDetails()} viewMode={false}/>
             <StepControllerView 
               nextButtonName = "Create Parcel" 
               enablePreviousButton={true} 
@@ -486,6 +517,7 @@ function CreateParcel(props){
   }
 
   const validateStep = () =>{
+
     if(state.verifiedSteps >= 4){
       console.log('already created.. no more modification')
       return;
@@ -522,6 +554,13 @@ function CreateParcel(props){
         openNotificationWithIcon({title:"Parcel Image Validation", type:'error', message:"Please take photo and continue"})
         return;
       }
+    }
+
+    if(state.currentStep === 2){
+        if(!state.selectedTrip){
+          openNotificationWithIcon({title:"Trip Schedule Validation", type:'error', message:"Please select trip"})
+          return;
+        }
     }
 
     let verifiedSteps = state.currentStep

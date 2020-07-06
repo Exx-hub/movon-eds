@@ -12,37 +12,38 @@ export const ScheduledTrips = (props)=>{
                     <h2>Select Trip</h2>
                     <span>{moment().format("hh:ss A - MMM DD, YYYY")}</span>
                 </div>
-                <DetailsView {...props} key={1} onClick={()=>props.onSelect(0)}/>
-            </div>
-        
-            <div className="pagination-container">
-                <Pagination 
-                    defaultCurrent={0} 
-                    current={props.page || 0} 
-                    total={props.total || 50} 
-                    onChange={ props.onChange || null} />
+                {
+                    props.tripShedules.map((e,i)=>(<DetailsView data={e} {...props} key={i} onClick={()=>props.onSelect(e)}/>))
+                }
             </div>
         </div>)
 }
 
 const DetailsView = (props) =>{
-    return(<div className="details-view-item" onClick={props.onClick || null}>
-    
+    const{
+        bus,
+        busCompanyId,
+        endStation,
+        startStation,
+        tripStartDateTime
+    }=props.data;
+
+    return(<div className="details-view-item" onClick={props.onClick}>
             <div className="content-container">
                 <div className="pin-origin-destination">
                     <img className="pin-icon" src={pin} alt="pin-icon"/>
                     <div className="origin-destination">
-                        <span style={{flexGrow:1}}>Naga</span>
-                        <span>Cubao</span>
+                        <span style={{flexGrow:1}}>{startStation.name}</span>
+                        <span>{endStation.name}</span>
                     </div>
                 </div>
                 <div className="content-text-info">
                     <div className="content-text-info-items">
                         <div className="items">
-                            <span className="company-text">Company</span>
-                            <span className="bus-model-text">Bus Model</span>
+                            <span className="company-text">{busCompanyId.name}</span>
+                            <span className="bus-model-text">{bus.busModel}</span>
                             <span className="departure-time-title">Departure Time</span>
-                            <span className="departure-time">02:52 AM - Jun 30, 2020</span>
+                            <span className="departure-time">{tripStartDateTime}</span>
                         </div>
                     </div>
                 </div>
