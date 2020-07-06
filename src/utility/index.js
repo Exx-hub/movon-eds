@@ -61,6 +61,15 @@ export const getToken = () =>{
   return token
 }
 
+export const getUser = () =>{
+  let user = null
+  const credential = localStorage.getItem('credential') || null;
+  if(credential){
+    user = (JSON.parse(credential)).user
+  }
+  return user
+}
+
 export const clearCredential = () =>{
   localStorage.setItem('credential',null) 
 }

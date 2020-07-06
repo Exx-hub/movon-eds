@@ -17,9 +17,19 @@ const ManifestService = {
         })
     },
 
+    getAvailableManifest: (startStation, endStation) => {
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startStation}/${endStation}`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
+    },
+
     getManifest: (endTripDate, startTripDate, startStation, endStation, page) => {
-        console.log('getManifest url',`${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startTripDate}/${startStation}/${endStation}/${page}`,
-        )
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${endTripDate}/${startTripDate}/${startStation}/${endStation}/${page}`,

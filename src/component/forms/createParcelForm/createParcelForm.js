@@ -7,6 +7,7 @@ const { Option } = Select;
 
 function InputBox(props){
 
+  const disabled = (props.detail && props.detail.disabled) || false;
   const isRequired = (props.detail && props.detail.isRequired) || false;
   const name = (props.detail && props.detail.name) || null;
   const accepted = (props.detail && props.detail.accepted) || false;
@@ -22,7 +23,7 @@ function InputBox(props){
       title={props.title}
       placeholder={props.placeholder} 
       onBlur={props.onBlur || null}
-      disabled={props.disabled}
+      disabled={props.disabled || disabled}
       errorMessage={props.errorMessage}
       showError={props.showError}
       prefix ={props.prefix}
@@ -60,15 +61,22 @@ function CreateParcelForm(props) {
           <span className="create-group-title">Select Station</span>
           <Row >
             <Col className="gutter-row" span={12}>
-              <span className="input-placeholder-title">Destination*</span>
-              <Select
-                onChange={props.onSelectChange} 
-                value={destination.value} 
-                style={{ width: '100%' }}>
+              <div className="select-destination-form-container">
+                <span className="input-placeholder-title">Destination*</span>
+                <Select
+                  onBlur={()=>props.onBlur(destination.name)}
+                  className={`${!destination.accepted ? "select-error-destination-form" : ""}`}
+                  onChange={props.onSelectChange} 
+                  value={destination.value} 
+                  style={{ width: '100%' }}>
+                  {
+                    destination.options.map(e=>(<Option value={e.value}>{e.name}</Option>))
+                  }
+                </Select>
                 {
-                  destination.options.map(e=>(<Option value={e.value}>{e.name}</Option>))
+                  !destination.accepted && <span className="select-input-error">{destination.errorMessage || 'Destination is required' }</span>
                 }
-              </Select>
+              </div>
             </Col>
 
             <Col className="gutter-row" span={12}>
@@ -161,7 +169,7 @@ function CreateParcelForm(props) {
           <Row>
               <Col span={12} className={["gutter-row"]}>
                 <div className={["radio-button-group"]}>
-                <Radio.Group value={type.value}>
+                <Radio.Group value={type.value} onChange={props.onTypeChange}>
                 {
                   type.options.map(e=><Radio value={e.value}>{e.name}</Radio>)
                 }

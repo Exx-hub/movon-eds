@@ -1,9 +1,12 @@
 import axios from 'axios';
 import moment from 'moment';
-import Config from '../util/Config';
+import {config} from '../config';
+import {getToken} from '../utility'
+
+const BASE_URL = config.BASE_URL;
 
 const ParcelService = {
-    getTrips : (token, stationId) => {
+    getTrips : (stationId) => {
 
         var currentTime = moment().utc().format('YYYY-MM-DDThh:mm:ss[Z]')
         var todaysStartDate = moment().startOf('day').format('YYYY-MM-DDThh:mm:ss[Z]');
@@ -11,11 +14,11 @@ const ParcelService = {
 
         return axios({
             method: 'post',
-            url: `${Config.api_domain}/api/v1/account/delivery-person/home/trips`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/home/trips`,
             headers : {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : token
+                'x-auth-token' : getToken()
             },
             data : {
                 stationId: stationId,
@@ -65,19 +68,18 @@ const ParcelService = {
                 
         return axios({
             method: 'post',
-            url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/create`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/create`,
             headers : {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : Config.api_token
+                'x-auth-token' : getToken()
             },
             data: bodyFormData,
             config: { headers : {'Content-Type': 'multipart/form-data'} }
         })
     },
 
-    getDynamicPrice: (busCompanyId, claimAmount, endStation, type, paxNumber=1 ,startStation, weight) => {
-        
+    getDynamicPrice: (busCompanyId, claimAmount, endStation, type, paxNumber ,startStation, weight) => {
         if(busCompanyId, claimAmount, endStation, type, paxNumber ,startStation, weight){
             console.log('call the API------>>>getDynamicPrice')
             let accompaniedValue = ''
@@ -97,11 +99,11 @@ const ParcelService = {
 
             return axios({
                 method: 'post',
-                url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/${busCompanyId}/calculate`,
+                url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/calculate`,
                 headers: {
                     'x-auth-deviceid' : '1',
                     'x-auth-devicetype' : '1',
-                    'x-auth-token' : Config.api_token
+                    'x-auth-token' : getToken()
                 },
                 data: {
                     claimAmount,
@@ -120,11 +122,11 @@ const ParcelService = {
     getConvenienceFee: (quantity) => {
         return axios({
             method: 'get',
-            url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/parcel-convenience-fee/${quantity}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/parcel-convenience-fee/${quantity}`,
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : Config.api_token
+                'x-auth-token' : getToken()
             }
         })
     }
