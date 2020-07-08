@@ -39,34 +39,6 @@ export const ReviewDetails = (props) =>{
     }=props.value
 
 
-    // const{ 
-    //     packageInfo, 
-    //     recipientInfo, 
-    //     senderInfo, 
-    //     priceDetails,
-    //     additionalNote,
-    //     tripCode,
-    //     billOfLading 
-    // } = props.value;
-
-    // const packageName = packageInfo && packageInfo.packageName;
-    // const packageWeight = packageInfo && packageInfo.packageWeight;;
-    // const packageQty = packageInfo && packageInfo.quantity;
-    // const packageImages = packageInfo && packageInfo.packageImages;
-    
-    // const recipientName = recipientInfo.recipientName;
-    // const recipientEmail = recipientInfo.recipientEmail;
-    // const recipientPhone = recipientInfo.recipientPhone.number;
-
-    // const senderName = senderInfo.senderName;
-    // const senderEmail = senderInfo.senderEmail;
-    // const senderPhone = senderInfo.senderPhone.number;
-
-    // const convenienceFee = priceDetails && priceDetails.convenienceFee;
-    // const insuranceFee = priceDetails && priceDetails.convenienceFee;
-    // const price = priceDetails && priceDetails.convenienceFee;
-    // const totalPrice = priceDetails && priceDetails.convenienceFee;
-
     return <div className="component-review-details">
          <div className="parcel-image-container">
              {
