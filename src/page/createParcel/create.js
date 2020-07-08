@@ -265,7 +265,6 @@ class CreateParcel extends React.Component {
   componentDidMount(){
     const stationId = getUser().assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
-      console.log('getTrips====>>',e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data.trips){
@@ -334,8 +333,6 @@ class CreateParcel extends React.Component {
     this.setState({ isLoading: true });
     ParcelService.create(this.state).then((e) => {
       this.setState({ isLoading: false });
-
-      console.log("======>>createParcel", e);
       const { success, data, errorCode } = e.data;
       if (success) {
         showNotification({
@@ -345,7 +342,6 @@ class CreateParcel extends React.Component {
         });
         this.setState({createParcelResponseData: data},this.gotoNextStep());
       } else {
-        console.log("create parcel errorCode:", errorCode);
         showNotification({
           title: "Create Parcel",
           type: "error",
@@ -456,7 +452,6 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
     ParcelService.getConvenienceFee(qty).then(res=>{
-      console.log('===>>response',res)
       let details = {...this.state.details}
       let systemFee= {...this.state.details.systemFee}
       const { success, data } = res.data;
@@ -465,18 +460,6 @@ class CreateParcel extends React.Component {
       }
       this.setState({ details: Object.assign(details,{systemFee}) })
     })
-
-    // let details = {...this.state.details}
-    // let systemFee= {...this.state.details.systemFee}
-    // ParcelService.getConvenienceFee(qty)
-    // .then(res=>{
-    //   console.log('====>>res',res)
-    //   const { success, data } = res.data;
-    //   if (success) {
-    //     systemFee = Object.assign({},systemFee,{ value: data.convenienceFee })
-    //   }
-    //   this.setState({ details: Object.assign(details,{systemFee}) })
-    // });
   }
 
   computePrice = () =>{
@@ -509,7 +492,6 @@ class CreateParcel extends React.Component {
         weight
       )
       .then(e => {
-        console.log('computePrice====>>response',e)
         const details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
         if(success){
@@ -528,9 +510,6 @@ class CreateParcel extends React.Component {
   }
 
   onInputChange = (name, value) => {
-
-    console.log('name',name)
-    console.log('value',value)
     let details = {...this.state.details};
 
       if (name === "senderEmail" || name === "recieverEmail") {
@@ -548,8 +527,6 @@ class CreateParcel extends React.Component {
         this.getConvinienceFee(value)
       }
 
-      console.log('details',details)
-
       if (name === "declaredValue") {
         const packageInsurance = {
           ...details.packageInsurance,
@@ -559,7 +536,6 @@ class CreateParcel extends React.Component {
       }
 
       if (name === "billOfLading") {
-        console.log('!isNull(value)',!isNull(value))
         this.setState({billOfLading:{...this.state.billOfLading, ...{value, accepted: !isNull(value)}}})
         return;
       }
@@ -573,7 +549,6 @@ class CreateParcel extends React.Component {
 
     if(name === 'senderEmail' || name === 'recieverEmail'){
       const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details[name].value)
-      console.log('validEmail',validEmail, name)
       if(!validEmail){
         item = {...details[name], ...{
           hasError:true,
@@ -794,7 +769,7 @@ class CreateParcel extends React.Component {
       this.setState({details: {...currentDetails, ...{totalShippingCost}}})
     }
 
-    console.log('componentDidUpdate----->>>>')
+    console.log('----->>>>')
   }
 
   render() {
