@@ -32,39 +32,62 @@ const ParcelService = {
         })
     },
 
-    create : (parcelData) => {
+    create : (state) => {
+        const{
+            details, checkIn, packageImagePreview, selectedTrip, billOfLading,
+        }=state;
+      
+        const {
+            senderName,
+            senderMobile,
+            senderEmail,
+            recieverName,
+            recieverMobile,
+            recieverEmail,
+            destination,
+            description,
+            declaredValue,
+            quantity,
+            systemFee,
+            additionNote,
+            packageInsurance,
+            type,
+            packageWeight,
+            shippingCost,
+            totalShippingCost,
+        } = details;
 
-        console.log('create state params',parcelData)
+        const COUNTRY_CODE= "PH";
+        const CARGO_PADALA= 3;
+        const PACKAGE_INSURANCE = 0;
+
         const bodyFormData = new FormData();
-        const packageName = (parcelData.packageName === 'Others' ? `Others -  ${parcelData.packageNameOpt}` : parcelData.packageName)
-
-        bodyFormData.set('senderName',parcelData.senderName)
-        bodyFormData.set('senderEmail', parcelData.senderEmail)
-        bodyFormData.set('senderPhoneCountryCode', parcelData.senderPhoneCountryCode)
-        bodyFormData.set('senderPhoneNumber', parcelData.senderPhoneNumber)
-        bodyFormData.set('recipientName', parcelData.recipientName)
-        bodyFormData.set('recipientEmail', parcelData.recipientEmail)
-        bodyFormData.set('recipientPhoneCountryCode', parcelData.recipientPhoneCountryCode)
-        bodyFormData.set('recipientPhoneNumber', parcelData.recipientPhoneNumber)
-        // bodyFormData.set('packageName', parcelData.packageName)
-        bodyFormData.set('packageName', packageName)
-        bodyFormData.set('packageWeight', parcelData.packageWeight)
-        bodyFormData.set('estimatedValue', parcelData.estimatedValue)
-        bodyFormData.set('accompanied', parcelData.accompanied)
-        bodyFormData.set('packageInsurance', parcelData.packageInsurance)
-        bodyFormData.set('quantity', parcelData.quantity)
-        bodyFormData.set('price', parcelData.price)
-        bodyFormData.set('additionalNote', parcelData.additionalNote)
-        bodyFormData.append('packageImage', parcelData.packageImage)
-        bodyFormData.set('busId', parcelData.busId)
-        bodyFormData.set('busCompanyId', parcelData.busCompanyId)
-        bodyFormData.set('tripId', parcelData.tripId)
-        bodyFormData.set('startStation', parcelData.startStation)
-        bodyFormData.set('endStation', parcelData.endStation)
-        bodyFormData.set('checkIn', parcelData.checkIn)
-        bodyFormData.set('convenienceFee', parcelData.convenienceFee)
-        bodyFormData.set('insuranceFee', parcelData.insuranceFee)
-        bodyFormData.set('billOfLading', parcelData.billOfLading)
+        bodyFormData.set('senderName',senderName.value)
+        bodyFormData.set('senderEmail', senderEmail.value)
+        bodyFormData.set('senderPhoneCountryCode', COUNTRY_CODE)
+        bodyFormData.set('senderPhoneNumber', senderMobile.value)
+        bodyFormData.set('recipientName', recieverName.value)
+        bodyFormData.set('recipientEmail', recieverEmail.value)
+        bodyFormData.set('recipientPhoneCountryCode', COUNTRY_CODE)
+        bodyFormData.set('recipientPhoneNumber',recieverMobile.value)
+        bodyFormData.set('packageName', description.value)
+        bodyFormData.set('packageWeight',packageWeight.value)
+        bodyFormData.set('estimatedValue', declaredValue.value)
+        bodyFormData.set('accompanied', type.value !== CARGO_PADALA)
+        bodyFormData.set('packageInsurance', PACKAGE_INSURANCE)
+        bodyFormData.set('quantity', quantity.value)
+        bodyFormData.set('price', shippingCost.value)
+        bodyFormData.set('additionalNote', additionNote.value)
+        bodyFormData.append('packageImage', packageImagePreview)
+        bodyFormData.set('busId', selectedTrip.bus.busId)
+        bodyFormData.set('busCompanyId', selectedTrip.busCompanyId._id)
+        bodyFormData.set('tripId', selectedTrip._id)
+        bodyFormData.set('startStation', selectedTrip.startStation._id)
+        bodyFormData.set('endStation', selectedTrip.endStation._id)
+        bodyFormData.set('checkIn', checkIn)
+        bodyFormData.set('convenienceFee', systemFee.value)
+        bodyFormData.set('insuranceFee', packageInsurance.value)
+        bodyFormData.set('billOfLading', billOfLading.value)
                 
         return axios({
             method: 'post',
@@ -80,7 +103,6 @@ const ParcelService = {
     },
 
     getDynamicPrice: (busCompanyId, claimAmount, endStation, type, paxNumber ,startStation, weight) => {
-        if(busCompanyId, claimAmount, endStation, type, paxNumber ,startStation, weight){
             console.log('call the API------>>>getDynamicPrice')
             let accompaniedValue = ''
             switch (type) {
@@ -112,11 +134,10 @@ const ParcelService = {
                     startStation,
                     weight,
                     accompaniedValue,
-                    isAccompanied: type != 3,
-                    paxNumber: type == 3 ? 0 : paxNumber,
+                    isAccompanied: type !== 3,
+                    paxNumber: type === 3 ? 0 : paxNumber,
                 }
             })
-        }
     },
 
     getConvenienceFee: (quantity) => {

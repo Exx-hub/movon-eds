@@ -81,6 +81,7 @@ const TicketDetails = () =>{
 }
 
 export const TicketView = (props) =>{
+    console.log('data', props.data)
     return (<div className="component-ticketview-container">
         <TicketDetails />
         <TicketDetails />

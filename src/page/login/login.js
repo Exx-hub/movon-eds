@@ -39,7 +39,6 @@ function Login(props) {
       const { data, success, errorCode } = e.data;
       setState({...state, ...{isLoading:false}})
       if(success){
-        console.log('totke',{ user: data.user, token: data.token})
         setCredential({ user: data.user, token: data.token});
         props.history.push('/')
         return;

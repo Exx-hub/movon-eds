@@ -37,8 +37,7 @@ function Manifest(props) {
         }else{
           setState({...state,...{routes:data}})
         }
-        ManifestService.getAvailableManifest(data[2].start,data[2].end).then(e=>{console.log('getAvailableManifest',e)})
-
+        //ManifestService.getAvailableManifest(data[2].start,data[2].end).then(e=>{console.log('getAvailableManifest',e)})
       });
 
     }

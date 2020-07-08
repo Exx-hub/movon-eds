@@ -1,6 +1,6 @@
 export const config = {
-    _BASE_URL:"http://192.168.0.103:8000",
-    BASE_URL:"http://ec2-52-74-225-236.ap-southeast-1.compute.amazonaws.com:8000",
+    BASE_URL:"http://192.168.0.104:8000",
+    _BASE_URL:"http://ec2-52-74-225-236.ap-southeast-1.compute.amazonaws.com:8000",
     api_domain: 'http://ec2-52-74-225-236.ap-southeast-1.compute.amazonaws.com:8000',
     api_domain_prod:'http://ec2-54-179-191-186.ap-southeast-1.compute.amazonaws.com',
     
@@ -34,7 +34,7 @@ export const config = {
     }
 }
 
-export const errorCode = {
+export const errorDetails = {
     7002:{
         module:'LOGIN',
         code: "DELIVERY_PERSON_NOT_FOUND",
@@ -52,6 +52,13 @@ export const errorCode = {
         code: 'SESSION_NOT_FOUND',
         message: "Session Expired",
         description: "Please logout your account and login again."
+        
+    },
+    403:{
+        module:'PARCEL',
+        code: 'PARCEL_PRICE_CONFIG_NOT_FOUND',
+        message: "Bus Configuration Error",
+        description: "No configuration found. Please contact Movon technical support!"
         
     },
 }

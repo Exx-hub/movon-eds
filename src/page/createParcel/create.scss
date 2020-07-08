@@ -59,6 +59,11 @@
       margin-left: .5rem;
     }
 
+    .disabled-btn{
+      background: rgba(0,0,0,.2);
+      color: #282828;
+    }
+
     .btn-next{
       &:hover{
         color: greenyellow;

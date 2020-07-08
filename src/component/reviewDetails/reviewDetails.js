@@ -92,7 +92,14 @@ export const ReviewDetails = (props) =>{
                             !props.viewMode ?
                             <>
                                 <span>Bill of Lading*</span>
-                                <InputView />
+                                <InputView 
+                                    onChange={props.onChange}
+                                    value={billOfLading.value}
+                                    name={billOfLading.name}
+                                    accepted={billOfLading.accepted}
+                                    isRequired={billOfLading.isRequired}
+                                    errorMessage="Bill of Lading is required!"
+                                />
                             </> :
                             <InputBox title="Bill of Lading:" value={billOfLading}/>
                         }
