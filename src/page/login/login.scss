@@ -18,14 +18,19 @@
     border-radius: 5px;
     box-shadow: 5px 10px 10px grey;
 
+    .hide{
+      display: none !important;
+    }
+
     .login-button{
       margin-top: 1rem;
     }
   
     .login-page-logo-section{
-        height:60px; 
+        height:120px; 
         width:100%; 
         display:flex;
+        margin-top: 1rem;
   
         img{
           height: 100%;
@@ -42,7 +47,6 @@
         font-size: 20px;
         font-weight: 200;
         color: white;
-        margin-top: 1rem;
       }
     }
 

@@ -780,7 +780,7 @@ class CreateParcel extends React.Component {
           <div style={{ float: "left" }}>
             <Button type="link" onClick={() => this.props.history.goBack()}>
               <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
-              <span style={{ fontSize: "20px", color: "#fff" }}>Home</span>
+              <span style={{ fontSize: "20px", color: "#fff" }}>Create Parcel</span>
             </Button>
           </div>
         </Header>

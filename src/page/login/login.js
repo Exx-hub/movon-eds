@@ -3,6 +3,7 @@ import { Form, notification, Input, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { RoundedButton } from '../../component/button'
 import movon from '../../assets/movon3.png';
+import movoncargo from '../../assets/movoncargo.png';
 import User from '../../service/User';
 import { config } from '../../config';
 import { getCredential, setCredential } from '../../utility'
@@ -61,10 +62,10 @@ function Login(props) {
           onFinishFailed={onFinishFailed}>
 
           <div className="login-page-logo-section">
-            <img src={movon} />
+            <img src={movoncargo} alt="logo"/>
           </div>
           <div className="delivery-express-section">
-            <span className="txt-delivery-express">Delivery Express</span>
+            <span className="txt-delivery-express">Express Delivery | Web Portal</span>
           </div>
 
           <Space direction="vertical" style={{ width: '100%' }}>

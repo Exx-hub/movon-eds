@@ -20,13 +20,18 @@ import {
   Dropdown
 } from 'antd';
 
+
 import {
+  AuditOutlined,
   DesktopOutlined,
-  PieChartOutlined,
   UserOutlined,
   PoweroffOutlined,
-  SettingOutlined
+  SettingOutlined,
+  PlusSquareOutlined,
+  BarChartOutlined,
+  TrophyOutlined
 } from '@ant-design/icons';
+
 
 const { Header, Footer, Content, Sider } = Layout;
 
@@ -44,7 +49,7 @@ function Home(props) {
 
   const onNavigationMenuChange = (e) =>{
       switch(e.key){
-        case '2': props.history.push("/parcel"); break
+        case '1': props.history.push("/parcel"); break
         case '2': props.history.push("/manifest/list"); break
         case 'drop-down-logout' : 
           const{ token }=getCredential();
@@ -101,16 +106,16 @@ function Home(props) {
           defaultSelectedKeys={['1']} 
           mode="inline" 
           onClick={(e)=>{ onNavigationMenuChange(e) }}>
-            <Menu.Item key="1" icon={<PieChartOutlined />}>
+            <Menu.Item key="1" icon={<BarChartOutlined />}>
               Dashboard
             </Menu.Item>
-            <Menu.Item key="2" icon={<DesktopOutlined />}>
+            <Menu.Item key="2" icon={<PlusSquareOutlined />}>
              Add Parcel
             </Menu.Item>
-            <Menu.Item key="3" icon={<DesktopOutlined />}>
+            <Menu.Item key="3" icon={<AuditOutlined />}>
              Manifest
             </Menu.Item>
-            <Menu.Item key="4" icon={<DesktopOutlined />}>
+            <Menu.Item key="4" icon={<TrophyOutlined />}>
              Claim
             </Menu.Item>
           </Menu>
@@ -124,7 +129,7 @@ function Home(props) {
             <Redirect from="/" to="/manifest/list" />
           </Switch>
         </Content>
-          <Footer>Footer</Footer>
+        
         </Layout>
       </Layout>
       

@@ -188,6 +188,27 @@ function ManifestDetails(props) {
     setState({ ...state, ...{ showDetails: true, selectedItem: state.parcelData[value.key] } })
   }
 
+  const getReviewDetails = (data) =>{
+    return {
+      packageName:data.packageInfo.packageName,
+      packageWeight:data.packageInfo.packageWeight,
+      packageQty: data.packageInfo.quantity,
+      packageImages: data.packageInfo.packageImages,
+      recipientName: data.recipientInfo.recipientName,
+      recipientEmail: data.recipientInfo.recipientEmail,
+      recipientPhone: data.recipientInfo.recipientPhone.number,
+      senderName: data.senderInfo.senderName,
+      senderEmail: data.senderInfo.senderEmail,
+      senderPhone: data.senderInfo.senderPhone.number,
+      convenienceFee: data.priceDetails.convenienceFee,
+      insuranceFee: data.priceDetails.insuranceFee,
+      price: data.priceDetails.price,
+      totalPrice: data.priceDetails.totalPrice,
+      additionalNote:data.additionalNote,
+      billOfLading: data.billOfLading,
+    }
+  }
+
   return (
     <Layout className="manifest-details-page">
       <Header className="home-header-view">
@@ -226,7 +247,7 @@ function ManifestDetails(props) {
                       className="x-button-close"/>
                   </Tooltip>
                 </div>
-                <ReviewDetails viewMode={true} value={state.selectedItem} />
+                <ReviewDetails viewMode={true} value={getReviewDetails(state.selectedItem)} />
                 <Button
                   onClick={() => setState({ ...state, ...{ showDetails: false } })}
                   className="manifest-review-details-button-close">Close</Button>

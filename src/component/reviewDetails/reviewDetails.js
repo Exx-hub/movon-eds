@@ -18,6 +18,7 @@ export const ReviewDetails = (props) =>{
 
     console.log('ReviewDetails props',props)
 
+
     const{
         packageName,
         packageWeight,
