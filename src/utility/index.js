@@ -78,9 +78,19 @@ export const clearCredential = () =>{
     @param {string} type - success, info, warning, error
     @param {number} code - 000
   */
+
  export const openNotificationWithIcon = (type, code, func) => {
   notification[type]({
     duration:0,
+    onClose: func || null,
+    message: config[code].message || "Configure Failed",
+    description: config[code].description || "setup you mesage to config",
+  });
+};
+
+export const openNotificationWithDuration = (type, code, func) => {
+  notification[type]({
+    duration:5,
     onClose: func || null,
     message: config[code].message || "Configure Failed",
     description: config[code].description || "setup you mesage to config",

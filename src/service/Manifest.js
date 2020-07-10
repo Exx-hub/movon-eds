@@ -17,10 +17,10 @@ const ManifestService = {
         })
     },
 
-    getAvailableManifest: (startStation, endStation) => {
+    getAvailableManifest: (startStation, endStation, limit) => {
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startStation}/${endStation}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startStation}/${endStation}/${limit}`,
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
@@ -29,10 +29,24 @@ const ManifestService = {
         })
     },
 
-    getManifest: (endTripDate, startTripDate, startStation, endStation, page) => {
+    getManifestDateRange: (startTripDate, endTripDate, startStation, endStation) => {
+    
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${endTripDate}/${startTripDate}/${startStation}/${endStation}/${page}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startTripDate}/${endTripDate}/${startStation}/${endStation}`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
+    },
+
+    getManifest: (startTripDate, startStation, endStation, page) => {
+    
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startTripDate}/${startStation}/${endStation}/${page}`,
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',

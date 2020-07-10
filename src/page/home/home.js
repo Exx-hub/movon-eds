@@ -49,8 +49,8 @@ function Home(props) {
 
   const onNavigationMenuChange = (e) =>{
       switch(e.key){
-        case '1': props.history.push("/parcel"); break
-        case '2': props.history.push("/manifest/list"); break
+        case '2': props.history.push("/parcel"); break
+        case '3': props.history.push("/manifest/list"); break
         case 'drop-down-logout' : 
           const{ token }=getCredential();
           User.logout(token).then();

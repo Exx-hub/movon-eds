@@ -63,11 +63,11 @@ const ParcelService = {
 
         const bodyFormData = new FormData();
         bodyFormData.set('senderName',senderName.value)
-        bodyFormData.set('senderEmail', senderEmail.value)
+        bodyFormData.set('senderEmail', senderEmail.value || "")
         bodyFormData.set('senderPhoneCountryCode', COUNTRY_CODE)
         bodyFormData.set('senderPhoneNumber', senderMobile.value)
         bodyFormData.set('recipientName', recieverName.value)
-        bodyFormData.set('recipientEmail', recieverEmail.value)
+        bodyFormData.set('recipientEmail', recieverEmail.value || "")
         bodyFormData.set('recipientPhoneCountryCode', COUNTRY_CODE)
         bodyFormData.set('recipientPhoneNumber',recieverMobile.value)
         bodyFormData.set('packageName', description.value)

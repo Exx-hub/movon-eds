@@ -1,10 +1,10 @@
 import React from 'react';
-import { Table, DatePicker, Button, Row, Col, Layout, Input, Alert } from 'antd';
+import { Table, DatePicker, Button, Row, Col, Layout, Input, Select } from 'antd';
 import './manifest.scss';
 import moment from 'moment';
 import { EyeOutlined, PrinterOutlined } from '@ant-design/icons'
 import ManifestService from '../../service/Manifest';
-import {openNotificationWithIcon} from '../../utility'
+import {openNotificationWithIcon, openNotificationWithDuration, clearCredential} from '../../utility'
 
 const { Search } = Input
 const { RangePicker } = DatePicker;
@@ -12,108 +12,204 @@ const dateFormat = "MMM DD, YYYY";
 const currentTime = moment()
 const today = currentTime.format(dateFormat)
 const yesterday = currentTime.subtract(1, 'd').format(dateFormat);
-{/* <RangePicker
-    className="manifest-date-range"
-    onChange={(date, date2) => { console.log('date2', date2) }}
-    defaultValue={[moment(yesterday, dateFormat), moment(today, dateFormat)]}
-    format={dateFormat} /> */}
+    // <Search
+    //         className="manifest-search"
+    //         placeholder="Routes | Departure | Arrival | Model" />
 
-function Manifest(props) {
+    // <RangePicker
+    //         className="manifest-date-range"
+    //         onChange={(date, date2) => { console.log('date2', date2) }}
+    //         defaultValue={[moment(yesterday, dateFormat), moment(today, dateFormat)]}
+    //         format={dateFormat} />
 
-  const [state, setState] = React.useState({
-    routes:null
-  });
+const { Option } = Select;    
+const LIMIT= 5;
 
-  React.useEffect(()=>{
 
-    if(!state.routes){
-      ManifestService
-      .getRoutes()
-      .then(e=>{
-        console.log('getRoutes ====> e',e)
-        const{errorCode,success,data}=e.data;
-        if(!success && errorCode){
-          openNotificationWithIcon('error',errorCode);
-        }else{
-          setState({...state,...{routes:data}})
-        }
-        //ManifestService.getAvailableManifest(data[2].start,data[2].end).then(e=>{console.log('getAvailableManifest',e)})
-      });
-
-    }
-  },[state.routes])
-
+const TableRoutesView = (props) =>{
   const columns = [
-    {
-      title: 'Origin',
-      dataIndex: 'startStation',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.startStation.length - b.startStation.length
-    },
-    {
-      title: 'Destination',
-      dataIndex: 'endStation',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.endStation.length - b.endStation.length
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (text, record) => (
-        <Layout>
-          <Button
-            onClick={() => { 
-              props.history.push('/manifest/details', { data: state.routes[record.key] }) 
-            }}>
-            <EyeOutlined />View
-          </Button>
+  {
+    title: 'Origin',
+    dataIndex: 'origin',
+    defaultSortOrder: 'descend',
+    //sorter: (a, b) => a.startStation.length - b.startStation.length
+  },
+  {
+    title: 'Destination',
+    dataIndex: 'destination',
+    defaultSortOrder: 'descend',
+    //sorter: (a, b) => a.endStation.length - b.endStation.length
+  },
+  {
+    title: 'Departure Date',
+    dataIndex: 'date',
+    defaultSortOrder: 'descend',
+    //sorter: (a, b) => a.startStation.length - b.startStation.length
+  },
+  {
+    title: 'Total Parcel',
+    dataIndex: 'count',
+    defaultSortOrder: 'descend',
+    //sorter: (a, b) => a.startStation.length - b.startStation.length
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (text, record) => (
+      <Layout>
+        <Button
+          style={{color:'white', fontWeight:'200', background:'teal'}}
+          size="small"
+          onClick={() =>props.onViewClick(record.data)}> View </Button>
 
-          {/* <Button
-            onClick={() => { props.history.push('/manifest/print') }}>
-            <PrinterOutlined /> Print
-        </Button> */}
-        </Layout>),
-    },
+        {/* <Button
+          onClick={() => { props.history.push('/manifest/print') }}>
+          <PrinterOutlined /> Print
+
+      </Button> */}
+      </Layout>),
+  },
   ];
+  return <Table
+    pagination={false}
+    columns={columns}
+    dataSource={props.dataSource}
+    onChange={props.onChange} />
+}    
 
-  const onChangeTable = (pagination, filters, sorter, extra) =>{
+class Manifest extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.state={
+      routes:undefined,
+      routesList:{
+        value:0,
+        options:[]
+      },
+      listOfTripDates:[]
+    }
+  }
+
+  componentDidMount(){
+
+    ManifestService
+    .getRoutes()
+    .then(e=>{
+      const{errorCode,success,data}=e.data;
+      if(!success && errorCode){
+        if(errorCode === 1000){
+          this.onForceLogout(errorCode)
+        }else{
+          openNotificationWithIcon('error',errorCode);
+        }
+      }else{
+        console.log('getRoutes ====> e',data)
+
+        const options = data.map((e,i)=>{
+          return{
+            data: e,
+            value: i,
+            name: `${e.startStationName} - ${e.endStationName}`
+          }
+        })
+        this.setState({
+          routes:data, 
+          routesList:{...this.state.routesList,...{options}}
+        });
+        ManifestService.getAvailableManifest(data[2].start, data[2].end, LIMIT)
+        .then(e=>{
+          console.log('getAvailableManifest',e)
+          const{data, success}=e.data
+          if(!success){
+            if(errorCode === 1000){
+              this.onForceLogout(errorCode);
+            }else{
+              openNotificationWithIcon('error',errorCode)
+            }
+            return;
+          }
+          this.setState({listOfTripDates:data})
+        })
+      }
+    });
+
+  }
+
+  onForceLogout = (errorCode) =>{
+    openNotificationWithDuration('error', errorCode)
+    clearCredential();
+    this.props.history.push('/login')
+  }
+  
+  onChangeTable = (pagination, filters, sorter, extra) =>{
     console.log('params', pagination, filters, sorter, extra);
   }
 
-  const getRoutes = () =>{
-    return state.routes.map((e,i)=>{
+  handleChange = (value) =>{
+    console.log(`selected ${value}`);
+    this.setState({routesList:{...this.state.routesList, ...{value}}})
+  }
+
+  dataSource = () =>{
+    return this.state.listOfTripDates.map((e,i)=>{
+      console.log('routesList.value',this.state.routesList.value)
       return {
         key: i,
-        startStation: e.startStationName,
-        endStation: e.endStationName
+        date:  moment(e._id).format('MMM DD, YYYY hh:mm A') ,
+        count: e.count,
+        origin: this.state.routes[this.state.routesList.value].startStationName,
+        destination: this.state.routes[this.state.routesList.value].endStationName,
+        data: e.data
       }
     });
   }
 
-  return (
-    <div className="manifest-page">
+  handleDateRangeChange = (date) =>{
+    const firstDate = date[0];
+    const secondDate = date[1];
+  }
+
+  render(){
+    const{routes, routesList}=this.state;
+    console.log('routesList',routesList)
+
+    return <div className="manifest-page">
       <Row style={{ marginTop: '2rem', marginBottom: '1rem' }}>
-        <Col offset={16} span={8}>
-          <Search
-            className="manifest-search"
-            placeholder="Routes | Departure | Arrival | Model" />
+        <Col span={12}>
+        {
+          routesList && 
+          <Select 
+            defaultValue={routesList.value} 
+            style={{ width: '90%' }} 
+            onChange={this.handleChange}>{ routesList.options.map(e=>(<Option key={e.value} value={e.value}>{e.name}</Option>)) }
+          </Select>
+        }
+        </Col>
+        <Col span={12}>
+          <RangePicker
+            style={{float:'right'}}
+            onChange={(date, date2) => this.handleDateRangeChange(date2)}
+             />
         </Col>
       </Row>
       <Row>
-        <Col span={24}>
+        <Col span={24} style={{marginTop:'2rem'}}>
           { 
-            state.routes && 
-            <Table
+            routes && 
+            <TableRoutesView
+              routes={routes}
               pagination={false}
-              columns={columns}
-              dataSource={getRoutes()}
-              onChange={onChangeTable} /> 
+              dataSource={this.dataSource()}
+              onChange={this.onChangeTable} 
+              onViewClick={(data)=>this.props.history.push('/manifest/details', {data}) }
+              /> 
           }
         </Col>
       </Row>
 
     </div>
-  );
+  }
 }
 
 export default Manifest;
