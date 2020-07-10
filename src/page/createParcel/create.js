@@ -390,13 +390,12 @@ class CreateParcel extends React.Component {
         });
 
         let tempDetails = {...details}
-        Object.keys(details).forEach((e) => {
-          if (details[e].isRequired && isNull(details[e].value)) {
-            const item = Object.assign({}, details[e], { accepted: false });
-            tempDetails = Object.assign({}, details, { [e]: item });
+        Object.keys(tempDetails).forEach((e) => {
+          if (tempDetails[e].isRequired && isNull(tempDetails[e].value)) {
+            const item = {...tempDetails[e], ...{ accepted: false }} //Object.assign({}, details[e], { accepted: false });
+            tempDetails = {...tempDetails, ...{[e]:item}}  //Object.assign({}, details, item );
           }
         });
-
         this.setState({ details: tempDetails });
         return false;
       }
