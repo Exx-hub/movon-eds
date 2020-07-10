@@ -104,8 +104,8 @@ class CreateParcel extends React.Component {
       width: 0,
       height: 0,
       packageImagePreview: null,
-      currentStep: 4,
-      verifiedSteps: 4,
+      currentStep: 0,
+      verifiedSteps: 0,
       trips: undefined,
       selectedTrip: undefined,
       createParcelResponseData: undefined,
@@ -245,7 +245,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          disabled: false,
+          disabled: true,
         },
       }
     };
@@ -605,7 +605,7 @@ class CreateParcel extends React.Component {
   onTypeChange = (value)=>{
     const details={...this.state.details};
     const type = {...details.type, ...{value}}
-    const paxs = {...details.paxs, ...{ isRequired: value !== 3, disabled:value === 3 }}
+    const paxs = {...details.paxs, ...{ value:0, isRequired: value !== 3, disabled: value === 3 }}
     this.setState({details:{...details, ...{type, paxs}}});
   }
 
