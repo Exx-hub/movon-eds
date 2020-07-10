@@ -233,6 +233,7 @@ class CreateParcel extends React.Component {
           value: 0,
           isRequired: false,
           accepted: true,
+          disabled:true
         },
         totalShippingCost: {
           name: "totalShippingCost",
@@ -606,7 +607,19 @@ class CreateParcel extends React.Component {
     const details={...this.state.details};
     const type = {...details.type, ...{value}}
     const paxs = {...details.paxs, ...{ value:0, isRequired: value !== 3, disabled: value === 3 }}
-    this.setState({details:{...details, ...{type, paxs}}});
+    const quantity = {...details.quantity, ...{ value:0 }}
+    const packageWeight = {...details.packageWeight, ...{ value:0 }}
+    const systemFee = {...details.systemFee, ...{ value:0 }}
+    const totalShippingCost = {...details.totalShippingCost, ...{ value:0 }}
+    const shippingCost = {...details.shippingCost, ...{ value:0 }}
+    this.setState({details:{...details, ...{
+      systemFee,
+      totalShippingCost,
+      type, 
+      shippingCost,
+      paxs, 
+      quantity, 
+      packageWeight}}});
   }
 
   onCreateNewParcel =()=>{
@@ -785,12 +798,10 @@ class CreateParcel extends React.Component {
           </div>
         </Header>
 
-        WIDTH:{width}
-
         <Layout>
           { width > MIN_WIDTH && (
             <Sider width={200} className="create-side-bar">
-              <div style={{ marginLeft: "1rem", marginTop: "1rem" }}>
+              <div style={{ marginLeft: "2rem", marginTop: "1rem" }}>
                 <StepsView
                   stepList={STEPS_LIST}
                   current={this.state.currentStep}

@@ -13,7 +13,7 @@ function InputBox(props){
   const accepted = (props.detail && props.detail.accepted) || false;
   const value = (props.detail && props.detail.value) || "";
 
-  return (<>
+  return (<div style={{marginBottom:'.6rem'}}>
     <span className="input-placeholder-title">{`${ isRequired  ? props.title + "*" : props.title}`|| ""}</span>
     <InputView
       value={value}
@@ -29,7 +29,7 @@ function InputBox(props){
       prefix ={props.prefix}
       type={props.type}
       onChange={props.onChange} />
-    </>)
+    </div>)
 }
 
 function CreateParcelForm(props) {
@@ -117,7 +117,6 @@ function CreateParcelForm(props) {
                 placeholder="" />
 
               <InputBox 
-                onBlur={()=>props.onBlur(senderEmail.name)}
                 detail={senderEmail}
                 showError={senderEmail.hasError || false}
                 onChange={props.onChange}
@@ -153,7 +152,6 @@ function CreateParcelForm(props) {
                 placeholder="" />
 
               <InputBox
-                onBlur={()=>props.onBlur(recieverEmail.name)} 
                 detail={recieverEmail}
                 onChange={props.onChange}
                 title="Reciever Email"

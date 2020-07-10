@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, DatePicker, Button, Row, Col, Layout, Input, Select } from 'antd';
+import { Table, DatePicker, Button, Row, Col, Layout, Input, Select, Skeleton } from 'antd';
 import './manifest.scss';
 import moment from 'moment';
 import { EyeOutlined, PrinterOutlined } from '@ant-design/icons'
@@ -82,6 +82,7 @@ class Manifest extends React.Component {
   constructor(props){
     super(props);
     this.state={
+      fetching:false,
       routes:undefined,
       routesList:{
         value:0,
@@ -117,10 +118,20 @@ class Manifest extends React.Component {
           routes:data, 
           routesList:{...this.state.routesList,...{options}}
         });
-        ManifestService.getAvailableManifest(data[2].start, data[2].end, LIMIT)
+        this.getManifestByDestination(data[2].start, data[2].end)
+      }
+    });
+
+  }
+
+  getManifestByDestination = (startStationId, endStationId) =>{
+    console.log('startStationId',startStationId)
+    console.log('endStationId',endStationId)
+    this.setState({fetching:true})
+    ManifestService.getAvailableManifest(startStationId, endStationId, LIMIT)
         .then(e=>{
           console.log('getAvailableManifest',e)
-          const{data, success}=e.data
+          const{data, success, errorCode}=e.data
           if(!success){
             if(errorCode === 1000){
               this.onForceLogout(errorCode);
@@ -129,11 +140,8 @@ class Manifest extends React.Component {
             }
             return;
           }
-          this.setState({listOfTripDates:data})
+          this.setState({listOfTripDates:data, fetching:false})
         })
-      }
-    });
-
   }
 
   onForceLogout = (errorCode) =>{
@@ -146,8 +154,9 @@ class Manifest extends React.Component {
     console.log('params', pagination, filters, sorter, extra);
   }
 
-  handleChange = (value) =>{
-    console.log(`selected ${value}`);
+  handleSelectChange = (value) =>{
+    const data = this.state.routes[value];
+    this.getManifestByDestination(data.start, data.end)
     this.setState({routesList:{...this.state.routesList, ...{value}}})
   }
 
@@ -171,7 +180,7 @@ class Manifest extends React.Component {
   }
 
   render(){
-    const{routes, routesList}=this.state;
+    const{routes, routesList, fetching}=this.state;
     console.log('routesList',routesList)
 
     return <div className="manifest-page">
@@ -182,7 +191,7 @@ class Manifest extends React.Component {
           <Select 
             defaultValue={routesList.value} 
             style={{ width: '90%' }} 
-            onChange={this.handleChange}>{ routesList.options.map(e=>(<Option key={e.value} value={e.value}>{e.name}</Option>)) }
+            onChange={this.handleSelectChange}>{ routesList.options.map(e=>(<Option key={e.value} value={e.value}>{e.name}</Option>)) }
           </Select>
         }
         </Col>
@@ -194,16 +203,17 @@ class Manifest extends React.Component {
         </Col>
       </Row>
       <Row>
-        <Col span={24} style={{marginTop:'2rem'}}>
+        <Col span={24} style={{marginTop:'.5rem'}}>
           { 
-            routes && 
+            !fetching ? 
             <TableRoutesView
               routes={routes}
               pagination={false}
               dataSource={this.dataSource()}
               onChange={this.onChangeTable} 
               onViewClick={(data)=>this.props.history.push('/manifest/details', {data}) }
-              /> 
+              /> :
+              <Skeleton active />
           }
         </Col>
       </Row>
