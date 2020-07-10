@@ -101,8 +101,8 @@ class CreateParcel extends React.Component {
     super(props);
 
     this.state = {
-      width: 0,
-      height: 0,
+      width: window.innerWidth, 
+      height: window.innerHeight,
       packageImagePreview: null,
       currentStep: 0,
       verifiedSteps: 0,
@@ -785,8 +785,10 @@ class CreateParcel extends React.Component {
           </div>
         </Header>
 
+        WIDTH:{width}
+
         <Layout>
-          {width > MIN_WIDTH && (
+          { width > MIN_WIDTH && (
             <Sider width={200} className="create-side-bar">
               <div style={{ marginLeft: "1rem", marginTop: "1rem" }}>
                 <StepsView
