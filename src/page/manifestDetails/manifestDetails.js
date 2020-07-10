@@ -125,31 +125,25 @@ function ManifestDetails(props) {
     if (!state.data) {
       const data = props.location.state.data || "";
       console.log('data',data)
-      // ManifestService
-      //   .getManifest(yesterday, today, data.start, data.end, 0)
-      //   .then(e => {
-      //     const { data, success, errorCode } = e.data
-      //     console.log('getManifest ====> e', e)
-      //     if (success) {
 
-            const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-            const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
-            const movonBillOfLading = data[0].displayId;
-            const coyBillOfLading = data[0].billOfLading;
-            const routes1 = data[0].trips.startStation.name
-            const routes2 = data[0].trips.endStation.name
+      const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
+      const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
+      const movonBillOfLading = data[0].displayId;
+      const coyBillOfLading = data[0].billOfLading;
+      const routes1 = data[0].trips.startStation.name
+      const routes2 = data[0].trips.endStation.name
 
-            setState({
-              ...state, ...{
-                parcelData: data,
-                departureTime,
-                arrivalTime,
-                movonBillOfLading,
-                coyBillOfLading,
-                routes: `${routes1} - ${routes2}`,
-                fetching: false
-              }
-            })
+      setState({
+        ...state, ...{
+          parcelData: data,
+          departureTime,
+          arrivalTime,
+          movonBillOfLading,
+          coyBillOfLading,
+          routes: `${routes1} - ${routes2}`,
+          fetching: false
+        }
+      })
     }
 
   }, [])

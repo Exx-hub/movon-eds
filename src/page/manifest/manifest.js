@@ -1,10 +1,11 @@
 import React from 'react';
-import { Table, DatePicker, Button, Row, Col, Layout, Input, Select, Skeleton } from 'antd';
+import { Table, DatePicker, Button, Row, Col, Layout, Input, Select, Skeleton, Space } from 'antd';
 import './manifest.scss';
 import moment from 'moment';
 import { EyeOutlined, PrinterOutlined } from '@ant-design/icons'
 import ManifestService from '../../service/Manifest';
 import {openNotificationWithIcon, openNotificationWithDuration, clearCredential} from '../../utility'
+import TicketView from "../../component/ticketView";
 
 const { Search } = Input
 const { RangePicker } = DatePicker;
@@ -47,7 +48,7 @@ const TableRoutesView = (props) =>{
     //sorter: (a, b) => a.startStation.length - b.startStation.length
   },
   {
-    title: 'Total Parcel',
+    title: 'Parcel',
     dataIndex: 'count',
     defaultSortOrder: 'descend',
     //sorter: (a, b) => a.startStation.length - b.startStation.length
@@ -56,18 +57,17 @@ const TableRoutesView = (props) =>{
     title: 'Action',
     key: 'action',
     render: (text, record) => (
-      <Layout>
+      <Space>
         <Button
           style={{color:'white', fontWeight:'200', background:'teal'}}
           size="small"
           onClick={() =>props.onViewClick(record.data)}> View </Button>
 
-        {/* <Button
-          onClick={() => { props.history.push('/manifest/print') }}>
-          <PrinterOutlined /> Print
-
-      </Button> */}
-      </Layout>),
+        <Button
+          size="small"
+          style={{color:'white', fontWeight:'200', background:'teal'}}
+          onClick={() => props.onPrint(record.data)}> Print </Button>
+      </Space>),
   },
   ];
   return <Table
@@ -211,7 +211,8 @@ class Manifest extends React.Component {
               pagination={false}
               dataSource={this.dataSource()}
               onChange={this.onChangeTable} 
-              onViewClick={(data)=>this.props.history.push('/manifest/details', {data}) }
+              onPrint={(data)=>this.props.history.push('/manifest/print',data)}
+              onViewClick={(list)=>this.props.history.push('/manifest/details', {list}) }
               /> :
               <Skeleton active />
           }
