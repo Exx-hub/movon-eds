@@ -49,7 +49,8 @@
     }
     
     .input-placeholder-title{
-        font-size: 12px;
+        font-size: 14px;
+        font-weight: 200;
         color: rgba(0, 0, 0, 0.5);
     }
 
@@ -65,5 +66,15 @@
         font-size: 10px;
         font-style: italic;
     }
+
+    // .select-destination-form-container{
+    //     display: flex;
+    //     flex-direction: row;
+    //     align-items: center;
+
+    //     .select-placeholder{
+    //         width: 180px;
+    //     }
+    // }
 }
 

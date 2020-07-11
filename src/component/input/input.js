@@ -15,7 +15,9 @@ function InputView(props) {
 
     return (
     <div className="component-input">
-        <Input 
+        <Input
+            size="large"
+            style={{width:'100%'}}
             disabled={props.disabled}
             onBlur={props.onBlur}
             className={[ (props.showError || hasError) ? "input-has-error" : ""]}

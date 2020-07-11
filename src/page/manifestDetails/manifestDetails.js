@@ -2,10 +2,8 @@ import React from 'react';
 import './manifestDetails.scss'
 import ParcelCard from '../../component/parcelCard'
 import ReviewDetails from '../../component/reviewDetails'
-import ManifestService from '../../service/Manifest';
 import moment from 'moment';
 import { config } from '../../config'
-import { openNotificationWithIcon, clearCredential, debounce } from '../../utility'
 import {TableView} from '../../component/table'
 import TicketView from "../../component/ticketView";
 import ReactToPrint from 'react-to-print';
@@ -13,7 +11,6 @@ import ReactToPrint from 'react-to-print';
 import { 
   FilterOutlined, 
   ArrowLeftOutlined, 
-  PrinterOutlined, 
   CloseCircleOutlined,
   ArrowsAltOutlined 
 } from '@ant-design/icons';
@@ -21,7 +18,6 @@ import {
 import { 
   Layout, 
   Button, 
-  Table, 
   Divider, 
   Col, 
   Row, 
@@ -36,11 +32,6 @@ import {
 const { Search } = Input;
 const { Option } = Select;
 const { Header, Content, Sider } = Layout;
-
-const dateFormat = "MMM DD, YYYY";
-const currentTime = moment()
-const today = currentTime.format(dateFormat)
-const yesterday = currentTime.subtract(7, 'd').format(dateFormat);
 
 const InputBox = (props) => {
   return (<div className="input-box" style={{ margin: '.5rem' }}>
@@ -91,7 +82,6 @@ function SiderContent(props) {
         <InputBox title="MovOn Bill of Lading" value={props.state.movonBillOfLading} />
         <InputBox title="Company Bill of Lading" value={props.state.coyBillOfLading} />
         <InputBox title="Departure Date" value={props.state.departureTime} />
-        <InputBox title="Arrival Date" value={props.state.arrivalTime} />
       </Col>
     </Row>
 
@@ -425,7 +415,7 @@ class ManifestDetails extends React.Component{
               <div style={{ float: 'left' }}>
                 <Button
                   type="link"
-                  onClick={() => { this.props.history.goBack() }}>
+                  onClick={() => { this.props.history.push('/manifest/list',) }}>
                   <ArrowLeftOutlined style={{ fontSize: '20px', color: '#fff' }} />
                   <span style={{ fontSize: '20px', color: '#fff' }}>Manifest Details</span>
                 </Button>

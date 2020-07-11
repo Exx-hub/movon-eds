@@ -1,10 +1,9 @@
 import React from 'react';
-import { Layout, Button, Table, Col, Row, Tooltip } from 'antd';
-import './printManifestDetails.css'
-import { ArrowLeftOutlined, PrinterOutlined } from '@ant-design/icons';
 import ReactToPrint from 'react-to-print';
 import moment from 'moment';
-import {getUser} from '../../utility'
+import { Layout, Button, Table, Col, Row, Tooltip } from 'antd';
+import { ArrowLeftOutlined, PrinterOutlined } from '@ant-design/icons';
+import './printManifestDetails.css'
 
 const { Header } = Layout
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Radio, Select } from 'antd';
+import { Row, Col, Radio, Select, Space } from 'antd';
 import './createParcelForm.scss'
 import {InputView} from '../../input' 
 
@@ -13,22 +13,22 @@ function InputBox(props){
   const accepted = (props.detail && props.detail.accepted) || false;
   const value = (props.detail && props.detail.value) || "";
 
-  return (<div style={{marginBottom:'.6rem'}}>
+  return (<div style={{marginBottom:'.6rem', minHeight:'70px'}}>
     <span className="input-placeholder-title">{`${ isRequired  ? props.title + "*" : props.title}`|| ""}</span>
     <InputView
-      value={value}
-      name={name}
-      accepted={accepted}
-      isRequired={isRequired}
-      title={props.title}
-      placeholder={props.placeholder} 
-      onBlur={props.onBlur || null}
-      disabled={props.disabled || disabled}
-      errorMessage={props.errorMessage}
-      showError={props.showError}
-      prefix ={props.prefix}
-      type={props.type}
-      onChange={props.onChange} />
+          value={value}
+          name={name}
+          accepted={accepted}
+          isRequired={isRequired}
+          title={props.title}
+          placeholder={props.placeholder} 
+          onBlur={props.onBlur || null}
+          disabled={props.disabled || disabled}
+          errorMessage={props.errorMessage}
+          showError={props.showError}
+          prefix ={props.prefix}
+          type={props.type}
+          onChange={props.onChange} />
     </div>)
 }
 
@@ -62,8 +62,9 @@ function CreateParcelForm(props) {
           <Row >
             <Col className="gutter-row" span={12}>
               <div className="select-destination-form-container">
-                <span className="input-placeholder-title">Destination*</span>
+                <span className="input-placeholder-title select-placeholder">Destination*</span>
                 <Select
+                  size="large"
                   onBlur={()=>props.onBlur(destination.name)}
                   className={`${!destination.accepted ? "select-error-destination-form" : ""}`}
                   onChange={props.onSelectChange} 
@@ -203,8 +204,8 @@ function CreateParcelForm(props) {
                 onBlur={()=>props.onBlur(packageWeight.name)} 
                 detail={packageWeight}
                 onChange={props.onChange}
-                placeholder="Package Weight (kg)" 
-                title="Package Weight" />
+                placeholder="Weight (kg)" 
+                title="Weight" />
 
 
               <InputBox 
@@ -223,8 +224,8 @@ function CreateParcelForm(props) {
                 type="number"
                 detail={packageInsurance}
                 onChange={props.onChange}
-                placeholder="Package Insurance: 10%" 
-                title="Package Insurance: 10%" />
+                placeholder="Insurance: 10%" 
+                title="Insurance: 10%" />
 
               <InputBox
                 type="number"

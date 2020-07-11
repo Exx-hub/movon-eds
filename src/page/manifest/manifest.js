@@ -1,31 +1,15 @@
 import React from 'react';
-import { Table, DatePicker, Button, Row, Col, Layout, Input, Select, Skeleton, Space } from 'antd';
-import './manifest.scss';
-import moment from 'moment';
-import { EyeOutlined, PrinterOutlined } from '@ant-design/icons'
-import ManifestService from '../../service/Manifest';
+import { Table, DatePicker, Button, Row, Col, Select, Skeleton, Space } from 'antd';
 import {openNotificationWithIcon, openNotificationWithDuration, clearCredential} from '../../utility'
-import TicketView from "../../component/ticketView";
+import ManifestService from '../../service/Manifest';
+import moment from 'moment';
+import './manifest.scss';
 
-const { Search } = Input
 const { RangePicker } = DatePicker;
-const dateFormat = "MMM DD, YYYY";
-const currentTime = moment()
-const today = currentTime.format(dateFormat)
-const yesterday = currentTime.subtract(1, 'd').format(dateFormat);
-    // <Search
-    //         className="manifest-search"
-    //         placeholder="Routes | Departure | Arrival | Model" />
-
-    // <RangePicker
-    //         className="manifest-date-range"
-    //         onChange={(date, date2) => { console.log('date2', date2) }}
-    //         defaultValue={[moment(yesterday, dateFormat), moment(today, dateFormat)]}
-    //         format={dateFormat} />
-
 const { Option } = Select;    
-const LIMIT= 5;
 
+const LIMIT= 5;
+const dateFormat = "MMM DD, YYYY";
 
 const TableRoutesView = (props) =>{
   const columns = [
@@ -82,13 +66,16 @@ class Manifest extends React.Component {
   constructor(props){
     super(props);
     this.state={
+      endDay: moment().format(dateFormat),
+      startDay:moment().subtract(5, 'd').format(dateFormat),
       fetching:false,
       routes:undefined,
       routesList:{
         value:0,
         options:[]
       },
-      listOfTripDates:[]
+      listOfTripDates:undefined,
+      selectedRoute:undefined
     }
   }
 
@@ -106,7 +93,6 @@ class Manifest extends React.Component {
         }
       }else{
         console.log('getRoutes ====> e',data)
-
         const options = data.map((e,i)=>{
           return{
             data: e,
@@ -116,21 +102,20 @@ class Manifest extends React.Component {
         })
         this.setState({
           routes:data, 
+          selectedRoute:data[0],
           routesList:{...this.state.routesList,...{options}}
         });
-        this.getManifestByDestination(data[2].start, data[2].end)
+        this.getManifestByDestination(data[0].start, data[0].end)
       }
     });
 
   }
 
-  getManifestByDestination = (startStationId, endStationId) =>{
-    console.log('startStationId',startStationId)
-    console.log('endStationId',endStationId)
+  getManifestByDestination = ( startStationId, endStationId) =>{
     this.setState({fetching:true})
-    ManifestService.getAvailableManifest(startStationId, endStationId, LIMIT)
+    ManifestService.getManifestDateRange(this.state.startDay, this.state.endDay, startStationId, endStationId)
         .then(e=>{
-          console.log('getAvailableManifest',e)
+          console.log('getManifestDateRange',e)
           const{data, success, errorCode}=e.data
           if(!success){
             if(errorCode === 1000){
@@ -140,7 +125,7 @@ class Manifest extends React.Component {
             }
             return;
           }
-          this.setState({listOfTripDates:data, fetching:false})
+          this.setState({listOfTripDates:data || [], fetching:false})
         })
   }
 
@@ -156,11 +141,19 @@ class Manifest extends React.Component {
 
   handleSelectChange = (value) =>{
     const data = this.state.routes[value];
-    this.getManifestByDestination(data.start, data.end)
-    this.setState({routesList:{...this.state.routesList, ...{value}}})
+    this.setState({
+      selectedRoute: data,
+      routesList:{...this.state.routesList, ...{value}}
+    },()=>{
+      this.getManifestByDestination(data.start, data.end)
+    })
   }
 
   dataSource = () =>{
+    if(!this.state.listOfTripDates){
+      return null;
+    }
+
     return this.state.listOfTripDates.map((e,i)=>{
       console.log('routesList.value',this.state.routesList.value)
       return {
@@ -174,9 +167,18 @@ class Manifest extends React.Component {
     });
   }
 
-  handleDateRangeChange = (date) =>{
-    const firstDate = date[0];
-    const secondDate = date[1];
+  onChangeDatePicker = (date) =>{
+    const startDay = date[0];
+    const endDay = date[1];
+    console.log('onChangeDatePicker date',date)
+    console.log('onChangeDatePicker date',date)
+
+    if(startDay && endDay){
+      this.setState({startDay,endDay},()=>{
+        const selectedRoute = this.state.selectedRoute;
+        this.getManifestByDestination(selectedRoute.start, selectedRoute.end)
+      });
+    }
   }
 
   render(){
@@ -196,14 +198,14 @@ class Manifest extends React.Component {
         <Col span={12}>
           <RangePicker
             style={{float:'right'}}
-            onChange={(date, date2) => this.handleDateRangeChange(date2)}
-             />
+            defaultValue={[moment(this.state.startDay, dateFormat), moment(this.state.endDay, dateFormat)]}
+            onChange={(date, date2) => this.onChangeDatePicker(date2)}/>
         </Col>
       </Row>
       <Row>
         <Col span={24} style={{marginTop:'.5rem'}}>
           { 
-            !fetching ? 
+            !fetching && this.state.listOfTripDates ? 
             <TableRoutesView
               routes={routes}
               pagination={false}
