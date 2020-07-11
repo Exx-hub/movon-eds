@@ -142,7 +142,7 @@ function ManifestDetails(props) {
     parcelData: null,
     fetching: true
   })
-  const[currentView, setCurrentView] = React.useState(TICKET)
+  const[currentView, setCurrentView] = React.useState(TABLE_CARD_VIEW)
   const printEl = React.useRef(null);
 
 
@@ -211,16 +211,25 @@ function ManifestDetails(props) {
       packageImages: data.packageInfo.packageImages,
       recipientName: data.recipientInfo.recipientName,
       recipientEmail: data.recipientInfo.recipientEmail,
-      recipientPhone: data.recipientInfo.recipientPhone.number,
+      recipientPhone: "+63"+data.recipientInfo.recipientPhone.number,
       senderName: data.senderInfo.senderName,
       senderEmail: data.senderInfo.senderEmail,
-      senderPhone: data.senderInfo.senderPhone.number ,
+      senderPhone: "+63"+data.senderInfo.senderPhone.number,
       convenienceFee: data.priceDetails.convenienceFee,
       insuranceFee: data.priceDetails.insuranceFee,
       price: data.priceDetails.price,
       totalPrice: data.priceDetails.totalPrice,
       additionalNote:data.additionalNote,
-      billOfLading: data.billOfLading
+      billOfLading: data.billOfLading,
+      busCompanyName: data.busCompanyName,
+      busCompanyLogo: data.busCompanyLogo,
+      endStationName: data.trips.endStationName,
+      startStationName: data.trips.startStationName,
+      tripCode: data.trips.displayId,
+      tripDate: data.trips.tripStartDateTime,
+      scanCode: data.scanCode,
+      createdAt: data.createdAt,
+      subParcels: data.subParcels
     }
   }
 
@@ -278,11 +287,11 @@ function ManifestDetails(props) {
           />
           <Space>
             <Button
-              onClick={() => setCurrentView(TICKET)}
-              className="manifest-review-details-button-close">Print</Button>
+              className="default-delivery-button manifest-review-details-button-close"
+              onClick={() => setCurrentView(TICKET)}>Print</Button>
             <Button
-              onClick={() => setCurrentView(TABLE_CARD_VIEW)}
-              className="manifest-review-details-button-close">Close</Button>
+              className="default-delivery-button manifest-review-details-button-close"
+              onClick={() => setCurrentView(TABLE_CARD_VIEW)}>Close</Button>
           </Space>
         </div>
         )
@@ -291,14 +300,23 @@ function ManifestDetails(props) {
         case 3:  
           View = (
             <div style={{padding:'2rem'}}>
-              <div ref={printEl}>
-                <TicketView />
+              <div className="manifest-review-details-header">
+                <span>Print</span>
+                <Tooltip title="Close">
+                <CloseCircleOutlined 
+                  onClick={()=>setCurrentView(TABLE_CARD_VIEW)} 
+                  className="x-button-close"/>
+              </Tooltip>
               </div>
-              <Space>
+                  
+              <div ref={printEl}>
+                <TicketView  value={getReviewDetails(state.selectedItem)}/>
+              </div>
+              <Space className="ticket-view-buttons">
                 <ReactToPrint
                   content={() => printEl.current }
-                  trigger={() => (<Button>Print</Button>)} />
-                <Button onClick={()=>setCurrentView(TABLE_CARD_VIEW)}>Cancel</Button>
+                  trigger={() => (<Button className="default-delivery-button">Print</Button>)} />
+                <Button className="default-delivery-button"  onClick={()=>setCurrentView(TABLE_CARD_VIEW)}>Cancel</Button>
               </Space>
             </div>
           )

@@ -181,8 +181,6 @@ class Manifest extends React.Component {
 
   render(){
     const{routes, routesList, fetching}=this.state;
-    console.log('routesList',routesList)
-
     return <div className="manifest-page">
       <Row style={{ marginTop: '2rem', marginBottom: '1rem' }}>
         <Col span={12}>

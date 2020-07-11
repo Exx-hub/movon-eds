@@ -2,10 +2,10 @@
     display: flex;
     flex-direction: column;
     padding:10px;
-    border: 1px dashed #333;
+    //border: 1px dashed #333;
     width: 5.4in;
     height: 100%;
-    background: yellow;
+   // background: yellow;
 
     .ant-divider-horizontal{
         margin:.5rem;
@@ -13,38 +13,45 @@
 
     .to-bold h5{
         font-weight: bold;
-        font-size: 13px;
+        //font-size: 13px;
     }
 
     .title h5{
         font-weight: 100;
-        font-size: 13px;
+        //font-size: 13px;
     }
 
     .ticket-details{
-        background: red;
+        //background: red;
         display: flex;
         flex-direction: column;
-        //border:1px dashed gray;
+        border:1px dashed gray;
         width: 100%;
+        height: 4.4in;
+        padding:1rem;
 
         h3{
             margin-left: 1rem;
         }
 
         .image-logo-container{
-            margin-bottom: 1rem;
-            margin-left: 1rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            //margin-bottom: 1rem;
+            //margin-left: 1rem;
+            width: 100%;
+            height: 50px;
     
             .movon-logo{
-                height: 20px;
-                width: 65px;
-                margin-left: .5rem;
-                margin-right: 1rem;
+                height: 50%;
+                width: 80px;
+                margin-right: 3rem;
             }
     
             .partner-logo{
-                height: 30px;
+                height: 120%;
                 width: 110px;
             }
         }
@@ -54,30 +61,83 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            width: 100%;
 
             .code-date-container-item1{
-                font-size: 20px;
+                font-size: 25px;
                 font-weight: bold;
             }
-            .code-date-container-item2{
-                font-size: 16px;
 
+            .code-date-container-destination{
+                font-size: 18px;
+                font-weight: 200;
             }
+            
         }
 
         .destination-container{
 
             .destination{
                 color: black;
-                font-size: 20px;
+                //font-size: 20px;
                 font-weight: 200;
                 margin-right: .5rem;
             }
             .destination-value{
                 color: black;
                 font-weight: bold;
-                font-size: 20px;
+                //font-size: 20px;
             }
         }
+    }
+
+    .qr-section{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        .qr-container{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .qr-code-img{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                h5{
+                    margin-top: 1rem;
+                    font-size: 18px;
+                    font-weight: bold;
+                    text-align: center;
+                    width: 100%;
+                }
+            }
+        }
+
+        
+
+        .parcel-count{
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 300;
+        }
+    }
+
+    .ticket-view-populate-section{
+        margin-top: .5rem;
+        font-size: 16px;
+        font-weight: 200;
+        font-family: Arial, Helvetica, sans-serif;
     }
 }
