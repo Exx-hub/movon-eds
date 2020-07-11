@@ -211,8 +211,8 @@ class Manifest extends React.Component {
               pagination={false}
               dataSource={this.dataSource()}
               onChange={this.onChangeTable} 
-              onPrint={(data)=>this.props.history.push('/manifest/print',data)}
-              onViewClick={(list)=>this.props.history.push('/manifest/details', {list}) }
+              onPrint={(data)=>this.props.history.push('/manifest/print',{data})}
+              onViewClick={(data)=>this.props.history.push('/manifest/details', {data}) }
               /> :
               <Skeleton active />
           }

@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 import {notification} from 'antd';
-import {config} from '../config'
+import {config, ERROR_CODES} from '../config'
 
 
 export const useWindowSize = () =>{
@@ -83,8 +83,8 @@ export const clearCredential = () =>{
   notification[type]({
     duration:0,
     onClose: func || null,
-    message: config[code].message || "Configure Failed",
-    description: config[code].description || "setup you mesage to config",
+    message: ERROR_CODES[code].message || "Configure Failed",
+    description: ERROR_CODES[code].description || "setup you mesage to config",
   });
 };
 
@@ -92,8 +92,8 @@ export const openNotificationWithDuration = (type, code, func) => {
   notification[type]({
     duration:5,
     onClose: func || null,
-    message: config[code].message || "Configure Failed",
-    description: config[code].description || "setup you mesage to config",
+    message: ERROR_CODES[code].message || "Configure Failed",
+    description: ERROR_CODES[code].description || "setup you mesage to config",
   });
 };
 

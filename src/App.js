@@ -22,7 +22,7 @@ function App() {
           <Route exact={true} path="/login" render={props=> <Login {...props} />} />
           <Route exact={true} path="/parcel" render={props=> getCredential() ? <CreateParcel {...props}/> : <Redirect to="/login" /> }/>
           <Route exact={true} path="/manifest/details" render={props=> getCredential() ? <ManifestDetails {...props}/>: <Redirect to="/login" /> }/>
-          <Route exact={true} path="/manifest/print" render={props=> getCredential() ? <PrinManifestDetails {...props}/> : <Redirect to="/login" /> }/>
+          <Route exact={true} path="/manifest/print/" render={props=> getCredential() ? <PrinManifestDetails {...props}/> : <Redirect to="/login" /> }/>
           <Route path="/" render={props=> getCredential() ? <Home {...props}/> : <Redirect to="/login" /> }/>
         </Switch>
     </Router>

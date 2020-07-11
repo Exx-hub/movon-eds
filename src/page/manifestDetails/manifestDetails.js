@@ -1,7 +1,5 @@
 import React from 'react';
-import { Layout, Button, Table, Divider, Col, Row, Select, Input, Switch, Tooltip, Skeleton, Space } from 'antd';
 import './manifestDetails.scss'
-import { FilterOutlined, ArrowLeftOutlined, ArrowsAltOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import ParcelCard from '../../component/parcelCard'
 import ReviewDetails from '../../component/reviewDetails'
 import ManifestService from '../../service/Manifest';
@@ -9,7 +7,31 @@ import moment from 'moment';
 import { config } from '../../config'
 import { openNotificationWithIcon, clearCredential } from '../../utility'
 import {TableView} from '../../component/table'
+import TicketView from "../../component/ticketView";
+import ReactToPrint from 'react-to-print';
 
+
+import { 
+  FilterOutlined, 
+  ArrowLeftOutlined, 
+  PrinterOutlined, 
+  CloseCircleOutlined 
+} from '@ant-design/icons';
+
+import { 
+  Layout, 
+  Button, 
+  Table, 
+  Divider, 
+  Col, 
+  Row, 
+  Select, 
+  Input, 
+  Switch, 
+  Tooltip, 
+  Skeleton, 
+  Space 
+} from 'antd';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -108,6 +130,10 @@ function CardView(props) {
 }
 
 function ManifestDetails(props) {
+  const TABLE_CARD_VIEW = 1;
+  const PREVIEW = 2;
+  const TICKET = 3;
+
   const [state, setState] = React.useState({
     data: null,
     isCardView: false,
@@ -116,22 +142,19 @@ function ManifestDetails(props) {
     parcelData: null,
     fetching: true
   })
-  const[currentView, setCurrentView] = React.useState(1)
+  const[currentView, setCurrentView] = React.useState(TICKET)
+  const printEl = React.useRef(null);
 
-  const TABLE_CARD_VIEW = 1;
-  const PREVIEW = 2;
 
   React.useEffect(() => {
     if (!state.data) {
       const data = props.location.state.data || "";
-      console.log('data',data)
-
       const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
       const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
       const movonBillOfLading = data[0].displayId;
       const coyBillOfLading = data[0].billOfLading;
-      const routes1 = data[0].trips.startStation.name
-      const routes2 = data[0].trips.endStation.name
+      const routes1 = data[0].trips.startStationName
+      const routes2 = data[0].trips.endStationName
 
       setState({
         ...state, ...{
@@ -175,12 +198,12 @@ function ManifestDetails(props) {
   }
 
   const onSelect = (value) => {
-    console.log('onSelect xxxxx', value)
     setState({ ...state, ...{ selectedItem: state.parcelData[value.key] } })
     setCurrentView(PREVIEW)
   }
 
   const getReviewDetails = (data) =>{
+    console.log('data',data)
     return {
       packageName:data.packageInfo.packageName,
       packageWeight:data.packageInfo.packageWeight,
@@ -197,7 +220,7 @@ function ManifestDetails(props) {
       price: data.priceDetails.price,
       totalPrice: data.priceDetails.totalPrice,
       additionalNote:data.additionalNote,
-      billOfLading: data.billOfLading,
+      billOfLading: data.billOfLading
     }
   }
 
@@ -249,19 +272,36 @@ function ManifestDetails(props) {
                 className="x-button-close"/>
             </Tooltip>
           </div>
-          <ReviewDetails viewMode={true} 
-          value={getReviewDetails(state.selectedItem)} 
+          <ReviewDetails 
+            viewMode={true} 
+            value={getReviewDetails(state.selectedItem)} 
           />
           <Space>
             <Button
-              onClick={() => setState({ ...state, ...{ showDetails: false } })}
+              onClick={() => setCurrentView(TICKET)}
               className="manifest-review-details-button-close">Print</Button>
             <Button
               onClick={() => setCurrentView(TABLE_CARD_VIEW)}
-            className="manifest-review-details-button-close">Close</Button>
+              className="manifest-review-details-button-close">Close</Button>
           </Space>
         </div>
         )
+        break;
+
+        case 3:  
+          View = (
+            <div style={{padding:'2rem'}}>
+              <div ref={printEl}>
+                <TicketView />
+              </div>
+              <Space>
+                <ReactToPrint
+                  content={() => printEl.current }
+                  trigger={() => (<Button>Print</Button>)} />
+                <Button onClick={()=>setCurrentView(TABLE_CARD_VIEW)}>Cancel</Button>
+              </Space>
+            </div>
+          )
         break;
 
       default:

@@ -497,14 +497,9 @@ class CreateParcel extends React.Component {
         if(success){
           const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.totalCost).toFixed(2)}}
           this.setState({details:{...details, ...{shippingCost}}})
+          return
         }
-        else{
-          showNotification({
-            title: errorDetails[errorCode].message,
-            type: "error",
-            message: errorDetails[errorCode].description
-          });
-        }
+        openNotificationWithIcon("error",errorCode);
       })
     }
   }

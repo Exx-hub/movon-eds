@@ -3,7 +3,8 @@ import { Layout, Button, Table, Col, Row, Tooltip } from 'antd';
 import './printManifestDetails.css'
 import { ArrowLeftOutlined, PrinterOutlined } from '@ant-design/icons';
 import ReactToPrint from 'react-to-print';
-import moment from 'moment'
+import moment from 'moment';
+import {getUser} from '../../utility'
 
 const { Header } = Layout
 
@@ -61,7 +62,10 @@ function TableView(props) {
     },
   ];
   return (<Col span={24} style={{ padding: '.25rem' }}>
-    <Table pagination={false} dataSource={props.dataSource} columns={columns} />
+    <Table 
+      pagination={false} 
+      dataSource={props.dataSource} 
+      columns={columns} />
   </Col>)
 }
 
@@ -75,24 +79,23 @@ class PrintManifestDetails extends React.Component {
       routes1:undefined,
       routes2:undefined,
       tripCode:undefined,
-      dataSource:[]
+      dataSource:[],
+      busCompanyName:undefined,
     }
     this.printEl = React.createRef();
   }
 
   componentDidMount(){
-    const data = this.props.location.state
-
-    console.log('PrintManifestDetails  =========>> ',data)
-
-    if(!data)
-      return;
+    const data = this.props.location.state.data
+    if(!data) return;
+    console.log('data',data)
 
     const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-    const routes1 = data[0].trips.startStation.name
-    const routes2 = data[0].trips.endStation.name
+    const routes1 = data[0].trips.startStationName
+    const routes2 = data[0].trips.endStationName;
     const deliveryPerson = data[0].deliveryPersonInfo.deliveryPersonName
     const tripCode = data[0].trips.displayId
+    const busCompanyName= data[0].busCompanyName;
 
     const dataSource = data.map((e,i)=>{
       return {
@@ -117,7 +120,8 @@ class PrintManifestDetails extends React.Component {
       routes1,
       routes2,
       tripCode,
-      dataSource
+      dataSource,
+      busCompanyName
     })
   }
 
@@ -128,7 +132,8 @@ class PrintManifestDetails extends React.Component {
       routes1,
       routes2,
       tripCode,
-      dataSource
+      dataSource,
+      busCompanyName
     }=this.state;
     return(
       <Layout className="print-manifest-details-page">
@@ -158,11 +163,11 @@ class PrintManifestDetails extends React.Component {
           <div ref={ this.printEl }>
             <div style={{ marginLeft: '.5rem', marginTop: '.5rem' }}>
               <div className='print-title-corner'>
-                <span className="print-company-title">no name company</span>
+                <span className="print-company-title">{busCompanyName}</span>
                 <span className="print-company-date">{moment().format("MMM DD, YYYY")}</span>
               </div>
               <Row>
-                <Col span={3}>
+                <Col offset={2} span={3}>
                   <h3 className="col-title">Routes:</h3>
                   <h3 className="col-title">Trip Code:</h3>
                 </Col>
@@ -184,7 +189,9 @@ class PrintManifestDetails extends React.Component {
               </Row>
           </div>
             <div className="my-table">
-              <TableView pagination={false} dataSource={dataSource} />
+              <TableView 
+                pagination={false} 
+                dataSource={dataSource} />
             </div>
         </div>
       </Layout>

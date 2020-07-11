@@ -1,9 +1,11 @@
 .component-ticketview-container{
-    padding:1rem;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;;
+    padding:10px;
+    border: 1px dashed #333;
+    width: 5.4in;
+    height: 100%;
+    background: yellow;
 
     .ant-divider-horizontal{
         margin:.5rem;
@@ -20,13 +22,11 @@
     }
 
     .ticket-details{
-        background: white;
+        background: red;
         display: flex;
         flex-direction: column;
-        width: 384px;
-        padding:1rem;
-        padding-top: 2rem;
-        border:1px dashed gray;
+        //border:1px dashed gray;
+        width: 100%;
 
         h3{
             margin-left: 1rem;
