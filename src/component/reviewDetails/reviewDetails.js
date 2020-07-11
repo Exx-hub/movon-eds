@@ -42,7 +42,7 @@ export const ReviewDetails = (props) =>{
     return <div className="component-review-details">
          <div className="parcel-image-container">
              {
-                 packageImages.map(e=>(<img className="img-parcel" src={e} alt="img-parcel"/>))
+                 packageImages.map((e,i)=>(<img key={i} className="img-parcel" src={e} alt="img-parcel"/>))
              }
         </div>
 

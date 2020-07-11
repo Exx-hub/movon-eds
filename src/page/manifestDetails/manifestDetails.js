@@ -5,11 +5,10 @@ import ReviewDetails from '../../component/reviewDetails'
 import ManifestService from '../../service/Manifest';
 import moment from 'moment';
 import { config } from '../../config'
-import { openNotificationWithIcon, clearCredential } from '../../utility'
+import { openNotificationWithIcon, clearCredential, debounce } from '../../utility'
 import {TableView} from '../../component/table'
 import TicketView from "../../component/ticketView";
 import ReactToPrint from 'react-to-print';
-
 
 import { 
   FilterOutlined, 
@@ -42,11 +41,6 @@ const currentTime = moment()
 const today = currentTime.format(dateFormat)
 const yesterday = currentTime.subtract(7, 'd').format(dateFormat);
 
-
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
-
 const InputBox = (props) => {
   return (<div className="input-box" style={{ margin: '.5rem' }}>
     <span>{props.title}</span>
@@ -75,28 +69,18 @@ function SiderContent(props) {
         <Row>
           <Col span={24} className="sider-content-col">
             <div className="manifest-details-select">
-              <span>Travel Status</span>
-              <Select defaultValue="all" style={{ width: '100%' }} onChange={handleChange}>
-                <Option value="all">All</Option>
-                <Option value="intransit">In-Transit</Option>
-                <Option value="arraived">Arraived</Option>
-              </Select>
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24} className="sider-content-col">
-            <div className="manifest-details-select">
               <span>Parcel Status</span>
-              <Select defaultValue="all" style={{ width: '100%' }} onChange={handleChange}>
-                <Option value="all">All</Option>
-                <Option value="claimed">Claimed</Option>
-                <Option value="unclaimed">Unclaimed</Option>
+              <Select defaultValue="all" style={{ width: '100%' }} onChange={(e)=>props.onChange({name:'parcelStatus',value:e})}>
+                <Option value={0}>All</Option>
+                <Option value={1}>Created</Option>
+                <Option value={2}>Intransit</Option>
+                <Option value={3}>Received</Option>
+                <Option value={4}>Claimed</Option>
+                <Option value={5}>Delivered</Option>
               </Select>
             </div>
           </Col>
         </Row>
-
         <Divider />
       </>
     }
@@ -129,52 +113,70 @@ function CardView(props) {
   </section>)
 }
 
-function ManifestDetails(props) {
-  const TABLE_CARD_VIEW = 1;
-  const PREVIEW = 2;
-  const TICKET = 3;
+const TABLE_CARD_VIEW = 1;
+const PREVIEW = 2;
+const TICKET = 3;
 
-  const [state, setState] = React.useState({
-    data: null,
-    isCardView: false,
-    showDetails: false,
-    selectedItem: null,
-    parcelData: null,
-    fetching: true
-  })
-  const[currentView, setCurrentView] = React.useState(TABLE_CARD_VIEW)
-  const printEl = React.useRef(null);
+class ManifestDetails extends React.Component{
 
+  constructor(props){
+    super(props)
+    this.state={
+      data: null,
+      isCardView: false,
+      showDetails: false,
+      selectedItem: null,
+      parcelData: null,
+      fetching: true,
+      currentView: TABLE_CARD_VIEW,
+      searchValue:"",
+      status:0
+    }
+    this.printEl = React.createRef();
+  }
 
-  React.useEffect(() => {
-    if (!state.data) {
-      const data = props.location.state.data || "";
-      const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-      const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
-      const movonBillOfLading = data[0].displayId;
-      const coyBillOfLading = data[0].billOfLading;
-      const routes1 = data[0].trips.startStationName
-      const routes2 = data[0].trips.endStationName
-
-      setState({
-        ...state, ...{
-          parcelData: data,
-          departureTime,
-          arrivalTime,
-          movonBillOfLading,
-          coyBillOfLading,
-          routes: `${routes1} - ${routes2}`,
-          fetching: false
-        }
-      })
+  componentDidMount(){
+    const data = this.props.location.state && this.props.location.state.data || undefined
+    if(!data){
+      this.props.history.push('/')
     }
 
-  }, [])
+    const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
+    const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
+    const movonBillOfLading = data[0].displayId;
+    const coyBillOfLading = data[0].billOfLading;
+    const routes1 = data[0].trips.startStationName
+    const routes2 = data[0].trips.endStationName
 
-  const onSiderChange = (e) => {
-    switch (e.name) {
+    this.setState({
+      tempParcelData: data,
+      parcelData: data,
+      departureTime,
+      arrivalTime,
+      movonBillOfLading,
+      coyBillOfLading,
+      routes: `${routes1} - ${routes2}`,
+      fetching: false
+    });
+  }
+
+  onSiderChange = (name,value) => {
+    switch (name) {
       case "switch-view":
-        setState({ ...state, ...{ isCardView: e.value } })
+        this.setState({isCardView: value})
+        break;
+
+      case "parcelStatus":
+        const data = this.state.parcelData;
+        const tempParcelData = data.filter(e=>{
+          if(value === 0){
+            return true;
+          }
+          if(e.status === value){
+            return true;
+          }
+        })
+        this.setState({status:value, tempParcelData})
         break;
 
       default:
@@ -182,8 +184,8 @@ function ManifestDetails(props) {
     }
   }
 
-  const parseParcel = () => {
-    return state.parcelData ? state.parcelData.map((e, i) => {
+  parseParcel = () => {
+    return this.state.tempParcelData ? this.state.tempParcelData.map((e, i) => {
       return {
         "key": i,
         "qrcode": e.scanCode,
@@ -192,18 +194,18 @@ function ManifestDetails(props) {
         'receiver': e.recipientInfo.recipientName,
         'qty': e.packageInfo.quantity,
         'travelStatus': config.parcelStatus[e.status],
-        "packageImg":e.packageInfo.packageImages
+        "packageImg":e.packageInfo.packageImages,
+        "_id":e._id
       }
     }) : []
   }
 
-  const onSelect = (value) => {
-    setState({ ...state, ...{ selectedItem: state.parcelData[value.key] } })
-    setCurrentView(PREVIEW)
+  onSelect = (value) => {
+    const selectedItem = this.state.parcelData.filter(e=>e._id === value._id)[0]
+    this.setState({ selectedItem, currentView:PREVIEW })
   }
 
-  const getReviewDetails = (data) =>{
-    console.log('data',data)
+  getReviewDetails = (data) =>{
     return {
       packageName:data.packageInfo.packageName,
       packageWeight:data.packageInfo.packageWeight,
@@ -233,9 +235,27 @@ function ManifestDetails(props) {
     }
   }
 
-  const SwitchView = () =>{
+  doSearch = el =>{
+    const data = this.state.parcelData;
+    const toSearch = el.toLowerCase();
+    const tempParcelData = data.filter(e=>{
+      const firstCondition = e.scanCode.toLowerCase().includes(el.toLowerCase()) 
+      || e.packageInfo.packageName.toLowerCase().includes(toSearch)
+        || e.senderInfo.senderName.toLowerCase().includes(toSearch)
+          || e.recipientInfo.recipientName.toLowerCase().includes(toSearch)
+
+      if(this.state.status !== 0){
+        return firstCondition && this.state.status === e.status;
+      }else{
+        return firstCondition;
+      }
+    })
+    this.setState({searchValue:el,tempParcelData})
+  }
+
+  SwitchView = () =>{
     let View = null
-    switch (currentView) {
+    switch (this.state.currentView) {
       case 1: 
           View = (
             <div className="right-content-section">
@@ -243,28 +263,28 @@ function ManifestDetails(props) {
                 <Col span={24}>
                   <div className="search-container">
                     <Search
+                      value={this.state.searchValue}
                       className="manifest-details-search-box"
                       placeholder="Sender | Receiver | QR Code"
-                      onSearch={value => console.log(value)}
-                    />
+                      onChange={(e)=>this.doSearch(e.target.value)}
+                      />
                   </div>
                 </Col>
               </Row>
               <Row>
                 {
-                  state.isCardView ?
+                  this.state.isCardView ?
                     <CardView
-                      onSelect={(record) => onSelect(record)}
-                      dataSource={parseParcel()} /> :
+                      onSelect={(record) => this.onSelect(record)}
+                      dataSource={this.parseParcel()} /> :
                     <>
                       {
-                        state.fetching ? <Skeleton active /> :
+                        this.state.fetching ? <Skeleton active /> :
                           <TableView
-                            dataSource={parseParcel()}
-                            onSelect={(record) => onSelect(record)} />
+                            dataSource={this.parseParcel()}
+                            onSelect={(record) => this.onSelect(record)} />
                       }
                     </>
-
                 }
               </Row>
             </div>
@@ -277,21 +297,21 @@ function ManifestDetails(props) {
             <span>Preview</span>
             <Tooltip title="Close">
               <CloseCircleOutlined 
-                onClick={()=>setCurrentView(TABLE_CARD_VIEW)} 
+                onClick={()=>this.setState({currentView:TABLE_CARD_VIEW})} 
                 className="x-button-close"/>
             </Tooltip>
           </div>
           <ReviewDetails 
             viewMode={true} 
-            value={getReviewDetails(state.selectedItem)} 
+            value={this.getReviewDetails(this.state.selectedItem)} 
           />
           <Space>
             <Button
               className="default-delivery-button manifest-review-details-button-close"
-              onClick={() => setCurrentView(TICKET)}>Print</Button>
+              onClick={() => this.setState({currentView:TICKET})}>Print</Button>
             <Button
               className="default-delivery-button manifest-review-details-button-close"
-              onClick={() => setCurrentView(TABLE_CARD_VIEW)}>Close</Button>
+              onClick={() => this.setState({currentView:TABLE_CARD_VIEW})}>Close</Button>
           </Space>
         </div>
         )
@@ -304,19 +324,19 @@ function ManifestDetails(props) {
                 <span>Print</span>
                 <Tooltip title="Close">
                 <CloseCircleOutlined 
-                  onClick={()=>setCurrentView(TABLE_CARD_VIEW)} 
+                  onClick={()=>this.setState({currentView:TABLE_CARD_VIEW})} 
                   className="x-button-close"/>
               </Tooltip>
               </div>
                   
-              <div ref={printEl}>
-                <TicketView  value={getReviewDetails(state.selectedItem)}/>
+              <div ref={this.printEl}>
+                <TicketView  value={this.getReviewDetails(this.state.selectedItem)}/>
               </div>
               <Space className="ticket-view-buttons">
                 <ReactToPrint
-                  content={() => printEl.current }
+                  content={() => this.printEl.current }
                   trigger={() => (<Button className="default-delivery-button">Print</Button>)} />
-                <Button className="default-delivery-button"  onClick={()=>setCurrentView(TABLE_CARD_VIEW)}>Cancel</Button>
+                <Button className="default-delivery-button"  onClick={()=>this.setState({currentView:TABLE_CARD_VIEW})}>Cancel</Button>
               </Space>
             </div>
           )
@@ -328,40 +348,48 @@ function ManifestDetails(props) {
     return View;
   }
 
-  return (
-    <Layout className="manifest-details-page">
-      <Header className="home-header-view">
-        <Row>
-          <Col span={8}>
-            <div style={{ float: 'left' }}>
-              <Button
-                type="link"
-                onClick={() => { props.history.goBack() }}>
-                <ArrowLeftOutlined style={{ fontSize: '20px', color: '#fff' }} />
-                <span style={{ fontSize: '20px', color: '#fff' }}>Manifest Details</span>
-              </Button>
-            </div>
-          </Col>
-        </Row>
-      </Header>
+  doSorting = ()=>{
 
-      <Layout className="manifest-details-page-body">
+  }
 
-        <Sider width={300} className="manifest-details-sider">
-          <SiderContent
-            hidden={state.showDetails}
-            state={state}
-            onChange={(e) => onSiderChange(e)} />
-        </Sider>
-
-        <Content>
-          <SwitchView />
-        </Content>
-
+  render(){
+    return (
+      <Layout className="manifest-details-page">
+        <Header className="home-header-view">
+          <Row>
+            <Col span={8}>
+              <div style={{ float: 'left' }}>
+                <Button
+                  type="link"
+                  onClick={() => { this.props.history.goBack() }}>
+                  <ArrowLeftOutlined style={{ fontSize: '20px', color: '#fff' }} />
+                  <span style={{ fontSize: '20px', color: '#fff' }}>Manifest Details</span>
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </Header>
+  
+        <Layout className="manifest-details-page-body">
+  
+          <Sider width={300} className="manifest-details-sider">
+            <SiderContent
+              hidden={this.state.currentView === PREVIEW}
+              state={this.state}
+              onChange={({name,value}) => this.onSiderChange(name,value)} />
+          </Sider>
+  
+          <Content>
+            { this.SwitchView() }
+          </Content>
+  
+        </Layout>
+  
       </Layout>
-
-    </Layout>
-  );
+    );
+  }
 }
+
+
 
 export default ManifestDetails;
