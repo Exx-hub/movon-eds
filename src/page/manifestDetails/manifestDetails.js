@@ -14,7 +14,8 @@ import {
   FilterOutlined, 
   ArrowLeftOutlined, 
   PrinterOutlined, 
-  CloseCircleOutlined 
+  CloseCircleOutlined,
+  ArrowsAltOutlined 
 } from '@ant-design/icons';
 
 import { 
@@ -111,6 +112,68 @@ function CardView(props) {
       })
     }
   </section>)
+}
+
+const ManifestDetailsTable = (props) =>{
+  const columns = [
+    {
+      title: '',
+      dataIndex: '',
+      key: 'action',
+      render: (text, record) => (
+        <div className="table-view-expand">
+          <Tooltip title="Show full details">
+            <Button className="btn-expand-icon">
+              <ArrowsAltOutlined
+                className="table-view-expand-icon"
+                onClick={() => {
+                  props.onSelect(record)
+                }}
+              />
+            </Button>
+          </Tooltip>
+        </div>)
+    },
+    {
+      title: 'QR Code',
+      dataIndex: 'qrcode',
+      key: 'qr-code',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      sorter: (a, b) => a.description.length - b.description.length,
+    },
+    {
+      title: 'Sender',
+      dataIndex: 'sender',
+      key: 'sender',
+      sorter: (a, b) => a.sender.length - b.sender.length,
+    },
+    {
+      title: 'Receiver',
+      dataIndex: 'receiver',
+      key: 'receiver',
+      sorter: (a, b) => a.receiver.length - b.receiver.length,
+    },
+    {
+      title: 'Qty',
+      dataIndex: 'qty',
+      key: 'qty',
+      sorter: (a, b) => a.qty - b.qty,
+    },
+    {
+      title: 'Parcel Status',
+      dataIndex: 'travelStatus',
+      key: 'travelStatus',
+      sorter: (a, b) => a.name.travelStatus - b.name.travelStatus,
+    },
+  ];
+  return <TableView
+    columns = {columns}
+    dataSource={props.dataSource}
+    onSelect={(record) => props.onSelect(record)} />
 }
 
 const TABLE_CARD_VIEW = 1;
@@ -280,9 +343,10 @@ class ManifestDetails extends React.Component{
                     <>
                       {
                         this.state.fetching ? <Skeleton active /> :
-                          <TableView
+                          <ManifestDetailsTable 
                             dataSource={this.parseParcel()}
-                            onSelect={(record) => this.onSelect(record)} />
+                            onSelect={(record) => this.onSelect(record)}
+                          />
                       }
                     </>
                 }
@@ -371,7 +435,6 @@ class ManifestDetails extends React.Component{
         </Header>
   
         <Layout className="manifest-details-page-body">
-  
           <Sider width={300} className="manifest-details-sider">
             <SiderContent
               hidden={this.state.currentView === PREVIEW}
@@ -382,14 +445,11 @@ class ManifestDetails extends React.Component{
           <Content>
             { this.SwitchView() }
           </Content>
-  
         </Layout>
   
       </Layout>
     );
   }
 }
-
-
 
 export default ManifestDetails;
