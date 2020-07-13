@@ -47,14 +47,11 @@ const TicketDetails = (props) =>{
     
         const iterate = (param) =>{
             const view = Object.keys(param).map((e,i)=>{
-                return(
-                    <Row>
-                        <Space className="details-txt">
-                            <h5 style={{width:'120px'}}>{param[e].name}</h5>
-                            <h5>:</h5>
-                            <h5>{param[e].value}</h5>
-                        </Space>
-                    </Row>)
+                return(<Space className="details-txt">
+                            <h4 style={{width:'120px'}}>{param[e].name}</h4>
+                            <h4>:</h4>
+                            <h4>{param[e].value}</h4>
+                        </Space>)
             });  
             return view;
         }
@@ -64,40 +61,40 @@ const TicketDetails = (props) =>{
 
     return (
         <div className="ticket-details">
-            <Row>
-                <Col span={9}>
-                    <div className="qr-section">
-                        <div className="qr-container">
-                            <div className="qr-code-img">
-                                <QRCode
-                                    bgColor="#FFFFFF"
-                                    fgColor="#000000"
-                                    level="Q"
-                                    style={{ width: 130 }}
-                                    value={code}
-                                />
-                                <h5 className="code-date-container-item2">{code}</h5>
-                            </div>
+            <div style={{display:'flex', flexDirection:'row', marginRight:'1rem'}}>
+                <div className="qr-section">
+                    <div className="qr-container">
+                        <div className="qr-code-img">
+                            <QRCode
+                                bgColor="#FFFFFF"
+                                fgColor="#000000"
+                                level="Q"
+                                style={{ width: 130 }}
+                                value={code}
+                            />
+                            <h5 className="code-date-container-item2">{code}</h5>
                         </div>
-                        <div className="code-date-container">
-                            <h4 className="code-date-container-item1">{moment(createdAt).format('MMM DD, YYYY')}</h4>
-                            <h4 className="code-date-container-destination">{endStationName}</h4>
-                        </div>
-                        <div className="parcel-count"> {props.children} </div>
                     </div>
-                </Col>
-                <Col span={15}>
-                    <Row justify="end">
-                        <div className="image-logo-container">
-                            <img src={movon} className="movon-logo"/>
-                            <img src={busCompanyLogo} className="partner-logo"/>
-                        </div>
-                    </Row>
-                    <Row justify="end">
-                        <div className="ticket-view-populate-section"><Populate /></div>
-                    </Row>
-                </Col>
-            </Row>
+                    <div className="code-date-container">
+                        <h4 className="code-date-container-item1">{moment(createdAt).format('MMM DD, YYYY')}</h4>
+                        <h4 className="code-date-container-destination">{endStationName}</h4>
+                    </div>
+                    <div className="parcel-count"> {props.children} </div>
+                </div>
+                <div style={{
+                    display:'flex', 
+                    flexDirection:'column', 
+                    justifyContent:'flex-end',
+                    alignItems:'flex-end',
+                    width:'100%'
+                    }}>
+                    <div className="image-logo-container">
+                        <img src={movon} className="movon-logo"/>
+                        <img src={busCompanyLogo} className="partner-logo"/>
+                    </div>
+                    <div className="ticket-view-populate-section"><Populate /></div>
+                </div>
+            </div>
         </div>
     )
 }
