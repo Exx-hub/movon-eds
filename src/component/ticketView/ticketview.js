@@ -71,7 +71,7 @@ const TicketDetails = (props) =>{
                                 style={{ width: 150 }}
                                 value={code}
                             />
-                            <h5 className="code-date-container-item2">{code}</h5>
+                            <h4 className="code-date-container-item2">{code}</h4>
                         </div>
                     </div>
                     <div className="code-date-container">
