@@ -311,6 +311,7 @@ class CreateParcel extends React.Component {
   componentDidMount(){
     const stationId = getUser().assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
+      console.log('getTrips e',e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data.trips){

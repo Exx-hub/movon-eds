@@ -1,7 +1,7 @@
 import React from 'react';
 import './ticketview.scss';
 import { QRCode } from "react-qr-svg";
-import {Row, Col, Space} from 'antd';
+import {Space} from 'antd';
 import movon from '../../assets/movon3.png';
 import {config} from '../../config'
 import moment from 'moment'
@@ -27,8 +27,7 @@ const TicketDetails = (props) =>{
 
     const code = props.code
 
-    const Populate = (props) =>{
-        console.log('Populate', props)
+    const Populate = () =>{
         const list = {
             billOfLading:{ value:billOfLading, name:'Bill Of Lading'},
             tripCode:{ value:tripCode, name:'Trip Code'},
@@ -61,7 +60,7 @@ const TicketDetails = (props) =>{
 
     return (
         <div className="ticket-details">
-            <div style={{display:'flex', flexDirection:'row', marginRight:'1rem'}}>
+            <div style={{display:'flex', flexDirection:'row', marginRight:'1rem', height:'100%'}}>
                 <div className="qr-section">
                     <div className="qr-container">
                         <div className="qr-code-img">
@@ -69,7 +68,7 @@ const TicketDetails = (props) =>{
                                 bgColor="#FFFFFF"
                                 fgColor="#000000"
                                 level="Q"
-                                style={{ width: 130 }}
+                                style={{ width: 150 }}
                                 value={code}
                             />
                             <h5 className="code-date-container-item2">{code}</h5>
@@ -84,9 +83,8 @@ const TicketDetails = (props) =>{
                 <div style={{
                     display:'flex', 
                     flexDirection:'column', 
-                    justifyContent:'flex-end',
-                    alignItems:'flex-end',
-                    width:'100%'
+                    justifyContent:'flex-start',
+                    alignItems:'flex-start'
                     }}>
                     <div className="image-logo-container">
                         <img src={movon} className="movon-logo"/>
@@ -100,7 +98,6 @@ const TicketDetails = (props) =>{
 }
 
 const PCopy = (props) =>{
-    console.log('props PCopy',props)
     if(props){
         const quantity = props.value.packageQty;
         const scanCode = props.value.scanCode;
@@ -115,7 +112,6 @@ const PCopy = (props) =>{
 }
 
 const SpCopy = (props) =>{
-    console.log('props SpCopy',props)
     if(props){
         const quantity = props.value.packageQty;
         const scanCode = props.value.subParcels[0].subParcelCode;
@@ -130,7 +126,6 @@ const SpCopy = (props) =>{
 }
 
 const CompanyCopy = (props) =>{
-    console.log('props SpCopy',props)
     if(props){
         const quantity = config.ticket.totalCopy;
         const scanCode = props.value.subParcels[0].subParcelCode;
@@ -145,7 +140,6 @@ const CompanyCopy = (props) =>{
 }
 
 export const TicketView = (props) =>{
-    console.log('data', props.value)
     return (
     <div className="component-ticketview-container">
         {props.value && <PCopy {...props} />}
