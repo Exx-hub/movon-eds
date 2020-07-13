@@ -96,6 +96,49 @@ const getReviewDetails = (state) =>{
   }
 }
 
+const parceResponseData = (data) =>{
+  console.log('parceResponseData ===>> data',data);
+  console.log('parceResponseData ===>> getUser',getUser());
+
+  const{
+    config,
+    externalCompany,
+    logo,
+    name
+  }=getUser().busCompanyId;
+  
+  const endStationName = data.trips ? data.trips.endStationName : data.endStation.name
+  const startStationName = data.trips ? data.trips.startStationName : data.startStation.name
+
+  return {
+    packageName:data.packageInfo.packageName,
+    packageWeight:data.packageInfo.packageWeight,
+    packageQty: data.packageInfo.quantity,
+    packageImages: data.packageInfo.packageImages,
+    recipientName: data.recipientInfo.recipientName,
+    recipientEmail: data.recipientInfo.recipientEmail,
+    recipientPhone: "+63"+data.recipientInfo.recipientPhone.number,
+    senderName: data.senderInfo.senderName,
+    senderEmail: data.senderInfo.senderEmail,
+    senderPhone: "+63"+data.senderInfo.senderPhone.number,
+    convenienceFee: data.priceDetails.convenienceFee,
+    insuranceFee: data.priceDetails.insuranceFee,
+    price: data.priceDetails.price,
+    totalPrice: data.priceDetails.totalPrice,
+    additionalNote:data.additionalNote,
+    billOfLading: data.billOfLading,
+    busCompanyName: name,
+    busCompanyLogo: logo,
+    endStationName,
+    startStationName,
+    tripCode: data.trips ? data.trips.displayId : data.tripCode,
+    //tripDate: data.trips.tripStartDateTime,
+    scanCode: data.scanCode,
+    createdAt: data.createdAt,
+    subParcels: data.subParcels
+  }
+}
+
 class CreateParcel extends React.Component {
   constructor(props) {
     super(props);
@@ -261,6 +304,8 @@ class CreateParcel extends React.Component {
     this.computePrice = debounce(this.computePrice,1000)
 
     this.printEl = React.createRef();
+    console.log('constructor ===>> getUser',getUser());
+
   }
 
   componentDidMount(){
@@ -333,6 +378,7 @@ class CreateParcel extends React.Component {
     });
     this.setState({ isLoading: true });
     ParcelService.create(this.state).then((e) => {
+      console.log('CREATE RESPONSE e',e)
       this.setState({ isLoading: false });
       const { success, data, errorCode } = e.data;
       if (success) {
@@ -341,7 +387,8 @@ class CreateParcel extends React.Component {
           type: "success",
           message: "Your parcel is successfully created!",
         });
-        this.setState({createParcelResponseData: data},this.gotoNextStep());
+        console.log('createParcel====>>',data)
+        this.setState({createParcelResponseData: data},()=>this.gotoNextStep());
       } else {
         showNotification({
           title: "Create Parcel",
@@ -359,6 +406,10 @@ class CreateParcel extends React.Component {
       for (let i = 0; i < Object.keys(_details).length; i++) {
         let name = Object.keys(_details)[i];
         if (_details[name].isRequired && isNull(_details[name].value)) {
+          hasError = true;
+          break;
+        }
+        if(!_details[name].accepted){
           hasError = true;
           break;
         }
@@ -396,6 +447,9 @@ class CreateParcel extends React.Component {
             tempDetails = {...tempDetails, ...{[e]:item}}  
           }
         });
+
+
+
         this.setState({ details: tempDetails });
         return false;
       }
@@ -471,7 +525,7 @@ class CreateParcel extends React.Component {
       type 
     }= this.state.details
 
-    const busCompanyId = getUser().busCompanyId;
+    const busCompanyId = getUser().busCompanyId._id;
     const startStation = getUser().assignedStation._id;
 
     const endStationOption = destination.options.filter(e=>e.value === destination.value)[0]
@@ -492,14 +546,19 @@ class CreateParcel extends React.Component {
         weight
       )
       .then(e => {
+        console.log('computePrice e',e)
         const details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
         if(success){
           const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.totalCost).toFixed(2)}}
           this.setState({details:{...details, ...{shippingCost}}})
           return
+        }else{
+          openNotificationWithIcon('error', errorCode, ()=>{
+            clearCredential();
+            this.props.history.push('/')
+          })
         }
-        openNotificationWithIcon("error",errorCode);
       })
     }
   }
@@ -570,8 +629,24 @@ class CreateParcel extends React.Component {
     }
 
     if(name === 'senderName' || name === 'recieverName' ){
-      const validString = /^[A-Za-z]+$/.test(details[name].value);
-      if(!validString){
+      
+      let hasError = true;
+      if(details[name].value){
+        const fullName =  details[name].value.split(" ");
+        if(fullName.length > 1){
+          hasError = false
+        }else{
+          for(let i=0; i<fullName.length; i++){
+            const validString = /^[A-Za-z]+$/.test(fullName[i]);
+            if(validString){
+              hasError = false;
+              break;
+            }
+          }
+        }
+      }
+      
+      if(hasError){
         item = {...details[name], ...{
           isRequired:true,
           accepted:false,
@@ -658,6 +733,7 @@ class CreateParcel extends React.Component {
             />
             <StepControllerView
               width={this.state.width}
+              onPreviousStep={()=>this.onPreviousStep()}
               onNextStep={() => {
                 if (this.validateStep()) {
                   this.gotoNextStep();
@@ -676,6 +752,7 @@ class CreateParcel extends React.Component {
             />
             <StepControllerView 
               width={this.state.width}
+              onPreviousStep={()=>this.onPreviousStep()}
               onNextStep={() => {
                 if (this.validateStep()) {
                   this.gotoNextStep();
@@ -697,6 +774,12 @@ class CreateParcel extends React.Component {
               tripShedules={this.state.trips}
               windowSize={this.state.width}
             />
+            <StepControllerView
+              width={this.state.width}
+              disableNextButton={true}
+              onPreviousStep={()=>this.onPreviousStep()}
+              onNextStep={() => {}}
+            />
           </>
         );
         break;
@@ -712,6 +795,7 @@ class CreateParcel extends React.Component {
               disabled={this.state.isLoading}
               nextButtonName="Create Parcel"
               enablePreviousButton={true}
+              onPreviousStep={()=>this.onPreviousStep()}
               onNextStep={() => {
                 if(this.validateStep()){
                   this.createParcel()
@@ -725,7 +809,7 @@ class CreateParcel extends React.Component {
         view = (
           <>
             <div ref={(el) => (this.printEl = el)}>
-              <TicketView data={this.state.createParcelResponseData} />
+              <TicketView value={parceResponseData(this.state.createParcelResponseData)} />
             </div>
             <div className="on-step4-button-group">
               <ReactToPrint

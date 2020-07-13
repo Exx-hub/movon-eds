@@ -16,9 +16,6 @@ const InputBox = (props) =>{
 
 export const ReviewDetails = (props) =>{
 
-    console.log('ReviewDetails props',props)
-
-
     const{
         packageName,
         packageWeight,
@@ -37,7 +34,6 @@ export const ReviewDetails = (props) =>{
         additionalNote,
         billOfLading
     }=props.value
-
 
     return <div className="component-review-details">
          <div className="parcel-image-container">
@@ -62,7 +58,7 @@ export const ReviewDetails = (props) =>{
                         <InputBox title="Total Shipping Cost" value={totalPrice} />
                         <InputBox title="Additional Note:" value={additionalNote}/>
                         {
-                            !props.viewMode ?
+                            !props.viewMode && billOfLading ?
                             <>
                                 <span>Bill of Lading*</span>
                                 <InputView 

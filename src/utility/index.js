@@ -80,12 +80,13 @@ export const clearCredential = () =>{
   */
 
  export const openNotificationWithIcon = (type, code, func) => {
-  notification[type]({
-    duration:0,
-    onClose: func || null,
-    message: ERROR_CODES[code].message || "Configure Failed",
-    description: ERROR_CODES[code].description || "setup you mesage to config",
-  });
+    console.log('[UTILITY]:openNotificationWithIcon code',code)
+    notification[type]({
+      duration:0,
+      onClose: func || null,
+      message: ERROR_CODES ? ERROR_CODES[code].message : "Something went wrong",
+      description: ERROR_CODES ? ERROR_CODES[code].description : "Something went wrong",
+    });
 };
 
 export const openNotificationWithDuration = (type, code, func) => {

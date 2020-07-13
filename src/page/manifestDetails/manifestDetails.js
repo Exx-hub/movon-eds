@@ -93,12 +93,10 @@ function CardView(props) {
   return (<section className="card-view-section">
     {
       dataSource.map(e => {
-        return (<Col span={8}>
-          <ParcelCard
-            value={e}
-            onSelect={(e) => props.onSelect(e)}
-          />
-        </Col>)
+        return (<ParcelCard
+          value={e}
+          onSelect={(e) => props.onSelect(e)}
+        />)
       })
     }
   </section>)
@@ -175,6 +173,8 @@ class ManifestDetails extends React.Component{
   constructor(props){
     super(props)
     this.state={
+      width: window.innerWidth, 
+      height: window.innerHeight,
       data: null,
       isCardView: false,
       showDetails: false,
@@ -186,6 +186,12 @@ class ManifestDetails extends React.Component{
       status:0
     }
     this.printEl = React.createRef();
+    window.addEventListener("resize", (e) => {
+      this.setState({
+        height: e.currentTarget.innerHeight,
+        width: e.currentTarget.innerWidth,
+      });
+    });
   }
 
   componentDidMount(){
@@ -193,7 +199,7 @@ class ManifestDetails extends React.Component{
     if(!data){
       this.props.history.push('/')
     }
-
+    console.log('data',data)
     const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
     const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
     const movonBillOfLading = data[0].displayId;
@@ -327,9 +333,9 @@ class ManifestDetails extends React.Component{
               <Row>
                 {
                   this.state.isCardView ?
-                    <CardView
+                    <div style={{padding:'2rem'}}><CardView
                       onSelect={(record) => this.onSelect(record)}
-                      dataSource={this.parseParcel()} /> :
+                      dataSource={this.parseParcel()} /></div> :
                     <>
                       {
                         this.state.fetching ? <Skeleton active /> :
@@ -407,6 +413,7 @@ class ManifestDetails extends React.Component{
   }
 
   render(){
+    const{ width, currentView }=this.state
     return (
       <Layout className="manifest-details-page">
         <Header className="home-header-view">
@@ -425,14 +432,22 @@ class ManifestDetails extends React.Component{
         </Header>
   
         <Layout className="manifest-details-page-body">
-          <Sider width={300} className="manifest-details-sider">
-            <SiderContent
-              hidden={this.state.currentView === PREVIEW}
+          {
+            width > 800 && currentView !== PREVIEW && <Sider width={300} className="manifest-details-sider">
+              <SiderContent
+                hidden={currentView === PREVIEW}
+                state={this.state}
+                onChange={({name,value}) => this.onSiderChange(name,value)} />
+            </Sider>
+          }
+  
+          <Content style={{overflow:'scroll'}}>
+            {
+              width < 800 && <SiderContent
+              hidden={currentView === PREVIEW}
               state={this.state}
               onChange={({name,value}) => this.onSiderChange(name,value)} />
-          </Sider>
-  
-          <Content>
+            }
             { this.SwitchView() }
           </Content>
         </Layout>

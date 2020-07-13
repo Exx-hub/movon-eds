@@ -17,25 +17,23 @@ const TableRoutesView = (props) =>{
     title: 'Origin',
     dataIndex: 'origin',
     defaultSortOrder: 'descend',
-    //sorter: (a, b) => a.startStation.length - b.startStation.length
   },
   {
     title: 'Destination',
     dataIndex: 'destination',
     defaultSortOrder: 'descend',
-    //sorter: (a, b) => a.endStation.length - b.endStation.length
   },
   {
     title: 'Departure Date',
     dataIndex: 'date',
     defaultSortOrder: 'descend',
-    //sorter: (a, b) => a.startStation.length - b.startStation.length
+    sorter: (a, b) => moment(a.date) - moment(b.date)
   },
   {
     title: 'Parcel',
     dataIndex: 'count',
     defaultSortOrder: 'descend',
-    //sorter: (a, b) => a.startStation.length - b.startStation.length
+    sorter: (a, b) => a.count - b.count
   },
   {
     title: 'Action',
@@ -92,7 +90,6 @@ class Manifest extends React.Component {
           openNotificationWithIcon('error',errorCode);
         }
       }else{
-        console.log('getRoutes ====> e',data)
         const options = data.map((e,i)=>{
           return{
             data: e,
@@ -115,7 +112,6 @@ class Manifest extends React.Component {
     this.setState({fetching:true})
     ManifestService.getManifestDateRange(this.state.startDay, this.state.endDay, startStationId, endStationId)
         .then(e=>{
-          console.log('getManifestDateRange',e)
           const{data, success, errorCode}=e.data
           if(!success){
             if(errorCode === 1000){
@@ -136,7 +132,6 @@ class Manifest extends React.Component {
   }
   
   onChangeTable = (pagination, filters, sorter, extra) =>{
-    console.log('params', pagination, filters, sorter, extra);
   }
 
   handleSelectChange = (value) =>{
@@ -155,7 +150,6 @@ class Manifest extends React.Component {
     }
 
     return this.state.listOfTripDates.map((e,i)=>{
-      console.log('routesList.value',this.state.routesList.value)
       return {
         key: i,
         date:  moment(e._id).format('MMM DD, YYYY hh:mm A') ,
@@ -170,8 +164,6 @@ class Manifest extends React.Component {
   onChangeDatePicker = (date) =>{
     const startDay = date[0];
     const endDay = date[1];
-    console.log('onChangeDatePicker date',date)
-    console.log('onChangeDatePicker date',date)
 
     if(startDay && endDay){
       this.setState({startDay,endDay},()=>{
@@ -185,40 +177,37 @@ class Manifest extends React.Component {
     const{routes, routesList, fetching}=this.state;
     return <div className="manifest-page">
       <Row style={{ marginTop: '2rem', marginBottom: '1rem' }}>
-        <Col span={12}>
+        <Col span={8}>
         {
           routesList && 
           <Select 
+            size="large"
             defaultValue={routesList.value} 
             style={{ width: '90%' }} 
             onChange={this.handleSelectChange}>{ routesList.options.map(e=>(<Option key={e.value} value={e.value}>{e.name}</Option>)) }
           </Select>
         }
         </Col>
-        <Col span={12}>
+        <Col offset={4} span={12}>
           <RangePicker
+            size="large"
             style={{float:'right'}}
             defaultValue={[moment(this.state.startDay, dateFormat), moment(this.state.endDay, dateFormat)]}
             onChange={(date, date2) => this.onChangeDatePicker(date2)}/>
         </Col>
       </Row>
-      <Row>
-        <Col span={24} style={{marginTop:'.5rem'}}>
-          { 
-            !fetching && this.state.listOfTripDates ? 
-            <TableRoutesView
-              routes={routes}
-              pagination={false}
-              dataSource={this.dataSource()}
-              onChange={this.onChangeTable} 
-              onPrint={(data)=>this.props.history.push('/manifest/print',{data})}
-              onViewClick={(data)=>this.props.history.push('/manifest/details', {data}) }
-              /> :
-              <Skeleton active />
-          }
-        </Col>
-      </Row>
-
+      { 
+        !fetching && this.state.listOfTripDates ? 
+        <TableRoutesView
+          routes={routes}
+          pagination={false}
+          dataSource={this.dataSource()}
+          onChange={this.onChangeTable} 
+          onPrint={(data)=>this.props.history.push('/manifest/print',{data})}
+          onViewClick={(data)=>this.props.history.push('/manifest/details', {data}) }
+          /> :
+          <Skeleton active />
+      }
     </div>
   }
 }

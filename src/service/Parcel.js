@@ -88,6 +88,8 @@ const ParcelService = {
         bodyFormData.set('convenienceFee', systemFee.value)
         bodyFormData.set('insuranceFee', packageInsurance.value)
         bodyFormData.set('billOfLading', billOfLading.value)
+
+        console.log('bodyFormData',bodyFormData)
                 
         return axios({
             method: 'post',

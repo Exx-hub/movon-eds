@@ -49,7 +49,7 @@ const TicketDetails = (props) =>{
             const view = Object.keys(param).map((e,i)=>{
                 return(
                     <Row>
-                        <Space>
+                        <Space className="details-txt">
                             <h5 style={{width:'120px'}}>{param[e].name}</h5>
                             <h5>:</h5>
                             <h5>{param[e].value}</h5>
@@ -58,8 +58,8 @@ const TicketDetails = (props) =>{
             });  
             return view;
         }
-        const packageInfoLabel = [<> <h5 style={{fontSize:'15px', paddingTop:'.5rem', paddingBottom:'.2rem'}}>Package Info:</h5> </>]
-        return [iterate(list), packageInfoLabel, iterate(packageInfo)]
+        //const packageInfoLabel = [<> <h5 style={{fontSize:'15px', paddingTop:'.5rem', paddingBottom:'.2rem'}}>Package Info:</h5> </>]
+        return [iterate(list), iterate(packageInfo)]
     }
 
     return (
@@ -86,7 +86,7 @@ const TicketDetails = (props) =>{
                         <div className="parcel-count"> {props.children} </div>
                     </div>
                 </Col>
-                <Col span={15} style={{color:'red'}}>
+                <Col span={15}>
                     <Row justify="end">
                         <div className="image-logo-container">
                             <img src={movon} className="movon-logo"/>
