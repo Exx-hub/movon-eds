@@ -110,9 +110,9 @@ function Home(props) {
             <Menu.Item key="3" icon={<AuditOutlined />}>
               Manifest
             </Menu.Item>
-            <Menu.Item key="4" icon={<FileSearchOutlined />}>
+            {/* <Menu.Item key="4" icon={<FileSearchOutlined />}>
               Reports
-            </Menu.Item>
+            </Menu.Item> */}
             {/* <Menu.Item key="5" icon={<TrophyOutlined />}>
              Claim
             </Menu.Item> */}

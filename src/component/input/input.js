@@ -16,7 +16,7 @@ function InputView(props) {
     return (
     <div className="component-input">
         <Input
-            size="large"
+            size="default"
             style={{width:'100%'}}
             disabled={props.disabled}
             onBlur={props.onBlur}

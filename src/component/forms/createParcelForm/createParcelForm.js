@@ -2,8 +2,13 @@ import React from 'react';
 import { Row, Col, Radio, Select, Space } from 'antd';
 import './createParcelForm.scss'
 import {InputView} from '../../input' 
+import {getUser} from '../../../utility'
 
 const { Option } = Select;
+
+const USER = getUser();
+const externalCompany = USER && USER.busCompanyId.externalCompany;
+const enalbeBicolIsarogWays = externalCompany === 2;
 
 function InputBox(props){
 
@@ -13,22 +18,22 @@ function InputBox(props){
   const accepted = (props.detail && props.detail.accepted) || false;
   const value = (props.detail && props.detail.value) || "";
 
-  return (<div style={{marginBottom:'.6rem', minHeight:'70px'}}>
+  return (<div style={{marginBottom:'.4rem', minHeight:'55px'}}>
     <span className="input-placeholder-title">{`${ isRequired  ? props.title + "*" : props.title}`|| ""}</span>
     <InputView
-          value={value}
-          name={name}
-          accepted={accepted}
-          isRequired={isRequired}
-          title={props.title}
-          placeholder={props.placeholder} 
-          onBlur={props.onBlur || null}
-          disabled={props.disabled || disabled}
-          errorMessage={props.errorMessage}
-          showError={props.showError}
-          prefix ={props.prefix}
-          type={props.type}
-          onChange={props.onChange} />
+      value={value}
+      name={name}
+      accepted={accepted}
+      isRequired={isRequired}
+      title={props.title}
+      placeholder={props.placeholder} 
+      onBlur={props.onBlur || null}
+      disabled={props.disabled || disabled}
+      errorMessage={props.errorMessage}
+      showError={props.showError}
+      prefix ={props.prefix}
+      type={props.type}
+      onChange={props.onChange} />
     </div>)
 }
 
@@ -64,14 +69,14 @@ function CreateParcelForm(props) {
               <div className="select-destination-form-container">
                 <span className="input-placeholder-title select-placeholder">Destination*</span>
                 <Select
-                  size="large"
+                  size="default"
                   onBlur={()=>props.onBlur(destination.name)}
                   className={`${!destination.accepted ? "select-error-destination-form" : ""}`}
                   onChange={props.onSelectChange} 
                   value={destination.value} 
                   style={{ width: '100%' }}>
                   {
-                    destination.options.map(e=>(<Option value={e.value}>{e.name}</Option>))
+                    destination.options.map(e=>(<Option key={e.value} value={e.value}>{e.name}</Option>))
                   }
                 </Select>
                 {
@@ -170,7 +175,7 @@ function CreateParcelForm(props) {
                 <div className={["radio-button-group"]}>
                 <Radio.Group value={type.value} onChange={props.onTypeChange}>
                 {
-                  type.options.map(e=><Radio value={e.value}>{e.name}</Radio>)
+                  type.options.map(e=><Radio key={e.value} value={e.value}>{e.name}</Radio>)
                 }
                 </Radio.Group>
                 </div>
@@ -189,6 +194,7 @@ function CreateParcelForm(props) {
                 detail={declaredValue}
                 onChange={props.onChange}
                 title="Declared Value"
+                errorMessage={declaredValue.errorMessage}
                 placeholder="Declared Value" />
 
               <InputBox
@@ -197,6 +203,7 @@ function CreateParcelForm(props) {
                 detail={quantity}
                 onChange={props.onChange}
                 title="Quantity"
+                errorMessage={quantity.errorMessage}
                 placeholder="Quantity" />
 
                <InputBox 
@@ -205,6 +212,7 @@ function CreateParcelForm(props) {
                 detail={packageWeight}
                 onChange={props.onChange}
                 placeholder="Weight (kg)" 
+                errorMessage={packageWeight.errorMessage}
                 title="Weight" />
 
 
@@ -213,19 +221,20 @@ function CreateParcelForm(props) {
                 onBlur={()=>props.onBlur(paxs.name)} 
                 detail={paxs}
                 onChange={props.onChange}
+                errorMessage={paxs.errorMessage}
                 title="Number of Pax"
                 placeholder="Number of Pax" />
 
             </Col>
 
             <Col span={12} className={["gutter-row"]}>
-              <InputBox 
+              { enalbeBicolIsarogWays && <InputBox 
                 disabled={true}
                 type="number"
                 detail={packageInsurance}
                 onChange={props.onChange}
                 placeholder="Insurance: 10%" 
-                title="Insurance: 10%" />
+                title="Insurance: 10%" />}
 
               <InputBox
                 type="number"

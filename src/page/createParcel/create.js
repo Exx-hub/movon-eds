@@ -20,8 +20,8 @@ import {
   clearCredential,
   debounce,
 } from "../../utility";
-import{errorDetails}from '../../config'
 
+const USER = getUser();
 const { Content, Sider, Header } = Layout;
 
 const MIN_WIDTH = 800;
@@ -97,15 +97,8 @@ const getReviewDetails = (state) =>{
 }
 
 const parceResponseData = (data) =>{
-  console.log('parceResponseData ===>> data',data);
-  console.log('parceResponseData ===>> getUser',getUser());
-
-  const{
-    config,
-    externalCompany,
-    logo,
-    name
-  }=getUser().busCompanyId;
+  const logo = USER.busCompanyId.logo;
+  const name = USER.busCompanyId.name
   
   const endStationName = data.trips ? data.trips.endStationName : data.endStation.name
   const startStationName = data.trips ? data.trips.startStationName : data.startStation.name
@@ -291,7 +284,13 @@ class CreateParcel extends React.Component {
           accepted: true,
           disabled: true,
         },
-      }
+      },
+      payment:{
+        matrix:0,
+        p2pMatrix:0,
+        enableP2P:false
+      },
+      enalbeBicolIsarogWays:false
     };
 
     window.addEventListener("resize", (e) => {
@@ -300,18 +299,20 @@ class CreateParcel extends React.Component {
         width: e.currentTarget.innerWidth,
       });
     });
+
     this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
     this.computePrice = debounce(this.computePrice,1000)
+    this.getMatrixFare = debounce(this.getMatrixFare,1000)
 
     this.printEl = React.createRef();
-    console.log('constructor ===>> getUser',getUser());
 
+    const externalCompany = USER && USER.busCompanyId.constexternalCompany
+    this.setState({enalbeBicolIsarogWays: externalCompany === 2})
   }
 
   componentDidMount(){
-    const stationId = getUser().assignedStation._id;
+    const stationId = USER && USER.assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
-      console.log('getTrips e',e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data.trips){
@@ -336,12 +337,30 @@ class CreateParcel extends React.Component {
           })
         }
       }else{
-        openNotificationWithIcon('error', errorCode, ()=>{
-          clearCredential();
-          this.props.history.push('/')
-        })
+        this.handleErrorNotification(errorCode)
       }
     })
+  }
+
+  handleErrorNotification = (code) =>{
+
+    if(isNull(code)){
+      showNotification({
+        title: "Server Error",
+        type: "error",
+        message: "Something went wrong",
+      });
+      return;
+    }
+
+    if(code === 1000){
+      openNotificationWithIcon('error', code, ()=>{
+        clearCredential();
+        this.props.history.push('/')
+      })
+      return;
+    }
+    openNotificationWithIcon('error', code);
   }
 
   gotoNextStep = () => {
@@ -379,7 +398,6 @@ class CreateParcel extends React.Component {
     });
     this.setState({ isLoading: true });
     ParcelService.create(this.state).then((e) => {
-      console.log('CREATE RESPONSE e',e)
       this.setState({ isLoading: false });
       const { success, data, errorCode } = e.data;
       if (success) {
@@ -388,14 +406,9 @@ class CreateParcel extends React.Component {
           type: "success",
           message: "Your parcel is successfully created!",
         });
-        console.log('createParcel====>>',data)
         this.setState({createParcelResponseData: data},()=>this.gotoNextStep());
       } else {
-        showNotification({
-          title: "Create Parcel",
-          type: "error",
-          message: "Something went wrong",
-        });
+        this.handleErrorNotification(errorCode)
       }
     });
   }
@@ -448,8 +461,6 @@ class CreateParcel extends React.Component {
             tempDetails = {...tempDetails, ...{[e]:item}}  
           }
         });
-
-
 
         this.setState({ details: tempDetails });
         return false;
@@ -509,11 +520,13 @@ class CreateParcel extends React.Component {
     ParcelService.getConvenienceFee(qty).then(res=>{
       let details = {...this.state.details}
       let systemFee= {...this.state.details.systemFee}
-      const { success, data } = res.data;
+      const { success, data, errorCode } = res.data;
       if (success) {
         systemFee = Object.assign({},systemFee,{ value: data.convenienceFee })
+        this.setState({ details: Object.assign(details,{systemFee}) })
+      }else{
+        this.handleErrorNotification(errorCode)
       }
-      this.setState({ details: Object.assign(details,{systemFee}) })
     })
   }
 
@@ -526,8 +539,8 @@ class CreateParcel extends React.Component {
       type 
     }= this.state.details
 
-    const busCompanyId = getUser().busCompanyId._id;
-    const startStation = getUser().assignedStation._id;
+    const busCompanyId =  USER && USER.busCompanyId._id || undefined;
+    const startStation =  USER && USER.assignedStation._id || undefined;
 
     const endStationOption = destination.options.filter(e=>e.value === destination.value)[0]
     const endStation = endStationOption ? endStationOption.data.endStation._id : undefined;
@@ -547,55 +560,59 @@ class CreateParcel extends React.Component {
         weight
       )
       .then(e => {
-        console.log('computePrice e',e)
         const details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
         if(success){
           const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.totalCost).toFixed(2)}}
           this.setState({details:{...details, ...{shippingCost}}})
-          return
         }else{
-          openNotificationWithIcon('error', errorCode, ()=>{
-            clearCredential();
-            this.props.history.push('/')
-          })
+          this.handleErrorNotification(errorCode)
         }
       })
+    }
+  }
+
+  /** computation for interconnected bus company*/
+  addCombineP2PPricing = () =>{
+    if(this.state.enableP2P){
+      //do computation here...
     }
   }
 
   onInputChange = (name, value) => {
     let details = {...this.state.details};
 
-      if (name === "senderEmail" || name === "recieverEmail") {
-        let item = { ...details[name], ...{ value, hasError: false } };
-        let _details = { ...details, ...{ [name]: item } };
-        this.setState({details:_details})
-        return;
-      } 
+    if (name === "senderEmail" || name === "recieverEmail") {
+      let item = { ...details[name], ...{ value, hasError: false } };
+      let _details = { ...details, ...{ [name]: item } };
+      this.setState({details:_details})
+      return;
+    } 
 
-      let item = { ...details[name], ...{ value, accepted: !isNull(value) } };
-      details = { ...details, ...{ [name]: item } };
+    let item = { ...details[name], ...{ value, accepted: !isNull(value) } };
+    details = { ...details, ...{ [name]: item } };
       
-
-      if(name === "quantity"){
+    if(name === "quantity"){
+      if(typeof value === 'number' && value > -1)
         this.getConvinienceFee(value)
-      }
+    }
 
-      if (name === "declaredValue") {
+    if (name === "declaredValue") {
+      if(typeof value === 'number' && value > -1){
         const packageInsurance = {
           ...details.packageInsurance,
           ...{ value: parseFloat(value * 0.1).toFixed(2) },
         };
         details = { ...details, ...{ packageInsurance } };
       }
+    }
 
-      if (name === "billOfLading") {
-        this.setState({billOfLading:{...this.state.billOfLading, ...{value, accepted: !isNull(value)}}})
-        return;
-      }
+    if (name === "billOfLading") {
+      this.setState({billOfLading:{...this.state.billOfLading, ...{value, accepted: !isNull(value)}}})
+      return;
+    }
 
-      this.setState({details})
+    this.setState({details})
   };
 
   onBlurValidation = (name)=>{
@@ -659,6 +676,15 @@ class CreateParcel extends React.Component {
       return;
     }
 
+    if(name === 'declaredValue' || name === 'quantity' || name==='packageWeight'){
+      if(typeof details[name].value !== 'number' || details[name].value < 0){
+        item = {...details[name], ...{ isRequired:true, accepted:false, errorMessage:'invalid entry' }}
+        details = {...details, ...{[name]:item}}
+        this.setState({details});
+      }
+      return;
+    }
+
     if(details[name].isRequired && isNull(details[name].value)){
       item = {...details[name], ...{ isRequired:true, accepted:false }}
       details = {...details, ...{[name]:item}}
@@ -669,8 +695,10 @@ class CreateParcel extends React.Component {
     
   onSelectChange = (value)=>{
     let details = {...this.state.details};
+    const selectedDestination = details.destination.options.filter(e=>e.value === value)[0].data
     const destination = {...details.destination, ...{ value, accepted:true}}
-    this.setState({ details: {...details, ...{destination}} });
+    details = {...details, ...{destination}}
+    this.setState({ details, selectedDestination });
   }
     
   onTypeChange = (value)=>{
@@ -850,18 +878,52 @@ class CreateParcel extends React.Component {
         if(currentDetails.type.value !== 3 && currentDetails.paxs.value === paxs.value){
           return;
         }
-        this.computePrice();
+
+        if(this.state.enalbeBicolIsarogWays){
+          this.computePrice();
+          this.addP2PPricing();
+        }else{
+          this.getMatrixFare();
+        }
       }
     }
 
-    const total = parseFloat(currentDetails.packageInsurance.value || 0) + parseFloat(currentDetails.systemFee.value || 0) + parseFloat(currentDetails.shippingCost.value) ;
+    this.updateTotalShippingCost();
+  }
+
+  updateTotalShippingCost = () =>{
+    const currentDetails = this.state.details;
+    let total = parseFloat(currentDetails.shippingCost.value) ;
+    
+    if(this.state.enalbeBicolIsarogWays){
+      total += parseFloat(currentDetails.systemFee.value || 0);
+    }
+
     const totalShippingCost = parseFloat(currentDetails.totalShippingCost.value || 0).toFixed(2) ;
     if(parseFloat(total).toFixed(2) !== totalShippingCost){
       const totalShippingCost = {...currentDetails.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
       this.setState({details: {...currentDetails, ...{totalShippingCost}}})
     }
+  }
 
-    console.log('----->>>>')
+  getMatrixFare = () =>{
+    const{ details, selectedDestination }=this.state
+
+    ParcelService.getFareMatrix(
+        selectedDestination.busCompanyId._id, 
+        details.declaredValue.value, 
+        details.packageWeight.value, 
+        selectedDestination.startStation._id, 
+        selectedDestination.endStation._id )
+      .then((e)=>{ 
+        const{data, success, errorCode} = e.data
+        if(success){
+          const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
+          this.setState({details:{...details, ...{shippingCost}}})
+          return;
+        }
+        this.handleErrorNotification(errorCode)
+      })
   }
 
   render() {

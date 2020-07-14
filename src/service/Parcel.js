@@ -89,8 +89,6 @@ const ParcelService = {
         bodyFormData.set('insuranceFee', packageInsurance.value)
         bodyFormData.set('billOfLading', billOfLading.value)
 
-        console.log('bodyFormData',bodyFormData)
-                
         return axios({
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/create`,
@@ -105,7 +103,6 @@ const ParcelService = {
     },
 
     getDynamicPrice: (busCompanyId, claimAmount, endStation, type, paxNumber ,startStation, weight) => {
-            console.log('call the API------>>>getDynamicPrice')
             let accompaniedValue = ''
             switch (type) {
                 case 2:
@@ -118,8 +115,6 @@ const ParcelService = {
                     accompaniedValue = "Excess AC"
                     break;
             }
-
-            console.log('service getDynamicPrice',type)
 
             return axios({
                 method: 'post',
@@ -140,6 +135,24 @@ const ParcelService = {
                     paxNumber: type === 3 ? 0 : paxNumber,
                 }
             })
+    },
+
+    getFareMatrix:(busCompanyId, declaredValue, weight, origin, destination) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/calculate-by-matrix/`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            },
+            data: {
+                declaredValue, 
+                weight, 
+                origin, 
+                destination
+            }
+        })
     },
 
     getConvenienceFee: (quantity) => {

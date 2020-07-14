@@ -30,8 +30,6 @@ const ManifestService = {
     },
 
     getManifestDateRange: (startTripDate, endTripDate, startStation, endStation) => {
-        console.log('startTripDate',startTripDate)
-        console.log('endTripDate',endTripDate)
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/range/${startTripDate}/${endTripDate}/${startStation}/${endStation}`,

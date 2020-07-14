@@ -87,7 +87,6 @@ class PrintManifestDetails extends React.Component {
   componentDidMount(){
     const data = this.props.location.state.data
     if(!data) return;
-    console.log('data',data)
 
     const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
     const routes1 = data[0].trips.startStationName

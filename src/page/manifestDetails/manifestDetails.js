@@ -7,6 +7,9 @@ import { config } from '../../config'
 import {TableView} from '../../component/table'
 import TicketView from "../../component/ticketView";
 import ReactToPrint from 'react-to-print';
+import ManifestService from '../../service/Manifest';
+import {openNotificationWithIcon, clearCredential} from '../../utility'
+import{notification} from 'antd'
 
 import { 
   FilterOutlined, 
@@ -157,6 +160,18 @@ const ManifestDetailsTable = (props) =>{
       key: 'travelStatus',
       sorter: (a, b) => a.name.travelStatus - b.name.travelStatus,
     },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <Space>
+          <Button 
+          disabled={ record.travelStatus.toLowerCase() !== 'created'}
+          size="small"
+          style={{color:'white', fontWeight:'200', background:`${ record.travelStatus.toLowerCase() === 'created' ? 'teal' : 'gray'}`}}
+          onClick={() => props.onCheckIn(record.tripId)}> Check In </Button>
+        </Space>),
+    },
   ];
   return <TableView
     columns = {columns}
@@ -199,7 +214,6 @@ class ManifestDetails extends React.Component{
     if(!data){
       this.props.history.push('/')
     }
-    console.log('data',data)
     const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
     const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
     const movonBillOfLading = data[0].displayId;
@@ -244,6 +258,7 @@ class ManifestDetails extends React.Component{
   }
 
   parseParcel = () => {
+    console.log('this.state.tempParcelData',this.state.tempParcelData)
     return this.state.tempParcelData ? this.state.tempParcelData.map((e, i) => {
       return {
         "key": i,
@@ -254,6 +269,7 @@ class ManifestDetails extends React.Component{
         'qty': e.packageInfo.quantity,
         'travelStatus': config.parcelStatus[e.status],
         "packageImg":e.packageInfo.packageImages,
+        "tripId":e.tripId,
         "_id":e._id
       }
     }) : []
@@ -312,6 +328,40 @@ class ManifestDetails extends React.Component{
     this.setState({searchValue:el,tempParcelData})
   }
 
+  handleErrorNotification = (code) =>{
+    console.log('error',code)
+    if(!code){
+      notification['error']({
+        message: "Server Error",
+        description: "Something went wrong",
+      });
+      return;
+    }
+
+    if(code === 1000){
+      openNotificationWithIcon('error', code, ()=>{
+        clearCredential();
+        this.props.history.push('/')
+      })
+      return;
+    }
+    openNotificationWithIcon('error', code);
+  }
+
+  onCheckIn = (id)=>{
+    ManifestService.checkInNewParcel(id).then(e=>{
+      console.log('onCheckIn e',e);
+      const{data,success,errorCode}=e.data;
+      if(success){
+        let routes = [...this.state.routes];
+        routes = routes.indexOf(e=>e.tripId == id)
+        this.props.history.push('/')
+      }else{
+        this.handleErrorNotification(errorCode)
+      }
+    })
+  }
+
   SwitchView = () =>{
     let View = null
     switch (this.state.currentView) {
@@ -340,6 +390,7 @@ class ManifestDetails extends React.Component{
                       {
                         this.state.fetching ? <Skeleton active /> :
                           <ManifestDetailsTable 
+                            onCheckIn={(tripId)=>this.onCheckIn(tripId)}
                             dataSource={this.parseParcel()}
                             onSelect={(record) => this.onSelect(record)}
                           />

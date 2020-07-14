@@ -5,7 +5,6 @@ import {config} from '../../config'
 
 
 export const ParcelCard = (props) => {
-  console.log('ParcelCard props', props)
       const{
         key,
         qrcode,

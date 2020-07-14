@@ -2,7 +2,6 @@ import {useEffect,useState} from 'react';
 import {notification} from 'antd';
 import {config, ERROR_CODES} from '../config'
 
-
 export const useWindowSize = () =>{
     const isClient = typeof window === 'object';
   
@@ -62,12 +61,16 @@ export const getToken = () =>{
 }
 
 export const getUser = () =>{
-  let user = null
-  const credential = localStorage.getItem('credential') || null;
-  if(credential){
-    user = (JSON.parse(credential)).user
+  try {
+    let user = null
+    const credential = localStorage.getItem('credential') || undefined;
+    if(credential){
+      user = JSON.parse(credential).user
+      return user ? user : null;
+    }
+  } catch (error) {
+    return null
   }
-  return user
 }
 
 export const clearCredential = () =>{
@@ -80,7 +83,7 @@ export const clearCredential = () =>{
   */
 
  export const openNotificationWithIcon = (type, code, func) => {
-    console.log('[UTILITY]:openNotificationWithIcon code',code)
+    console.log('[UTILITY]:erroCode',code)
     notification[type]({
       duration:0,
       onClose: func || null,
