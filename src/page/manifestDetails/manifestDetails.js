@@ -9,7 +9,7 @@ import TicketView from "../../component/ticketView";
 import ReactToPrint from 'react-to-print';
 import ManifestService from '../../service/Manifest';
 import {openNotificationWithIcon, clearCredential} from '../../utility'
-import{notification} from 'antd'
+import {notification} from 'antd'
 
 import { 
   FilterOutlined, 
