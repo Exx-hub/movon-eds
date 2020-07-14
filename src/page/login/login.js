@@ -28,8 +28,8 @@ function Login(props) {
   */
   const openNotificationWithIcon = (type, code) => {
     notification[type]({
-      message: config[code].message || "Login Failed",
-      description: config[code].description || "username or password isn't correct",
+      message: config[code] && config[code].message || "Login Failed",
+      description: config[code] && config[code].description || "username or password isn't correct",
     });
   };
 

@@ -892,6 +892,7 @@ class CreateParcel extends React.Component {
   }
 
   updateTotalShippingCost = () =>{
+    
     const currentDetails = this.state.details;
     let total = parseFloat(currentDetails.shippingCost.value) ;
     
