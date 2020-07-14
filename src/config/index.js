@@ -1,8 +1,8 @@
 export const config = {
-    _BASE_URL:"http://192.168.0.105:8000",
-    BASE_URL:"https://movon-backend-dev.tk",
+    _BASE_URL_L:"http://192.168.0.105:8000",
+    _BASE_URL:"https://movon-backend-dev.tk",
     api_domain: 'http://ec2-52-74-225-236.ap-southeast-1.compute.amazonaws.com:8000',
-    api_domain_prod:'http://ec2-54-179-191-186.ap-southeast-1.compute.amazonaws.com',
+    BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created', 
         2:'intransit', 
