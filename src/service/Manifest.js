@@ -76,7 +76,21 @@ const ManifestService = {
                 'x-auth-token' : getToken()
             }
         })
+    },
+
+    getManifestByDate: (date, startStation, endStation) => {
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/by-date?date=${date}&startStation=${startStation}&endStation=${endStation}`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
     }
+
+    
 }
 
 export default ManifestService;

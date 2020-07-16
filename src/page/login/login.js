@@ -22,19 +22,7 @@ function Login(props) {
     }
   },[]);
 
-  /**
-    @param {string} type - success, info, warning, error
-    @param {number} code - 000
-  */
-  // const openNotificationWithIcon = (type, code) => {
-  //   notification[type]({
-  //     message: config[code] && config[code].message || "Login Failed",
-  //     description: config[code] && config[code].description || "username or password isn't correct",
-  //   });
-  // };
-
   const handleErrorNotification = (code) =>{
-    console.log('error',code)
     if(!code){
       notification['error']({
         message: "Server Error",

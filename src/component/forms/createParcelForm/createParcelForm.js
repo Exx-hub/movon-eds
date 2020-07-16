@@ -1,15 +1,9 @@
 import React from 'react';
-import { Row, Col, Radio, Select, Space,Form, Input, Button } from 'antd';
+import { Row, Col, Radio, Select } from 'antd';
 import './createParcelForm.scss'
 import {InputView} from '../../input' 
-import {getUser} from '../../../utility'
-import {ButtonNextStep} from '../../button'
 
 const { Option } = Select;
-
-const USER = getUser();
-const externalCompany = USER && USER.busCompanyId.externalCompany;
-const enalbeBicolIsarogWays = externalCompany === 2;
 
 function InputBox(props){
 
@@ -60,8 +54,6 @@ function CreateParcelForm(props) {
     totalShippingCost,
     paxs
   }=props.details;
-
-  console.log('senderEmail',senderEmail)
 
   return (
     <div className="create-parcel-form">
@@ -233,13 +225,14 @@ function CreateParcelForm(props) {
             </Col>
 
             <Col span={12} className={["gutter-row"]}>
-              { enalbeBicolIsarogWays && <InputBox 
+            
+              <InputBox 
                 disabled={true}
                 type="number"
                 detail={packageInsurance}
                 onChange={props.onChange}
-                placeholder="Insurance: 10%" 
-                title="Insurance: 10%" />}
+                placeholder={packageInsurance.placeholder || "Insurance: 10%" }
+                title={packageInsurance.title || "Insurance: 10%"} />
 
               <InputBox
                 type="number"

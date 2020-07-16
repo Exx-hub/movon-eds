@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Layout, Button, Table, Col, Row, Tooltip } from 'antd';
 import { ArrowLeftOutlined, PrinterOutlined } from '@ant-design/icons';
 import './printManifestDetails.css'
+import ManifestService from '../../service/Manifest';
 
 const { Header } = Layout
 
@@ -85,41 +86,47 @@ class PrintManifestDetails extends React.Component {
   }
 
   componentDidMount(){
-    const data = this.props.location.state.data
-    if(!data) return;
+    const state = this.props.location.state && this.props.location.state.data || undefined
+    if(!state){
+      this.props.history.push('/')
+    }
 
-    const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-    const routes1 = data[0].trips.startStationName
-    const routes2 = data[0].trips.endStationName;
-    const deliveryPerson = data[0].deliveryPersonInfo.deliveryPersonName
-    const tripCode = data[0].trips.displayId
-    const busCompanyName= data[0].busCompanyName;
+    ManifestService.getManifestByDate(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
+    .then(e=>{
+      const data = e.data;
+      const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
+      const routes1 = data[0].trips.startStationName
+      const routes2 = data[0].trips.endStationName;
+      const deliveryPerson = data[0].deliveryPersonInfo.deliveryPersonName
+      const tripCode = data[0].trips.displayId
+      const busCompanyName= data[0].busCompanyName;
 
-    const dataSource = data.map((e,i)=>{
-      return {
-        key: i,
-        movonBillOfLading: e.displayId,
-        companyBillOfLading: e.billOfLading,
-        description: e.packageInfo.packageName,
-        weight: e.packageInfo.packageWeight,
-        amount: e.priceDetails.totalPrice,
-        qty: e.packageInfo.quantity,
-        sender: e.senderInfo.senderName,
-        reciepient: e.recipientInfo.recipientName,
-        status: e.status,
-        created: e.deliveryPersonInfo.deliveryPersonName,
-      }
-    })
+      const dataSource = data.map((e,i)=>{
+        return {
+          key: i,
+          movonBillOfLading: e.displayId,
+          companyBillOfLading: e.billOfLading,
+          description: e.packageInfo.packageName,
+          weight: e.packageInfo.packageWeight,
+          amount: e.priceDetails.totalPrice,
+          qty: e.packageInfo.quantity,
+          sender: e.senderInfo.senderName,
+          reciepient: e.recipientInfo.recipientName,
+          status: e.status,
+          created: e.deliveryPersonInfo.deliveryPersonName,
+        }
+      })
 
-    this.setState({
-      data, 
-      deliveryPerson, 
-      departureTime,
-      routes1,
-      routes2,
-      tripCode,
-      dataSource,
-      busCompanyName
+      this.setState({
+        data, 
+        deliveryPerson, 
+        departureTime,
+        routes1,
+        routes2,
+        tripCode,
+        dataSource,
+        busCompanyName
+      })
     })
   }
 

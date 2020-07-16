@@ -22,7 +22,7 @@ function InputView(props) {
             onBlur={props.onBlur}
             className={[ (props.showError || hasError) ? "input-has-error" : ""]}
             prefix={props.prefix}
-            suffix={ hasError ? _suffix({ hasError }) : null }
+            //suffix={ hasError ? _suffix({ hasError }) : null }
             placeholder={props.placeholder} 
             value={props.value} 
             name={props.name}

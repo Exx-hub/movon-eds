@@ -10,6 +10,7 @@ import {
   Button,
   notification,
   Layout,
+  Checkbox
 } from "antd";
 import ReactToPrint from "react-to-print";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -93,6 +94,7 @@ const getReviewDetails = (state) =>{
     totalPrice: state.details.totalShippingCost.value,
     additionalNote:state.details.additionNote.value,
     billOfLading: state.billOfLading,
+    checkIn: state.checkIn
   }
 }
 
@@ -148,7 +150,7 @@ class CreateParcel extends React.Component {
       previousButtonName: "Previous",
       nextButtonName: "Next",
       page: 1,
-      checkIn: true,
+      checkIn: false,
       isLoading: false,
       billOfLading: {
         name: "billOfLading",
@@ -237,6 +239,8 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
+          title:"",
+          placeholder:""
         },
         type: {
           name: "type",
@@ -288,9 +292,17 @@ class CreateParcel extends React.Component {
           disabled: true,
         },
       },
-      enalbeBicolIsarogWays:false
+      enalbeBicolIsarogWays:false,
+      declaredValueAdditionFee:0.1,
+      noOfStickerCopy:5,
     };
+    this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
+    this.computePrice = debounce(this.computePrice,1000)
+    this.getMatrixFare = debounce(this.getMatrixFare,1000)
+    this.printEl = React.createRef();
+  }
 
+  componentDidMount(){
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,
@@ -298,38 +310,35 @@ class CreateParcel extends React.Component {
       });
     });
 
-    this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
-    this.computePrice = debounce(this.computePrice,1000)
-    this.getMatrixFare = debounce(this.getMatrixFare,1000)
-
-    this.printEl = React.createRef();
-
-    const externalCompany = USER && USER.busCompanyId.constexternalCompany
-    this.setState({enalbeBicolIsarogWays: externalCompany === 2})
-  }
-
-  componentDidMount(){
+    let {details,declaredValueAdditionFee, noOfStickerCopy} = {...this.state};
+    const busCompanyId = USER && USER.busCompanyId || undefined
+    if(busCompanyId){
+      const externalCompany = busCompanyId.externalCompany;
+      const parcel = busCompanyId.config.parcel || undefined;
+      if(parcel){
+        const addFee = parcel.declaredValueAdditionFee || undefined;
+        declaredValueAdditionFee = addFee ? addFee : declaredValueAdditionFee;
+        noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
+        if(addFee){
+          let title = `Additional Fee: ${addFee} %` 
+          let packageInsurance = {...details.packageInsurance, ...{title, placeholder: "Additional Fee"}}
+           details = {...details, ...{packageInsurance}}
+        }
+      }
+      this.setState({
+        enalbeBicolIsarogWays: externalCompany === 2,
+        declaredValueAdditionFee,
+        noOfStickerCopy,
+        details
+      })
+    }
+   
     const stationId = USER && USER.assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
-      console.log('componentDidMount getTrips',e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data.trips){
           const details = {...this.state.details}
-          const options = [];
-          const map = new Map();
-
-          // for (const station of data.trips.data) {
-          //     if (!map.has(station.endStation._id)) {
-          //         map.set(station.endStation._id, true);
-          //         options.push({
-          //             value: station.endStation._id,
-          //             name: station.endStation.name,
-          //             data: station
-          //         })
-          //     }
-          // }
-
           let _myOption =[]
           data.trips.data.map(e=>{
             e.route.map(ee=>{
@@ -357,7 +366,6 @@ class CreateParcel extends React.Component {
               return true
             }
           })
-
 
           const destination = {...details.destination, ...{options:_myOption}}
           this.setState({
@@ -460,9 +468,13 @@ class CreateParcel extends React.Component {
       return hasError;
   }
 
-
   onBlurValidation = (name)=>{
     let details = {...this.state.details};
+
+    if(isNull(details[name].value)){
+      return null;
+    }
+
     if(!isNull(details[name].value) && (name === 'senderEmail' || name === 'recieverEmail')){
       const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details[name].value)
       return {...details[name], ...{
@@ -472,7 +484,7 @@ class CreateParcel extends React.Component {
       }}
     }
 
-    if(name === 'senderMobile' || name === 'recieverMobile' ){
+    if(!isNull(details[name].value) && (name === 'senderMobile' || name === 'recieverMobile') ){
       const validNumber = /^\d+$/.test(details[name].value);
       const isValid = validNumber && details[name].value.length === 10
       return {...details[name], ...{
@@ -482,24 +494,23 @@ class CreateParcel extends React.Component {
     }
 
     if(name === 'senderName' || name === 'recieverName' ){
-      let hasError = false;
+      let isValid = true;
       if(details[name].value){
         const fullName =  details[name].value.split(" ");
-        const isValid = fullName.length > 1;
-
+        isValid = fullName.length > 1;
         if(isValid){
           for(let i=0; i<fullName.length; i++){
             const validString = /^[A-Za-z]+$/.test(fullName[i]);
             if(!validString){
-              hasError = true;
+              isValid = false;
               break;
             }
           }
         }
       }
       return {...details[name], ...{
-        accepted: !hasError,
-        errorMessage: hasError ? "Invalid name!" : ""
+        accepted: isValid,
+        errorMessage: !isValid ? "Invalid name!" : ""
       }}
     }
 
@@ -508,7 +519,7 @@ class CreateParcel extends React.Component {
       return {...details[name], 
         ...{ 
           accepted: isValid, 
-          errorMessage: isValid ? "" : 'invalid entry' }}
+          errorMessage: isValid ? "" : 'Invalid number!' }}
     }
     return null;
   }
@@ -697,7 +708,7 @@ class CreateParcel extends React.Component {
       if(isValid){
         const packageInsurance = {
           ...details.packageInsurance,
-          ...{ value: parseFloat(value * 0.1).toFixed(2) },
+          ...{ value: parseFloat(value * this.state.declaredValueAdditionFee).toFixed(2) },
         };
         let item = { ...details[name], ...{ 
           errorMessage: isValid ? "" : "Invalid number",
@@ -719,7 +730,6 @@ class CreateParcel extends React.Component {
     this.setState({details:{ ...details, ...{ [name]: item } }})
   };
 
-    
   onSelectChange = (value)=>{
     let details = {...this.state.details};
     const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
@@ -749,29 +759,7 @@ class CreateParcel extends React.Component {
   }
 
   onCreateNewParcel =()=>{
-    this.setState({
-      billOfLading: {
-        name: "billOfLading",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      packageImagePreview: null,
-      currentStep: 0,
-      verifiedSteps: 0,
-      trips: undefined,
-      selectedTrip: undefined,
-      createParcelResponseData: undefined,
-    },()=>{
-      let tempDetails = {...this.state.details}
-      Object.keys(tempDetails).forEach((e) => {
-        if (tempDetails[e].isRequired && isNull(tempDetails[e].value)) {
-          const item = Object.assign({}, tempDetails[e], { accepted: true, value:undefined });
-          tempDetails = Object.assign({}, tempDetails, { [e]: item });
-        }
-      });
-      this.setState({ details: tempDetails });
-    })
+    window.location.reload(true);
   }
 
   stepView = (step) => {
@@ -792,13 +780,14 @@ class CreateParcel extends React.Component {
               onSelectChange={(value) => this.onSelectChange(value)}
               onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
             />
+          
             <StepControllerView
               width={this.state.width}
               onPreviousStep={()=>this.onPreviousStep()}
               onNextStep={() => {
                 let isValid = this.validateStep()
                 if (isValid) {
-                  //this.gotoNextStep();
+                  this.gotoNextStep();
                 }
               }}
             />
@@ -853,17 +842,22 @@ class CreateParcel extends React.Component {
               value={getReviewDetails(this.state)}
               viewMode={false}
             />
-            <StepControllerView
-              disabled={this.state.isLoading}
-              nextButtonName="Create Parcel"
-              enablePreviousButton={true}
-              onPreviousStep={()=>this.onPreviousStep()}
-              onNextStep={() => {
-                if(this.validateStep()){
-                  this.createParcel()
-                }
-              }}
+            <div className="center-horizontal-space-between">
+              <div className="checkbox-container">
+                <Checkbox checked={this.state.checkIn} onChange={(e)=>this.setState({checkIn:e.target.checked})}>Check In</Checkbox>
+              </div>
+              <StepControllerView
+                disabled={this.state.isLoading}
+                nextButtonName="Create Parcel"
+                enablePreviousButton={true}
+                onPreviousStep={()=>this.onPreviousStep()}
+                onNextStep={() => {
+                  if(this.validateStep()){
+                    this.createParcel()
+                  }
+                }}
             />
+            </div>
           </>
         );
         break;
@@ -920,25 +914,23 @@ class CreateParcel extends React.Component {
         }
       }
     }
-
+    const oldDetails = prevState.details
+    const curDetails = this.state.details
+    if(oldDetails.packageInsurance.value !== curDetails.packageInsurance.value
+      || oldDetails.shippingCost.value !== curDetails.shippingCost.value
+        || oldDetails.systemFee.value !== curDetails.systemFee.value)
     this.updateTotalShippingCost();
   }
 
   updateTotalShippingCost = () =>{
     
     const currentDetails = {...this.state.details};
-    let total = parseFloat(currentDetails.shippingCost.value) + parseFloat(currentDetails.systemFee.value);
+    let total = parseFloat(currentDetails.shippingCost.value || 0) 
+      + parseFloat(currentDetails.systemFee.value || 0)
+        + parseFloat(currentDetails.packageInsurance.value || 0);
     
-    if(this.state.enalbeBicolIsarogWays){
-      total += parseFloat(currentDetails.systemFee.value || 0);
-    }
-
-    const totalShippingCost = parseFloat(currentDetails.totalShippingCost.value || 0).toFixed(2) ;
-   
-    if(parseFloat(total).toFixed(2) !== totalShippingCost){
-      const totalShippingCost = {...currentDetails.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
-      this.setState({details: {...currentDetails, ...{totalShippingCost}}})
-    }
+    const totalShippingCost = {...currentDetails.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
+    this.setState({details: {...currentDetails, ...{totalShippingCost}}})
   }
 
   getMatrixFare = () =>{
@@ -966,7 +958,7 @@ class CreateParcel extends React.Component {
       <Layout className="create-parcelview-parent-container">
         <Header className="home-header-view" style={{ padding: 0 }}>
           <div style={{ float: "left" }}>
-            <Button type="link" onClick={() => this.props.history.goBack()}>
+            <Button type="link" onClick={() => this.props.history.push('/')}>
               <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
               <span style={{ fontSize: "20px", color: "#fff" }}>Create Parcel</span>
             </Button>

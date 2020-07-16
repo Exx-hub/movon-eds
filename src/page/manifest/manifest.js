@@ -43,12 +43,12 @@ const TableRoutesView = (props) =>{
         <Button
           style={{color:'white', fontWeight:'200', background:'teal'}}
           size="small"
-          onClick={() =>props.onViewClick(record.data)}> View </Button>
+          onClick={() =>props.onViewClick(record)}> View </Button>
 
         <Button
           size="small"
           style={{color:'white', fontWeight:'200', background:'teal'}}
-          onClick={() => props.onPrint(record.data)}> Print </Button>
+          onClick={() => props.onPrint(record)}> Print </Button>
       </Space>),
   },
   ];
@@ -99,6 +99,7 @@ class Manifest extends React.Component {
           routesList:{...this.state.routesList,...{options}}
         });
         this.getManifestByDestination(data[0].start, data[0].end)
+        
       }
       });
     } catch (error) {
@@ -107,7 +108,6 @@ class Manifest extends React.Component {
   }
 
   handleErrorNotification = (code) =>{
-    console.log('error',code)
     if(!code){
       notification['error']({
         message: "Server Error",
@@ -170,13 +170,15 @@ class Manifest extends React.Component {
     }
 
     return this.state.listOfTripDates.map((e,i)=>{
+      const data = this.state.routes[this.state.routesList.value]
       return {
         key: i,
         date:  moment(e._id).format('MMM DD, YYYY hh:mm A') ,
         count: e.count,
-        origin: this.state.routes[this.state.routesList.value].startStationName,
-        destination: this.state.routes[this.state.routesList.value].endStationName,
-        data: e.data
+        origin: data.startStationName,
+        destination: data.endStationName,
+        startStationId:data.start,
+        endStationId:data.end
       }
     });
   }
@@ -223,9 +225,8 @@ class Manifest extends React.Component {
           pagination={false}
           dataSource={this.dataSource()}
           onChange={this.onChangeTable} 
-          onPrint={(data)=>this.props.history.push('/manifest/print',{data})}
-          onViewClick={(data)=>this.props.history.push('/manifest/details', {data}) }
-          onCheckIn={(e)=>console.log('e',e)}
+          onPrint={(data)=>this.props.history.push('/manifest/print',{ data })}
+          onViewClick={(data)=>this.props.history.push('/manifest/details', { data }) }
           /> :
           <Skeleton active />
       }
