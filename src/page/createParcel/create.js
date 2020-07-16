@@ -247,14 +247,17 @@ class CreateParcel extends React.Component {
             {
               value: 1,
               name: "Excess AC",
+              disabled:true,
             },
             {
               value: 2,
               name: "Excess Non AC",
+              disabled:true,
             },
             {
               value: 3,
               name: "Cargo Padala",
+              disabled:false,
             },
           ],
         },
@@ -285,11 +288,6 @@ class CreateParcel extends React.Component {
           disabled: true,
         },
       },
-      payment:{
-        matrix:0,
-        p2pMatrix:0,
-        enableP2P:false
-      },
       enalbeBicolIsarogWays:false
     };
 
@@ -313,6 +311,7 @@ class CreateParcel extends React.Component {
   componentDidMount(){
     const stationId = USER && USER.assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
+      console.log('componentDidMount getTrips',e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data.trips){
@@ -320,17 +319,47 @@ class CreateParcel extends React.Component {
           const options = [];
           const map = new Map();
 
-          for (const station of data.trips.data) {
-              if (!map.has(station.endStation._id)) {
-                  map.set(station.endStation._id, true);
-                  options.push({
-                      value: station.endStation._id,
-                      name: station.endStation.name,
-                      data: station
-                  })
-              }
-          }
-          const destination = {...details.destination, ...{options}}
+          // for (const station of data.trips.data) {
+          //     if (!map.has(station.endStation._id)) {
+          //         map.set(station.endStation._id, true);
+          //         options.push({
+          //             value: station.endStation._id,
+          //             name: station.endStation.name,
+          //             data: station
+          //         })
+          //     }
+          // }
+
+          let _myOption =[]
+          data.trips.data.map(e=>{
+            e.route.map(ee=>{
+              const name = ee.stop.name
+              const id = ee.stop._id
+              _myOption.push({
+                name,
+                value:id,
+                startStationId:e.startStation._id,
+                companyId:e.busCompanyId._id
+              })
+            })
+          })
+          _myOption.push({
+            name:data.trips.data[0].endStation.name,
+            value:data.trips.data[0].endStation._id,
+            startStationId:data.trips.data[0].startStation._id,
+            companyId:data.trips.data[0].busCompanyId._id
+          })
+
+          let clean=[]
+          _myOption = _myOption.filter(e=>{
+            if(!clean.includes(e.value)){
+              clean.push(e.value)
+              return true
+            }
+          })
+
+
+          const destination = {...details.destination, ...{options:_myOption}}
           this.setState({
             trips:data.trips.data, 
             details:{...details, ...{destination}}
@@ -431,6 +460,59 @@ class CreateParcel extends React.Component {
       return hasError;
   }
 
+
+  onBlurValidation = (name)=>{
+    let details = {...this.state.details};
+    if(!isNull(details[name].value) && (name === 'senderEmail' || name === 'recieverEmail')){
+      const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details[name].value)
+      return {...details[name], ...{
+        hasError: !validEmail,
+        accepted: validEmail,
+        errorMessage: validEmail ? "" : "Invalid Email!"
+      }}
+    }
+
+    if(name === 'senderMobile' || name === 'recieverMobile' ){
+      const validNumber = /^\d+$/.test(details[name].value);
+      const isValid = validNumber && details[name].value.length === 10
+      return {...details[name], ...{
+        accepted: isValid,
+        errorMessage:"Invalid phone number!"
+      }}
+    }
+
+    if(name === 'senderName' || name === 'recieverName' ){
+      let hasError = false;
+      if(details[name].value){
+        const fullName =  details[name].value.split(" ");
+        const isValid = fullName.length > 1;
+
+        if(isValid){
+          for(let i=0; i<fullName.length; i++){
+            const validString = /^[A-Za-z]+$/.test(fullName[i]);
+            if(!validString){
+              hasError = true;
+              break;
+            }
+          }
+        }
+      }
+      return {...details[name], ...{
+        accepted: !hasError,
+        errorMessage: hasError ? "Invalid name!" : ""
+      }}
+    }
+
+    if(name === 'declaredValue' || name === 'quantity' || name==='packageWeight'){
+      const isValid = Number(details[name].value) > -1;
+      return {...details[name], 
+        ...{ 
+          accepted: isValid, 
+          errorMessage: isValid ? "" : 'invalid entry' }}
+    }
+    return null;
+  }
+
   validateStep = () => {
     let { 
       currentStep, 
@@ -447,6 +529,7 @@ class CreateParcel extends React.Component {
     }
 
     if (currentStep === 0) {
+
       if (this.isRequiredDetailsHasNull()) {
         showNotification({
           title: "Parcel Details Validation",
@@ -461,9 +544,21 @@ class CreateParcel extends React.Component {
             tempDetails = {...tempDetails, ...{[e]:item}}  
           }
         });
-
         this.setState({ details: tempDetails });
         return false;
+      }
+      else{
+        let hasError = false
+        let tempDetails = {...details}
+        Object.keys(tempDetails).forEach((e) => {
+          let item =  this.onBlurValidation(e)
+          if(item){
+            hasError = true;
+            tempDetails = {...tempDetails, ...{[e]:item}} 
+          }
+        });
+        this.setState({ details: tempDetails });
+        return hasError;
       }
     }
 
@@ -582,28 +677,35 @@ class CreateParcel extends React.Component {
   onInputChange = (name, value) => {
     let details = {...this.state.details};
 
-    if (name === "senderEmail" || name === "recieverEmail") {
-      let item = { ...details[name], ...{ value, hasError: false } };
-      let _details = { ...details, ...{ [name]: item } };
-      this.setState({details:_details})
-      return;
-    } 
-
-    let item = { ...details[name], ...{ value, accepted: !isNull(value) } };
-    details = { ...details, ...{ [name]: item } };
-      
     if(name === "quantity"){
-      if(typeof value === 'number' && value > -1)
-        this.getConvinienceFee(value)
+      const isValid = Number(value) > -1;
+      let item = { ...details[name], ...{ 
+        errorMessage: isValid ? "" : "Invalid number",
+        value, 
+        accepted: isValid } };
+      details = { ...details, ...{ [name]: item } };
+      this.setState({details},()=>{
+        if(isValid){
+          this.getConvinienceFee(value)
+        }
+      })
+      return
     }
 
     if (name === "declaredValue") {
-      if(typeof value === 'number' && value > -1){
+      const isValid = Number(value) > -1;
+      if(isValid){
         const packageInsurance = {
           ...details.packageInsurance,
           ...{ value: parseFloat(value * 0.1).toFixed(2) },
         };
-        details = { ...details, ...{ packageInsurance } };
+        let item = { ...details[name], ...{ 
+          errorMessage: isValid ? "" : "Invalid number",
+          value, 
+          accepted: isValid } };
+        details = { ...details, ...{ packageInsurance, [name]: item } };
+        this.setState({details})
+        return
       }
     }
 
@@ -612,90 +714,15 @@ class CreateParcel extends React.Component {
       return;
     }
 
-    this.setState({details})
+    
+    let item = { ...details[name], ...{ value, accepted: true, hasError:false } };
+    this.setState({details:{ ...details, ...{ [name]: item } }})
   };
 
-  onBlurValidation = (name)=>{
-    let item;
-    let details = this.state.details;
-
-    if(name === 'senderEmail' || name === 'recieverEmail'){
-      const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details[name].value)
-      if(!validEmail){
-        item = {...details[name], ...{
-          hasError:true,
-          errorMessage:"Invalid name!"
-          }}
-        details = {...details, ...{[name]:item}}
-      }
-      this.setState({details})
-      return;
-    }
-
-    if(name === 'senderMobile' || name === 'recieverMobile' ){
-      const validNumber = /^\d+$/.test(details[name].value);
-      if(!validNumber || !(details[name].value.length === 10)){
-        item = {...details[name], ...{
-          isRequired:true,
-          accepted:false,
-          errorMessage:"Invalid phone number!"
-        }}
-        details = {...details, ...{[name]:item}}
-      }
-      this.setState({details})
-      return;
-    }
-
-    if(name === 'senderName' || name === 'recieverName' ){
-      
-      let hasError = true;
-      if(details[name].value){
-        const fullName =  details[name].value.split(" ");
-        if(fullName.length > 1){
-          hasError = false
-        }else{
-          for(let i=0; i<fullName.length; i++){
-            const validString = /^[A-Za-z]+$/.test(fullName[i]);
-            if(validString){
-              hasError = false;
-              break;
-            }
-          }
-        }
-      }
-      
-      if(hasError){
-        item = {...details[name], ...{
-          isRequired:true,
-          accepted:false,
-          errorMessage:"Invalid name!"
-        }}
-        details = {...details, ...{[name]:item}}
-      }
-      this.setState({details})
-      return;
-    }
-
-    if(name === 'declaredValue' || name === 'quantity' || name==='packageWeight'){
-      if(typeof details[name].value !== 'number' || details[name].value < 0){
-        item = {...details[name], ...{ isRequired:true, accepted:false, errorMessage:'invalid entry' }}
-        details = {...details, ...{[name]:item}}
-        this.setState({details});
-      }
-      return;
-    }
-
-    if(details[name].isRequired && isNull(details[name].value)){
-      item = {...details[name], ...{ isRequired:true, accepted:false }}
-      details = {...details, ...{[name]:item}}
-    }
-
-    this.setState({details});
-  }
     
   onSelectChange = (value)=>{
     let details = {...this.state.details};
-    const selectedDestination = details.destination.options.filter(e=>e.value === value)[0].data
+    const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
     const destination = {...details.destination, ...{ value, accepted:true}}
     details = {...details, ...{destination}}
     this.setState({ details, selectedDestination });
@@ -710,6 +737,7 @@ class CreateParcel extends React.Component {
     const systemFee = {...details.systemFee, ...{ value:0 }}
     const totalShippingCost = {...details.totalShippingCost, ...{ value:0 }}
     const shippingCost = {...details.shippingCost, ...{ value:0 }}
+
     this.setState({details:{...details, ...{
       systemFee,
       totalShippingCost,
@@ -754,7 +782,11 @@ class CreateParcel extends React.Component {
         view = (
           <>
             <ParcelDetailsForm
-              onBlur={(name) => this.onBlurValidation(name)}
+              onBlur={(name) =>{ 
+                let item = this.onBlurValidation(name)
+                if(item)
+                  this.setState({details:{...this.state.details, ...{[name]:item}}})
+              }}
               details={this.state.details}
               onTypeChange={(e) => this.onTypeChange(e.target.value)}
               onSelectChange={(value) => this.onSelectChange(value)}
@@ -764,8 +796,9 @@ class CreateParcel extends React.Component {
               width={this.state.width}
               onPreviousStep={()=>this.onPreviousStep()}
               onNextStep={() => {
-                if (this.validateStep()) {
-                  this.gotoNextStep();
+                let isValid = this.validateStep()
+                if (isValid) {
+                  //this.gotoNextStep();
                 }
               }}
             />
@@ -893,14 +926,15 @@ class CreateParcel extends React.Component {
 
   updateTotalShippingCost = () =>{
     
-    const currentDetails = this.state.details;
-    let total = parseFloat(currentDetails.shippingCost.value) ;
+    const currentDetails = {...this.state.details};
+    let total = parseFloat(currentDetails.shippingCost.value) + parseFloat(currentDetails.systemFee.value);
     
     if(this.state.enalbeBicolIsarogWays){
       total += parseFloat(currentDetails.systemFee.value || 0);
     }
 
     const totalShippingCost = parseFloat(currentDetails.totalShippingCost.value || 0).toFixed(2) ;
+   
     if(parseFloat(total).toFixed(2) !== totalShippingCost){
       const totalShippingCost = {...currentDetails.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
       this.setState({details: {...currentDetails, ...{totalShippingCost}}})
@@ -909,13 +943,12 @@ class CreateParcel extends React.Component {
 
   getMatrixFare = () =>{
     const{ details, selectedDestination }=this.state
-
     ParcelService.getFareMatrix(
-        selectedDestination.busCompanyId._id, 
+        selectedDestination.companyId, 
         details.declaredValue.value, 
         details.packageWeight.value, 
-        selectedDestination.startStation._id, 
-        selectedDestination.endStation._id )
+        selectedDestination.startStationId, 
+        selectedDestination.value )
       .then((e)=>{ 
         const{data, success, errorCode} = e.data
         if(success){

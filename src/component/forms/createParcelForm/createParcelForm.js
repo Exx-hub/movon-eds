@@ -1,8 +1,9 @@
 import React from 'react';
-import { Row, Col, Radio, Select, Space } from 'antd';
+import { Row, Col, Radio, Select, Space,Form, Input, Button } from 'antd';
 import './createParcelForm.scss'
 import {InputView} from '../../input' 
 import {getUser} from '../../../utility'
+import {ButtonNextStep} from '../../button'
 
 const { Option } = Select;
 
@@ -59,6 +60,8 @@ function CreateParcelForm(props) {
     totalShippingCost,
     paxs
   }=props.details;
+
+  console.log('senderEmail',senderEmail)
 
   return (
     <div className="create-parcel-form">
@@ -124,10 +127,11 @@ function CreateParcelForm(props) {
 
               <InputBox 
                 detail={senderEmail}
-                showError={senderEmail.hasError || false}
                 onChange={props.onChange}
                 title="Sender Email"
+                onBlur={()=>props.onBlur(senderEmail.name)}
                 errorMessage="Invalid email"
+                showError={senderEmail.hasError || false}
                 placeholder="Sender Email" />
                 
             </div>
@@ -158,6 +162,7 @@ function CreateParcelForm(props) {
                 placeholder="" />
 
               <InputBox
+                onBlur={()=>props.onBlur(recieverEmail.name)}
                 detail={recieverEmail}
                 onChange={props.onChange}
                 title="Reciever Email"
@@ -175,7 +180,7 @@ function CreateParcelForm(props) {
                 <div className={["radio-button-group"]}>
                 <Radio.Group value={type.value} onChange={props.onTypeChange}>
                 {
-                  type.options.map(e=><Radio key={e.value} value={e.value}>{e.name}</Radio>)
+                  type.options.map(e=><Radio disabled={e.disabled} key={e.value} value={e.value}>{e.name}</Radio>)
                 }
                 </Radio.Group>
                 </div>
@@ -264,3 +269,4 @@ function CreateParcelForm(props) {
 }
 
 export default CreateParcelForm;
+
