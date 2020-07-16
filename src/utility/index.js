@@ -83,13 +83,18 @@ export const clearCredential = () =>{
   */
 
  export const openNotificationWithIcon = (type, code, func) => {
-    console.log('[UTILITY]:erroCode',code)
-    notification[type]({
-      duration:0,
-      onClose: func || null,
-      message: ERROR_CODES ? ERROR_CODES[code].message : "Something went wrong",
-      description: ERROR_CODES ? ERROR_CODES[code].description : "Something went wrong",
-    });
+  console.log('[UTILITY]:erroCode',code)
+
+  const erCode = ERROR_CODES && ERROR_CODES[code] || undefined;
+  const msg = erCode && erCode.message || undefined;
+  const desc = erCode && erCode.description || undefined;
+  
+  notification[type]({
+    duration:0,
+    onClose: func || null,
+    message: msg || "Something went wrong",
+    description: desc || "Something went wrong",
+  });
 };
 
 export const openNotificationWithDuration = (type, code, func) => {
