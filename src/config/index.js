@@ -1,8 +1,8 @@
 export const config = {
-    _BASE_URL_L:"http://192.168.0.105:8000",
-    _BASE_URL:"https://movon-backend-dev.tk",
-    api_domain: 'http://ec2-52-74-225-236.ap-southeast-1.compute.amazonaws.com:8000',
-    BASE_URL:'https://movon.com.ph/server',
+    _BASE_URL_local:"http://192.168.0.105:8000",
+    BASE_URL:"https://movon-backend-dev.tk",
+    _api_domain: 'http://ec2-52-74-225-236.ap-southeast-1.compute.amazonaws.com:8000',
+    _BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created', 
         2:'intransit', 
@@ -11,7 +11,7 @@ export const config = {
         5:'delivered'
     },
     ticket:{
-        totalCopy:5
+        totalCopy:6
     }
 }
 
@@ -35,6 +35,12 @@ export const ERROR_CODES = {
         description: "Please logout your account and login again."
     },
     403:{
+        module:'PARCEL',
+        code: 'PARCEL_PRICE_CONFIG_NOT_FOUND',
+        message: "Bus Configuration Error",
+        description: "No configuration found. Please contact Movon technical support!"
+    },
+    7003:{
         module:'PARCEL',
         code: 'PARCEL_PRICE_CONFIG_NOT_FOUND',
         message: "Bus Configuration Error",

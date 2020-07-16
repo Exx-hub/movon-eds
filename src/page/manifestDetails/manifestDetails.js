@@ -198,7 +198,10 @@ class ManifestDetails extends React.Component{
       fetching: true,
       currentView: TABLE_CARD_VIEW,
       searchValue:"",
-      status:0
+      status:0,
+      date: undefined,
+      startStationId:undefined, 
+      endStationId:undefined,
     }
     this.printEl = React.createRef();
     window.addEventListener("resize", (e) => {
@@ -210,27 +213,38 @@ class ManifestDetails extends React.Component{
   }
 
   componentDidMount(){
-    const data = this.props.location.state && this.props.location.state.data || undefined
-    if(!data){
+    const state = this.props.location.state && this.props.location.state.data || undefined
+    if(!state){
       this.props.history.push('/')
     }
-    const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-    const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
-    const movonBillOfLading = data[0].displayId;
-    const coyBillOfLading = data[0].billOfLading;
-    const routes1 = data[0].trips.startStationName
-    const routes2 = data[0].trips.endStationName
+    this.fetchManifest(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
+  }
 
-    this.setState({
-      tempParcelData: data,
-      parcelData: data,
-      departureTime,
-      arrivalTime,
-      movonBillOfLading,
-      coyBillOfLading,
-      routes: `${routes1} - ${routes2}`,
-      fetching: false
-    });
+  fetchManifest = (date,startStationId,endStationId) =>{
+    ManifestService.getManifestByDate(date, startStationId, endStationId)
+    .then(e=>{
+      let data = e.data;
+      const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
+      const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
+      const movonBillOfLading = data[0].displayId;
+      const coyBillOfLading = data[0].billOfLading;
+      const routes1 = data[0].trips.startStationName
+      const routes2 = data[0].trips.endStationName
+
+      this.setState({
+        date,
+        startStationId,
+        endStationId,
+        tempParcelData: data,
+        parcelData: data,
+        departureTime,
+        arrivalTime,
+        movonBillOfLading,
+        coyBillOfLading,
+        routes: `${routes1} - ${routes2}`,
+        fetching: false
+      });
+    })
   }
 
   onSiderChange = (name,value) => {
@@ -258,7 +272,6 @@ class ManifestDetails extends React.Component{
   }
 
   parseParcel = () => {
-    console.log('this.state.tempParcelData',this.state.tempParcelData)
     return this.state.tempParcelData ? this.state.tempParcelData.map((e, i) => {
       return {
         "key": i,
@@ -329,7 +342,6 @@ class ManifestDetails extends React.Component{
   }
 
   handleErrorNotification = (code) =>{
-    console.log('error',code)
     if(!code){
       notification['error']({
         message: "Server Error",
@@ -353,9 +365,7 @@ class ManifestDetails extends React.Component{
       console.log('onCheckIn e',e);
       const{data,success,errorCode}=e.data;
       if(success){
-        let routes = [...this.state.routes];
-        routes = routes.indexOf(e=>e.tripId == id)
-        this.props.history.push('/')
+        this.fetchManifest(this.state.date, this.state.startStationId, this.setState.endStationId)
       }else{
         this.handleErrorNotification(errorCode)
       }

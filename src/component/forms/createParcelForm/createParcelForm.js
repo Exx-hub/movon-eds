@@ -1,14 +1,9 @@
 import React from 'react';
-import { Row, Col, Radio, Select, Space } from 'antd';
+import { Row, Col, Radio, Select } from 'antd';
 import './createParcelForm.scss'
 import {InputView} from '../../input' 
-import {getUser} from '../../../utility'
 
 const { Option } = Select;
-
-const USER = getUser();
-const externalCompany = USER && USER.busCompanyId.externalCompany;
-const enalbeBicolIsarogWays = externalCompany === 2;
 
 function InputBox(props){
 
@@ -124,10 +119,11 @@ function CreateParcelForm(props) {
 
               <InputBox 
                 detail={senderEmail}
-                showError={senderEmail.hasError || false}
                 onChange={props.onChange}
                 title="Sender Email"
+                onBlur={()=>props.onBlur(senderEmail.name)}
                 errorMessage="Invalid email"
+                showError={senderEmail.hasError || false}
                 placeholder="Sender Email" />
                 
             </div>
@@ -158,6 +154,7 @@ function CreateParcelForm(props) {
                 placeholder="" />
 
               <InputBox
+                onBlur={()=>props.onBlur(recieverEmail.name)}
                 detail={recieverEmail}
                 onChange={props.onChange}
                 title="Reciever Email"
@@ -175,7 +172,7 @@ function CreateParcelForm(props) {
                 <div className={["radio-button-group"]}>
                 <Radio.Group value={type.value} onChange={props.onTypeChange}>
                 {
-                  type.options.map(e=><Radio key={e.value} value={e.value}>{e.name}</Radio>)
+                  type.options.map(e=><Radio disabled={e.disabled} key={e.value} value={e.value}>{e.name}</Radio>)
                 }
                 </Radio.Group>
                 </div>
@@ -228,13 +225,14 @@ function CreateParcelForm(props) {
             </Col>
 
             <Col span={12} className={["gutter-row"]}>
-              { enalbeBicolIsarogWays && <InputBox 
+            
+              <InputBox 
                 disabled={true}
                 type="number"
                 detail={packageInsurance}
                 onChange={props.onChange}
-                placeholder="Insurance: 10%" 
-                title="Insurance: 10%" />}
+                placeholder={packageInsurance.placeholder || "Insurance: 10%" }
+                title={packageInsurance.title || "Insurance: 10%"} />
 
               <InputBox
                 type="number"
@@ -264,3 +262,4 @@ function CreateParcelForm(props) {
 }
 
 export default CreateParcelForm;
+

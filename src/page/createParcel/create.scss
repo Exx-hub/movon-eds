@@ -112,6 +112,19 @@
     display: none;
   }
 
+  .center-horizontal-space-between{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    justify-items: center;
+  }
+
+  .checkbox-container{
+    display: flex;
+    align-self: center;
+    padding: 1rem;
+  } 
+
 }
 
 
