@@ -335,6 +335,7 @@ class CreateParcel extends React.Component {
    
     const stationId = USER && USER.assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
+      console.log('trips',e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data.trips){
@@ -351,14 +352,14 @@ class CreateParcel extends React.Component {
                 companyId:e.busCompanyId._id
               })
             })
+            _myOption.push({
+              name:e.endStation.name,
+              value:e.endStation._id,
+              startStationId:e.startStation._id,
+              companyId:e.busCompanyId._id
+            })
           })
-          _myOption.push({
-            name:data.trips.data[0].endStation.name,
-            value:data.trips.data[0].endStation._id,
-            startStationId:data.trips.data[0].startStation._id,
-            companyId:data.trips.data[0].busCompanyId._id
-          })
-
+         
           let clean=[]
           _myOption = _myOption.filter(e=>{
             if(!clean.includes(e.value)){
