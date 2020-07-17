@@ -5,6 +5,7 @@ import {Space} from 'antd';
 import movon from '../../assets/movon3.png';
 import {config} from '../../config'
 import moment from 'moment'
+import {getUser} from '../../utility'
 //import bicol from '../../assets/bicol.png'
 
 const TicketDetails = (props) =>{
@@ -127,7 +128,12 @@ const SpCopy = (props) =>{
 
 const CompanyCopy = (props) =>{
     if(props){
-        const quantity = config.ticket.totalCopy;
+        const USER = getUser();
+        let noOfStickerCopy = config.ticket.totalCopy;
+        if(USER){
+            noOfStickerCopy = USER.busCompanyId && USER.busCompanyId.config && USER.busCompanyId.config.parcel.noOfStickerCopy;
+        }
+        const quantity = noOfStickerCopy || config.ticket.totalCopy;
         const scanCode = props.value.subParcels[0].subParcelCode;
         
         let _view=[]

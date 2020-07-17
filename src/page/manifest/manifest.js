@@ -86,6 +86,7 @@ class Manifest extends React.Component {
       if(!success && errorCode){
         this.handleErrorNotification(errorCode)
       }else{
+
         const options = data.map((e,i)=>{
           return{
             data: e,
@@ -93,6 +94,10 @@ class Manifest extends React.Component {
             name: `${e.startStationName} - ${e.endStationName}`
           }
         })
+
+        console.log('data',data)
+        console.log('options',options)
+
         this.setState({
           routes:data, 
           selectedRoute:data[0],
