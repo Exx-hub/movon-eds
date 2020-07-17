@@ -22,7 +22,6 @@ import {
   debounce,
 } from "../../utility";
 
-const USER = getUser();
 const { Content, Sider, Header } = Layout;
 
 const MIN_WIDTH = 800;
@@ -99,8 +98,9 @@ const getReviewDetails = (state) =>{
 }
 
 const parceResponseData = (data) =>{
-  const logo = USER.busCompanyId.logo;
-  const name = USER.busCompanyId.name
+  const USER = getUser();
+  const logo = USER && USER.busCompanyId.logo || undefined;
+  const name = USER && USER.busCompanyId.name
   
   const endStationName = data.trips ? data.trips.endStationName : data.endStation.name
   const startStationName = data.trips ? data.trips.startStationName : data.startStation.name
@@ -310,8 +310,11 @@ class CreateParcel extends React.Component {
       });
     });
 
+    this.USER = getUser();
+    console.log('USER',getUser())
+
     let {details,declaredValueAdditionFee, noOfStickerCopy} = {...this.state};
-    const busCompanyId = USER && USER.busCompanyId || undefined
+    const busCompanyId = this.USER && this.USER.busCompanyId || undefined
     if(busCompanyId){
       const externalCompany = busCompanyId.externalCompany;
       const parcel = busCompanyId.config.parcel || undefined;
@@ -320,7 +323,7 @@ class CreateParcel extends React.Component {
         declaredValueAdditionFee = addFee ? addFee : declaredValueAdditionFee;
         noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
         if(addFee){
-          let title = `Additional Fee: ${addFee} %` 
+          let title = `Additional Fee: ${addFee}` 
           let packageInsurance = {...details.packageInsurance, ...{title, placeholder: "Additional Fee"}}
            details = {...details, ...{packageInsurance}}
         }
@@ -333,7 +336,7 @@ class CreateParcel extends React.Component {
       })
     }
    
-    const stationId = USER && USER.assignedStation._id;
+    const stationId = this.USER && this.USER.assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
       console.log('trips',e)
       const{data, success, errorCode}=e.data;
@@ -342,6 +345,7 @@ class CreateParcel extends React.Component {
           const details = {...this.state.details}
           let _myOption =[]
           data.trips.data.map(e=>{
+
             e.route.map(ee=>{
               const name = ee.stop.name
               const id = ee.stop._id
@@ -349,14 +353,26 @@ class CreateParcel extends React.Component {
                 name,
                 value:id,
                 startStationId:e.startStation._id,
-                companyId:e.busCompanyId._id
+                startStationName: e.startStation.name,
+                companyId:e.busCompanyId._id,
+                companyName: e.busCompanyId.name,
+                tripStartDateTime: e.tripStartDateTime,
+                busModel:e.bus.busModel,
+                busId:e.bus.busId,
+                tripsId:e._id
               })
             })
             _myOption.push({
               name:e.endStation.name,
               value:e.endStation._id,
               startStationId:e.startStation._id,
-              companyId:e.busCompanyId._id
+              startStationName: e.startStation.name,
+              companyId:e.busCompanyId._id,
+              companyName: e.busCompanyId.name,
+              tripStartDateTime: e.tripStartDateTime,
+              busModel:e.bus.busModel,
+              busId:e.bus.busId,
+              tripsId:e._id
             })
           })
          
@@ -368,8 +384,12 @@ class CreateParcel extends React.Component {
             }
           })
 
+          console.log('data.trips.data', data.trips.data)
+          console.log('data.trips.data')
+
           const destination = {...details.destination, ...{options:_myOption}}
           this.setState({
+            tripOption:_myOption,
             trips:data.trips.data, 
             details:{...details, ...{destination}}
           })
@@ -646,8 +666,8 @@ class CreateParcel extends React.Component {
       type 
     }= this.state.details
 
-    const busCompanyId =  USER && USER.busCompanyId._id || undefined;
-    const startStation =  USER && USER.assignedStation._id || undefined;
+    const busCompanyId =  this.USER && this.USER.busCompanyId._id || undefined;
+    const startStation =  this.USER && this.USER.assignedStation._id || undefined;
 
     const endStationOption = destination.options.filter(e=>e.value === destination.value)[0]
     const endStation = endStationOption ? endStationOption.data.endStation._id : undefined;
@@ -823,6 +843,7 @@ class CreateParcel extends React.Component {
                   this.gotoNextStep();
                 }
               })}
+              tripOption={this.state.tripOption}
               tripShedules={this.state.trips}
               windowSize={this.state.width}
             />
