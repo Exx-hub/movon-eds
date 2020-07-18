@@ -754,6 +754,7 @@ class CreateParcel extends React.Component {
   onSelectChange = (value)=>{
     let details = {...this.state.details};
     const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
+    console.log('selectedDestination',selectedDestination)
     const destination = {...details.destination, ...{ value, accepted:true}}
     details = {...details, ...{destination}}
     this.setState({ details, selectedDestination });
@@ -838,11 +839,15 @@ class CreateParcel extends React.Component {
         view = (
           <>
             <ScheduledTrips
-              onSelect={(selectedTrip)=>this.setState({selectedTrip},()=>{
-                if (this.validateStep()) {
-                  this.gotoNextStep();
-                }
-              })}
+              onSelect={(selectedTrip)=>{
+                console.log('selectedTrips',selectedTrip)
+                this.setState({selectedTrip},()=>{
+                  if (this.validateStep()) {
+                    this.gotoNextStep();
+                  }
+                });
+              }}
+              selectedDestination={this.state.selectedDestination}
               tripOption={this.state.tripOption}
               tripShedules={this.state.trips}
               windowSize={this.state.width}

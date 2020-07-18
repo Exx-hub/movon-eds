@@ -12,9 +12,10 @@ export const ScheduledTrips = (props)=>{
                     <h2>Select Trip</h2>
                     <span>{moment().format("hh:ss A - MMM DD, YYYY")}</span>
                 </div>
-                {
+                <DetailsView data={props.selectedDestination} {...props} onClick={()=>props.onSelect(props.selectedDestination)}/>
+                {/* {
                     props.tripOption.map((e,i)=>(<DetailsView data={e} {...props} key={i} onClick={()=>props.onSelect(e)}/>))
-                }
+                } */}
             </div>
         </div>)
 }
@@ -54,7 +55,7 @@ const DetailsView = (props) =>{
                             <span className="company-text">{companyName}</span>
                             <span className="bus-model-text">{busModel}</span>
                             <span className="departure-time-title">Departure Time</span>
-                            <span className="departure-time">{tripStartDateTime}</span>
+                            <span className="departure-time">{moment(tripStartDateTime).format("MMM DD, YYYY hh:mm A")}</span>
                         </div>
                     </div>
                 </div>
