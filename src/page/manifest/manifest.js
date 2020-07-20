@@ -13,15 +13,20 @@ const dateFormat = "MMM DD, YYYY";
 
 const TableRoutesView = (props) =>{
   const columns = [
-  {
-    title: 'Origin',
-    dataIndex: 'origin',
-    defaultSortOrder: 'descend',
-  },
-  {
+  // {
+  //   title: 'Origin',
+  //   dataIndex: 'origin',
+  //   defaultSortOrder: 'descend',
+  // },
+  // {
+  //   title: 'Destination',
+  //   dataIndex: 'destination',
+  //   defaultSortOrder: 'descend',
+  // },
+   {
     title: 'Destination',
-    dataIndex: 'destination',
-    defaultSortOrder: 'descend',
+    dataIndex: 'name',
+    defaultSortOrder: 'name',
   },
   {
     title: 'Departure Date',
@@ -82,7 +87,6 @@ class Manifest extends React.Component {
       ManifestService
       .getRoutes()
       .then(e=>{
-        console.log('e',e)
         const{errorCode,success,data}=e.data;
         if(!success && errorCode){
           this.handleErrorNotification(errorCode)
@@ -95,9 +99,6 @@ class Manifest extends React.Component {
             name: e.name
           }
         })
-
-        console.log('data',data)
-        console.log('options',options)
 
         this.setState({
           routes:data, 
@@ -181,6 +182,7 @@ class Manifest extends React.Component {
         date:  moment(e._id).format('MMM DD, YYYY hh:mm A') ,
         count: e.count,
         origin: data.startStationName,
+        name: data.name,
         destination: data.endStationName,
         startStationId:data.start,
         endStationId:data.end
