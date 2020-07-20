@@ -1,6 +1,6 @@
 export const config = {
     BASE_URL:"https://movon-backend-dev.tk",
-    BASE_URL_production:'https://movon.com.ph/server',
+    _BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created', 
         2:'intransit', 
@@ -12,6 +12,8 @@ export const config = {
         totalCopy:6
     }
 }
+
+console.log('NODE_ENV',process)
 
 export const ERROR_CODES = {
     7002:{
