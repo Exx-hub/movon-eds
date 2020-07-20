@@ -1,5 +1,6 @@
 export const config = {
-    BASE_URL:'https://movon.com.ph/server',
+    BASE_URL:"https://movon-backend-dev.tk",
+    BASE_URL_production:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created', 
         2:'intransit', 
