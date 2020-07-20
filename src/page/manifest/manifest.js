@@ -82,16 +82,17 @@ class Manifest extends React.Component {
       ManifestService
       .getRoutes()
       .then(e=>{
-      const{errorCode,success,data}=e.data;
-      if(!success && errorCode){
-        this.handleErrorNotification(errorCode)
-      }else{
+        console.log('e',e)
+        const{errorCode,success,data}=e.data;
+        if(!success && errorCode){
+          this.handleErrorNotification(errorCode)
+        }else{
 
         const options = data.map((e,i)=>{
           return{
             data: e,
             value: i,
-            name: `${e.startStationName} - ${e.endStationName}`
+            name: e.name
           }
         })
 
@@ -122,10 +123,9 @@ class Manifest extends React.Component {
     }
 
     if(code === 1000){
-      openNotificationWithIcon('error', code, ()=>{
-        clearCredential();
-        this.props.history.push('/')
-      })
+      openNotificationWithIcon('error', code);
+      clearCredential();
+      this.props.history.push('/')
       return;
     }
     openNotificationWithIcon('error', code);

@@ -9,6 +9,7 @@ import ManifestService from '../../service/Manifest';
 const { Header } = Layout
 
 function TableView(props) {
+  const busCompanyName = (props && props.dataSource.length > 0) ? props.dataSource[0].busCompanyName : "";
   const columns = [
     {
       title: () => (<span>(Movon) <br /> Bill of Lading</span>),
@@ -16,7 +17,7 @@ function TableView(props) {
       key: 'billOfLading1'
     },
     {
-      title: () => (<span>(BITS) <br /> Bill of Lading</span>),
+      title: () => (<span>({busCompanyName}) <br /> Bill of Lading</span>),
       dataIndex: 'companyBillOfLading',
       key: 'billOfLading2',
     },
@@ -26,19 +27,21 @@ function TableView(props) {
       key: 'description',
     },
     {
-      title: 'Wt.',
+      title: 'Weight',
       dataIndex: 'weight',
       key: 'weight',
+      render:(text)=>(<>{text}{Number(text)>1 ? " kgs." : " kg."}</>)
     },
     {
-      title: 'Qty.',
+      title: 'Quantity',
       dataIndex: 'qty',
       key: 'qty',
     },
     {
-      title: 'Amt.',
+      title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
+      render:(text)=>(<>₱ {parseFloat(text).toFixed(2)}</>)
     },
     {
       title: 'Status',
@@ -55,11 +58,11 @@ function TableView(props) {
       dataIndex: 'reciepient',
       key: 'reciepient',
     },
-    {
-      title: 'Created',
-      dataIndex: 'created',
-      key: 'created',
-    },
+    // {
+    //   title: 'Created',
+    //   dataIndex: 'created',
+    //   key: 'created',
+    // },
   ];
   return (<Col span={24} style={{ padding: '.25rem' }}>
     <Table 
@@ -113,7 +116,7 @@ class PrintManifestDetails extends React.Component {
           sender: e.senderInfo.senderName,
           reciepient: e.recipientInfo.recipientName,
           status: e.status,
-          created: e.deliveryPersonInfo.deliveryPersonName,
+          busCompanyName: e.busCompanyName,
         }
       })
 

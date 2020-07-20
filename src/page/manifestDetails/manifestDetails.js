@@ -221,8 +221,10 @@ class ManifestDetails extends React.Component{
   }
 
   fetchManifest = (date,startStationId,endStationId) =>{
+
     ManifestService.getManifestByDate(date, startStationId, endStationId)
     .then(e=>{
+
       let data = e.data;
       const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
       const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
@@ -244,6 +246,7 @@ class ManifestDetails extends React.Component{
         routes: `${routes1} - ${routes2}`,
         fetching: false
       });
+
     })
   }
 
@@ -351,10 +354,9 @@ class ManifestDetails extends React.Component{
     }
 
     if(code === 1000){
-      openNotificationWithIcon('error', code, ()=>{
-        clearCredential();
-        this.props.history.push('/')
-      })
+      openNotificationWithIcon('error', code);
+      clearCredential();
+      this.props.history.push('/')
       return;
     }
     openNotificationWithIcon('error', code);

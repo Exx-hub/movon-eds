@@ -311,7 +311,6 @@ class CreateParcel extends React.Component {
     });
 
     this.USER = getUser();
-    console.log('USER',getUser())
 
     let {details,declaredValueAdditionFee, noOfStickerCopy} = {...this.state};
     const busCompanyId = this.USER && this.USER.busCompanyId || undefined
@@ -338,7 +337,6 @@ class CreateParcel extends React.Component {
    
     const stationId = this.USER && this.USER.assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
-      console.log('trips',e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data.trips){
@@ -346,22 +344,6 @@ class CreateParcel extends React.Component {
           let _myOption =[]
           data.trips.data.map(e=>{
 
-            e.route.map(ee=>{
-              const name = ee.stop.name
-              const id = ee.stop._id
-              _myOption.push({
-                name,
-                value:id,
-                startStationId:e.startStation._id,
-                startStationName: e.startStation.name,
-                companyId:e.busCompanyId._id,
-                companyName: e.busCompanyId.name,
-                tripStartDateTime: e.tripStartDateTime,
-                busModel:e.bus.busModel,
-                busId:e.bus.busId,
-                tripsId:e._id
-              })
-            })
             _myOption.push({
               name:e.endStation.name,
               value:e.endStation._id,
@@ -374,6 +356,7 @@ class CreateParcel extends React.Component {
               busId:e.bus.busId,
               tripsId:e._id
             })
+            
           })
          
           let clean=[]
@@ -383,9 +366,6 @@ class CreateParcel extends React.Component {
               return true
             }
           })
-
-          console.log('data.trips.data', data.trips.data)
-          console.log('data.trips.data')
 
           const destination = {...details.destination, ...{options:_myOption}}
           this.setState({
@@ -412,10 +392,9 @@ class CreateParcel extends React.Component {
     }
 
     if(code === 1000){
-      openNotificationWithIcon('error', code, ()=>{
-        clearCredential();
-        this.props.history.push('/')
-      })
+      openNotificationWithIcon('error', code);
+      clearCredential();
+      this.props.history.push('/');
       return;
     }
     openNotificationWithIcon('error', code);
@@ -754,7 +733,6 @@ class CreateParcel extends React.Component {
   onSelectChange = (value)=>{
     let details = {...this.state.details};
     const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
-    console.log('selectedDestination',selectedDestination)
     const destination = {...details.destination, ...{ value, accepted:true}}
     details = {...details, ...{destination}}
     this.setState({ details, selectedDestination });
@@ -840,7 +818,6 @@ class CreateParcel extends React.Component {
           <>
             <ScheduledTrips
               onSelect={(selectedTrip)=>{
-                console.log('selectedTrips',selectedTrip)
                 this.setState({selectedTrip},()=>{
                   if (this.validateStep()) {
                     this.gotoNextStep();
