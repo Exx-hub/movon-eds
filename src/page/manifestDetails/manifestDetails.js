@@ -369,6 +369,7 @@ class ManifestDetails extends React.Component{
   }
 
   onCheckIn = (id)=>{
+    console.log('checkin id',id)
     ManifestService.checkParcelById(id).then(e=>{
       window.location.reload(true);
     })
