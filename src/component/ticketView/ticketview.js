@@ -24,6 +24,7 @@ const TicketDetails = (props) =>{
         startStationName,
         tripCode,
         createdAt,
+        totalPrice,
     }= props.value;
 
     const code = props.code
@@ -45,18 +46,68 @@ const TicketDetails = (props) =>{
             packageWeight:{ value:packageWeight, name:'Chargeable wt.'},
         }
     
-        const iterate = (param) =>{
-            const view = Object.keys(param).map((e,i)=>{
-                return(<Space className="details-txt">
-                            <h4 style={{width:'120px'}}>{param[e].name}</h4>
-                            <h4>:</h4>
-                            <h4>{param[e].value}</h4>
-                        </Space>)
-            });  
-            return view;
-        }
+        // const iterate = (param) =>{
+        //     const view = Object.keys(param).map((e,i)=>{
+        //         return(<Space className="details-txt">
+        //                     <h4 style={{width:'120px'}}>{param[e].name}</h4>
+        //                     <h4>:</h4>
+        //                     <h4>{param[e].value}</h4>
+        //                 </Space>)
+        //     });  
+        //     return view;
+        // }
         //const packageInfoLabel = [<> <h5 style={{fontSize:'15px', paddingTop:'.5rem', paddingBottom:'.2rem'}}>Package Info:</h5> </>]
-        return [iterate(list), iterate(packageInfo)]
+        
+        const View = (<>
+        <Space className="details-txt">
+            <h4 className="span-description" style={{width:'120px'}}>Way Bill</h4>
+            <h4>:</h4>
+                <h4>{billOfLading}</h4>
+        </Space>
+        <Space className="details-txt">
+            <h4 className="span-description" style={{width:'120px'}}>Trip Code</h4>
+            <h4>:</h4>
+                <h4>{tripCode}</h4>
+        </Space>
+        <Space className="details-txt">
+            <h4 className="span-description" style={{width:'120px'}}>Sender</h4>
+            <h4>:</h4>
+                <h4>{senderName}</h4>
+        </Space>
+        <Space className="details-txt">
+            <h4 className="span-description" style={{width:'120px'}}>Mobile Number</h4>
+            <h4>:</h4>
+                <h4>{billOfLading}</h4>
+        </Space>
+        <Space className="details-txt">
+            <h4 className="span-description" style={{width:'120px'}}>Receiver</h4>
+            <h4>:</h4>
+                <h4>{recipientName}</h4>
+        </Space>
+        <Space className="details-txt" style={{margin:0}}>
+            <h4 className="span-description" style={{width:'120px'}}>Mobile Number</h4>
+            <h4>:</h4>
+                <h4>{recipientPhone}</h4>
+        </Space>
+        <br />
+        <Space className="details-txt">
+            <h4 className="span-description" style={{width:'120px'}}>Origin</h4>
+            <h4>:</h4>
+                <h4>{startStationName}</h4>
+        </Space>
+        <Space className="details-txt">
+            <h4 className="span-description" style={{width:'120px'}}>Price</h4>
+            <h4>:</h4>
+            <h4>₱{parseFloat(totalPrice).toFixed(2)}</h4>
+        </Space>
+        <Space direction="horizontal"  className="details-txt">
+        <h4 className="span-description">Quantity | Weight</h4>
+        <h4>: &nbsp; {packageQty} {packageQty.length > 1 ? "pkgs." : "pkg"} &nbsp; - &nbsp; {packageWeight} {packageWeight.length > 1 ? "kgs." : "kg"}</h4>
+        </Space>
+        </>)
+        
+        
+        return View
     }
 
     return (

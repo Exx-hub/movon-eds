@@ -1,6 +1,7 @@
 export const config = {
+    //BASE_URL:"http://192.168.0.103:8000",
     BASE_URL:"https://movon-backend-dev.tk",
-    _BASE_URL:'https://movon.com.ph/server',
+    // _BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created', 
         2:'intransit', 

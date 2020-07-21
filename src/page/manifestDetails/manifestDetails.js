@@ -169,7 +169,7 @@ const ManifestDetailsTable = (props) =>{
           disabled={ record.travelStatus.toLowerCase() !== 'created'}
           size="small"
           style={{color:'white', fontWeight:'200', background:`${ record.travelStatus.toLowerCase() === 'created' ? 'teal' : 'gray'}`}}
-          onClick={() => props.onCheckIn(record.tripId)}> Check In </Button>
+          onClick={() => props.onCheckIn(record._id)}> Check In </Button>
         </Space>),
     },
   ];
@@ -224,7 +224,6 @@ class ManifestDetails extends React.Component{
 
     ManifestService.getManifestByDate(date, startStationId, endStationId)
     .then(e=>{
-
       let data = e.data;
       const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
       const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
@@ -322,7 +321,8 @@ class ManifestDetails extends React.Component{
       tripDate: data.trips.tripStartDateTime,
       scanCode: data.scanCode,
       createdAt: data.createdAt,
-      subParcels: data.subParcels
+      subParcels: data.subParcels,
+      totalPrice: data.priceDetails.totalPrice
     }
   }
 
@@ -363,14 +363,8 @@ class ManifestDetails extends React.Component{
   }
 
   onCheckIn = (id)=>{
-    ManifestService.checkInNewParcel(id).then(e=>{
-      console.log('onCheckIn e',e);
-      const{data,success,errorCode}=e.data;
-      if(success){
-        this.fetchManifest(this.state.date, this.state.startStationId, this.setState.endStationId)
-      }else{
-        this.handleErrorNotification(errorCode)
-      }
+    ManifestService.checkParcelById(id).then(e=>{
+      window.location.reload(true);
     })
   }
 

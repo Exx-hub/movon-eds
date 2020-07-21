@@ -88,7 +88,24 @@ const ManifestService = {
                 'x-auth-token' : getToken()
             }
         })
-    }
+    },
+
+    checkParcelById: (parcelId) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/update-status`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            },
+            data:{
+                parcelId
+            }
+        })
+    },
+
+    
 
     
 }
