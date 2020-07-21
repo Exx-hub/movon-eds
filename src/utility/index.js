@@ -90,7 +90,6 @@ export const clearCredential = () =>{
   const desc = erCode && erCode.description || undefined;
   
   notification[type]({
-    duration:0,
     onClose: func || null,
     message: msg || "Something went wrong",
     description: desc || "Something went wrong",

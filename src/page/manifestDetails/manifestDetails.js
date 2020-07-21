@@ -224,10 +224,8 @@ class ManifestDetails extends React.Component{
 
     ManifestService.getManifestByDate(date, startStationId, endStationId)
     .then(e=>{
-      console.log('getManifestByDate e',e)
-      const{success, errorCode, data}=e.data;
-
-      if(success){
+      console.log('getManifestByDate data',e.data)
+      if(e.data){
         let data = e.data;
         const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
         const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
@@ -250,7 +248,7 @@ class ManifestDetails extends React.Component{
           fetching: false
         });
       }else{
-        this.handleErrorNotification(errorCode)
+        //this.handleErrorNotification(errorCode)
       }
       
     })
@@ -352,6 +350,7 @@ class ManifestDetails extends React.Component{
   }
 
   handleErrorNotification = (code) =>{
+    console.log('error',code)
     if(!code){
       notification['error']({
         message: "Server Error",
