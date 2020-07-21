@@ -214,7 +214,7 @@ class ManifestDetails extends React.Component{
 
   componentDidMount(){
     const state = this.props.location.state && this.props.location.state.data || undefined
-    if(!state){
+    if(!state.date){
       this.props.history.push('/')
     }
     this.fetchManifest(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
@@ -370,6 +370,7 @@ class ManifestDetails extends React.Component{
 
   onCheckIn = (id)=>{
     ManifestService.checkParcelById(id).then(e=>{
+      console.log('e checkParcelById',e)
       window.location.reload(true);
     })
   }
