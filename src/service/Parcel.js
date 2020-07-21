@@ -165,6 +165,18 @@ const ParcelService = {
                 'x-auth-token' : getToken()
             }
         })
+    },
+
+    getFiveStarConvenienceFee: (quantity) => {
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/convenience-fee?quantity=${quantity}`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
     }
 
 }

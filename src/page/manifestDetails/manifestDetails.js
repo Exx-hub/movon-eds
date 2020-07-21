@@ -204,18 +204,23 @@ class ManifestDetails extends React.Component{
       endStationId:undefined,
     }
     this.printEl = React.createRef();
+   
+  }
+
+  componentDidMount(){
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,
         width: e.currentTarget.innerWidth,
       });
     });
-  }
 
-  componentDidMount(){
     const state = this.props.location.state && this.props.location.state.data || undefined
+    console.log('state',state)
+
     if(!state.date){
       this.props.history.push('/')
+      return
     }
     this.fetchManifest(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
   }
@@ -225,6 +230,11 @@ class ManifestDetails extends React.Component{
     ManifestService.getManifestByDate(date, startStationId, endStationId)
     .then(e=>{
       console.log('getManifestByDate data',e.data)
+      if(!e.data.success && e.data.errorCode){
+        this.handleErrorNotification(e.data.errorCode)
+        return;
+      }
+
       if(e.data){
         let data = e.data;
         const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
@@ -247,8 +257,6 @@ class ManifestDetails extends React.Component{
           routes: `${routes1} - ${routes2}`,
           fetching: false
         });
-      }else{
-        //this.handleErrorNotification(errorCode)
       }
       
     })

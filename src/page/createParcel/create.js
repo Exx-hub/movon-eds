@@ -630,17 +630,29 @@ class CreateParcel extends React.Component {
   };
 
   getConvinienceFee = (qty) =>{
-    ParcelService.getConvenienceFee(qty).then(res=>{
-      let details = {...this.state.details}
-      let systemFee= {...this.state.details.systemFee}
+
+    const updateState = (res) =>{
       const { success, data, errorCode } = res.data;
       if (success) {
+        let details = {...this.state.details}
+        let systemFee= {...this.state.details.systemFee}
         systemFee = Object.assign({},systemFee,{ value: data.convenienceFee })
         this.setState({ details: Object.assign(details,{systemFee}) })
       }else{
         this.handleErrorNotification(errorCode)
       }
-    })
+    }
+
+    if(this.USER 
+        && this.USER.busCompanyId 
+          && this.USER.busCompanyId.config 
+            && this.USER.busCompanyId.config.parcel 
+              && this.USER.busCompanyId.config.parcel.tag && this.USER.busCompanyId.config.parcel.tag === 'five-star'){
+                
+      ParcelService.getFiveStarConvenienceFee(qty).then(res=>updateState(res))
+      return;
+    }
+    ParcelService.getConvenienceFee(qty).then(res=>updateState(res));
   }
 
   computePrice = () =>{
