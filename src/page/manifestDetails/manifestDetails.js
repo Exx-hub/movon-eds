@@ -224,28 +224,35 @@ class ManifestDetails extends React.Component{
 
     ManifestService.getManifestByDate(date, startStationId, endStationId)
     .then(e=>{
-      let data = e.data;
-      const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-      const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
-      const movonBillOfLading = data[0].displayId;
-      const coyBillOfLading = data[0].billOfLading;
-      const routes1 = data[0].trips.startStationName
-      const routes2 = data[0].trips.endStationName
+      console.log('getManifestByDate e',e)
+      const{success, errorCode, data}=e.data;
 
-      this.setState({
-        date,
-        startStationId,
-        endStationId,
-        tempParcelData: data,
-        parcelData: data,
-        departureTime,
-        arrivalTime,
-        movonBillOfLading,
-        coyBillOfLading,
-        routes: `${routes1} - ${routes2}`,
-        fetching: false
-      });
-
+      if(success){
+        let data = e.data;
+        const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
+        const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
+        const movonBillOfLading = data[0].displayId;
+        const coyBillOfLading = data[0].billOfLading;
+        const routes1 = data[0].trips.startStationName
+        const routes2 = data[0].trips.endStationName
+  
+        this.setState({
+          date,
+          startStationId,
+          endStationId,
+          tempParcelData: data,
+          parcelData: data,
+          departureTime,
+          arrivalTime,
+          movonBillOfLading,
+          coyBillOfLading,
+          routes: `${routes1} - ${routes2}`,
+          fetching: false
+        });
+      }else{
+        this.handleErrorNotification(errorCode)
+      }
+      
     })
   }
 
