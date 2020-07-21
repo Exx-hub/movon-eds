@@ -497,10 +497,6 @@ class CreateParcel extends React.Component {
   
 
     if(name === 'senderName' || name === 'recieverName' ){
-
-      console.log('name',name)
-      console.log('value',details[name].value)
-
       let isValid = true;
       if(details[name].value){
         const fullName =  details[name].value.trim().split(" ");
