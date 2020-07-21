@@ -494,11 +494,14 @@ class CreateParcel extends React.Component {
       }}
     }
 
+  
+
     if(name === 'senderName' || name === 'recieverName' ){
       let isValid = true;
       if(details[name].value){
-        const fullName =  details[name].value.split(" ");
+        const fullName =  details[name].value.trim().split(" ");
         isValid = fullName.length > 1;
+
         if(isValid){
           for(let i=0; i<fullName.length; i++){
             const validString = /^[A-Za-z]+$/.test(fullName[i]);
@@ -509,6 +512,9 @@ class CreateParcel extends React.Component {
           }
         }
       }
+
+      console.log('isValid',isValid)
+
       return {...details[name], ...{
         accepted: isValid,
         errorMessage: !isValid ? "Invalid name!" : ""
