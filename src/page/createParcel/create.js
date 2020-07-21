@@ -130,7 +130,8 @@ const parceResponseData = (data) =>{
     //tripDate: data.trips.tripStartDateTime,
     scanCode: data.scanCode,
     createdAt: data.createdAt,
-    subParcels: data.subParcels
+    subParcels: data.subParcels,
+    totalPrice: data.priceDetails.totalPrice
   }
 }
 
