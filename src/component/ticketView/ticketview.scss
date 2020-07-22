@@ -1,7 +1,6 @@
 .component-ticketview-container{
     display: flex;
     flex-direction: column;
-    padding:10px;
     //border: 1px dashed #333;
     width: 5.4in;
     height: 100%;
@@ -24,8 +23,9 @@
         border:1px dashed gray;
         display: flex;
         flex-direction: column;
-        width: 100%;
-        margin-bottom: 10px;
+        width: 5.4in;
+        height: 4.0416in;
+
         h3{
             margin-left: 1rem;
         }
@@ -136,13 +136,14 @@
     }
 
     .details-txt{
-        font-size: 1em;
+        font-size: 1.15em;
         height: 20px;
         color: black;
+        height: 25px;
 
         .span-description {
             width: 100px !important;
-            font-size: .7em;
+            font-size: .6em;
           }
 
         // h5{

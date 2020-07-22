@@ -208,6 +208,12 @@ class ManifestDetails extends React.Component{
   }
 
   componentDidMount(){
+    const state = this.props.location.state && this.props.location.state.data || undefined
+    if(!(state && state.date)){
+      this.props.history.push('/')
+      return
+    }
+
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,
@@ -215,13 +221,6 @@ class ManifestDetails extends React.Component{
       });
     });
 
-    const state = this.props.location.state && this.props.location.state.data || undefined
-    console.log('state',state)
-
-    if(!state.date){
-      this.props.history.push('/')
-      return
-    }
     this.fetchManifest(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
   }
 
