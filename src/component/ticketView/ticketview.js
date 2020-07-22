@@ -30,21 +30,21 @@ const TicketDetails = (props) =>{
     const code = props.code
 
     const Populate = () =>{
-        const list = {
-            billOfLading:{ value:billOfLading, name:'Bill Of Lading'},
-            tripCode:{ value:tripCode, name:'Trip Code'},
-            senderName:{ value:senderName, name:'Sender'},
-            senderPhone:{ value:senderPhone, name:'Mobile Number'},
-            recipientName:{ value:recipientName, name:'Receiver'},
-            recipientPhone:{ value:recipientPhone, name:'Mobile Number'}
-        };
-        const packageInfo= {
-            packageName:{ value:packageName, name:'Package Name'},
-            quantity:{ value: packageQty, name:'Quantity'},
-            origin:{ value:startStationName, name:'Origin'},
-            destination:{ value:endStationName, name:'destination'},
-            packageWeight:{ value:packageWeight, name:'Chargeable wt.'},
-        }
+        // const list = {
+        //     billOfLading:{ value:billOfLading, name:'Bill Of Lading'},
+        //     tripCode:{ value:tripCode, name:'Trip Code'},
+        //     senderName:{ value:senderName, name:'Sender'},
+        //     senderPhone:{ value:senderPhone, name:'Mobile Number'},
+        //     recipientName:{ value:recipientName, name:'Receiver'},
+        //     recipientPhone:{ value:recipientPhone, name:'Mobile Number'}
+        // };
+        // const packageInfo= {
+        //     packageName:{ value:packageName, name:'Package Name'},
+        //     quantity:{ value: packageQty, name:'Quantity'},
+        //     origin:{ value:startStationName, name:'Origin'},
+        //     destination:{ value:endStationName, name:'destination'},
+        //     packageWeight:{ value:packageWeight, name:'Chargeable wt.'},
+        // }
     
         // const iterate = (param) =>{
         //     const view = Object.keys(param).map((e,i)=>{
@@ -77,7 +77,7 @@ const TicketDetails = (props) =>{
         <Space className="details-txt">
             <h4 className="span-description" style={{width:'120px'}}>Mobile Number</h4>
             <h4>:</h4>
-                <h4>{billOfLading}</h4>
+                <h4>{senderPhone}</h4>
         </Space>
         <Space className="details-txt">
             <h4 className="span-description" style={{width:'120px'}}>Receiver</h4>
@@ -156,7 +156,8 @@ const PCopy = (props) =>{
 
         let _view=[]
         for(let i=0; i < quantity; i++){
-            _view.push(<TicketDetails key={i} {...props} code={scanCode}> {i+1} of {quantity}</TicketDetails>)
+            _view.push(<TicketDetails key={i} {...props} code={scanCode} /> )
+            //{i+1} of {quantity}</TicketDetails>)
         }
         return _view;
     }
@@ -166,11 +167,12 @@ const PCopy = (props) =>{
 const SpCopy = (props) =>{
     if(props){
         const quantity = props.value.packageQty;
-        const scanCode = props.value.subParcels[0].subParcelCode;
+       // const scanCode = props.value.subParcels[0].subParcelCode;
         
         let _view=[]
-        for(let i=0; i<quantity; i++){
-            _view.push(<TicketDetails key={i} {...props} code={scanCode} >  <span>{i+1} of {quantity}</span> </TicketDetails>)
+        for(let i=0; i<props.value.subParcels.length; i++){
+            const scanCode = props.value.subParcels[i].subParcelCode
+            _view.push(<TicketDetails key={i} {...props} code={scanCode} >  <span>{i+1} of {props.value.subParcels.length}</span> </TicketDetails>)
         }
         return _view;
     }
