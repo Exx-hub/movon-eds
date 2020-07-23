@@ -105,8 +105,6 @@ const TicketDetails = (props) =>{
         <h4>: &nbsp; {packageQty} {packageQty.length > 1 ? "pkgs." : "pkg"} &nbsp; - &nbsp; {packageWeight} {packageWeight.length > 1 ? "kgs." : "kg"}</h4>
         </Space>
         </>)
-        
-        
         return View
     }
 
@@ -157,7 +155,6 @@ const PCopy = (props) =>{
         let _view=[]
         for(let i=0; i < quantity; i++){
             _view.push(<TicketDetails key={i} {...props} code={scanCode} /> )
-            //{i+1} of {quantity}</TicketDetails>)
         }
         return _view;
     }
