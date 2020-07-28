@@ -998,16 +998,28 @@ class CreateParcel extends React.Component {
     }).then(e=>{
       console.log('getMatrixComputation e',e)
       const{data, success, errorCode} = e.data
-        if(success){
-          const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
-          const packageInsurance = {
-            ...details.packageInsurance,
-            ...{ value: parseFloat(data.declaredRate).toFixed(2) },
-          };
-          this.setState({details:{...details, ...{shippingCost, packageInsurance}}})
-          return;
-        }
+
+      if(!success && errorCode){
         this.handleErrorNotification(errorCode)
+        return;
+      }
+      
+
+      if(success && data){
+        const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
+        const packageInsurance = {
+          ...details.packageInsurance,
+          ...{ value: parseFloat(data.declaredRate).toFixed(2) },
+        };
+        this.setState({details:{...details, ...{shippingCost, packageInsurance}}})
+        return;
+      }else{
+        notification['error']({
+          message: "Matrix Error",
+          description: "No Matrix found",
+        });
+      }
+       
     })
   }
 
