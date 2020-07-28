@@ -3,6 +3,8 @@ import Manifest from '../manifest';
 import User from '../../service/User';
 import movonLogo from '../../assets/movoncargo.png';
 import {clearCredential,getCredential} from '../../utility'
+import PriceMatrix from '../priceMatrix'
+
 import './home.scss';
 
 import {
@@ -46,6 +48,7 @@ function Home(props) {
     switch(e.key){
       case '2': props.history.push("/parcel"); break
       case '3': props.history.push("/manifest/list"); break
+      case '4': props.history.push("/manifest/matrix"); break
       case 'drop-down-logout' : 
         const{ token }=getCredential();
         User.logout(token).then();
@@ -110,9 +113,9 @@ function Home(props) {
             <Menu.Item key="3" icon={<AuditOutlined />}>
               Manifest
             </Menu.Item>
-            {/* <Menu.Item key="4" icon={<FileSearchOutlined />}>
-              Reports
-            </Menu.Item> */}
+            <Menu.Item key="4" icon={<FileSearchOutlined />}>
+              Matrix
+            </Menu.Item>
             {/* <Menu.Item key="5" icon={<TrophyOutlined />}>
              Claim
             </Menu.Item> */}
@@ -121,6 +124,9 @@ function Home(props) {
         <Layout >
           <Content className={'home-content'}>
             <Switch>
+              <Route path="/manifest/matrix">
+                <PriceMatrix {...props}/>
+              </Route>
               <Route path="/manifest/list">
                 <Manifest {...props}/>
               </Route>
