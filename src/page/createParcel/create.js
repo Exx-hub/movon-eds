@@ -15,6 +15,7 @@ import {
 import ReactToPrint from "react-to-print";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
+import MatrixService from "../../service/Matrix";
 import {
   getUser,
   openNotificationWithIcon,
@@ -241,7 +242,7 @@ class CreateParcel extends React.Component {
           isRequired: false,
           accepted: true,
           title:"",
-          placeholder:""
+          placeholder:"Declared Value Rate",
         },
         type: {
           name: "type",
@@ -319,18 +320,18 @@ class CreateParcel extends React.Component {
       const externalCompany = busCompanyId.externalCompany;
       const parcel = busCompanyId.config.parcel || undefined;
       if(parcel){
-        const addFee = parcel.declaredValueAdditionFee || undefined;
-        declaredValueAdditionFee = addFee ? addFee : declaredValueAdditionFee;
+        //const addFee = parcel.declaredValueAdditionFee || undefined;
+        //declaredValueAdditionFee = addFee ? addFee : declaredValueAdditionFee;
         noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
-        if(addFee){
-          let title = `Additional Fee: ${addFee}` 
-          let packageInsurance = {...details.packageInsurance, ...{title, placeholder: "Additional Fee"}}
-           details = {...details, ...{packageInsurance}}
-        }
+        // if(addFee){
+        //   let title = `Additional Fee: ${addFee}` 
+        //   let packageInsurance = {...details.packageInsurance, ...{title, placeholder: "Declared Value Rate"}}
+        //    details = {...details, ...{packageInsurance}}
+        // }
       }
       this.setState({
         enalbeBicolIsarogWays: externalCompany === 2,
-        declaredValueAdditionFee,
+        //declaredValueAdditionFee,
         noOfStickerCopy,
         details
       })
@@ -722,22 +723,22 @@ class CreateParcel extends React.Component {
       return
     }
 
-    if (name === "declaredValue") {
-      const isValid = Number(value) > -1;
-      if(isValid){
-        const packageInsurance = {
-          ...details.packageInsurance,
-          ...{ value: parseFloat(value * this.state.declaredValueAdditionFee).toFixed(2) },
-        };
-        let item = { ...details[name], ...{ 
-          errorMessage: isValid ? "" : "Invalid number",
-          value, 
-          accepted: isValid } };
-        details = { ...details, ...{ packageInsurance, [name]: item } };
-        this.setState({details})
-        return
-      }
-    }
+    // if (name === "declaredValue") {
+    //   const isValid = Number(value) > -1;
+    //   if(isValid){
+    //     const packageInsurance = {
+    //       ...details.packageInsurance,
+    //       ...{ value: parseFloat(value * this.state.declaredValueAdditionFee).toFixed(2) },
+    //     };
+    //     let item = { ...details[name], ...{ 
+    //       errorMessage: isValid ? "" : "Invalid number",
+    //       value, 
+    //       accepted: isValid } };
+    //     details = { ...details, ...{ packageInsurance, [name]: item } };
+    //     this.setState({details})
+    //     return
+    //   }
+    // }
 
     if (name === "billOfLading") {
       this.setState({billOfLading:{...this.state.billOfLading, ...{value, accepted: !isNull(value)}}})
@@ -750,6 +751,7 @@ class CreateParcel extends React.Component {
   };
 
   onSelectChange = (value)=>{
+    console.log('onSelectChange',value)
     let details = {...this.state.details};
     const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
     const destination = {...details.destination, ...{ value, accepted:true}}
@@ -933,7 +935,10 @@ class CreateParcel extends React.Component {
           this.computePrice();
           this.addP2PPricing();
         }else{
-          this.getMatrixFare();
+          this.getMatrixFare({
+            declaredValue:currentDetails.declaredValue.value,
+            weight:currentDetails.packageWeight.value
+          });
         }
       }
     }
@@ -956,23 +961,66 @@ class CreateParcel extends React.Component {
     this.setState({details: {...currentDetails, ...{totalShippingCost}}})
   }
 
-  getMatrixFare = () =>{
+  getMatrixFare = ({weight,declaredValue}) =>{
+
+    //const{ details, selectedDestination }=this.state
+    // ParcelService.getFareMatrix(
+    //     selectedDestination.companyId, 
+    //     details.declaredValue.value, 
+    //     details.packageWeight.value, 
+    //     selectedDestination.startStationId, 
+    //     selectedDestination.value )
+    //   .then((e)=>{ 
+    //     const{data, success, errorCode} = e.data
+    //     if(success){
+    //       const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
+    //       this.setState({details:{...details, ...{shippingCost}}})
+    //       return;
+    //     }
+    //     this.handleErrorNotification(errorCode)
+    //   })
+    // let data = {
+    //   origin: this.state.startStation._id,
+    //   destination: this.state.selectedRoute,
+    //   price,
+    //   pricePerKilo,
+    //   declaredValueRate,
+    //   maxAllowedWeight
+    // }
+
     const{ details, selectedDestination }=this.state
-    ParcelService.getFareMatrix(
-        selectedDestination.companyId, 
-        details.declaredValue.value, 
-        details.packageWeight.value, 
-        selectedDestination.startStationId, 
-        selectedDestination.value )
-      .then((e)=>{ 
-        const{data, success, errorCode} = e.data
-        if(success){
-          const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
-          this.setState({details:{...details, ...{shippingCost}}})
-          return;
-        }
+    const origin = this.USER && this.USER.assignedStation._id;
+    MatrixService.getMatrixComputation({
+      origin,
+      destination: selectedDestination.value,
+      declaredValue,
+      weight
+    }).then(e=>{
+      console.log('getMatrixComputation e',e)
+      const{data, success, errorCode} = e.data
+
+      if(!success && errorCode){
         this.handleErrorNotification(errorCode)
-      })
+        return;
+      }
+      
+
+      if(success && data){
+        const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
+        const packageInsurance = {
+          ...details.packageInsurance,
+          ...{ value: parseFloat(data.declaredRate).toFixed(2) },
+        };
+        this.setState({details:{...details, ...{shippingCost, packageInsurance}}})
+        return;
+      }else{
+        notification['error']({
+          message: "Matrix Error",
+          description: "No Matrix found",
+        });
+      }
+       
+    })
   }
 
   render() {

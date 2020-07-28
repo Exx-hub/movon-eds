@@ -231,8 +231,8 @@ function CreateParcelForm(props) {
                 type="number"
                 detail={packageInsurance}
                 onChange={props.onChange}
-                placeholder={packageInsurance.placeholder || "Insurance: 10%" }
-                title={packageInsurance.title || "Insurance: 10%"} />
+                placeholder={ packageInsurance.placeholder || "Insurance: 10%" }
+                title={ packageInsurance.placeholder || "Insurance: 10%"} />
 
               <InputBox
                 type="number"

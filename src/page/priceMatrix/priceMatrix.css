@@ -1,0 +1,10 @@
+.matrix-body{
+    display: flex;
+    flex-direction: column;
+}
+
+.matrix-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
