@@ -221,7 +221,7 @@ function CreateParcelForm(props) {
                   detail={lenght}
                   onChange={props.onChange}
                   errorMessage={paxs.errorMessage}
-                  title="Lenght"
+                  title="Length in Meter"
                   placeholder="Lenght" />
               }  
               
