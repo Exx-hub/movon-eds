@@ -43,7 +43,7 @@ const MatrixService = {
                 destination:params.destination,
                 declaredValue:params.declaredValue,
                 weight:params.weight,
-                lenght:params.lenght
+                length:params.length
             }
         })
     },

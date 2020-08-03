@@ -293,8 +293,8 @@ class CreateParcel extends React.Component {
           accepted: true,
           disabled: true,
         },
-        lenght: {
-          name: "lenght",
+        length: {
+          name: "length",
           value: undefined,
           isRequired: true,
           accepted: true,
@@ -921,17 +921,17 @@ class CreateParcel extends React.Component {
 
   componentDidUpdate(prevProps, prevState){
     const currentDetails = this.state.details;
-    const{ destination, packageWeight, declaredValue, paxs, lenght }=prevState.details;
+    const{ destination, packageWeight, declaredValue, paxs, length }=prevState.details;
 
     if(currentDetails.destination.value !== destination.value
         || currentDetails.packageWeight.value !== packageWeight.value
           || currentDetails.declaredValue.value !== declaredValue.value
-            || currentDetails.lenght.value !== lenght.value
+            || currentDetails.length.value !== length.value
         ){
 
       if(currentDetails.destination.value !== undefined
         && currentDetails.packageWeight.value !== undefined
-        && currentDetails.lenght.value !== undefined
+        && currentDetails.length.value !== undefined
         && currentDetails.declaredValue.value !== undefined){
 
         if(currentDetails.type.value !== 3 && currentDetails.paxs.value === paxs.value){
@@ -946,7 +946,7 @@ class CreateParcel extends React.Component {
           this.getMatrixFare({
             declaredValue:currentDetails.declaredValue.value,
             weight:currentDetails.packageWeight.value,
-            lenght:currentDetails.lenght.value
+            length:currentDetails.length.value
           });
         }
       }
@@ -970,7 +970,7 @@ class CreateParcel extends React.Component {
     this.setState({details: {...currentDetails, ...{totalShippingCost}}})
   }
 
-  getMatrixFare = ({weight,declaredValue, lenght}) =>{
+  getMatrixFare = ({weight,declaredValue, length}) =>{
 
     const{ details, selectedDestination }=this.state
     const origin = this.USER && this.USER.assignedStation._id;
@@ -979,7 +979,7 @@ class CreateParcel extends React.Component {
       destination: selectedDestination.value,
       declaredValue,
       weight,
-      lenght
+      length
     }).then(e=>{
       const{data, success, errorCode} = e.data
 
