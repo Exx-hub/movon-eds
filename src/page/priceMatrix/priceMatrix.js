@@ -164,7 +164,9 @@ export default class PriceMatrix extends React.Component {
         price: 0,
         pricePerKilo: 0,
         declaredValueRate: 0,
-        maxAllowedWeight: 0
+        maxAllowedWeight: 0,
+        maxAllowedLenght:0,
+        lengthRate:0
       }],
       hasContent: false,
       routes: undefined,
@@ -278,12 +280,21 @@ export default class PriceMatrix extends React.Component {
     const pricePerKilo = this.state.matrix[0].pricePerKilo;
     const declaredValueRate = this.state.matrix[0].declaredValueRate;
     const maxAllowedWeight = this.state.matrix[0].maxAllowedWeight;
+    const maxAllowedLenght = this.state.matrix[0].maxAllowedLenght;
+    const lengthRate = this.state.matrix[0].lengthRate;
 
-    if (price === 0 && pricePerKilo === 0 && declaredValueRate === 0 && maxAllowedWeight === 0) {
+    if (price === 0 
+          && pricePerKilo === 0 
+            && declaredValueRate === 0 
+              && maxAllowedWeight === 0
+                && maxAllowedLenght === 0
+                  && lengthRate === 0) {
+
       notification['error']({
         message: "Input Fields Validation",
         description: "Please fill up missing fields",
       });
+
       return;
     }
 
@@ -293,7 +304,9 @@ export default class PriceMatrix extends React.Component {
       price,
       pricePerKilo,
       declaredValueRate,
-      maxAllowedWeight
+      maxAllowedWeight,
+      maxAllowedLenght,
+      lengthRate
     }
 
     MatrixService.create(data).then(e => {
@@ -406,11 +419,15 @@ export default class PriceMatrix extends React.Component {
     this.setState({ selectedRoute: e }, () => {
       MatrixService.getMatrix({ origin, destination }).then(e => {
         const { data } = e.data;
+        console.log('data',data)
         this.setState({
           matrix: [{
             declaredValueRate: data ? data.declaredValueRate : 0,
             maxAllowedWeight: data ? data.maxAllowedWeight : 0,
             price: data ? data.price : 0,
+            pricePerKilo: data ? data.pricePerKilo : 0,
+            maxAllowedLenght: data ? data.maxAllowedLenght : 0,
+            lengthRate: data ? data.lengthRate : 0,
             pricePerKilo: data ? data.pricePerKilo : 0,
           }]
         })
@@ -421,16 +438,18 @@ export default class PriceMatrix extends React.Component {
   fiveStartMatrix = () => {
     return <>
       <Row>
-        <Col span={6} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Declared Value Cut (%)</Col>
-        <Col span={6} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Max Allowed Weight</Col>
-        <Col span={6} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Price Per Kilo</Col>
-        <Col span={6} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Price</Col>
+        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Declared Value Rate (%)</Col>
+        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Max Allowed Weight</Col>
+        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>length Rate</Col>
+        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Max Allowed length (Meter)</Col>
+        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Price Per Kilo</Col>
+        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Price</Col>
       </Row>
 
       {
         this.state.matrix.map((e, i) => (
           <Row>
-            <Col span={6} >
+            <Col span={4} >
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -438,7 +457,7 @@ export default class PriceMatrix extends React.Component {
                   onChange={(e) => this.matrixItemChange("declaredValueRate", e.target.value, i)} />
               </div>
             </Col>
-            <Col span={6}>
+            <Col span={4}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -446,7 +465,23 @@ export default class PriceMatrix extends React.Component {
                   onChange={(e) => this.matrixItemChange("maxAllowedWeight", e.target.value, i)} />
               </div>
             </Col>
-            <Col span={6}>
+            <Col span={4}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['lengthRate']}
+                  onChange={(e) => this.matrixItemChange("lengthRate", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={4}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['maxAllowedLenght']}
+                  onChange={(e) => this.matrixItemChange("maxAllowedLenght", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={4}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -455,7 +490,7 @@ export default class PriceMatrix extends React.Component {
                   onChange={(e) => this.matrixItemChange("pricePerKilo", e.target.value, i)} />
               </div>
             </Col>
-            <Col span={6}>
+            <Col span={4}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -464,23 +499,6 @@ export default class PriceMatrix extends React.Component {
                   onChange={(e) => this.matrixItemChange("price", e.target.value, i)} />
               </div>
             </Col>
-            {
-              this.state.hasContent &&
-              <Col span={3}>
-                <div style={{
-                  background: '#fff',
-                  height: '100%',
-                  border: '1px solid rgba(0,0,0,.2)'
-                }}>
-                  <Button
-                    onClick={() => this.onSaveMatrixItem(i)}
-                    disabled={e.disabled}
-                    style={{ height: '30px', color: `${e.disabled ? "gray" : "#28a745"}` }}
-                    type="link"
-                    icon={<SaveOutlined />}>Save</Button>
-                </div>
-              </Col>
-            }
           </Row>))
       }
       <Row style={{ marginTop: '1rem' }}>

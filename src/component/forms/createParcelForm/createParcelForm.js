@@ -52,7 +52,8 @@ function CreateParcelForm(props) {
     packageWeight,
     shippingCost,
     totalShippingCost,
-    paxs
+    paxs,
+    length
   }=props.details;
 
   return (
@@ -212,7 +213,18 @@ function CreateParcelForm(props) {
                 errorMessage={packageWeight.errorMessage}
                 title="Weight" />
 
-
+              {
+                length && 
+                <InputBox 
+                  type="number"
+                  onBlur={()=>props.onBlur(paxs.name)} 
+                  detail={length}
+                  onChange={props.onChange}
+                  errorMessage={paxs.errorMessage}
+                  title="Length in Meter"
+                  placeholder="length" />
+              }  
+              
               <InputBox 
                 type="number"
                 onBlur={()=>props.onBlur(paxs.name)} 

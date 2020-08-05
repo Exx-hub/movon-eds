@@ -293,6 +293,12 @@ class CreateParcel extends React.Component {
           accepted: true,
           disabled: true,
         },
+        length: {
+          name: "length",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
       },
       enalbeBicolIsarogWays:false,
       declaredValueAdditionFee:0.1,
@@ -514,8 +520,6 @@ class CreateParcel extends React.Component {
         }
       }
 
-      console.log('isValid',isValid)
-
       return {...details[name], ...{
         accepted: isValid,
         errorMessage: !isValid ? "Invalid name!" : ""
@@ -662,7 +666,7 @@ class CreateParcel extends React.Component {
       declaredValue, 
       paxs, 
       packageWeight, 
-      type 
+      type
     }= this.state.details
 
     const busCompanyId =  this.USER && this.USER.busCompanyId._id || undefined;
@@ -683,7 +687,7 @@ class CreateParcel extends React.Component {
         type.value,
         pax,
         startStation,
-        weight
+        weight,
       )
       .then(e => {
         const details = {...this.state.details}
@@ -751,7 +755,6 @@ class CreateParcel extends React.Component {
   };
 
   onSelectChange = (value)=>{
-    console.log('onSelectChange',value)
     let details = {...this.state.details};
     const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
     const destination = {...details.destination, ...{ value, accepted:true}}
@@ -918,18 +921,23 @@ class CreateParcel extends React.Component {
 
   componentDidUpdate(prevProps, prevState){
     const currentDetails = this.state.details;
-    const{ destination, packageWeight, declaredValue, paxs }=prevState.details;
+    const{ destination, packageWeight, declaredValue, paxs, length }=prevState.details;
 
     if(currentDetails.destination.value !== destination.value
         || currentDetails.packageWeight.value !== packageWeight.value
-          || currentDetails.declaredValue.value !== declaredValue.value){
+          || currentDetails.declaredValue.value !== declaredValue.value
+            || currentDetails.length.value !== length.value
+        ){
 
-      if(currentDetails.destination.value
-          && currentDetails.packageWeight.value
-            && currentDetails.declaredValue.value){
+      if(currentDetails.destination.value !== undefined
+        && currentDetails.packageWeight.value !== undefined
+        && currentDetails.length.value !== undefined
+        && currentDetails.declaredValue.value !== undefined){
+
         if(currentDetails.type.value !== 3 && currentDetails.paxs.value === paxs.value){
           return;
         }
+
 
         if(this.state.enalbeBicolIsarogWays){
           this.computePrice();
@@ -937,7 +945,8 @@ class CreateParcel extends React.Component {
         }else{
           this.getMatrixFare({
             declaredValue:currentDetails.declaredValue.value,
-            weight:currentDetails.packageWeight.value
+            weight:currentDetails.packageWeight.value,
+            length:currentDetails.length.value
           });
         }
       }
@@ -961,32 +970,7 @@ class CreateParcel extends React.Component {
     this.setState({details: {...currentDetails, ...{totalShippingCost}}})
   }
 
-  getMatrixFare = ({weight,declaredValue}) =>{
-
-    //const{ details, selectedDestination }=this.state
-    // ParcelService.getFareMatrix(
-    //     selectedDestination.companyId, 
-    //     details.declaredValue.value, 
-    //     details.packageWeight.value, 
-    //     selectedDestination.startStationId, 
-    //     selectedDestination.value )
-    //   .then((e)=>{ 
-    //     const{data, success, errorCode} = e.data
-    //     if(success){
-    //       const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
-    //       this.setState({details:{...details, ...{shippingCost}}})
-    //       return;
-    //     }
-    //     this.handleErrorNotification(errorCode)
-    //   })
-    // let data = {
-    //   origin: this.state.startStation._id,
-    //   destination: this.state.selectedRoute,
-    //   price,
-    //   pricePerKilo,
-    //   declaredValueRate,
-    //   maxAllowedWeight
-    // }
+  getMatrixFare = ({weight,declaredValue, length}) =>{
 
     const{ details, selectedDestination }=this.state
     const origin = this.USER && this.USER.assignedStation._id;
@@ -994,16 +978,16 @@ class CreateParcel extends React.Component {
       origin,
       destination: selectedDestination.value,
       declaredValue,
-      weight
+      weight,
+      length
     }).then(e=>{
-      console.log('getMatrixComputation e',e)
       const{data, success, errorCode} = e.data
 
       if(!success && errorCode){
         this.handleErrorNotification(errorCode)
         return;
       }
-
+      
       if(success && data){
         const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.price).toFixed(2)}}
         const packageInsurance = {

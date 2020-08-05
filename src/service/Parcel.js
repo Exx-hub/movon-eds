@@ -55,6 +55,7 @@ const ParcelService = {
             packageWeight,
             shippingCost,
             totalShippingCost,
+            length
         } = details;
 
         const COUNTRY_CODE= "PH";
@@ -88,6 +89,7 @@ const ParcelService = {
         bodyFormData.set('convenienceFee', systemFee.value)
         bodyFormData.set('insuranceFee', packageInsurance.value)
         bodyFormData.set('billOfLading', billOfLading.value)
+        bodyFormData.set('billOfLading', length.value)
 
         return axios({
             method: 'post',
