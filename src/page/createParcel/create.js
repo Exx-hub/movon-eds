@@ -971,7 +971,7 @@ class CreateParcel extends React.Component {
   }
 
   getMatrixFare = ({weight,declaredValue, length}) =>{
-
+    console.log('this.USER',this.USER)
     const{ details, selectedDestination }=this.state
     const origin = this.USER && this.USER.assignedStation._id;
     MatrixService.getMatrixComputation({
@@ -981,6 +981,7 @@ class CreateParcel extends React.Component {
       weight,
       length
     }).then(e=>{
+      console.log('getMatrixComputation e',e)
       const{data, success, errorCode} = e.data
 
       if(!success && errorCode){

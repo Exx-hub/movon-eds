@@ -166,7 +166,7 @@ export default class PriceMatrix extends React.Component {
         declaredValueRate: 0,
         maxAllowedWeight: 0,
         maxAllowedLenght:0,
-        lengthRate:0
+        lenghtRate:0
       }],
       hasContent: false,
       routes: undefined,
@@ -281,14 +281,14 @@ export default class PriceMatrix extends React.Component {
     const declaredValueRate = this.state.matrix[0].declaredValueRate;
     const maxAllowedWeight = this.state.matrix[0].maxAllowedWeight;
     const maxAllowedLenght = this.state.matrix[0].maxAllowedLenght;
-    const lengthRate = this.state.matrix[0].lengthRate;
+    const lenghtRate = this.state.matrix[0].lenghtRate;
 
     if (price === 0 
           && pricePerKilo === 0 
             && declaredValueRate === 0 
               && maxAllowedWeight === 0
                 && maxAllowedLenght === 0
-                  && lengthRate === 0) {
+                  && lenghtRate === 0) {
 
       notification['error']({
         message: "Input Fields Validation",
@@ -306,7 +306,7 @@ export default class PriceMatrix extends React.Component {
       declaredValueRate,
       maxAllowedWeight,
       maxAllowedLenght,
-      lengthRate
+      lenghtRate
     }
 
     MatrixService.create(data).then(e => {
@@ -427,7 +427,7 @@ export default class PriceMatrix extends React.Component {
             price: data ? data.price : 0,
             pricePerKilo: data ? data.pricePerKilo : 0,
             maxAllowedLenght: data ? data.maxAllowedLenght : 0,
-            lengthRate: data ? data.lengthRate : 0,
+            lenghtRate: data ? data.lenghtRate : 0,
             pricePerKilo: data ? data.pricePerKilo : 0,
           }]
         })
@@ -469,8 +469,8 @@ export default class PriceMatrix extends React.Component {
               <div className="matrix-item">
                 <Input
                   type="number"
-                  value={e['lengthRate']}
-                  onChange={(e) => this.matrixItemChange("lengthRate", e.target.value, i)} />
+                  value={e['lenghtRate']}
+                  onChange={(e) => this.matrixItemChange("lenghtRate", e.target.value, i)} />
               </div>
             </Col>
             <Col span={4}>
