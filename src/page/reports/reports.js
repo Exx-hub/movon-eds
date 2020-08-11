@@ -152,15 +152,15 @@ class Reports extends React.Component {
     const{ fetching, exporting, transactions, summary, user } = this.state;
     return <Layout>
       <Content className='reports-page'>
-        <Row className='title'>Booking Summary</Row>
+        <Row className='title'>Parcel Summary</Row>
         <Row className='summary-info'>
           <Descriptions bordered size='small'>
             <Item label='Bus Company' span='3'>{user.busCompanyId.name}</Item>
-            <Item label='Total Bookings' span='2'>{summary.bookingsCount || 0}</Item>
+            <Item label='Total Parcels' span='2'>{summary.bookingsCount || 0}</Item>
             <Item label='Net Amount'>{summary.totalPrice || 0}</Item>
-            <Item label='No. of Bookings Confirmed'>{summary.confirmedCount || 0}</Item>
-            <Item label='No. of Bookings On Going'>{summary.inTransitCount || 0}</Item>
-            <Item label='No. of Bookings Delivered'>{summary.completedCount || 0}</Item>
+            <Item label='No. of Parcels Confirmed'>{summary.confirmedCount || 0}</Item>
+            <Item label='No. of Parcels On Going'>{summary.inTransitCount || 0}</Item>
+            <Item label='No. of Parcels Delivered'>{summary.completedCount || 0}</Item>
           </Descriptions>
         </Row>
         <Divider orientation='center'>Transactions</Divider>
