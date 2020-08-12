@@ -21,7 +21,7 @@ const MatrixService = {
     getMatrix: (params) => {
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix?origin=${params.origin}&destination=${params.destination}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix?busCompanyId=${params.busCompanyId}&origin=${params.origin}&destination=${params.destination}`,
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',

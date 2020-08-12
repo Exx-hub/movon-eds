@@ -206,6 +206,20 @@ class CreateParcel extends React.Component {
           accepted: true,
           options: [],
         },
+        connectingCompany:{
+          name: "connectingCompany",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+          options: [],
+        },
+        connectingRoutes:{
+          name: "connectingRoutes",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+          options: [],
+        },
         description: {
           name: "description",
           value: undefined,
@@ -319,8 +333,19 @@ class CreateParcel extends React.Component {
     });
 
     this.USER = getUser();
+    let {details, declaredValueAdditionFee, noOfStickerCopy} = {...this.state};
 
-    let {details,declaredValueAdditionFee, noOfStickerCopy} = {...this.state};
+    ParcelService.getConnectingBusPartners().then((e)=>{
+      const{success, data, errorCode}=e.data;
+      if(success){
+        const connectingCompany = {...details.connectingCompany};
+        connectingCompany.options = data.connectingRoutes;
+        this.setState({ details:{...this.state.details, ...{connectingCompany}} })
+      }else{
+        this.handleErrorNotification(errorCode)
+      }
+    })
+
     const busCompanyId = this.USER && this.USER.busCompanyId || undefined
     if(busCompanyId){
       const externalCompany = busCompanyId.externalCompany;
@@ -346,6 +371,7 @@ class CreateParcel extends React.Component {
     const stationId = this.USER && this.USER.assignedStation._id;
     ParcelService.getTrips(stationId).then(e=>{
       const{data, success, errorCode}=e.data;
+      console.log('getTrips',e)
       if(success){
         if(data.trips){
           const details = {...this.state.details}
@@ -386,6 +412,8 @@ class CreateParcel extends React.Component {
         this.handleErrorNotification(errorCode)
       }
     })
+
+    
   }
 
   handleErrorNotification = (code) =>{
@@ -754,12 +782,38 @@ class CreateParcel extends React.Component {
     this.setState({details:{ ...details, ...{ [name]: item } }})
   };
 
-  onSelectChange = (value)=>{
+  onSelectChange = (value,name)=>{
+
     let details = {...this.state.details};
-    const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
-    const destination = {...details.destination, ...{ value, accepted:true}}
-    details = {...details, ...{destination}}
-    this.setState({ details, selectedDestination });
+    if(name === 'connectingCompany'){
+      ParcelService.getConnectingRoutes(value).then((e)=>{
+        console.log('getConnectingRoutes',e);
+        const{data,success,errorCode}=e.data;
+        if(!success)
+          this.handleErrorNotification(errorCode);
+        else{
+          const connectingRoutes = {...details.connectingRoutes};
+          connectingRoutes.options = data.map(e=>({start:e.start, end:e.end, endStationName:e.endStationName}))
+          this.setState({ details:{...this.state.details, ...{connectingRoutes}} })
+        }
+      });      
+      const connectingCompany = {...details.connectingCompany, ...{ value, accepted:true}}
+      details = {...details, ...{connectingCompany}}
+      this.setState({ details });
+    }
+
+    if(name === 'connectingRoutes'){
+      const connectingRoutes = {...details.connectingRoutes, ...{ value, accepted:true}}
+      details = {...details, ...{connectingRoutes}}
+    }
+
+    if(name === 'destination'){
+      const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
+      const destination = {...details.destination, ...{ value, accepted:true}}
+      details = {...details, ...{destination}}
+      this.setState({ details, selectedDestination });
+    }
+    
   }
     
   onTypeChange = (value)=>{
@@ -801,7 +855,7 @@ class CreateParcel extends React.Component {
               }}
               details={this.state.details}
               onTypeChange={(e) => this.onTypeChange(e.target.value)}
-              onSelectChange={(value) => this.onSelectChange(value)}
+              onSelectChange={(value,name) => this.onSelectChange(value, name)}
               onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
             />
           

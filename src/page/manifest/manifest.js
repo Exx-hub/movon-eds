@@ -87,6 +87,7 @@ class Manifest extends React.Component {
       ManifestService
       .getRoutes()
       .then(e=>{
+        console.log('getRoutes',e)
         const{errorCode,success,data}=e.data;
         if(!success && errorCode){
           this.handleErrorNotification(errorCode)

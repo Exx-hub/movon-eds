@@ -1,3 +1,12 @@
+.price-matrix-module{
+    background: #fff;
+    width: 95%;
+    padding: 1rem;
+    margin-top: 1rem;
+    padding: 2rem;
+    align-self: center;
+}
+
 .matrix-body{
     display: flex;
     flex-direction: column;
@@ -7,4 +16,46 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.header-input-group{
+    text-align: center;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.2);
+    font-weight: 200; 
+    padding: .7rem;
+}
+
+.btn-add-row{
+    background: #28a745 !important;
+    color: #fff !important;
+}
+
+.btn-save{
+    margin-top: 1rem;;
+}
+
+.bus-company-name{
+    font-size: 1.5rem;
+}
+
+.select-group-origin-destination{
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.bicol-isarog-matrix{
+    margin-top: '2rem';
+    display: 'flex';
+    flex-direction: 'column';
+    width: '100%'
+}
+
+.bicol-isarog-select-group{
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.select-padding{
+    padding-left: 1rem;
 }

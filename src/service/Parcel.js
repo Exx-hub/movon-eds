@@ -179,6 +179,31 @@ const ParcelService = {
                 'x-auth-token' : getToken()
             }
         })
+    },
+
+    getConnectingBusPartners: () => {
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/list/connecting-partners`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
+    },
+
+    getConnectingRoutes:(companyId)=>{
+       
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${companyId}/connecting-routes`,
+            headers : {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
     }
 
 }

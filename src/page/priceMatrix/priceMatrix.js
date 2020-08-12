@@ -1,209 +1,96 @@
 import React from 'react';
-import ReactToPrint from 'react-to-print';
-import moment from 'moment';
-import { Layout, Button, Select, Col, Row, notification, Input, Space, Skeleton } from 'antd';
+import { Layout, Button, Select, Col, Row, notification, Input, Skeleton, Divider } from 'antd';
 import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import './priceMatrix.css'
-import ManifestService from '../../service/Manifest';
 import MatrixService from '../../service/Matrix';
 import ParcelService from '../../service/Parcel';
-
 import { openNotificationWithIcon, getUser, clearCredential } from '../../utility'
+import './priceMatrix.css'
 
 const { Option } = Select;
 
-const DefaultPriceMatrixLayout = [
-  {
-    minDeclaredValue: 0,
-    maxDeclaredValue: 1000,
-    minWeight: 1,
-    maxWeight: 10,
-    value: 0
-  },
-  {
-    minDeclaredValue: 1001,
-    maxDeclaredValue: 2000,
-    minWeight: 11,
-    maxWeight: 20,
-    value: 0
-  },
-  {
-    minDeclaredValue: 2001,
-    maxDeclaredValue: 3000,
-    minWeight: 21,
-    maxWeight: 30,
-    value: 0
-  },
-  {
-    minDeclaredValue: 3001,
-    maxDeclaredValue: 4000,
-    minWeight: 31,
-    maxWeight: 40,
-    value: 0
-  },
-  {
-    minDeclaredValue: 4001,
-    maxDeclaredValue: 5000,
-    minWeight: 41,
-    maxWeight: 50,
-    value: 0
-  },
-  {
-    minDeclaredValue: 5001,
-    maxDeclaredValue: 6000,
-    minWeight: 51,
-    maxWeight: 60,
-    value: 0
-  },
-  {
-    minDeclaredValue: 6001,
-    maxDeclaredValue: 7000,
-    minWeight: 61,
-    maxWeight: 70,
-    value: 0
-  },
-  {
-    minDeclaredValue: 7001,
-    maxDeclaredValue: 8000,
-    minWeight: 71,
-    maxWeight: 80,
-    value: 0
-  },
-  {
-    minDeclaredValue: 8001,
-    maxDeclaredValue: 9000,
-    minWeight: 81,
-    maxWeight: 90,
-    value: 0
-  },
-  {
-    minDeclaredValue: 9001,
-    maxDeclaredValue: 10000,
-    minWeight: 91,
-    maxWeight: 100,
-    value: 0
-  },
-  {
-    minDeclaredValue: 10001,
-    maxDeclaredValue: 12000,
-    minWeight: 101,
-    maxWeight: 120,
-    value: 0
-  },
-  {
-    minDeclaredValue: 12001,
-    maxDeclaredValue: 14000,
-    minWeight: 121,
-    maxWeight: 140,
-    value: 0
-  },
-  {
-    minDeclaredValue: 14001,
-    maxDeclaredValue: 16000,
-    minWeight: 141,
-    maxWeight: 160,
-    value: 0
-  },
-  {
-    minDeclaredValue: 16001,
-    maxDeclaredValue: 18000,
-    minWeight: 161,
-    maxWeight: 180,
-    value: 0
-  },
-  {
-    minDeclaredValue: 18001,
-    maxDeclaredValue: 20000,
-    minWeight: 181,
-    maxWeight: 200,
-    value: 0
-  },
-  {
-    minDeclaredValue: 20001,
-    maxDeclaredValue: 22000,
-    minWeight: 201,
-    maxWeight: 220,
-    value: 0
-  },
-  {
-    minDeclaredValue: 22001,
-    maxDeclaredValue: 24000,
-    minWeight: 221,
-    maxWeight: 240,
-    value: 0
-  },
-  {
-    minDeclaredValue: 24001,
-    maxDeclaredValue: 26000,
-    minWeight: 241,
-    maxWeight: 260,
-    value: 0
-  },
-  {
-    minDeclaredValue: 26001,
-    maxDeclaredValue: 28000,
-    minWeight: 261,
-    maxWeight: 280,
-    value: 0
-  },
-  {
-    minDeclaredValue: 28001,
-    maxDeclaredValue: 30000,
-    minWeight: 281,
-    maxWeight: 300,
-    value: 0
-  }
-]
+const initMatrix = {
+  price: 0,
+  pricePerKilo: 0,
+  declaredValueRate: 0,
+  maxAllowedWeight: 0,
+  maxAllowedLenght: 0,
+  lenghtRate: 0,
+  exceededPerKilo: 0,
+  tariffRate: 0,
+  excessOneMeter:0,
+  excessTwoMeter:0
+};
+
+const initConnectingMatrix = {
+  price: 0,
+  declaredValueMax: 0,
+  declaredValueMin: 0,
+  weightMax: 0,
+  weightMin: 0,
+  handlingFee: 0,
+  tariffRate: 0
+}
 
 export default class PriceMatrix extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      matrix: [{
-        price: 0,
-        pricePerKilo: 0,
-        declaredValueRate: 0,
-        maxAllowedWeight: 0,
-        maxAllowedLenght:0,
-        lenghtRate:0
-      }],
-      hasContent: false,
+      matrix: [{ ...initMatrix }],
+      connectingMatrix: [{ ...initConnectingMatrix }],
       routes: undefined,
       selectedRoute: undefined,
       routesList: [],
-      startStation: undefined
+      startStation: undefined,
+      connectingRoutes: {
+        name: "connectingRoutes",
+        value: undefined,
+        isRequired: true,
+        accepted: true,
+        options: [],
+      },
+      connectingRoutesOrigin: {
+        name: "connectingRoutesOrigin",
+        value: undefined,
+        isRequired: true,
+        accepted: true,
+        options: [],
+      },
+      connectingCompany: {
+        name: "connectingCompany",
+        value: undefined,
+        isRequired: true,
+        accepted: true,
+        options: [],
+      },
     }
   }
 
   componentDidMount() {
     this.user = getUser();
+    this.busCompanyId = this.user && this.user.busCompanyId._id || undefined;
+
     if (!this.user) {
       this.props.history.push('/')
     }
 
-
-    console.log('user', this.user)
-
     const stationId = this.use && this.use.assignedStation._id;
-    ParcelService.getTrips(stationId).then(e=>{
-      const{data, success, errorCode}=e.data;
-      if(success){
-        if(data.trips){
-          const details = {...this.state.details}
-          let options =[]
-          data.trips.data.map(e=>{
+    ParcelService.getTrips(stationId).then(e => {
+      const { data, success, errorCode } = e.data;
+      if (success) {
 
+        if (data.trips) {
+          let options = []
+          data.trips.data.map(e => {
             options.push({
-              name:e.endStation.name,
-              value:e.endStation._id,
+              name: e.endStation.name,
+              value: e.endStation._id,
             })
-            
           })
-         
-          let clean=[]
-          options = options.filter(e=>{
-            if(!clean.includes(e.value)){
+
+          let clean = []
+          options = options.filter(e => {
+            if (!clean.includes(e.value)) {
               clean.push(e.value)
               return true
             }
@@ -213,14 +100,28 @@ export default class PriceMatrix extends React.Component {
             selectedRoute: data[0],
             routesList: { ...this.state.routesList, ...{ options } },
             startStation: this.user.assignedStation
-          }, () => {
-            console.log('state', this.state)
-          });          
+          });
         }
-      }else{
+      } else {
         this.handleErrorNotification(errorCode)
       }
     })
+
+    ParcelService.getConnectingBusPartners()
+      .then((e) => {
+        console.log('getConnectingBusPartners',e)
+        const { success, data, errorCode } = e.data;
+        if (success) {
+          if(data.connectingRoutes.length > 0){
+            const connectingCompany = { ...this.state.connectingCompany };
+            connectingCompany.options = data.connectingRoutes;
+            this.getConnectingRoutes(data.connectingRoutes[0]._id);
+            this.setState({ connectingCompany })
+          }
+        } else {
+          this.handleErrorNotification(errorCode)
+        }
+      })
   }
 
   handleErrorNotification = (code) => {
@@ -241,54 +142,25 @@ export default class PriceMatrix extends React.Component {
     openNotificationWithIcon('error', code);
   }
 
-  parseMatrix = (matrix) => {
-    return matrix.map(e => {
-      return { ...e, ...{ disabled: true } }
-    })
-  }
-
-
-  onAddItem = () => {
-    const matrix = [...this.state.matrix, ...[{
-      minDeclaredValue: 0,
-      maxDeclaredValue: 0,
-      minWeight: 0,
-      maxWeight: 0,
-      disabled: false,
-      value: 0
-    }]]
-    this.setState({ matrix })
-  }
-
   matrixItemChange = (name, value, index) => {
-    console.log('name', name)
     let matrix = [...this.state.matrix];
     matrix[index].disabled = false;
     matrix[index][name] = value;
     this.setState({ matrix })
   }
 
-  onSaveMatrixItem = (index) => {
-    let matrix = [...this.state.matrix];
-    matrix[index].disabled = true;
-    this.setState({ matrix })
+  connectingMatrixChange = (name, value, index) => {
+    const connectingMatrix = [...this.state.connectingMatrix]
+    connectingMatrix[index][name] = value;
+    this.setState({ connectingMatrix })
   }
 
-  saveFiveStarMatrix = () => {
+  saveBicolIsarogMatrix = () => {
+    const matrix = [...this.state.matrix]
 
-    const price = this.state.matrix[0].price;
-    const pricePerKilo = this.state.matrix[0].pricePerKilo;
-    const declaredValueRate = this.state.matrix[0].declaredValueRate;
-    const maxAllowedWeight = this.state.matrix[0].maxAllowedWeight;
-    const maxAllowedLenght = this.state.matrix[0].maxAllowedLenght;
-    const lenghtRate = this.state.matrix[0].lenghtRate;
-
-    if (price === 0 
-          && pricePerKilo === 0 
-            && declaredValueRate === 0 
-              && maxAllowedWeight === 0
-                && maxAllowedLenght === 0
-                  && lenghtRate === 0) {
+    if(matrix[0].tariffRate === 0 && matrix[0].exceededPerKilo === 0 
+        && matrix[0].price === 0 && matrix[0].declaredValueRate === 0 
+          && matrix[0].maxAllowedWeight === 0) {
 
       notification['error']({
         message: "Input Fields Validation",
@@ -298,20 +170,94 @@ export default class PriceMatrix extends React.Component {
       return;
     }
 
-    let data = {
+    const data = this.state.matrix.map(e => ({
+      price: e.price,
+      declaredValueRate: e.declaredValueRate,
+      maxAllowedWeight: e.maxAllowedWeight,
+      exceededPerKilo: e.exceededPerKilo,
+      tariffRate: e.tariffRate
+    }))
+
+    this.saveMatrix({
+      busCompanyId: this.busCompanyId,
       origin: this.state.startStation._id,
       destination: this.state.selectedRoute,
-      price,
-      pricePerKilo,
-      declaredValueRate,
-      maxAllowedWeight,
-      maxAllowedLenght,
-      lenghtRate
+      stringValues: JSON.stringify(data)
+    })
+  }
+
+  saveConnectingMatrix = () => {
+    const connectingCompany = this.state.connectingCompany;
+    const origin = this.state.connectingRoutesOrigin.value;
+    const destination = this.state.connectingRoutes.value;
+
+    if (!origin || !destination) {
+      notification['error']({
+        message: "Input Fields Validation",
+        description: "Please fill up missing fields",
+      });
+      return;
     }
 
+    const stringValues = this.state.connectingMatrix.map(e => ({
+      price: e.price,
+      declaredValueMax: e.declaredValueMax,
+      declaredValueMin: e.declaredValueMin,
+      weightMax: e.weightMax,
+      weightMin: e.weightMin,
+      handlingFee: e.handlingFee,
+      tariffRate: e.tariffRate
+    }));
+
+    const busCompanyId = connectingCompany.value || (connectingCompany.options.length > 0 ? connectingCompany.options[0]._id : undefined)
+
+    this.saveMatrix({
+      busCompanyId,
+      origin,
+      destination,
+      stringValues: JSON.stringify(stringValues)
+    })
+  }
+
+  saveFiveStarMatrix = () => {
+    const origin = this.state.startStation._id;
+    const destination = this.state.selectedRoute;
+    const matrix = [...this.state.matrix];
+
+    if (origin && destination && matrix[0].price === 0 && matrix[0].pricePerKilo === 0 
+        && matrix[0].declaredValueRate === 0 && matrix[0].maxAllowedWeight === 0 
+          && matrix[0].maxAllowedLenght === 0 && matrix[0].lenghtRate === 0) {
+
+      notification['error']({
+        message: "Input Fields Validation",
+        description: "Please fill up missing fields",
+      });
+      return;
+    }
+
+    const stringValues = this.state.matrix.map(e => ({
+      price: e.price,
+      pricePerKilo: e.pricePerKilo,
+      declaredValueRate: e.declaredValueRate,
+      maxAllowedWeight: e.maxAllowedWeight,
+      maxAllowedLenght: e.maxAllowedLenght,
+      lenghtRate: e.lenghtRate,
+      excessOneMeter: e.excessOneMeter,
+      excessTwoMeter: e.excessTwoMeter
+    }))
+
+    this.saveMatrix({
+      busCompanyId: this.busCompanyId,
+      origin,
+      destination,
+      stringValues: JSON.stringify(stringValues)
+    })
+  }
+
+  saveMatrix = (data) => {
     MatrixService.create(data).then(e => {
-      const{success,errorCode}=e.data;
-      if(success)
+      const { success, errorCode } = e.data;
+      if (success)
         notification['success']({
           message: "Updated Successfuly",
           description: "All data are updated",
@@ -321,129 +267,81 @@ export default class PriceMatrix extends React.Component {
     })
   }
 
-  defaultMatrix = () => {
-    return <>
-      <Row>
-        <Col span={8} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Declared Value</Col>
-        <Col span={8} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Gross Weight</Col>
-        <Col span={this.state.hasContent ? 5 : 8} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Value</Col>
-        {
-          this.state.hasContent &&
-          <Col span={3} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Action</Col>
-        }
-      </Row>
-
-      <Row>
-        {
-          this.state.matrix.map((e, i) => (
-            <Row>
-              <Col span={8}>
-                <div className="matrix-item">
-                  <Input
-                    type="number"
-                    value={e['minDeclaredValue']}
-                    name="minDeclaredValue"
-                    onChange={(e) => this.matrixItemChange(e.target.name, e.target.value, i)} />
-                  <Input
-                    type="number"
-                    value={e['maxDeclaredValue']}
-                    name="maxDeclaredValue"
-                    onChange={(e) => this.matrixItemChange(e.target.name, e.target.value, i)} />
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="matrix-item">
-                  <Input
-                    type="number"
-                    value={e['minWeight']}
-                    onChange={(e) => this.matrixItemChange(e.target.name, e.target.value, i)} />
-                  <Input
-                    type="number"
-                    value={e['maxWeight']}
-                    onChange={(e) => this.matrixItemChange(e.target.name, e.target.value, i)} />
-                </div>
-              </Col>
-              <Col span={this.state.hasContent ? 5 : 8}>
-                <div className="matrix-item">
-                  <Input
-                    type="number"
-                    value={e['value']}
-                    onChange={(e) => this.matrixItemChange(e.target.name, e.target.value, i)} />
-                </div>
-              </Col>
-              {
-                this.state.hasContent &&
-                <Col span={3}>
-                  <div style={{
-                    background: '#fff',
-                    height: '100%',
-                    border: '1px solid rgba(0,0,0,.2)'
-                  }}>
-                    <Button
-                      onClick={() => this.onSaveMatrixItem(i)}
-                      disabled={e.disabled}
-                      style={{ height: '30px', color: `${e.disabled ? "gray" : "#28a745"}` }}
-                      type="link"
-                      icon={<SaveOutlined />}>Save</Button>
-                  </div>
-                </Col>
-              }
-            </Row>))
-        }
-      </Row>
-      <Row style={{ marginTop: '1rem' }}>
-        <Col span={12} style={{ paddingRight: '.5rem' }}>
-          <Button
-            style={{ background: "#28a745", color: "#fff" }}
-            onClick={() => this.onAddItem()}
-            block
-            icon={<PlusOutlined />}>Add Row</Button>
-        </Col>
-
-        <Col span={12}>
-          {
-            !this.state.hasContent &&
-            <Button
-              type="danger"
-              block
-              icon={<SaveOutlined />}>Save</Button>
-          }
-        </Col>
-      </Row>
-    </>
-  }
-
   onDestinationSelect = (e) => {
     const origin = this.state.startStation._id;
     const destination = e;
     this.setState({ selectedRoute: e }, () => {
-      MatrixService.getMatrix({ origin, destination }).then(e => {
-        const { data } = e.data;
-        console.log('data',data)
-        this.setState({
-          matrix: [{
-            declaredValueRate: data ? data.declaredValueRate : 0,
-            maxAllowedWeight: data ? data.maxAllowedWeight : 0,
-            price: data ? data.price : 0,
-            pricePerKilo: data ? data.pricePerKilo : 0,
-            maxAllowedLenght: data ? data.maxAllowedLenght : 0,
-            lenghtRate: data ? data.lenghtRate : 0,
-            pricePerKilo: data ? data.pricePerKilo : 0,
-          }]
+      MatrixService.getMatrix({ busCompanyId: this.busCompanyId, origin, destination })
+        .then(e => {
+          console.log('getMatrix',e)
+          const { data, success, errorCode } = e.data;
+          if (success) {
+            let matrix = data && data.stringValues ? JSON.parse(data.stringValues) : [initMatrix];
+            this.setState({ matrix });
+          } else {
+            this.handleErrorNotification(errorCode);
+          }
         })
-      })
     })
   }
 
+  fetchConnectingMatrix = () => {
+    const origin = this.state.connectingRoutesOrigin.value;
+    const destination = this.state.connectingRoutes.value
+    const connectingCompany = this.state.connectingCompany;
+    const busCompanyId = connectingCompany.value || (connectingCompany.options.length > 0 ? connectingCompany.options[0]._id : undefined)
+
+    if (busCompanyId && origin && destination) {
+      MatrixService.getMatrix({ busCompanyId, origin, destination })
+        .then(e => {
+          const { data, success, errorCode } = e.data;
+          if (success) {
+            let connectingMatrix = [{ ...initConnectingMatrix }];
+            if (data && data.stringValues) {
+              connectingMatrix = JSON.parse(data.stringValues)
+            }
+            this.setState({ connectingMatrix });
+          } else {
+            this.handleErrorNotification(errorCode);
+          }
+        })
+    }
+
+  }
+
+  getConnectingRoutes = (e) => {
+    ParcelService.getConnectingRoutes(e).then((e) => {
+      const { data, success, errorCode } = e.data;
+      if (!success)
+        this.handleErrorNotification(errorCode);
+      else {
+        const connectingRoutesOrigin = { ...this.state.connectingRoutesOrigin };
+        const connectingRoutes = { ...this.state.connectingRoutes };
+        connectingRoutes.options = data.map(e => ({ start: e.start, end: e.end, startStationName: e.startStationName, endStationName: e.endStationName }))
+
+        let clean = []
+        connectingRoutesOrigin.options = connectingRoutes.options.filter(e => {
+          if (!clean.includes(e.start)) {
+            clean.push(e.start)
+            return true
+          }
+        })
+
+        this.setState({ connectingRoutes, connectingRoutesOrigin })
+      }
+    });
+  }
+
   fiveStartMatrix = () => {
+    const matrix = [...this.state.matrix]
     return <>
       <Row>
-        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Declared Value Rate (%)</Col>
-        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Max Allowed Weight</Col>
-        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>length Rate</Col>
-        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Max Allowed length (Meter)</Col>
-        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Price Per Kilo</Col>
-        <Col span={4} style={{ textAlign: 'center', background: '#fff', border: '1px solid rgba(0,0,0,.2)', fontWeight: '200', padding: '.7rem' }}>Price</Col>
+        <Col span={4} className="header-input-group">Declared Value Rate (%)</Col>
+        <Col span={4} className="header-input-group">In excess of 1m (%)</Col>
+        <Col span={4} className="header-input-group">In excess of 2m (%)</Col>
+        <Col span={4} className="header-input-group">Allowed Weight (kgs.)</Col>
+        <Col span={4} className="header-input-group">In Excess of { matrix[0]['maxAllowedWeight'] || 20 } (PHP)</Col>
+        <Col span={4} className="header-input-group">Price (PHP)</Col>
       </Row>
 
       {
@@ -457,6 +355,25 @@ export default class PriceMatrix extends React.Component {
                   onChange={(e) => this.matrixItemChange("declaredValueRate", e.target.value, i)} />
               </div>
             </Col>
+            
+            <Col span={4}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['excessOneMeter']} 
+                  onChange={(e) => this.matrixItemChange("excessOneMeter", e.target.value, i)} />
+              </div>
+            </Col>
+
+            <Col span={4}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['excessTwoMeter']}
+                  onChange={(e) => this.matrixItemChange("excessTwoMeter", e.target.value, i)} />
+              </div>
+            </Col>
+
             <Col span={4}>
               <div className="matrix-item">
                 <Input
@@ -465,22 +382,7 @@ export default class PriceMatrix extends React.Component {
                   onChange={(e) => this.matrixItemChange("maxAllowedWeight", e.target.value, i)} />
               </div>
             </Col>
-            <Col span={4}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e['lenghtRate']}
-                  onChange={(e) => this.matrixItemChange("lenghtRate", e.target.value, i)} />
-              </div>
-            </Col>
-            <Col span={4}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e['maxAllowedLenght']}
-                  onChange={(e) => this.matrixItemChange("maxAllowedLenght", e.target.value, i)} />
-              </div>
-            </Col>
+
             <Col span={4}>
               <div className="matrix-item">
                 <Input
@@ -490,6 +392,7 @@ export default class PriceMatrix extends React.Component {
                   onChange={(e) => this.matrixItemChange("pricePerKilo", e.target.value, i)} />
               </div>
             </Col>
+
             <Col span={4}>
               <div className="matrix-item">
                 <Input
@@ -502,43 +405,265 @@ export default class PriceMatrix extends React.Component {
           </Row>))
       }
       <Row style={{ marginTop: '1rem' }}>
-        <Col span={12} style={{ paddingRight: '.5rem' }}>
-          {
-            this.user && this.user.busCompanyId.config.parcel.tag !== "five-star" &&
-
-            <Button
-              style={{ background: "#28a745", color: "#fff" }}
-              onClick={() => this.onAddItem()}
-              block
-              icon={<PlusOutlined />}>Add Row</Button>
-
-          }
-        </Col>
-
-        <Col span={12}>
-          {
-            !this.state.hasContent &&
-            <Button
-              onClick={() => this.saveFiveStarMatrix()}
-              type="danger"
-              block
-              icon={<SaveOutlined />}>Save</Button>
-          }
+        <Col offset={12} span={12}>
+          <Button onClick={() => this.saveFiveStarMatrix()} type="danger" block icon={<SaveOutlined />}>Save</Button>
         </Col>
       </Row>
     </>
   }
 
+  bicolIsarogMatrix = () => {
+    return <>
+      <Row>
+        <Col className="header-input-group" span={5}>Declared Value Rate (%)</Col>
+        <Col className="header-input-group" span={5}>Max Allowed Weight</Col>
+        <Col className="header-input-group" span={5}>Exceeded Per Kilo</Col>
+        <Col className="header-input-group" span={4}>Tariff Rate(%)</Col>
+        <Col className="header-input-group" span={5}>Price</Col>
+      </Row>
+
+      {
+        this.state.matrix.map((e, i) => (
+          <Row>
+            <Col span={5} >
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['declaredValueRate']}
+                  onChange={(e) => this.matrixItemChange("declaredValueRate", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={5}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['maxAllowedWeight']}
+                  onChange={(e) => this.matrixItemChange("maxAllowedWeight", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={5}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['exceededPerKilo']}
+                  onChange={(e) => this.matrixItemChange("exceededPerKilo", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={4}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  name="tariffRate"
+                  value={e['tariffRate']}
+                  onChange={(e) => this.matrixItemChange("tariffRate", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={5}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  name="price"
+                  value={e['price']}
+                  onChange={(e) => this.matrixItemChange("price", e.target.value, i)} />
+              </div>
+            </Col>
+          </Row>))
+      }
+      <Row>
+        <Col offset={12} span={12}>
+          <Button className="btn-save" onClick={() => this.saveBicolIsarogMatrix()} type="danger" block icon={<SaveOutlined />}>Save</Button>
+        </Col>
+      </Row>
+    </>
+  }
+
+  connectingMatrix = () => {
+    return <>
+      <Row>
+        <Col span={4} className="header-input-group">Min Declared Value</Col>
+        <Col span={4} className="header-input-group">Max Declared Value</Col>
+        <Col span={4} className="header-input-group">Min Weight (kgs.)</Col>
+        <Col span={3} className="header-input-group">Max Weight (kgs.)</Col>
+        <Col span={3} className="header-input-group">Price</Col>
+        <Col span={3} className="header-input-group">Handling Fee</Col>
+        <Col span={3} className="header-input-group">Tarif Rate (%) </Col>
+      </Row>
+
+      {
+        this.state.connectingMatrix.map((e, i) => (
+          <Row key={i}>
+            <Col span={4} >
+              <div className="matrix-item">
+                <Input
+                  key={i}
+                  type="number"
+                  value={e['declaredValueMin']}
+                  onChange={(e) => this.connectingMatrixChange("declaredValueMin", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={4} >
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['declaredValueMax']}
+                  onChange={(e) => this.connectingMatrixChange("declaredValueMax", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={4}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['weightMin']}
+                  onChange={(e) => this.connectingMatrixChange("weightMin", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={3}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['weightMax']}
+                  onChange={(e) => this.connectingMatrixChange("weightMax", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={3}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['price']}
+                  onChange={(e) => this.connectingMatrixChange("price", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={3}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['handlingFee']}
+                  onChange={(e) => this.connectingMatrixChange("handlingFee", e.target.value, i)} />
+              </div>
+            </Col>
+            <Col span={3}>
+              <div className="matrix-item">
+                <Input
+                  type="number"
+                  value={e['tariffRate']}
+                  onChange={(e) => this.connectingMatrixChange("tariffRate", e.target.value, i)} />
+              </div>
+            </Col>
+          </Row>))
+      }
+      <Row style={{ marginTop: '1rem' }}>
+        <Col span={12} style={{ paddingRight: '.5rem' }}>
+            <Button className="btn-add-row" block icon={<PlusOutlined />} onClick={() => this.setState({ connectingMatrix:[...this.state.connectingMatrix, ...[{ ...initConnectingMatrix }]] })}>Add Row</Button>
+        </Col>
+
+        <Col span={12}>
+          <Button
+            onClick={() => this.saveConnectingMatrix()}
+            type="danger"
+            block
+            icon={<SaveOutlined />}>Save</Button>
+        </Col>
+      </Row>
+    </>
+  }
+
+  switchView = () => {
+    const connectingRoutesOrigin = { ...this.state.connectingRoutesOrigin };
+    const connectingRoutes = { ...this.state.connectingRoutes };
+    const connectingCompany = { ...this.state.connectingCompany };
+    const options = connectingCompany.options;
+    const tag = this.user && this.user.busCompanyId.config.parcel.tag;
+
+    let view = Skeleton;
+
+    switch (tag) {
+      case 'five-star':
+        view = this.fiveStartMatrix();
+        break;
+
+      case 'bicol-isarog':
+        view = <>
+          {this.bicolIsarogMatrix()}
+          {
+            connectingCompany.options.length > 0 && <Row>
+              <div className="bicol-isarog-matrix">
+                <Divider />
+                <h1 className="bus-company-name" >{(options.value ? options[options.map(e => (e._id)).indexOf(options.value)] : (options.length > 0 && options[0].name)) || 'Connecting Routes'} Matrix</h1>
+                <Row justify="left" className="bicol-isarog-select-group">
+                  <Col span={8} style={{ paddingRight: '.5rem' }}>
+                    {
+                      options && options.length > 0 &&
+                      <>
+                        <span>Associate</span>
+                        <Select
+                          placeholder="Associate"
+                          style={{ width: '100%' }}
+                          value={connectingCompany.value}
+                          defaultValue={options && options.length > 0 && options[0]._id}
+                          onChange={(e) => this.setState({ connectingCompany: { ...{ connectingCompany }, ...{ value: e } } }, () => this.getConnectingRoutes(e))}
+                        >
+                          {options.map((e, i) => (<Option key={i} value={e._id}>{e.name}</Option>))}
+                        </Select>
+                      </>
+                    }
+
+                  </Col>
+                  <Col span={8}>
+                    {
+                      connectingRoutesOrigin.options.length > 0 &&
+                      <div className="select-padding">
+                        <span>Origin</span>
+                        <Select
+                          style={{ width: '100%' }}
+                          placeholder="Destination"
+                          value={connectingRoutesOrigin.value}
+                          onChange={(e) => this.setState({ connectingRoutesOrigin: { ...connectingRoutesOrigin, ...{ value: e } } }, () => this.fetchConnectingMatrix())}>
+                          {
+                            connectingRoutesOrigin.options.map((e, i) => (<Option key={i} value={e.start}>{e.startStationName}</Option>))
+                          }
+                        </Select>
+                      </div>
+                    }
+                  </Col>
+                  <Col span={8}>
+                    {
+                      connectingRoutes.options &&
+                      <div className="select-padding">
+                        <span>Destination</span>
+                        <Select
+                          style={{ width: '100%' }}
+                          placeholder="Destination"
+                          value={connectingRoutes.value}
+                          onChange={(e) => this.setState({ connectingRoutes: { ...connectingRoutes, ...{ value: e } } }, () => this.fetchConnectingMatrix())}>
+                          {
+                            connectingRoutes.options.map((e, i) => (<Option value={e.end}>{e.endStationName}</Option>))
+                          }
+                        </Select>
+                      </div>
+                    }
+                  </Col>
+                </Row>
+                {this.connectingMatrix()}
+              </div>
+            </Row>
+          }
+        </>
+        break;
+
+      default:
+        break;
+    }
+    return view;
+  }
+
   render() {
-    console.log('this.user',this.user)
-    const isFiveStar = this.user && this.user.busCompanyId.config.parcel.tag === 'five-star'
     return (
       <Layout>
 
-        <div style={{ width: '90%', alignSelf: 'center', padding: '1rem', marginTop: '1rem' }}>
-          <Row><h1 style={{fontSize:'1.5rem'}}>{this.user && this.user.busCompanyId.name} Matrix</h1></Row>
-          <Row justify="center" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
-            <Col span={8} style={{ paddingRight: '.5rem', paddingLeft: '.5rem' }}>
+        <div className="price-matrix-module">
+          <h1 className="bus-company-name">{this.user && this.user.busCompanyId.name} Matrix</h1>
+          <Row justify="left" className="select-group-origin-destination">
+            <Col span={8} style={{ paddingRight: '.5rem' }}>
               {
                 this.state.startStation &&
                 <>
@@ -572,7 +697,7 @@ export default class PriceMatrix extends React.Component {
           </Row>
 
           {
-            isFiveStar ? isFiveStar ? this.fiveStartMatrix() : this.defaultMatrix() : Skeleton
+            this.switchView()
           }
 
         </div>
