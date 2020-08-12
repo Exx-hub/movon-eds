@@ -181,10 +181,11 @@ const ParcelService = {
         })
     },
 
-    getConnectingBusPartners: () => {
+    getTransactions: (busCompanyId) => {
+        // TODO: Add filter parameters as query
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/list/connecting-partners`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
@@ -193,17 +194,40 @@ const ParcelService = {
         })
     },
 
-    getConnectingRoutes:(companyId)=>{
-       
+    getTransactionSummary: (busCompanyId) => {
+        // TODO: Add filter parameters as query
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${companyId}/connecting-routes`,
-            headers : {
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/summary`,
+            headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
                 'x-auth-token' : getToken()
             }
         })
+    },
+
+    exportTransactions: (busCompanyId) => {
+        // TODO: Add filter parameters as query
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/export`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            },
+            responseType: 'arraybuffer',
+        }).then(response => {
+            // Source: https://gist.github.com/javilobo8/097c30a233786be52070986d8cdb1743
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Transactions.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+         });
     }
 
 }

@@ -333,7 +333,7 @@ class CreateParcel extends React.Component {
     });
 
     this.USER = getUser();
-    let {details, declaredValueAdditionFee, noOfStickerCopy} = {...this.state};
+    let {details, noOfStickerCopy} = {...this.state};
 
     ParcelService.getConnectingBusPartners().then((e)=>{
       const{success, data, errorCode}=e.data;
@@ -351,18 +351,10 @@ class CreateParcel extends React.Component {
       const externalCompany = busCompanyId.externalCompany;
       const parcel = busCompanyId.config.parcel || undefined;
       if(parcel){
-        //const addFee = parcel.declaredValueAdditionFee || undefined;
-        //declaredValueAdditionFee = addFee ? addFee : declaredValueAdditionFee;
         noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
-        // if(addFee){
-        //   let title = `Additional Fee: ${addFee}` 
-        //   let packageInsurance = {...details.packageInsurance, ...{title, placeholder: "Declared Value Rate"}}
-        //    details = {...details, ...{packageInsurance}}
-        // }
       }
       this.setState({
         enalbeBicolIsarogWays: externalCompany === 2,
-        //declaredValueAdditionFee,
         noOfStickerCopy,
         details
       })
@@ -995,7 +987,6 @@ class CreateParcel extends React.Component {
 
         if(this.state.enalbeBicolIsarogWays){
           this.computePrice();
-          this.addP2PPricing();
         }else{
           this.getMatrixFare({
             declaredValue:currentDetails.declaredValue.value,

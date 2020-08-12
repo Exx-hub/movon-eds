@@ -1,5 +1,6 @@
 import React from 'react';
 import Manifest from '../manifest';
+import Reports from '../reports';
 import User from '../../service/User';
 import movonLogo from '../../assets/movoncargo.png';
 import {clearCredential,getCredential} from '../../utility'
@@ -28,7 +29,8 @@ import {
   PoweroffOutlined,
   SettingOutlined,
   FileSearchOutlined,
-  AppstoreAddOutlined
+  AppstoreAddOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 
 const { Header, Content, Sider } = Layout;
@@ -49,6 +51,7 @@ function Home(props) {
       case '2': props.history.push("/parcel"); break
       case '3': props.history.push("/manifest/list"); break
       case '4': props.history.push("/manifest/matrix"); break
+      case '5': props.history.push("/reports"); break
       case 'drop-down-logout' : 
         const{ token }=getCredential();
         User.logout(token).then();
@@ -116,9 +119,9 @@ function Home(props) {
             <Menu.Item key="4" icon={<FileSearchOutlined />}>
               Matrix
             </Menu.Item>
-            {/* <Menu.Item key="5" icon={<TrophyOutlined />}>
-             Claim
-            </Menu.Item> */}
+            <Menu.Item key="5" icon={<BarChartOutlined />}>
+              Reports
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout >
@@ -130,12 +133,14 @@ function Home(props) {
               <Route path="/manifest/list">
                 <Manifest {...props}/>
               </Route>
+              <Route path="/reports">
+                <Reports {...props}/>
+              </Route>
               <Redirect from="/" to="/manifest/list" />
             </Switch>
           </Content>
         </Layout>
       </Layout>
-      
     </Layout>
   );
 }
