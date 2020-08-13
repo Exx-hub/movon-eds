@@ -28,6 +28,7 @@ const MatrixService = {
             }
         })
     },
+
     getMatrixComputation: (params) => {
         return axios({
             method: 'get',
@@ -43,6 +44,22 @@ const MatrixService = {
                 declaredValue:params.declaredValue,
                 weight:params.weight,
                 length:params.length
+            }
+        })
+    },
+
+    onConnectingRoutesComputation: (busCompanyId, origin, destination, weight, declaredValue) => {
+        console.log('passs sevice----->>>>')
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/matrix/connecting-routes/computation`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            },
+            data:{
+                busCompanyId, origin, destination, weight, declaredValue
             }
         })
     },

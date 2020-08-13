@@ -415,11 +415,11 @@ export default class PriceMatrix extends React.Component {
   bicolIsarogMatrix = () => {
     return <>
       <Row>
-        <Col className="header-input-group" span={5}>Declared Value Rate (%)</Col>
-        <Col className="header-input-group" span={5}>Max Allowed Weight</Col>
-        <Col className="header-input-group" span={5}>Exceeded Per Kilo</Col>
+        <Col className="header-input-group" span={5}>Declared Value Rate(%)</Col>
+        <Col className="header-input-group" span={5}>Allowed Weight (kgs.)</Col>
+        <Col className="header-input-group" span={5}>Exceeded Per Kilo (kgs.)</Col>
         <Col className="header-input-group" span={4}>Tariff Rate(%)</Col>
-        <Col className="header-input-group" span={5}>Price</Col>
+        <Col className="header-input-group" span={5}>Price (PHP)</Col>
       </Row>
 
       {

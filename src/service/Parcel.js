@@ -181,12 +181,37 @@ const ParcelService = {
         })
     },
 
+    getConnectingBusPartners: () => {
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/list/connecting-partners`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
+    },
+
     getTransactions: (busCompanyId) => {
         // TODO: Add filter parameters as query
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
             headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            }
+        })
+    },
+
+    getConnectingRoutes:(companyId)=>{
+       
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${companyId}/connecting-routes`,
+            headers : {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
                 'x-auth-token' : getToken()
