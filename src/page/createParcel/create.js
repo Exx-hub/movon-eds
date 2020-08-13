@@ -209,14 +209,14 @@ class CreateParcel extends React.Component {
         connectingCompany:{
           name: "connectingCompany",
           value: undefined,
-          isRequired: true,
+          isRequired: false,
           accepted: true,
           options: [],
         },
         connectingRoutes:{
           name: "connectingRoutes",
           value: undefined,
-          isRequired: true,
+          isRequired: false,
           accepted: true,
           options: [],
         },
@@ -317,7 +317,8 @@ class CreateParcel extends React.Component {
       enalbeBicolIsarogWays:false,
       declaredValueAdditionFee:0.1,
       noOfStickerCopy:5,
-      connectingCompanyComputation:0
+      connectingCompanyComputation:0,
+      tariffRate:undefined
     };
     this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
     this.computePrice = debounce(this.computePrice,1000)
@@ -361,9 +362,8 @@ class CreateParcel extends React.Component {
         noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
       }
 
-      if(busCompanyId.externalCompany === 1){
-        delete details.length;
-      }
+      const length = {...details.length, ...{isRequired: false}};
+      details = {...details, ...{length}}
 
       this.setState({
         enalbeBicolIsarogWays: busCompanyId.externalCompany === 1,
@@ -578,6 +578,8 @@ class CreateParcel extends React.Component {
       billOfLading 
     } = this.state;
 
+    console.log('validateStep details', this.state.details)
+
     if (verifiedSteps >= 4) {
       console.log("already created.. no more modification");
       return false;
@@ -668,16 +670,25 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
+    const setSystemFee = (value) =>{
+      let details = {...this.state.details}
+      let systemFee= {...this.state.details.systemFee}
+      systemFee = Object.assign({},systemFee,{ value })
+      this.setState({ details: Object.assign(details,{systemFee}) })
+    }
+
+    if(!qty){
+      setSystemFee(0)
+      return
+    }
+
     const updateState = (res) =>{
+      console.log('updateState e',res.data)
       const { success, data, errorCode } = res.data;
-      if (success) {
-        let details = {...this.state.details}
-        let systemFee= {...this.state.details.systemFee}
-        systemFee = Object.assign({},systemFee,{ value: data.convenienceFee })
-        this.setState({ details: Object.assign(details,{systemFee}) })
-      }else{
+      if (!success) {
         this.handleErrorNotification(errorCode)
       }
+      setSystemFee(data && data.convenienceFee || 0)
     }
 
     if(this.USER 
@@ -709,7 +720,7 @@ class CreateParcel extends React.Component {
     const pax = paxs.value || 0;
     const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined
 
-    if(!isNull(busCompanyId) && !isNull(startStation) && !isNull(endStation) && !isNull(weight)){
+    if(!isNull(busCompanyId) && !isNull(startStation) && !isNull(endStation) && !isNull(weight) && !isNull(decValue) ){
 
       ParcelService.getDynamicPrice(
         busCompanyId,
@@ -721,6 +732,7 @@ class CreateParcel extends React.Component {
         weight,
       )
       .then(e => {
+        console.log('getDynamicPrice',e)
         let details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
         if(success){
@@ -736,13 +748,6 @@ class CreateParcel extends React.Component {
     }
   }
 
-  /** computation for interconnected bus company*/
-  addCombineP2PPricing = () =>{
-    if(this.state.enableP2P){
-      //do computation here...
-    }
-  }
-
   onInputChange = (name, value) => {
     let details = {...this.state.details};
 
@@ -753,6 +758,7 @@ class CreateParcel extends React.Component {
         value, 
         accepted: isValid } };
       details = { ...details, ...{ [name]: item } };
+
       this.setState({details},()=>{
         if(isValid){
           this.getConvinienceFee(value)
@@ -761,22 +767,11 @@ class CreateParcel extends React.Component {
       return
     }
 
-    // if (name === "declaredValue") {
-    //   const isValid = Number(value) > -1;
-    //   if(isValid){
-    //     const packageInsurance = {
-    //       ...details.packageInsurance,
-    //       ...{ value: parseFloat(value * this.state.declaredValueAdditionFee).toFixed(2) },
-    //     };
-    //     let item = { ...details[name], ...{ 
-    //       errorMessage: isValid ? "" : "Invalid number",
-    //       value, 
-    //       accepted: isValid } };
-    //     details = { ...details, ...{ packageInsurance, [name]: item } };
-    //     this.setState({details})
-    //     return
-    //   }
-    // }
+    if (name === "declaredValue") {
+      const packageInsurance = {...details.packageInsurance};
+      packageInsurance.value = 0;
+      details = { ...details, ...{ packageInsurance } };
+    }
 
     if (name === "billOfLading") {
       this.setState({billOfLading:{...this.state.billOfLading, ...{value, accepted: !isNull(value)}}})
@@ -854,6 +849,7 @@ class CreateParcel extends React.Component {
         view = (
           <>
             <ParcelDetailsForm
+              enableInterConnection={this.state.enalbeBicolIsarogWays}
               onBlur={(name) =>{ 
                 let item = this.onBlurValidation(name)
                 if(item)
@@ -982,23 +978,19 @@ class CreateParcel extends React.Component {
   componentDidUpdate(prevProps, prevState){
     const currentDetails = {...this.state.details};
     const{ destination, packageWeight, declaredValue, paxs, length }=prevState.details;
-    let validateIfChange = undefined;
+    const oldConnectingRoutes = prevState.details.connectingRoutes.value;
+    const oldConnectingCompany = prevState.details.connectingCompany.value;
 
-    if(this.state.enalbeBicolIsarogWays){
-      validateIfChange = currentDetails.destination.value !== destination.value
-      || currentDetails.packageWeight.value !== packageWeight.value
-        || currentDetails.declaredValue.value !== declaredValue.value;
-    }else{
-      validateIfChange = currentDetails.destination.value !== destination.value
+    if(currentDetails.destination.value !== destination.value
       || currentDetails.packageWeight.value !== packageWeight.value
         || currentDetails.declaredValue.value !== declaredValue.value
-          || currentDetails.length.value !== length.value;
-    }
+          || currentDetails.length.value !== length.value
+            || oldConnectingRoutes !== currentDetails.connectingRoutes.value 
+              || oldConnectingCompany !== currentDetails.connectingCompany.value){
 
-    if(validateIfChange){
       if(currentDetails.destination.value !== undefined
         && currentDetails.packageWeight.value !== undefined
-        && currentDetails.declaredValue.value !== undefined){
+          && currentDetails.declaredValue.value !== undefined){
 
         if(currentDetails.type.value !== 3 && currentDetails.paxs.value === paxs.value){
           return;
@@ -1007,24 +999,31 @@ class CreateParcel extends React.Component {
         if(this.state.enalbeBicolIsarogWays){
           this.computePrice();
 
-            if(currentDetails.connectingRoutes.value && currentDetails.connectingCompany.value){
-              const destination = currentDetails.connectingRoutes.value 
-              const associateId = currentDetails.connectingCompany.value
-              const origin = currentDetails.connectingRoutes.options.filter(e=>e.end)[0].start;
-              const weight = currentDetails.packageWeight.value
-              const declaredValue = currentDetails.declaredValue.value
-              
+          if(currentDetails.connectingRoutes.value && currentDetails.connectingCompany.value){
+            const destination = currentDetails.connectingRoutes.value 
+            const associateId = currentDetails.connectingCompany.value
+            const origin = currentDetails.connectingRoutes.options.filter(e=>e.end)[0].start;
+            const weight = currentDetails.packageWeight.value
+            const declaredValue = currentDetails.declaredValue.value
+            
+            if(destination && associateId && origin && weight && declaredValue){
               MatrixService.onConnectingRoutesComputation(associateId, origin, destination, weight, declaredValue)
               .then(e=>{
-                const{data}=e.data
-                if(data){
-                  this.setState({connectingCompanyComputation: data.total})
+                console.log('onConnectingRoutesComputation',e)
+                const{data, success, errorCode} = e.data
+                if(success){
+                  if(data){
+                    this.setState({connectingCompanyComputation: data.total, tariffRate : e.tariffRate})
+                  }
+                }else{
+                  this.setState({connectingCompanyComputation: 0, tariffRate : 0})
+                  this.handleErrorNotification(errorCode);
                 }
               })
             }
-          
+            
+          }
         }else{
-
           this.getMatrixFare({
             declaredValue:currentDetails.declaredValue.value,
             weight:currentDetails.packageWeight.value,
@@ -1033,19 +1032,23 @@ class CreateParcel extends React.Component {
         }
       }
     }
+
     const oldDetails = prevState.details
     const curDetails = this.state.details
+
     if(oldDetails.shippingCost.value !== curDetails.shippingCost.value
-        || oldDetails.systemFee.value !== curDetails.systemFee.value
+      || oldDetails.systemFee.value !== curDetails.systemFee.value
+        || oldDetails.packageInsurance.value !== curDetails.packageInsurance.value
           || prevState.connectingCompanyComputation !== this.state.connectingCompanyComputation)
-    this.updateTotalShippingCost();
+      this.updateTotalShippingCost();
   }
 
   updateTotalShippingCost = () =>{
     const currentDetails = {...this.state.details};
     let total = parseFloat(currentDetails.shippingCost.value || 0) 
       + parseFloat(currentDetails.systemFee.value || 0)
-          + parseFloat(this.state.connectingCompanyComputation)
+        + parseFloat(currentDetails.packageInsurance.value || 0)
+          + parseFloat(this.state.connectingCompanyComputation || 0)
     
     const totalShippingCost = {...currentDetails.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
     this.setState({details: {...currentDetails, ...{totalShippingCost}}})

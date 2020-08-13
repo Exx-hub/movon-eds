@@ -58,6 +58,8 @@ function CreateParcelForm(props) {
     connectingRoutes
   } = props.details;
 
+  const enableInterConnection = props.enableInterConnection
+
   return (
     <div className="create-parcel-form">
       
@@ -94,7 +96,7 @@ function CreateParcelForm(props) {
             />
           </Col>
         </Row>
-        <Row >
+        <Row className={`${enableInterConnection ? "" : "hide"}`} >
           <Col className="gutter-row" span={12}>
             <div className="select-destination-form-container">
               <span className="input-placeholder-title select-placeholder">Associate Routes</span>
@@ -185,8 +187,9 @@ function CreateParcelForm(props) {
               title="Weight" />
 
             {
-              length &&
+              !enableInterConnection &&
               <InputBox
+                className={`${length ? "" : "hide"}`}
                 type="number"
                 onBlur={() => props.onBlur(paxs.name)}
                 detail={length}

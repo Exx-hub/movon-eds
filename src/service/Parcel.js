@@ -34,7 +34,13 @@ const ParcelService = {
 
     create : (state) => {
         const{
-            details, checkIn, packageImagePreview, selectedTrip, billOfLading,
+            details, 
+            checkIn, 
+            packageImagePreview, 
+            selectedTrip, 
+            billOfLading,
+            tariffRate,
+            enalbeBicolIsarogWays
         }=state;
       
         const {
@@ -55,9 +61,19 @@ const ParcelService = {
             packageWeight,
             shippingCost,
             totalShippingCost,
-            length
+            length,
+            connectingCompanyComputation,
+           
+            connectingCompany,
+            connectingRoutes
         } = details;
 
+        const associatedTariffRate = tariffRate || undefined;
+        const associatedDestination = connectingRoutes.value || undefined 
+        const associatedCompanyId = connectingCompany.value || undefined
+        const associatedOrigin = connectingRoutes.options.length>0 && connectingRoutes.options.filter(e=>e.end)[0].start || undefined;
+        const associatedAmount = connectingCompanyComputation;
+        
         const COUNTRY_CODE= "PH";
         const CARGO_PADALA= 3;
         const PACKAGE_INSURANCE = 0;
@@ -89,7 +105,12 @@ const ParcelService = {
         bodyFormData.set('convenienceFee', systemFee.value)
         bodyFormData.set('insuranceFee', packageInsurance.value)
         bodyFormData.set('billOfLading', billOfLading.value)
-        bodyFormData.set('billOfLading', length.value)
+        bodyFormData.set('associatedTariffRate', associatedTariffRate)
+        bodyFormData.set('associatedCompanyId', associatedCompanyId)
+        bodyFormData.set('associatedOrigin', associatedOrigin)
+        bodyFormData.set('associatedDestination', associatedDestination)
+        bodyFormData.set('associatedAmount', associatedAmount)
+        bodyFormData.set('lenght', length.value || undefined)
 
         return axios({
             method: 'post',
