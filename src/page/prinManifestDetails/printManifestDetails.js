@@ -5,6 +5,9 @@ import { Layout, Button, Table, Col, Row, Tooltip } from 'antd';
 import { ArrowLeftOutlined, PrinterOutlined } from '@ant-design/icons';
 import './printManifestDetails.css'
 import ManifestService from '../../service/Manifest';
+import {
+  getUser
+} from "../../utility";
 
 const { Header } = Layout
 
@@ -17,7 +20,7 @@ function TableView(props) {
       key: 'billOfLading1'
     },
     {
-      title: () => (<span>({busCompanyName}) <br /> Bill of Lading</span>),
+      title: () => (<span>({busCompanyName === "Bicol Isarog Trasport System Inc." ? "BITSI" : busCompanyName}) <br /> Bill of Lading</span>),
       dataIndex: 'companyBillOfLading',
       key: 'billOfLading2',
     },
@@ -43,11 +46,11 @@ function TableView(props) {
       key: 'amount',
       render:(text)=>(<>₱ {parseFloat(text).toFixed(2)}</>)
     },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
+    // {
+    //   title: 'Status',
+    //   dataIndex: 'status',
+    //   key: 'status',
+    // },
     {
       title: ' Sender ',
       dataIndex: 'sender',
@@ -94,8 +97,17 @@ class PrintManifestDetails extends React.Component {
       this.props.history.push('/')
     }
 
+    console.log('state',state)
+    console.log('getUser',getUser())
+    const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
+    this.companyTag = companyTag;
+
+    console.log('companyTag',companyTag)
+    let totalSales = 0;
+
     ManifestService.getManifestByDate(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
     .then(e=>{
+      console.log('getManifestByDate',e)
       const data = e.data;
       const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
       const routes1 = data[0].trips.startStationName
@@ -103,6 +115,10 @@ class PrintManifestDetails extends React.Component {
       const deliveryPerson = data[0].deliveryPersonInfo.deliveryPersonName
       const tripCode = data[0].trips.displayId
       const busCompanyName= data[0].busCompanyName;
+      
+      const dddd = data.map(e=>(Number(e.priceDetails.totalPrice) - Number(e.priceDetails.convenienceFee)))
+      totalSales = dddd.reduce((accumulator, currentValue)=> accumulator + currentValue );
+
 
       const dataSource = data.map((e,i)=>{
         return {
@@ -111,16 +127,18 @@ class PrintManifestDetails extends React.Component {
           companyBillOfLading: e.billOfLading,
           description: e.packageInfo.packageName,
           weight: e.packageInfo.packageWeight,
-          amount: e.priceDetails.totalPrice,
+          amount: e.priceDetails.totalPrice - 10,
           qty: e.packageInfo.quantity,
           sender: e.senderInfo.senderName,
           reciepient: e.recipientInfo.recipientName,
           status: e.status,
-          busCompanyName: e.busCompanyName,
+          busCompanyName: e.busCompanyName
         }
       })
 
       this.setState({
+        transactionDate: moment(state.date).format("MMM DD, YYYY"),
+        totalSales,
         data, 
         deliveryPerson, 
         departureTime,
@@ -172,26 +190,26 @@ class PrintManifestDetails extends React.Component {
             <div style={{ marginLeft: '.5rem', marginTop: '.5rem' }}>
               <div className='print-title-corner'>
                 <span className="print-company-title">{busCompanyName}</span>
-                <span className="print-company-date">{moment().format("MMM DD, YYYY")}</span>
+                <span className="print-company-date">{this.state.transactionDate}</span>
               </div>
               <Row>
                 <Col offset={2} span={3}>
                   <h3 className="col-title">Routes:</h3>
-                  <h3 className="col-title">Trip Code:</h3>
+                  <h3 className="col-title">Total Transaction:</h3>
                 </Col>
 
                 <Col span={6}>
-                  <h3 className="col-value">{routes1} - {routes2}</h3>
-                  <h3 className="col-value">{tripCode}</h3>
+                  <h3 className="col-value">{this.companyTag === 'bicol-isarog' ? `Edsa Cubao - ${routes2}` : `${routes1}-${routes2}`}</h3>
+                  <h3 className="col-value">{this.state.dataSource.length}</h3>
                 </Col>
 
                 <Col offset={4} span={4}>
-                  <h3 className="col-title">Departure Date:</h3>
+                  <h3 className="col-title">Total Sales:</h3>
                   <h3 className="col-title">Prepared By:</h3>
                 </Col>
 
                 <Col>
-                  <h3 className="col-value">{departureTime}</h3>
+                  <h3 className="col-value">₱ {this.state.totalSales ? this.state.totalSales.toFixed(2) : 0.00 }</h3>
                   <h3 className="col-value">{deliveryPerson}</h3>
                 </Col>
               </Row>
