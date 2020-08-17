@@ -94,7 +94,7 @@ class PrintManifestDetails extends React.Component {
   componentDidMount(){
     const state = this.props.location.state && this.props.location.state.data || undefined
     if(!state){
-      this.props.history.push('/')
+      this.props.history.goBack()
     }
 
     console.log('state',state)
@@ -166,7 +166,7 @@ class PrintManifestDetails extends React.Component {
         <Header className="home-header-view">
         <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
         <div>
-          <Button type="link" onClick={() => this.props.history.push('/')}>
+          <Button type="link" onClick={() => this.props.history.goBack()}>
           <ArrowLeftOutlined style={{ fontSize: '16px', color: '#fff' }} />
             <span style={{ fontSize: "20px", color: "#fff" }}>Print Manifest</span>
           </Button>

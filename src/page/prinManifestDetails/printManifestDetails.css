@@ -43,3 +43,7 @@
 .home-header-view{
     padding: 0px !important;
 }
+
+.ant-table-cell{
+    max-width: 200px !important;
+}

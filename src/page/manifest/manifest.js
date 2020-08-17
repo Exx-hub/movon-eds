@@ -101,12 +101,15 @@ class Manifest extends React.Component {
           }
         })
 
+        const params = new URLSearchParams(this.props.location.search);
+        const routesIndex = params.get('route-id'); // bar
+
         this.setState({
           routes:data, 
-          selectedRoute:data[0],
-          routesList:{...this.state.routesList,...{options}}
+          selectedRoute:data[Number(routesIndex||0)],
+          routesList:{...this.state.routesList,...{options, value:Number(routesIndex)}}
         });
-        this.getManifestByDestination(data[0].start, data[0].end)
+        this.getManifestByDestination(data[Number(routesIndex||0)].start, data[Number(routesIndex||0)].end)
         
       }
       });
@@ -138,6 +141,7 @@ class Manifest extends React.Component {
     try {
       ManifestService.getManifestDateRange(this.state.startDay, this.state.endDay, startStationId, endStationId)
       .then(e=>{
+        console.log('getManifestDateRange',e)
         const{data, success, errorCode}=e.data
         if(success){
           this.setState({listOfTripDates:data || [], fetching:false})
@@ -162,12 +166,18 @@ class Manifest extends React.Component {
   }
 
   handleSelectChange = (value) =>{
+    console.log('handleSelectChange value',value)
+
     const data = this.state.routes[value];
     this.setState({
       selectedRoute: data,
       routesList:{...this.state.routesList, ...{value}}
     },()=>{
       this.getManifestByDestination(data.start, data.end)
+      this.props.history.push({
+        pathname: '/manifest/list',
+        search: `?route-id=${value}`
+      })
     })
   }
 
@@ -212,9 +222,11 @@ class Manifest extends React.Component {
           routesList && 
           <Select 
             size="large"
-            defaultValue={routesList.value} 
+            value={routesList.value} 
             style={{ width: '90%' }} 
-            onChange={this.handleSelectChange}>{ routesList.options.map(e=>(<Option key={e.value} value={e.value}>{e.name}</Option>)) }
+            onChange={this.handleSelectChange}>{ 
+              routesList.options.map(e=>(<Option key={e.value} value={e.value}>{e.name}</Option>)) 
+            }
           </Select>
         }
         </Col>

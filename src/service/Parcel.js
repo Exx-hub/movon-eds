@@ -110,7 +110,7 @@ const ParcelService = {
         bodyFormData.set('associatedOrigin', associatedOrigin)
         bodyFormData.set('associatedDestination', associatedDestination)
         bodyFormData.set('associatedAmount', associatedAmount)
-        bodyFormData.set('lenght', length.value || undefined)
+        bodyFormData.set('length', length.value || undefined)
 
         return axios({
             method: 'post',

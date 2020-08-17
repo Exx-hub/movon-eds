@@ -494,7 +494,7 @@ class ManifestDetails extends React.Component{
               <div style={{ float: 'left' }}>
                 <Button
                   type="link"
-                  onClick={() => { this.props.history.push('/manifest/list',) }}>
+                  onClick={() => { this.props.history.goBack() }}>
                   <ArrowLeftOutlined style={{ fontSize: '20px', color: '#fff' }} />
                   <span style={{ fontSize: '20px', color: '#fff' }}>Manifest Details</span>
                 </Button>
