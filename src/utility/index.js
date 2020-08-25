@@ -1,34 +1,33 @@
-import {useEffect,useState} from 'react';
 import {notification} from 'antd';
-import {config, ERROR_CODES} from '../config'
+import { ERROR_CODES} from '../config'
 
-export const useWindowSize = () =>{
-    const isClient = typeof window === 'object';
+// export const useWindowSize = () =>{
+//     const isClient = typeof window === 'object';
   
-    function getSize() {
-      return {
-        width: isClient ? window.innerWidth : undefined,
-        height: isClient ? window.innerHeight : undefined
-      };
-    }
+//     function getSize() {
+//       return {
+//         width: isClient ? window.innerWidth : undefined,
+//         height: isClient ? window.innerHeight : undefined
+//       };
+//     }
   
-    const [windowSize, setWindowSize] = useState(getSize);
+//     const [windowSize, setWindowSize] = useState(getSize);
   
-    useEffect(() => {
-      if (!isClient) {
-        return false;
-      }
+//     useEffect(() => {
+//       if (!isClient) {
+//         return false;
+//       }
       
-      function handleResize() {
-        setWindowSize(getSize());
-      }
+//       function handleResize() {
+//         setWindowSize(getSize());
+//       }
   
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []); // Empty array ensures that effect is only run on mount and unmount
+//       window.addEventListener('resize', handleResize);
+//       return () => window.removeEventListener('resize', handleResize);
+//     }, []); // Empty array ensures that effect is only run on mount and unmount
   
-    return windowSize;
-}
+//     return windowSize;
+// }
 
 export const dataURLtoFile = (dataurl, filename) => {
   if(dataurl){
@@ -85,9 +84,9 @@ export const clearCredential = () =>{
  export const openNotificationWithIcon = (type, code, func) => {
   console.log('[UTILITY]:erroCode',code)
 
-  const erCode = ERROR_CODES && ERROR_CODES[code] || undefined;
-  const msg = erCode && erCode.message || undefined;
-  const desc = erCode && erCode.description || undefined;
+  const erCode = (ERROR_CODES && ERROR_CODES[code]) || undefined;
+  const msg = (erCode && erCode.message) || undefined;
+  const desc = (erCode && erCode.description) || undefined;
   
   notification[type]({
     onClose: func || null,

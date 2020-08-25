@@ -2,10 +2,8 @@ import React from 'react';
 import { Form, notification, Input, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { RoundedButton } from '../../component/button'
-import movon from '../../assets/movon3.png';
 import movoncargo from '../../assets/movoncargo.png';
 import User from '../../service/User';
-import { config } from '../../config';
 import { getCredential, setCredential, clearCredential, openNotificationWithIcon } from '../../utility'
 import './login.scss'
 
@@ -20,7 +18,7 @@ function Login(props) {
     if(getCredential()){
       props.history.push('/')
     }
-  },[]);
+  },[props.history]);
 
   const handleErrorNotification = (code) =>{
     if(!code){

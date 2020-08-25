@@ -29,7 +29,6 @@ export const ReviewDetails = (props) =>{
         senderPhone,
         convenienceFee,
         insuranceFee,
-        price,
         totalPrice,
         additionalNote,
         billOfLading

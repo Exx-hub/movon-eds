@@ -1,6 +1,5 @@
 import React from 'react';
 import './scheduletrips.scss';
-import {Pagination} from 'antd';
 import pin from '../../assets/destinationpin.png'
 import moment from 'moment';
 
@@ -31,10 +30,7 @@ const DetailsView = (props) =>{
 
     const {
         name,
-        value,
-        startStationId,
         startStationName,
-        companyId,
         companyName,
         tripStartDateTime,
         busModel,
@@ -62,36 +58,3 @@ const DetailsView = (props) =>{
             </div>
     </div>)
 }
-
-// <div style={{display:'flex', flexDirection:'row'}}>
-//                 <div style={{display:'flex', height:'100px'}}>
-//                     <img style={{height:'100px', position:'absolute'}} src={pin} />
-//                     <div 
-//                         style={{
-//                             marginLeft:'2rem',
-//                             display:'flex', 
-//                             flexDirection:'column',
-//                             justifyContent:'flex-start',
-//                             alignItems:'flex-start',
-//                             height:'100%',
-//                         }}>
-//                         <span style={{flexGrow:1}}>Naga</span>
-//                         <span>Cubao</span>
-//                     </div>
-//                 </div>
-//                 <div style={{
-//                     display:'flex',
-//                     flexDirection:'column',
-//                     justifyContent:'flex-start',
-//                     width:'100%'
-//                 }}>
-//                     <div style={{marginLeft:'10%', height:'100%', display:'flex', flexDirection:' row'}}>
-//                         <div style={{display:'flex', flexDirection:'column', alignSelf:'flex-end'}}>
-//                             <span>Company</span>
-//                             <span style={{marginBottom:'.5rem'}}>Bus Model</span>
-//                             <span>Departure Time</span>
-//                             <span>02:52 AM - Jun 30, 2020</span>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>

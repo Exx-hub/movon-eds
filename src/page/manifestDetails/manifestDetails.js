@@ -208,7 +208,7 @@ class ManifestDetails extends React.Component{
   }
 
   componentDidMount(){
-    const state = this.props.location.state && this.props.location.state.data || undefined
+    const state = (this.props.location.state && this.props.location.state.data) || undefined
     if(!(state && state.date)){
       this.props.history.push('/')
       return
@@ -228,7 +228,6 @@ class ManifestDetails extends React.Component{
 
     ManifestService.getManifestByDate(date, startStationId, endStationId)
     .then(e=>{
-      console.log('getManifestByDate data',e.data)
       if(!e.data.success && e.data.errorCode){
         this.handleErrorNotification(e.data.errorCode)
         return;
@@ -276,6 +275,7 @@ class ManifestDetails extends React.Component{
           if(e.status === value){
             return true;
           }
+          return false;
         })
         this.setState({status:value, tempParcelData})
         break;
@@ -334,7 +334,6 @@ class ManifestDetails extends React.Component{
       scanCode: data.scanCode,
       createdAt: data.createdAt,
       subParcels: data.subParcels,
-      totalPrice: data.priceDetails.totalPrice
     }
   }
 

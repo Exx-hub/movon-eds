@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, DatePicker, Button, Row, Col, Select, Skeleton, Space, notification, Descriptions, Layout, Divider } from 'antd';
+import { Table, Button, Row, Space, notification, Descriptions, Layout, Divider } from 'antd';
 import { openNotificationWithIcon, openNotificationWithDuration, getUser, clearCredential } from '../../utility';
 import ParcelService from '../../service/Parcel';
 import moment from 'moment';

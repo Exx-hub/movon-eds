@@ -44,7 +44,7 @@ function Home(props) {
       const{user} = getCredential();
       setState({...state, ...{user}})
     }
-  },[state.user]);
+  },[state]);
 
   const onNavigationMenuChange = (e) =>{
     switch(e.key){

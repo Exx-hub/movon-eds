@@ -40,7 +40,6 @@ const ParcelService = {
             selectedTrip, 
             billOfLading,
             tariffRate,
-            enalbeBicolIsarogWays
         }=state;
       
         const {
@@ -50,7 +49,6 @@ const ParcelService = {
             recieverName,
             recieverMobile,
             recieverEmail,
-            destination,
             description,
             declaredValue,
             quantity,
@@ -60,7 +58,6 @@ const ParcelService = {
             type,
             packageWeight,
             shippingCost,
-            totalShippingCost,
             length,
             connectingCompanyComputation,
            
@@ -71,7 +68,7 @@ const ParcelService = {
         const associatedTariffRate = tariffRate || undefined;
         const associatedDestination = connectingRoutes.value || undefined 
         const associatedCompanyId = connectingCompany.value || undefined
-        const associatedOrigin = connectingRoutes.options.length>0 && connectingRoutes.options.filter(e=>e.end)[0].start || undefined;
+        const associatedOrigin = (connectingRoutes.options.length>0 && connectingRoutes.options.filter(e=>e.end)[0].start) || undefined;
         const associatedAmount = connectingCompanyComputation;
         
         const COUNTRY_CODE= "PH";

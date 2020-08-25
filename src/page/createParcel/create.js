@@ -100,7 +100,7 @@ const getReviewDetails = (state) =>{
 
 const parceResponseData = (data) =>{
   const USER = getUser();
-  const logo = USER && USER.busCompanyId.logo || undefined;
+  const logo = (USER && USER.busCompanyId.logo) || undefined;
   const name = USER && USER.busCompanyId.name
   
   const endStationName = data.trips ? data.trips.endStationName : data.endStation.name
@@ -132,7 +132,6 @@ const parceResponseData = (data) =>{
     scanCode: data.scanCode,
     createdAt: data.createdAt,
     subParcels: data.subParcels,
-    totalPrice: data.priceDetails.totalPrice
   }
 }
 
@@ -339,7 +338,7 @@ class CreateParcel extends React.Component {
     });
 
     this.USER = getUser();
-    const busCompanyId = this.USER && this.USER.busCompanyId || undefined
+    const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined
     let {details, noOfStickerCopy} = {...this.state};
 
     ParcelService.getConnectingBusPartners().then((e)=>{
@@ -378,9 +377,9 @@ class CreateParcel extends React.Component {
       if(success){
         if(data.trips){
           const details = {...this.state.details}
-          let _myOption =[]
-          data.trips.data.map(e=>{
+          let _myOption =[] 
 
+          data.trips.data.forEach(e=>{
             _myOption.push({
               name:e.endStation.name,
               value:e.endStation._id,
@@ -403,6 +402,7 @@ class CreateParcel extends React.Component {
               clean.push(e.value)
               return true
             }
+            return false;
           })
 
           const destination = {...details.destination, ...{options:_myOption}}
@@ -516,6 +516,7 @@ class CreateParcel extends React.Component {
     }
 
     if(!isNull(details[name].value) && (name === 'senderEmail' || name === 'recieverEmail')){
+      // eslint-disable-next-line
       const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(details[name].value)
       return {...details[name], ...{
         hasError: !validEmail,
@@ -688,7 +689,7 @@ class CreateParcel extends React.Component {
       if (!success) {
         this.handleErrorNotification(errorCode)
       }
-      setSystemFee(data && data.convenienceFee || 0)
+      setSystemFee((data && data.convenienceFee) || 0)
     }
 
     if(this.USER 
@@ -712,8 +713,8 @@ class CreateParcel extends React.Component {
       type
     }= this.state.details
 
-    const busCompanyId =  this.USER && this.USER.busCompanyId._id || undefined;
-    const startStation =  this.USER && this.USER.assignedStation._id || undefined;
+    const busCompanyId =  (this.USER && this.USER.busCompanyId._id) || undefined;
+    const startStation =  (this.USER && this.USER.assignedStation._id) || undefined;
     const selectedOption = destination.options.filter(e=>e.value === destination.value)[0]
     const endStation = selectedOption.endStation || undefined;
     const decValue = declaredValue.value ? parseFloat(declaredValue.value).toFixed(2) : undefined;

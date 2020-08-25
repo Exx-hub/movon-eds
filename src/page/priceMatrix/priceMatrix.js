@@ -68,7 +68,7 @@ export default class PriceMatrix extends React.Component {
 
   componentDidMount() {
     this.user = getUser();
-    this.busCompanyId = this.user && this.user.busCompanyId._id || undefined;
+    this.busCompanyId = (this.user && this.user.busCompanyId._id) || undefined;
 
     if (!this.user) {
       this.props.history.push('/')
@@ -81,7 +81,7 @@ export default class PriceMatrix extends React.Component {
 
         if (data.trips) {
           let options = []
-          data.trips.data.map(e => {
+          data.trips.data.forEach(e => {
             options.push({
               name: e.endStation.name,
               value: e.endStation._id,
@@ -94,6 +94,7 @@ export default class PriceMatrix extends React.Component {
               clean.push(e.value)
               return true
             }
+            return false
           })
           this.setState({
             routes: data,
@@ -325,6 +326,7 @@ export default class PriceMatrix extends React.Component {
             clean.push(e.start)
             return true
           }
+          return false;
         })
 
         this.setState({ connectingRoutes, connectingRoutesOrigin })

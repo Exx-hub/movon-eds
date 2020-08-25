@@ -1,12 +1,8 @@
 import React from 'react';
-import { Col, Row, Space } from 'antd';
 import './parcelCard.scss';
-import {config} from '../../config'
-
 
 export const ParcelCard = (props) => {
       const{
-        key,
         qrcode,
         description,
         sender,
@@ -19,7 +15,7 @@ export const ParcelCard = (props) => {
   return (<div className="component-parcel-card"
     onClick={() => props.onSelect(props.value)}
   >
-    <img className="parcel-image" src={packageImg[0]} />
+    <img className="parcel-image" src={packageImg[0]} alt="parcel"/>
 
     <div className="parcel-card-top-title">
       <div className="my-space my-col-1">

@@ -18,7 +18,7 @@ function WebCam(props){
         const imageSrc = webcamRef.current.getScreenshot();
         props.onCapture(imageSrc)
       },
-      [webcamRef]
+      [webcamRef,props]
     );
   
     return (

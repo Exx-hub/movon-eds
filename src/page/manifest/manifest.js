@@ -4,7 +4,6 @@ import {openNotificationWithIcon, openNotificationWithDuration, clearCredential}
 import ManifestService from '../../service/Manifest';
 import moment from 'moment';
 import './manifest.scss';
-import {config} from '../../config'
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;    
@@ -74,7 +73,7 @@ class Manifest extends React.Component {
       fetching:false,
       routes:undefined,
       routesList:{
-        value:0,
+        value:undefined,
         options:[]
       },
       listOfTripDates:undefined,
@@ -83,6 +82,7 @@ class Manifest extends React.Component {
   }
 
   componentDidMount(){
+    this.setState({fetching:true})
     try {
       ManifestService
       .getRoutes()
@@ -92,6 +92,10 @@ class Manifest extends React.Component {
         if(!success && errorCode){
           this.handleErrorNotification(errorCode)
         }else{
+        this.setState({fetching:false})
+        if(!data || (data && data.length < 1)){
+          return;
+        }
 
         const options = data.map((e,i)=>{
           return{
@@ -239,7 +243,7 @@ class Manifest extends React.Component {
         </Col>
       </Row>
       { 
-        !fetching && this.state.listOfTripDates ? 
+        !fetching ? 
         <TableRoutesView
           routes={routes}
           pagination={false}

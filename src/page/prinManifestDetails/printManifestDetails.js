@@ -92,7 +92,7 @@ class PrintManifestDetails extends React.Component {
   }
 
   componentDidMount(){
-    const state = this.props.location.state && this.props.location.state.data || undefined
+    const state = (this.props.location.state && this.props.location.state.data) || undefined
     if(!state){
       this.props.history.goBack()
     }
@@ -154,10 +154,8 @@ class PrintManifestDetails extends React.Component {
   render(){
     const{
       deliveryPerson, 
-      departureTime,
       routes1,
       routes2,
-      tripCode,
       dataSource,
       busCompanyName
     }=this.state;

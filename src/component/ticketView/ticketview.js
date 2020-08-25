@@ -6,13 +6,11 @@ import movon from '../../assets/movon3.png';
 import {config} from '../../config'
 import moment from 'moment'
 import {getUser} from '../../utility'
-//import bicol from '../../assets/bicol.png'
 
 const TicketDetails = (props) =>{
 
     const{
         billOfLading,
-        packageName,
         packageQty,
         packageWeight,
         recipientName,
@@ -137,8 +135,8 @@ const TicketDetails = (props) =>{
                     alignItems:'flex-start'
                     }}>
                     <div className="image-logo-container">
-                        <img src={movon} className="movon-logo"/>
-                        <img src={busCompanyLogo} className="partner-logo"/>
+                        <img src={movon} className="movon-logo" alt="movon"/>
+                        <img src={busCompanyLogo} className="partner-logo" alt="partner"/>
                     </div>
                     <div className="ticket-view-populate-section"><Populate /></div>
                 </div>
@@ -163,8 +161,6 @@ const PCopy = (props) =>{
 
 const SpCopy = (props) =>{
     if(props){
-        const quantity = props.value.packageQty;
-       // const scanCode = props.value.subParcels[0].subParcelCode;
         
         let _view=[]
         for(let i=0; i<props.value.subParcels.length; i++){
