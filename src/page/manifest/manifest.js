@@ -65,20 +65,17 @@ const TableRoutesView = (props) =>{
 
 class Manifest extends React.Component {
 
-  constructor(props){
-    super(props);
-    this.state={
-      endDay: moment().format(dateFormat),
-      startDay:moment().subtract(3, 'd').format(dateFormat),
-      fetching:false,
-      routes:undefined,
-      routesList:{
-        value:undefined,
-        options:[]
-      },
-      listOfTripDates:undefined,
-      selectedRoute:undefined
-    }
+  state={
+    endDay: moment().format(dateFormat),
+    startDay:moment().subtract(3, 'd').format(dateFormat),
+    fetching:false,
+    routes:undefined,
+    routesList:{
+      value:undefined,
+      options:[]
+    },
+    listOfTripDates:undefined,
+    selectedRoute:undefined
   }
 
   componentDidMount(){

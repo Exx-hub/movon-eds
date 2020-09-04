@@ -5,6 +5,7 @@ import User from '../../service/User';
 import movonLogo from '../../assets/movoncargo.png';
 import {clearCredential,getCredential} from '../../utility'
 import PriceMatrix from '../priceMatrix'
+import SalesReport from "../salesReport"
 
 import './home.scss';
 
@@ -34,6 +35,8 @@ import {
 } from '@ant-design/icons';
 
 const { Header, Content, Sider } = Layout;
+const { SubMenu } = Menu;
+
 
 function Home(props) {
 
@@ -51,7 +54,8 @@ function Home(props) {
       case '2': props.history.push("/parcel"); break
       case '3': props.history.push("/manifest/list"); break
       case '4': props.history.push("/manifest/matrix"); break
-      case '5': props.history.push("/reports"); break
+      case '5': props.history.push("/report/sales"); break
+      case '6': props.history.push("/reports"); break
       case 'drop-down-logout' : 
         const{ token }=getCredential();
         User.logout(token).then();
@@ -100,28 +104,21 @@ function Home(props) {
         </Row>
       </Header>
       <Layout style={{background:'yellow'}}>
-        <Sider width={200} className="home-sider">
+        <Sider width={250} className="home-sider">
           <Menu 
           style={{marginTop:'1rem'}}
           theme="light" 
           defaultSelectedKeys={['1']} 
+          defaultOpenKeys={['sub1']}
           mode="inline" 
           onClick={(e)=>{ onNavigationMenuChange(e) }}>
-            {/* <Menu.Item key="1" icon={<BarChartOutlined />}>
-              Dashboard
-            </Menu.Item> */}
-            <Menu.Item key="2" icon={<AppstoreAddOutlined />}>
-              Add Parcel
-            </Menu.Item>
-            <Menu.Item key="3" icon={<AuditOutlined />}>
-              Manifest
-            </Menu.Item>
-            <Menu.Item key="4" icon={<FileSearchOutlined />}>
-              Matrix
-            </Menu.Item>
-            <Menu.Item key="5" icon={<BarChartOutlined />}>
-              Reports
-            </Menu.Item>
+            <Menu.Item key="2" icon={<AppstoreAddOutlined />}> Add Parcel </Menu.Item>
+            <Menu.Item key="3" icon={<AuditOutlined />}> Manifest </Menu.Item>
+            <Menu.Item key="4" icon={<FileSearchOutlined />}> Matrix </Menu.Item>
+            <SubMenu key="sub1" icon={<BarChartOutlined />} title="Reports">
+              <Menu.Item key="5" icon={<BarChartOutlined />}>BITSI Sales</Menu.Item>
+              <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>
+          </SubMenu>
           </Menu>
         </Sider>
         <Layout >
@@ -135,6 +132,9 @@ function Home(props) {
               </Route>
               <Route path="/reports">
                 <Reports {...props}/>
+              </Route>
+              <Route path="/report/sales">
+                <SalesReport {...props}/>
               </Route>
               <Redirect from="/" to="/manifest/list" />
             </Switch>
