@@ -19,11 +19,11 @@ function App() {
   return (
     <Router>
       <Switch>
-          <Route exact={true} path="/login" render={props=> <Login {...props} />} />
-          <Route exact={true} path="/parcel" render={props=> getCredential() ? <CreateParcel {...props}/> : <Redirect to="/login" /> }/>
-          <Route exact={true} path="/manifest/details" render={props=> getCredential() ? <ManifestDetails {...props}/>: <Redirect to="/login" /> }/>
-          <Route exact={true} path="/manifest/print/" render={props=> getCredential() ? <PrinManifestDetails {...props}/> : <Redirect to="/login" /> }/>
-          <Route path="/" render={props=> getCredential() ? <Home {...props}/> : <Redirect to="/login" /> }/>
+          <Route exact={true} path="/staging/login" render={props=> <Login {...props} />} />
+          <Route exact={true} path="/staging/parcel" render={props=> getCredential() ? <CreateParcel {...props}/> : <Redirect to="/staging/login" /> }/>
+          <Route exact={true} path="/staging/manifest/details" render={props=> getCredential() ? <ManifestDetails {...props}/>: <Redirect to="/staging/login" /> }/>
+          <Route exact={true} path="/staging/manifest/print/" render={props=> getCredential() ? <PrinManifestDetails {...props}/> : <Redirect to="/staging/login" /> }/>
+          <Route path="/" render={props=> getCredential() ? <Home {...props}/> : <Redirect to="/staging/login" /> }/>
         </Switch>
     </Router>
   );

@@ -127,16 +127,16 @@ function Home(props) {
         <Layout >
           <Content className={'home-content'}>
             <Switch>
-              <Route path="/manifest/matrix">
+              <Route path="/staging/manifest/matrix">
                 <PriceMatrix {...props}/>
               </Route>
-              <Route path="/manifest/list">
+              <Route path="/staging/manifest/list">
                 <Manifest {...props}/>
               </Route>
-              <Route path="/reports">
+              <Route path="/staging/reports">
                 <Reports {...props}/>
               </Route>
-              <Redirect from="/" to="/manifest/list" />
+              <Redirect from="/" to="/staging/manifest/list" />
             </Switch>
           </Content>
         </Layout>

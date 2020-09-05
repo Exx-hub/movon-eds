@@ -125,4 +125,9 @@ export const debounce = (func, wait) => {
     timeout = setTimeout(later, wait);
   };
 };
+
+export const envPath = (path) => {
+  const env =  process.env.NODE_ENV;
+  return process.env.NODE_ENV === 'development' ? '/staging' : '/production' + path
+};
   
