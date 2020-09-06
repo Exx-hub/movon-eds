@@ -22,9 +22,8 @@
     "typescript": "^3.9.5"
   },
   "scripts": {
-    "start": "PORT=8001 HTTPS=true react-scripts start",
-    "dev": "PORT=8004 HTTPS=true react-scripts start",
-    "local": "NODE_ENV=develop react-scripts start",
+    "staging": "PORT=8001 HTTPS=true react-scripts start",
+    "dev": "NODE_ENV=develop react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
