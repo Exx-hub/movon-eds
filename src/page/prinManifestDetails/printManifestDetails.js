@@ -77,21 +77,18 @@ function TableView(props) {
 
 class PrintManifestDetails extends React.Component {
 
-  constructor(props){
-    super(props);
-    this.state={
-      deliveryPerson:undefined, 
-      departureTime:undefined,
-      routes1:undefined,
-      routes2:undefined,
-      tripCode:undefined,
-      dataSource:[],
-      busCompanyName:undefined,
-    }
-    this.printEl = React.createRef();
+  state={
+    deliveryPerson:undefined, 
+    departureTime:undefined,
+    routes1:undefined,
+    routes2:undefined,
+    tripCode:undefined,
+    dataSource:[],
+    busCompanyName:undefined,
   }
 
   componentDidMount(){
+    this.printEl = React.createRef();
     const state = (this.props.location.state && this.props.location.state.data) || undefined
     if(!state){
       this.props.history.goBack()

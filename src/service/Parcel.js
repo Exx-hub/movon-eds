@@ -271,6 +271,62 @@ const ParcelService = {
             link.click();
             link.remove();
          });
+    },
+
+    getAllParcel: (params,busCompanyId)=>{
+        console.log('params',params)
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            },
+            params:{              
+                "dateFrom": params.dateFrom,
+                "dateTo": params.dateTo,
+                "startStation": params.startStation,
+                "endStation": params.endStation,
+                //     "isP2p": String,
+                //     "billOfLading": String,
+                //     "senderName": String,
+                //     "receiverName": String
+             }
+        })
+    },
+    exportCargoParcel: (params,busCompanyId,fileName)=>{
+        const dateFormat = "MMM DD, YYYY";
+
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list/export`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            },
+            responseType: 'arraybuffer',
+            params:{              
+                "title":"SUMMARY OF CARGO SALES",
+                "dateFrom": params.dateFrom,
+                "dateTo": params.dateTo,
+                "startStation": params.startStation,
+                "endStation": params.endStation,
+                destination: params.destination,
+                totalAmount: params.totalAmount,
+                "fullName": params.fullName,
+                date: moment(params.dateFrom).format(dateFormat) + " - " + moment(params.dateTo).format(dateFormat)
+             }
+        }).then(response=>{
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        })
     }
 
 }
