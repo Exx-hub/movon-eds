@@ -308,7 +308,7 @@ const ParcelService = {
             },
             responseType: 'arraybuffer',
             params:{              
-                "title":"SUMMARY OF CARGO SALES",
+                "title":params.title,
                 "dateFrom": params.dateFrom,
                 "dateTo": params.dateTo,
                 "startStation": params.startStation,
@@ -316,7 +316,8 @@ const ParcelService = {
                 destination: params.destination,
                 totalAmount: params.totalAmount,
                 "fullName": params.fullName,
-                date: moment(params.dateFrom).format(dateFormat) + " - " + moment(params.dateTo).format(dateFormat)
+                date: moment(params.dateFrom).format(dateFormat) + " - " + moment(params.dateTo).format(dateFormat),
+                isP2P: params.isP2P ? 1 : 0
              }
         }).then(response=>{
             const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));

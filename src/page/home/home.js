@@ -230,32 +230,34 @@ function Home(props) {
         <Layout >
           <Content className={'home-content'}>
             <Switch>
-              <Route path="/staging/manifest/matrix">
+              <Route path="/manifest/matrix">
                 <PriceMatrix {...props}/>
               </Route>
-              <Route path="/staging/manifest/list">
+
+              <Route path="/manifest/list">
                 <Manifest {...props}/>
               </Route>
-              <Route path="/staging/reports">
+
+              <Route path="/reports">
                 <Reports {...props}/>
               </Route>
-<<<<<<< HEAD
+
               <Route path="/report/sales/cargo">
                 <SalesReport 
                   source={tableSourceBitsi}
                   {...props} 
                   title="SUMMARY OF CARGO SALES"/>
               </Route>
+
               <Route path="/report/sales/vli-bitsi">
                 <SalesReport 
                   source={tableSourceVliBitsi}
+                  isP2P={true}
                   {...props} 
                   title="SUMMARY OF VLI-BITSI SALES"/>
               </Route>
+
               <Redirect from="/" to="/manifest/list" />
-=======
-              <Redirect from="/" to="/staging/manifest/list" />
->>>>>>> fee0d2ccfe7c2e9a89dd58ae0a7f1a2cc42b89c7
             </Switch>
           </Content>
         </Layout>
@@ -263,5 +265,4 @@ function Home(props) {
     </Layout>
   );
 }
-
 export default Home;

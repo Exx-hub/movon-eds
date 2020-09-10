@@ -221,6 +221,7 @@ class SalesReport extends React.Component {
   };
 
   downloadXls = () =>{
+    
     const startStation = this.state.user.assignedStation._id;
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
@@ -229,16 +230,21 @@ class SalesReport extends React.Component {
     const fullName = this.state.user.personalInfo.fullName;
     const totalAmount = this.state.totalAmount;
     const destination = (this.state.destination.data && this.state.destination.data.name) || ""
+    const isP2P = this.props.isP2P || false;
+    const title = this.props.title || "SUMMARY OF CARGO SALES";
+    const fileName = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX";
 
     return ParcelService.exportCargoParcel({
+      title,
       dateFrom,
       dateTo,
       startStation,
       endStation,
       fullName,
       totalAmount,
-      destination
-    },busCompanyId, "Cargo.XLSX").then(e=>console.log('parcel',e))
+      destination,
+      isP2P
+    },busCompanyId, fileName).then(e=>console.log('parcel',e))
   }
 
   render() {

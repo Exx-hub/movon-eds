@@ -40,12 +40,12 @@ function TableView(props) {
       dataIndex: 'qty',
       key: 'qty',
     },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      render:(text)=>(<>₱ {parseFloat(text).toFixed(2)}</>)
-    },
+    // {
+    //   title: 'Amount',
+    //   dataIndex: 'amount',
+    //   key: 'amount',
+    //   render:(text)=>(<>₱ {parseFloat(text).toFixed(2)}</>)
+    // },
     // {
     //   title: 'Status',
     //   dataIndex: 'status',
