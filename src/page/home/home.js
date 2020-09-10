@@ -233,13 +233,14 @@ function Home(props) {
               <Route path="/manifest/matrix">
                 <PriceMatrix {...props}/>
               </Route>
+
               <Route path="/manifest/list">
                 <Manifest {...props}/>
               </Route>
+
               <Route path="/reports">
                 <Reports {...props}/>
               </Route>
-              <Redirect from="/" to="/manifest/list" />
 
               <Route path="/report/sales/cargo">
                 <SalesReport 
@@ -247,12 +248,15 @@ function Home(props) {
                   {...props} 
                   title="SUMMARY OF CARGO SALES"/>
               </Route>
+
               <Route path="/report/sales/vli-bitsi">
                 <SalesReport 
                   source={tableSourceVliBitsi}
+                  isP2P={true}
                   {...props} 
                   title="SUMMARY OF VLI-BITSI SALES"/>
               </Route>
+
               <Redirect from="/" to="/manifest/list" />
             </Switch>
           </Content>
@@ -261,5 +265,4 @@ function Home(props) {
     </Layout>
   );
 }
-
 export default Home;
