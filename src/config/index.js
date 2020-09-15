@@ -1,6 +1,6 @@
 export const config = {
     //BASE_URL:"http://192.168.0.103:8002",
-    BASE_URL:"https://52.74.225.236:8002",
+    BASE_URL:"https://cargomovon.com/server",
     //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created', 
