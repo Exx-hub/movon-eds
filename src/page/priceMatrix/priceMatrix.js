@@ -74,7 +74,7 @@ export default class PriceMatrix extends React.Component {
       accepted: true,
       options: [],
     },
-    fixMatrix: [{ name: "test", price: 0, declaredValue: 0 }],
+    fixMatrix: [],
   };
 
   componentDidMount() {
@@ -303,7 +303,6 @@ export default class PriceMatrix extends React.Component {
         origin,
         destination,
       }).then((e) => {
-        console.log("getMatrix", e);
         const { data, success, errorCode } = e.data;
         if (success) {
           let result = (data &&
@@ -312,8 +311,15 @@ export default class PriceMatrix extends React.Component {
             matrix: [initMatrix],
             fixMatrix: [],
           };
-          const { matrix, fixMatrix } = result;
-          this.setState({ matrix, fixMatrix });
+          console.log("result", result);
+
+          if(Array.isArray(result)){
+            this.setState({ matrix:result, fixMatrix:[{name:"Add Item", price:0, declaredValue:0}] });
+          }else{
+            const { matrix, fixMatrix } = result;
+            this.setState({ matrix, fixMatrix });
+          }
+         
         } else {
           this.handleErrorNotification(errorCode);
         }
@@ -594,7 +600,8 @@ export default class PriceMatrix extends React.Component {
             </Col>
           </Row>
         ))}
-        <div style={{ marginTop: "3rem" }}>
+        
+        <div style={{ display:`${this.state.fixMatrix.length > 0 ? 'block' : 'none'}`, marginTop: "3rem" }}>
           <span style={{paddingBottom:'2rem', paddingTop:'2rem', fontSize:'14px'}}>Fix Price</span>
           {this.state.fixMatrix.map((e, index) => {
             return (
@@ -852,6 +859,8 @@ export default class PriceMatrix extends React.Component {
     const connectingCompany = { ...this.state.connectingCompany };
     const options = connectingCompany.options;
     const tag = this.user && this.user.busCompanyId.config.parcel.tag;
+
+    console.log('connectingCompany',connectingCompany)
 
     let view = Skeleton;
 

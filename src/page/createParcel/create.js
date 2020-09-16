@@ -831,10 +831,10 @@ class CreateParcel extends React.Component {
         .then(e => {
           const { data, success, errorCode } = e.data;
           if (success) {
-            let result = data && data.stringValues && JSON.parse(data.stringValues) || {matrix:[], fixMatrix:[]};
-            const{fixMatrix} = result;
+            let result = (data && data.stringValues && JSON.parse(data.stringValues)) || {matrix:[], fixMatrix:[]};
+            console.log('result',result)
             let details = {...this.state.details}
-            details.fixMatrix.options = [...[{name:"none", price:0, declaredValue:0}],...fixMatrix];
+            details.fixMatrix = {...details.fixMatrix, ...{options:[...[{name:"none", price:0, declaredValue:0}],...result.fixMatrix]}};
             this.setState({details});
           } else {
             this.handleErrorNotification(errorCode);
