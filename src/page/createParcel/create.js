@@ -312,12 +312,20 @@ class CreateParcel extends React.Component {
           isRequired: true,
           accepted: true,
         },
+        fixMatrix:{
+          name: "fixMatrix",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          options: [],
+        }
       },
       enalbeBicolIsarogWays:false,
       declaredValueAdditionFee:0.1,
       noOfStickerCopy:5,
       connectingCompanyComputation:0,
-      tariffRate:undefined
+      tariffRate:undefined,
+      
     };
     this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
     this.computePrice = debounce(this.computePrice,1000)
@@ -338,7 +346,10 @@ class CreateParcel extends React.Component {
     });
 
     this.USER = getUser();
-    const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined
+    const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined;
+    this.origin = this.USER.assignedStation._id
+    console.log(this.USER)
+    this.busCompanyId = busCompanyId._id;
     let {details, noOfStickerCopy} = {...this.state};
 
     ParcelService.getConnectingBusPartners().then((e)=>{
@@ -812,8 +823,60 @@ class CreateParcel extends React.Component {
     if(name === 'destination'){
       const selectedDestination = details.destination.options.filter(e=>e.value === value)[0]
       const destination = {...details.destination, ...{ value, accepted:true}}
+     
       details = {...details, ...{destination}}
       this.setState({ details, selectedDestination });
+
+      MatrixService.getMatrix({ busCompanyId: this.busCompanyId, origin:this.origin, destination:value })
+        .then(e => {
+          const { data, success, errorCode } = e.data;
+          if (success) {
+            let result = data && data.stringValues && JSON.parse(data.stringValues) || {matrix:[], fixMatrix:[]};
+            const{fixMatrix} = result;
+            let details = {...this.state.details}
+            details.fixMatrix.options = [...[{name:"none", price:0, declaredValue:0}],...fixMatrix];
+            this.setState({details});
+          } else {
+            this.handleErrorNotification(errorCode);
+          }
+        })
+    }
+
+    if(name === 'fixMatrix'){
+      let details =  {...this.state.details}
+      if(value !== 'none'){
+
+        let option = details.fixMatrix.options.find(e=>e.name === value);
+        let price = Number(option.price).toFixed(2)
+        let declaredValue = Number(option.declaredValue).toFixed(2)
+        declaredValue = declaredValue / 100
+        details.fixMatrix.value = value;
+  
+        details.packageInsurance.value = price * declaredValue
+        details.packageInsurance.disabled = true;
+  
+        details.declaredValue.value = price
+        details.declaredValue.disabled = true
+        details.shippingCost.value = price;
+  
+        details.packageWeight.disabled = true;
+        details.packageWeight.value = 0;
+
+        this.setState({details},()=>this.updateTotalShippingCost())
+      }else{
+        details.fixMatrix.value = 'none';
+        details.packageInsurance.disabled = false;
+        details.declaredValue.disabled = false
+        details.packageWeight.disabled = false;
+
+        details.packageInsurance.value = 0
+        details.declaredValue.value = 0
+        details.shippingCost.value = 0;
+        details.packageWeight.value = 0;
+        this.setState({details},()=>this.updateTotalShippingCost())
+
+      }
+     
     }
     
   }
@@ -997,7 +1060,9 @@ class CreateParcel extends React.Component {
           return;
         }
 
-        if(this.state.enalbeBicolIsarogWays){
+        console.log('this.state.details.fixMatrix.value',this.state.details.fixMatrix.value)
+
+        if(this.state.enalbeBicolIsarogWays && (this.state.details.fixMatrix.value === 'none' || this.state.details.fixMatrix.value === undefined)){
           this.computePrice();
 
           if(currentDetails.connectingRoutes.value && currentDetails.connectingCompany.value){
@@ -1037,10 +1102,10 @@ class CreateParcel extends React.Component {
     const oldDetails = prevState.details
     const curDetails = this.state.details
 
-    if(oldDetails.shippingCost.value !== curDetails.shippingCost.value
+    if( (this.state.details.fixMatrix.value === 'none' || this.state.details.fixMatrix.value === undefined) && (oldDetails.shippingCost.value !== curDetails.shippingCost.value
       || oldDetails.systemFee.value !== curDetails.systemFee.value
         || oldDetails.packageInsurance.value !== curDetails.packageInsurance.value
-          || prevState.connectingCompanyComputation !== this.state.connectingCompanyComputation)
+          || prevState.connectingCompanyComputation !== this.state.connectingCompanyComputation) )
       this.updateTotalShippingCost();
   }
 

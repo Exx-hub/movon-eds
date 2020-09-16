@@ -43,6 +43,7 @@ function Login(props) {
     setState({...state, ...{ isLoading: true } });
 
     User.login(state.staffId, state.password).then(e => {
+      console.log('login',e)
       const { data, success, errorCode } = e.data;
       setState({...state, ...{isLoading:false}})
       if(success){

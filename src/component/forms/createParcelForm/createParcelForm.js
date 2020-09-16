@@ -55,7 +55,8 @@ function CreateParcelForm(props) {
     paxs,
     length,
     connectingCompany,
-    connectingRoutes
+    connectingRoutes,
+    fixMatrix
   } = props.details;
 
   const enableInterConnection = props.enableInterConnection
@@ -66,7 +67,7 @@ function CreateParcelForm(props) {
       <div className='calculator-container-border'>
         <span className="create-group-title">Select Station</span>
         <Row >
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={8}>
             <div className="select-destination-form-container">
               <span className="input-placeholder-title select-placeholder">Destination*</span>
               <Select
@@ -86,7 +87,7 @@ function CreateParcelForm(props) {
             </div>
           </Col>
 
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={8}>
             <InputBox
               detail={description}
               title="Description"
@@ -95,6 +96,27 @@ function CreateParcelForm(props) {
               onBlur={() => props.onBlur(description.name)}
             />
           </Col>
+
+          <Col className="gutter-row" span={8}>
+          <div className="select-destination-form-container">
+            <span className="input-placeholder-title select-placeholder">Fixed Price</span>
+            <Select
+              size="default"
+              onBlur={() => props.onBlur(destination.name)}
+              className={`${!fixMatrix.accepted ? "select-error-destination-form" : ""}`}
+              onChange={(e) => props.onSelectChange(e, fixMatrix.name)}
+              value={fixMatrix.value}
+              style={{ width: '100%' }}>
+              {
+                fixMatrix.options.map(e => (<Option key={e.name} value={e.name}>{e.name}</Option>))
+              }
+            </Select>
+            {
+              !destination.accepted && <span className="select-input-error">{destination.errorMessage || 'Destination is required'}</span>
+            }
+          </div>
+        </Col>
+
         </Row>
         <Row className={`${enableInterConnection ? "" : "hide"}`} >
           <Col className="gutter-row" span={12}>
