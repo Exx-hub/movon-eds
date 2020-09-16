@@ -311,7 +311,6 @@ export default class PriceMatrix extends React.Component {
             matrix: [initMatrix],
             fixMatrix: [],
           };
-          console.log("result", result);
 
           if(Array.isArray(result)){
             this.setState({ matrix:result, fixMatrix:[{name:"Add Item", price:0, declaredValue:0}] });

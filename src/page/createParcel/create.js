@@ -686,7 +686,7 @@ class CreateParcel extends React.Component {
       let details = {...this.state.details}
       let systemFee= {...this.state.details.systemFee}
       systemFee = Object.assign({},systemFee,{ value })
-      this.setState({ details: Object.assign(details,{systemFee}) })
+      this.setState({ details: Object.assign(details,{systemFee}) },()=>this.updateTotalShippingCost())
     }
 
     if(!qty){
@@ -1060,8 +1060,6 @@ class CreateParcel extends React.Component {
           return;
         }
 
-        console.log('this.state.details.fixMatrix.value',this.state.details.fixMatrix.value)
-
         if(this.state.enalbeBicolIsarogWays && (this.state.details.fixMatrix.value === 'none' || this.state.details.fixMatrix.value === undefined)){
           this.computePrice();
 
@@ -1075,7 +1073,6 @@ class CreateParcel extends React.Component {
             if(destination && associateId && origin && weight && declaredValue){
               MatrixService.onConnectingRoutesComputation(associateId, origin, destination, weight, declaredValue)
               .then(e=>{
-                console.log('onConnectingRoutesComputation',e)
                 const{data, success, errorCode} = e.data
                 if(success){
                   if(data){
