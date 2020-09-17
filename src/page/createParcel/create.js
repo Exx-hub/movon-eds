@@ -236,12 +236,15 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: true,
           accepted: true,
+          disabled:true,
         },
         systemFee: {
           name: "systemFee",
           value: 0,
           isRequired: false,
           accepted: true,
+          disabled:true,
+
         },
         additionNote: {
           name: "additionNote",

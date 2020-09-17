@@ -197,7 +197,7 @@ function CreateParcelForm(props) {
               onChange={props.onChange}
               title="Quantity"
               errorMessage={quantity.errorMessage}
-              placeholder="Quantity" />
+              placeholder="Box / Parcel Count" />
 
             <InputBox
               type="number"
