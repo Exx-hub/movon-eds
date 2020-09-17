@@ -119,7 +119,28 @@ function CreateParcelForm(props) {
 
         </Row>
         <Row className={`${enableInterConnection ? "" : "hide"}`} >
-          <Col className="gutter-row" span={12}>
+
+        <Col className="gutter-row" span={8}>
+            <div className="select-destination-form-container">
+              <span className="input-placeholder-title select-placeholder">Associate</span>
+              <Select
+                size="default"
+                onBlur={() => props.onBlur(connectingCompany.name)}
+                className={`${!connectingCompany.accepted ? "select-error-destination-form" : ""}`}
+                onChange={(e) => props.onSelectChange(e, connectingCompany.name)}
+                value={connectingCompany.value}
+                style={{ width: '100%' }}>
+                {
+                  connectingCompany.options.map(e => (<Option key={e._id} value={e._id}>{e.name}</Option>))
+                }
+              </Select>
+              {
+                !connectingCompany.accepted && <span className="select-input-error">{connectingCompany.errorMessage || 'Bus Company is required'}</span>
+              }
+            </div>
+          </Col>
+          
+        <Col className="gutter-row" span={8}>
             <div className="select-destination-form-container">
               <span className="input-placeholder-title select-placeholder">Associate Routes</span>
               <Select
@@ -139,25 +160,7 @@ function CreateParcelForm(props) {
             </div>
           </Col>
 
-          <Col className="gutter-row" span={12}>
-            <div className="select-destination-form-container">
-              <span className="input-placeholder-title select-placeholder">Associate</span>
-              <Select
-                size="default"
-                onBlur={() => props.onBlur(connectingCompany.name)}
-                className={`${!connectingCompany.accepted ? "select-error-destination-form" : ""}`}
-                onChange={(e) => props.onSelectChange(e, connectingCompany.name)}
-                value={connectingCompany.value}
-                style={{ width: '100%' }}>
-                {
-                  connectingCompany.options.map(e => (<Option key={e._id} value={e._id}>{e.name}</Option>))
-                }
-              </Select>
-              {
-                !connectingCompany.accepted && <span className="select-input-error">{connectingCompany.errorMessage || 'Bus Company is required'}</span>
-              }
-            </div>
-          </Col>
+          
         </Row>
       </div>
 

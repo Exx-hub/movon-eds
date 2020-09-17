@@ -714,10 +714,12 @@ class CreateParcel extends React.Component {
       ParcelService.getFiveStarConvenienceFee(qty).then(res=>updateState(res))
       return;
     }
+
     const enableBISystemFee = false;
     if(enableBISystemFee){
       ParcelService.getConvenienceFee(qty).then(res=>updateState(res));
     }
+
   }
 
   computePrice = () =>{
@@ -839,8 +841,14 @@ class CreateParcel extends React.Component {
             let result = (data && data.stringValues && JSON.parse(data.stringValues)) || {matrix:[], fixMatrix:[]};
             console.log('result',result)
             let details = {...this.state.details}
-            details.fixMatrix = {...details.fixMatrix, ...{options:[...[{name:"none", price:0, declaredValue:0}],...result.fixMatrix]}};
-            this.setState({details});
+
+            if(Array.isArray(result)){
+              details.fixMatrix = {...details.fixMatrix, ...{options:[...[{name:"none", price:0, declaredValue:0}],...result]}};
+              this.setState({details});
+            }else{
+              details.fixMatrix = {...details.fixMatrix, ...{options:[...[{name:"none", price:0, declaredValue:0}],...result.fixMatrix]}};
+              this.setState({details});
+            }
           } else {
             this.handleErrorNotification(errorCode);
           }
