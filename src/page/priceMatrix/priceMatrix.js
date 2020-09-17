@@ -168,6 +168,15 @@ export default class PriceMatrix extends React.Component {
 
   saveBicolIsarogMatrix = () => {
     const matrix = [...this.state.matrix];
+    let hasError = false;
+    let fixMatrix = [...this.state.fixMatrix]
+
+    for(let x=0; x<this.state.fixMatrix.length; x++){
+      if(fixMatrix[x].name === '' || fixMatrix[x].price === 0){
+        hasError = true;
+        break;
+      }
+    }
 
     if (
       matrix[0].tariffRate === 0 &&
@@ -175,12 +184,13 @@ export default class PriceMatrix extends React.Component {
       matrix[0].price === 0 &&
       matrix[0].declaredValueRate === 0 &&
       matrix[0].maxAllowedWeight === 0
-    ) {
+    ) { hasError = true; }
+
+    if(hasError){
       notification["error"]({
         message: "Input Fields Validation",
         description: "Please fill up missing fields",
       });
-
       return;
     }
 
@@ -191,10 +201,6 @@ export default class PriceMatrix extends React.Component {
       exceededPerKilo: e.exceededPerKilo,
       tariffRate: e.tariffRate,
     }));
-
-    const fixMatrix = this.state.fixMatrix.filter(
-      (e) => e.name !== undefined || e.name !== null || e.name !== ""
-    );
 
     this.saveMatrix({
       busCompanyId: this.busCompanyId,
@@ -313,7 +319,7 @@ export default class PriceMatrix extends React.Component {
           };
 
           if(Array.isArray(result)){
-            this.setState({ matrix:result, fixMatrix:[{name:"Add Item", price:0, declaredValue:0}] });
+            this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}] });
           }else{
             const { matrix, fixMatrix } = result;
             this.setState({ matrix, fixMatrix });
@@ -671,7 +677,14 @@ export default class PriceMatrix extends React.Component {
             <Button
               onClick={() => {
                 const fixMatrix = [...this.state.fixMatrix];
-                fixMatrix.push({ name: "item", price: 0 });
+                if(fixMatrix[fixMatrix.length-1].name === "" && fixMatrix[fixMatrix.length-1].price === 0){
+                  notification["error"]({
+                    description: "Description is required or Price should not be zero",
+                    message: "Please fill up missing fields",
+                  });
+                  return;
+                }
+                fixMatrix.push({ name: "", price: 0, declaredValue:0 });
                 this.setState({ fixMatrix });
               }}
             >
