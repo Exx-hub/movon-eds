@@ -236,7 +236,6 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: true,
           accepted: true,
-          disabled:true,
         },
         systemFee: {
           name: "systemFee",
@@ -715,7 +714,10 @@ class CreateParcel extends React.Component {
       ParcelService.getFiveStarConvenienceFee(qty).then(res=>updateState(res))
       return;
     }
-    ParcelService.getConvenienceFee(qty).then(res=>updateState(res));
+    const enableBISystemFee = false;
+    if(enableBISystemFee){
+      ParcelService.getConvenienceFee(qty).then(res=>updateState(res));
+    }
   }
 
   computePrice = () =>{
