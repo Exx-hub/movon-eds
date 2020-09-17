@@ -56,13 +56,13 @@ const tableSourceVliBitsi = [
   },
   {
     title: 'RECEIVER',
-    dataIndex: 'receiver',
-    key: 'receiver,'
+    dataIndex: 'recipient',
+    key: 'recipient,'
   },
   {
     title: 'WEIGHT',
-    dataIndex: 'weight',
-    key: 'weight',
+    dataIndex: 'packageWeight',
+    key: 'packageWeight',
   },
   {
     title: 'DECLARED VALUE',
@@ -86,8 +86,8 @@ const tableSourceVliBitsi = [
   },
   {
     title: 'DESCRIPTION',
-    dataIndex: 'description',
-    key: 'description',
+    dataIndex: 'packageName',
+    key: 'packageName',
   },
   {
     title: 'AMOUNT',
