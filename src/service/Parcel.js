@@ -33,6 +33,7 @@ const ParcelService = {
     },
 
     create : (state) => {
+
         const{
             details, 
             checkIn, 
@@ -60,9 +61,9 @@ const ParcelService = {
             shippingCost,
             length,
             connectingCompanyComputation,
-           
             connectingCompany,
-            connectingRoutes
+            connectingRoutes,
+            totalShippingCost
         } = details;
 
         const associatedTariffRate = tariffRate || undefined;
@@ -89,8 +90,8 @@ const ParcelService = {
         bodyFormData.set('estimatedValue', declaredValue.value)
         bodyFormData.set('accompanied', type.value !== CARGO_PADALA)
         bodyFormData.set('packageInsurance', PACKAGE_INSURANCE)
-        bodyFormData.set('quantity', quantity.value)
-        bodyFormData.set('price', shippingCost.value)
+        bodyFormData.set('quantity', quantity.value || 0)
+        bodyFormData.set('price', shippingCost.value || 0)
         bodyFormData.set('additionalNote', additionNote.value)
         bodyFormData.append('packageImage', packageImagePreview)
         bodyFormData.set('busId', selectedTrip.busId)
@@ -99,15 +100,16 @@ const ParcelService = {
         bodyFormData.set('startStation', selectedTrip.startStationId)
         bodyFormData.set('endStation', selectedTrip.value)
         bodyFormData.set('checkIn', checkIn)
-        bodyFormData.set('convenienceFee', systemFee.value)
-        bodyFormData.set('insuranceFee', packageInsurance.value)
+        bodyFormData.set('convenienceFee', systemFee.value || 0)
+        bodyFormData.set('insuranceFee', packageInsurance.value || 0)
         bodyFormData.set('billOfLading', billOfLading.value)
-        bodyFormData.set('associatedTariffRate', associatedTariffRate)
+        bodyFormData.set('associatedTariffRate', associatedTariffRate || 0)
         bodyFormData.set('associatedCompanyId', associatedCompanyId)
         bodyFormData.set('associatedOrigin', associatedOrigin)
         bodyFormData.set('associatedDestination', associatedDestination)
         bodyFormData.set('associatedAmount', associatedAmount)
-        bodyFormData.set('parcel_length', length.value || undefined)
+        bodyFormData.set('parcel_length', length.value || 0)
+        bodyFormData.set('totalPrice',totalShippingCost.value || 0)
 
         return axios({
             method: 'post',
