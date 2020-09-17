@@ -547,8 +547,6 @@ class CreateParcel extends React.Component {
       }}
     }
 
-  
-
     if(name === 'senderName' || name === 'recieverName' ){
       let isValid = true;
       if(details[name].value){
@@ -709,7 +707,8 @@ class CreateParcel extends React.Component {
         && this.USER.busCompanyId 
           && this.USER.busCompanyId.config 
             && this.USER.busCompanyId.config.parcel 
-              && this.USER.busCompanyId.config.parcel.tag && this.USER.busCompanyId.config.parcel.tag === 'five-star'){
+              && this.USER.busCompanyId.config.parcel.tag 
+                && this.USER.busCompanyId.config.parcel.tag === 'five-star'){
                 
       ParcelService.getFiveStarConvenienceFee(qty).then(res=>updateState(res))
       return;
@@ -723,6 +722,11 @@ class CreateParcel extends React.Component {
   }
 
   computePrice = () =>{
+
+    if(this.state.details.fixMatrix.value !== 'none'){
+      return;
+    }
+
     const{ 
       destination, 
       declaredValue, 
@@ -788,7 +792,15 @@ class CreateParcel extends React.Component {
 
     if (name === "declaredValue") {
       const packageInsurance = {...details.packageInsurance};
-      packageInsurance.value = 0;
+      if(details.fixMatrix.value !== 'none'){
+        let option = details.fixMatrix.options.find(e=>e.name === details.fixMatrix.value);
+        let declaredValue = Number(option.declaredValue);
+        let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
+        packageInsurance.value = Number(newVal).toFixed(2)
+       
+      }else{
+        packageInsurance.value = 0;
+      }
       details = { ...details, ...{ packageInsurance } };
     }
 
@@ -799,7 +811,10 @@ class CreateParcel extends React.Component {
 
     
     let item = { ...details[name], ...{ value, accepted: true, hasError:false } };
-    this.setState({details:{ ...details, ...{ [name]: item } }})
+    this.setState({details:{ ...details, ...{ [name]: item } }},()=>{
+      if(name === "declaredValue")
+        this.updateTotalShippingCost()
+    })
   };
 
   onSelectChange = (value,name)=>{
@@ -864,23 +879,31 @@ class CreateParcel extends React.Component {
         let declaredValue = Number(option.declaredValue).toFixed(2)
         declaredValue = declaredValue / 100
         details.fixMatrix.value = value;
-  
-        details.packageInsurance.value = price * declaredValue
-        details.packageInsurance.disabled = true;
-  
-        details.declaredValue.value = price
-        details.declaredValue.disabled = true
+
+        if(Number(declaredValue) === Number(0)){
+          details.packageInsurance.value = 0;
+          details.packageInsurance.disabled = true;
+          details.declaredValue.value = 0
+          details.declaredValue.disabled = true
+        }else{
+          details.packageInsurance.value = 0;
+          details.packageInsurance.disabled = false;
+          details.declaredValue.value = 0
+          details.declaredValue.disabled = false
+        }
+
+        details.description.value = option.name;
         details.shippingCost.value = price;
-  
         details.packageWeight.disabled = true;
         details.packageWeight.value = 0;
-
         this.setState({details},()=>this.updateTotalShippingCost())
+
       }else{
         details.fixMatrix.value = 'none';
         details.packageInsurance.disabled = false;
         details.declaredValue.disabled = false
         details.packageWeight.disabled = false;
+        details.description.value = "";
 
         details.packageInsurance.value = 0
         details.declaredValue.value = 0
@@ -1073,7 +1096,8 @@ class CreateParcel extends React.Component {
           return;
         }
 
-        if(this.state.enalbeBicolIsarogWays && (this.state.details.fixMatrix.value === 'none' || this.state.details.fixMatrix.value === undefined)){
+        if(this.state.enalbeBicolIsarogWays){
+
           this.computePrice();
 
           if(currentDetails.connectingRoutes.value && currentDetails.connectingCompany.value){
@@ -1097,7 +1121,6 @@ class CreateParcel extends React.Component {
                 }
               })
             }
-            
           }
         }else{
           this.getMatrixFare({
@@ -1112,10 +1135,11 @@ class CreateParcel extends React.Component {
     const oldDetails = prevState.details
     const curDetails = this.state.details
 
-    if( (this.state.details.fixMatrix.value === 'none' || this.state.details.fixMatrix.value === undefined) && (oldDetails.shippingCost.value !== curDetails.shippingCost.value
-      || oldDetails.systemFee.value !== curDetails.systemFee.value
-        || oldDetails.packageInsurance.value !== curDetails.packageInsurance.value
-          || prevState.connectingCompanyComputation !== this.state.connectingCompanyComputation) )
+    if( (this.state.details.fixMatrix.value === 'none' 
+      || this.state.details.fixMatrix.value === undefined) && (oldDetails.shippingCost.value !== curDetails.shippingCost.value
+        || oldDetails.systemFee.value !== curDetails.systemFee.value
+          || oldDetails.packageInsurance.value !== curDetails.packageInsurance.value
+            || prevState.connectingCompanyComputation !== this.state.connectingCompanyComputation) )
       this.updateTotalShippingCost();
   }
 
