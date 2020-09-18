@@ -223,7 +223,7 @@ function Home(props) {
             <Menu.Item key="4" icon={<FileSearchOutlined />}> Matrix </Menu.Item>
             <SubMenu key="sub1" icon={<BarChartOutlined />} title="Reports">
               <Menu.Item key="5" icon={<BarChartOutlined />}>Cargo Sales</Menu.Item>
-              {getUser() && getUser().busCompanyId.config.parcel.tag === "bicol-isarog" && <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
+              {getUser() && getUser().busCompanyId && getUser().busCompanyId.config.parcel.tag === "bicol-isarog" && <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
           </SubMenu>
           </Menu>
         </Sider>
