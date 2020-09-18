@@ -1,6 +1,6 @@
 import React from "react";
 import "./create.scss";
-import ParcelDetailsForm from "../../component/forms/createParcelForm";
+import { BicolIsarogForm, CreateParcelForm } from "../../component/createParcelForm";
 import StepsView from "../../component/steps";
 import WebCam from "../../component/webcam";
 import ScheduledTrips from "../../component/scheduledTrips";
@@ -219,6 +219,12 @@ class CreateParcel extends React.Component {
           accepted: true,
           options: [],
         },
+        associateORNumber:{
+          name: "associateORNumber",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
         description: {
           name: "description",
           value: undefined,
@@ -320,7 +326,31 @@ class CreateParcel extends React.Component {
           isRequired: false,
           accepted: true,
           options: [],
-        }
+        },
+        busNumber: {
+          name: "busNumber",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        tripCode: {
+          name: "tripCode",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        driverFullName: {
+          name: "driverFullName",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        conductorFullName: {
+          name: "conductorFullName",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
       },
       enalbeBicolIsarogWays:false,
       declaredValueAdditionFee:0.1,
@@ -547,7 +577,7 @@ class CreateParcel extends React.Component {
       }}
     }
 
-    if(name === 'senderName' || name === 'recieverName' ){
+    if(name === 'senderName' || name === 'recieverName' || name === 'driverFullName' || name === "conductorName" ){
       let isValid = true;
       if(details[name].value){
         const fullName =  details[name].value.trim().split(" ");
@@ -948,18 +978,34 @@ class CreateParcel extends React.Component {
       case 0:
         view = (
           <>
-            <ParcelDetailsForm
-              enableInterConnection={this.state.enalbeBicolIsarogWays}
-              onBlur={(name) =>{ 
-                let item = this.onBlurValidation(name)
-                if(item)
-                  this.setState({details:{...this.state.details, ...{[name]:item}}})
-              }}
-              details={this.state.details}
-              onTypeChange={(e) => this.onTypeChange(e.target.value)}
-              onSelectChange={(value,name) => this.onSelectChange(value, name)}
-              onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
-            />
+            {
+              this.state.enalbeBicolIsarogWays ? 
+              <BicolIsarogForm
+                enableInterConnection={this.state.enalbeBicolIsarogWays}
+                onBlur={(name) =>{ 
+                  let item = this.onBlurValidation(name)
+                  if(item)
+                    this.setState({details:{...this.state.details, ...{[name]:item}}})
+                }}
+                details={this.state.details}
+                onTypeChange={(e) => this.onTypeChange(e.target.value)}
+                onSelectChange={(value,name) => this.onSelectChange(value, name)}
+                onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
+              /> 
+              :
+              <CreateParcelForm
+                enableInterConnection={this.state.enalbeBicolIsarogWays}
+                onBlur={(name) =>{ 
+                  let item = this.onBlurValidation(name)
+                  if(item)
+                    this.setState({details:{...this.state.details, ...{[name]:item}}})
+                }}
+                details={this.state.details}
+                onTypeChange={(e) => this.onTypeChange(e.target.value)}
+                onSelectChange={(value,name) => this.onSelectChange(value, name)}
+                onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
+              /> 
+          }
           
             <StepControllerView
               width={this.state.width}
