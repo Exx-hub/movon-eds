@@ -74,7 +74,7 @@ export default class PriceMatrix extends React.Component {
       accepted: true,
       options: [],
     },
-    fixMatrix: [],
+    fixMatrix: [{}],
   };
 
   componentDidMount() {
@@ -86,7 +86,6 @@ export default class PriceMatrix extends React.Component {
     }
 
     const stationId = this.use && this.use.assignedStation._id;
-    console.log("user", getUser());
     ParcelService.getTrips(stationId).then((e) => {
       const { data, success, errorCode } = e.data;
       if (success) {
@@ -120,7 +119,6 @@ export default class PriceMatrix extends React.Component {
     });
 
     ParcelService.getConnectingBusPartners().then((e) => {
-      console.log("getConnectingBusPartners", e);
       const { success, data, errorCode } = e.data;
       if (success) {
         if (data.connectingRoutes.length > 0) {
@@ -321,7 +319,8 @@ export default class PriceMatrix extends React.Component {
           if(Array.isArray(result)){
             this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}] });
           }else{
-            const { matrix, fixMatrix } = result;
+            let { matrix, fixMatrix } = result;
+            fixMatrix = [...[{name:"", price:0, declaredValue:0}] ,...fixMatrix]
             this.setState({ matrix, fixMatrix });
           }
          
@@ -513,7 +512,6 @@ export default class PriceMatrix extends React.Component {
   };
 
   onFixMatrixChange = (index, name, value) => {
-    console.log("onFixMatrixChange", index, name, value);
     let fixMatrix = [...this.state.fixMatrix];
     fixMatrix[index][name] = value;
     this.setState({ fixMatrix });
@@ -871,8 +869,6 @@ export default class PriceMatrix extends React.Component {
     const connectingCompany = { ...this.state.connectingCompany };
     const options = connectingCompany.options;
     const tag = this.user && this.user.busCompanyId.config.parcel.tag;
-
-    console.log('connectingCompany',connectingCompany)
 
     let view = Skeleton;
 
