@@ -353,7 +353,7 @@ function BicolIsarogForm(props) {
         </Row>
       </div>
 
-    <div className="input-container-border">
+    <div className="input-container-border" style={{display:'none'}}>
       <h4 className="create-group-title">Bus Information</h4>
 
       <Row>
