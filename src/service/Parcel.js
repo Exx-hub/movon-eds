@@ -63,7 +63,12 @@ const ParcelService = {
             connectingCompanyComputation,
             connectingCompany,
             connectingRoutes,
-            totalShippingCost
+            totalShippingCost,
+            associateORNumber,
+            busNumber,
+            tripCode,
+            driverFullName,
+            conductorFullName,
         } = details;
 
         const associatedTariffRate = tariffRate || undefined;
@@ -109,7 +114,12 @@ const ParcelService = {
         bodyFormData.set('associatedDestination', associatedDestination)
         bodyFormData.set('associatedAmount', associatedAmount)
         bodyFormData.set('parcel_length', length.value || 0)
-        bodyFormData.set('totalPrice',totalShippingCost.value || 0)
+        bodyFormData.set('totalShippingCost',totalShippingCost.value || 0)
+        bodyFormData.set('busNumber',busNumber.value)
+        bodyFormData.set('tripCode',tripCode.value)
+        bodyFormData.set('driverFullName',driverFullName.value)
+        bodyFormData.set('conductorFullName',conductorFullName.value)
+        bodyFormData.set('associateORNumber', associateORNumber.value)
 
         return axios({
             method: 'post',

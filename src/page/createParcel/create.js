@@ -1,6 +1,6 @@
 import React from "react";
 import "./create.scss";
-import ParcelDetailsForm from "../../component/forms/createParcelForm";
+import { BicolIsarogForm, CreateParcelForm } from "../../component/createParcelForm";
 import StepsView from "../../component/steps";
 import WebCam from "../../component/webcam";
 import ScheduledTrips from "../../component/scheduledTrips";
@@ -107,6 +107,7 @@ const parceResponseData = (data) =>{
   const startStationName = data.trips ? data.trips.startStationName : data.startStation.name
 
   return {
+    noOfSticker: (getUser() && getUser().busCompanyId && getUser().busCompanyId.config && getUser().busCompanyId.config.parcel.noOfStickerCopy) || 2,
     packageName:data.packageInfo.packageName,
     packageWeight:data.packageInfo.packageWeight,
     packageQty: data.packageInfo.quantity,
@@ -219,6 +220,12 @@ class CreateParcel extends React.Component {
           accepted: true,
           options: [],
         },
+        associateORNumber:{
+          name: "associateORNumber",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
         description: {
           name: "description",
           value: undefined,
@@ -320,11 +327,35 @@ class CreateParcel extends React.Component {
           isRequired: false,
           accepted: true,
           options: [],
-        }
+        },
+        busNumber: {
+          name: "busNumber",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        tripCode: {
+          name: "tripCode",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        driverFullName: {
+          name: "driverFullName",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        conductorFullName: {
+          name: "conductorFullName",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
       },
       enalbeBicolIsarogWays:false,
       declaredValueAdditionFee:0.1,
-      noOfStickerCopy:5,
+      noOfStickerCopy:2,
       connectingCompanyComputation:0,
       tariffRate:undefined,
       
@@ -350,7 +381,6 @@ class CreateParcel extends React.Component {
     this.USER = getUser();
     const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined;
     this.origin = this.USER.assignedStation._id
-    console.log(this.USER)
     this.busCompanyId = busCompanyId._id;
     let {details, noOfStickerCopy} = {...this.state};
 
@@ -547,7 +577,7 @@ class CreateParcel extends React.Component {
       }}
     }
 
-    if(name === 'senderName' || name === 'recieverName' ){
+    if(name === 'senderName' || name === 'recieverName' || name === 'driverFullName' || name === "conductorName" ){
       let isValid = true;
       if(details[name].value){
         const fullName =  details[name].value.trim().split(" ");
@@ -590,7 +620,6 @@ class CreateParcel extends React.Component {
       billOfLading 
     } = this.state;
 
-    console.log('validateStep details', this.state.details)
 
     if (verifiedSteps >= 4) {
       console.log("already created.. no more modification");
@@ -695,7 +724,6 @@ class CreateParcel extends React.Component {
     }
 
     const updateState = (res) =>{
-      console.log('updateState e',res.data)
       const { success, data, errorCode } = res.data;
       if (!success) {
         this.handleErrorNotification(errorCode)
@@ -723,7 +751,7 @@ class CreateParcel extends React.Component {
 
   computePrice = () =>{
 
-    if(this.state.details.fixMatrix.value !== 'none'){
+    if(this.state.details.fixMatrix.value && this.state.details.fixMatrix.value !== 'none'){
       return;
     }
 
@@ -755,7 +783,6 @@ class CreateParcel extends React.Component {
         weight,
       )
       .then(e => {
-        console.log('getDynamicPrice',e)
         let details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
         if(success){
@@ -792,12 +819,13 @@ class CreateParcel extends React.Component {
 
     if (name === "declaredValue") {
       const packageInsurance = {...details.packageInsurance};
-      if(details.fixMatrix.value !== 'none'){
+      if(details.fixMatrix.value && details.fixMatrix.value !== 'none' ){
         let option = details.fixMatrix.options.find(e=>e.name === details.fixMatrix.value);
-        let declaredValue = Number(option.declaredValue);
-        let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
-        packageInsurance.value = Number(newVal).toFixed(2)
-       
+        if(option){
+          let declaredValue = Number(option.declaredValue);
+          let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
+          packageInsurance.value = Number(newVal).toFixed(2)
+        }
       }else{
         packageInsurance.value = 0;
       }
@@ -854,7 +882,6 @@ class CreateParcel extends React.Component {
           const { data, success, errorCode } = e.data;
           if (success) {
             let result = (data && data.stringValues && JSON.parse(data.stringValues)) || {matrix:[], fixMatrix:[]};
-            console.log('result',result)
             let details = {...this.state.details}
 
             if(Array.isArray(result)){
@@ -948,18 +975,34 @@ class CreateParcel extends React.Component {
       case 0:
         view = (
           <>
-            <ParcelDetailsForm
-              enableInterConnection={this.state.enalbeBicolIsarogWays}
-              onBlur={(name) =>{ 
-                let item = this.onBlurValidation(name)
-                if(item)
-                  this.setState({details:{...this.state.details, ...{[name]:item}}})
-              }}
-              details={this.state.details}
-              onTypeChange={(e) => this.onTypeChange(e.target.value)}
-              onSelectChange={(value,name) => this.onSelectChange(value, name)}
-              onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
-            />
+            {
+              this.state.enalbeBicolIsarogWays ? 
+              <BicolIsarogForm
+                enableInterConnection={this.state.enalbeBicolIsarogWays}
+                onBlur={(name) =>{ 
+                  let item = this.onBlurValidation(name)
+                  if(item)
+                    this.setState({details:{...this.state.details, ...{[name]:item}}})
+                }}
+                details={this.state.details}
+                onTypeChange={(e) => this.onTypeChange(e.target.value)}
+                onSelectChange={(value,name) => this.onSelectChange(value, name)}
+                onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
+              /> 
+              :
+              <CreateParcelForm
+                enableInterConnection={this.state.enalbeBicolIsarogWays}
+                onBlur={(name) =>{ 
+                  let item = this.onBlurValidation(name)
+                  if(item)
+                    this.setState({details:{...this.state.details, ...{[name]:item}}})
+                }}
+                details={this.state.details}
+                onTypeChange={(e) => this.onTypeChange(e.target.value)}
+                onSelectChange={(value,name) => this.onSelectChange(value, name)}
+                onChange={(e) => this.onInputChange(e.target.name, e.target.value) }
+              /> 
+          }
           
             <StepControllerView
               width={this.state.width}
