@@ -354,7 +354,7 @@ class CreateParcel extends React.Component {
       },
       enalbeBicolIsarogWays:false,
       declaredValueAdditionFee:0.1,
-      noOfStickerCopy:5,
+      noOfStickerCopy:2,
       connectingCompanyComputation:0,
       tariffRate:undefined,
       
@@ -753,7 +753,7 @@ class CreateParcel extends React.Component {
 
   computePrice = () =>{
 
-    if(this.state.details.fixMatrix.value !== 'none'){
+    if(this.state.details.fixMatrix.value && this.state.details.fixMatrix.value !== 'none'){
       return;
     }
 
@@ -822,12 +822,14 @@ class CreateParcel extends React.Component {
 
     if (name === "declaredValue") {
       const packageInsurance = {...details.packageInsurance};
-      if(details.fixMatrix.value !== 'none'){
+      console.log('details.fixMatrix.value',details.fixMatrix.value)
+      if(details.fixMatrix.value && details.fixMatrix.value !== 'none' ){
         let option = details.fixMatrix.options.find(e=>e.name === details.fixMatrix.value);
-        let declaredValue = Number(option.declaredValue);
-        let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
-        packageInsurance.value = Number(newVal).toFixed(2)
-       
+        if(option){
+          let declaredValue = Number(option.declaredValue);
+          let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
+          packageInsurance.value = Number(newVal).toFixed(2)
+        }
       }else{
         packageInsurance.value = 0;
       }
