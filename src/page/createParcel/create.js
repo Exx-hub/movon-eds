@@ -107,6 +107,7 @@ const parceResponseData = (data) =>{
   const startStationName = data.trips ? data.trips.startStationName : data.startStation.name
 
   return {
+    noOfSticker: (getUser() && getUser().busCompanyId && getUser().busCompanyId.config && getUser().busCompanyId.config.parcel.noOfStickerCopy) || 2,
     packageName:data.packageInfo.packageName,
     packageWeight:data.packageInfo.packageWeight,
     packageQty: data.packageInfo.quantity,
@@ -380,7 +381,6 @@ class CreateParcel extends React.Component {
     this.USER = getUser();
     const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined;
     this.origin = this.USER.assignedStation._id
-    console.log(this.USER)
     this.busCompanyId = busCompanyId._id;
     let {details, noOfStickerCopy} = {...this.state};
 
@@ -620,7 +620,6 @@ class CreateParcel extends React.Component {
       billOfLading 
     } = this.state;
 
-    console.log('validateStep details', this.state.details)
 
     if (verifiedSteps >= 4) {
       console.log("already created.. no more modification");
@@ -725,7 +724,6 @@ class CreateParcel extends React.Component {
     }
 
     const updateState = (res) =>{
-      console.log('updateState e',res.data)
       const { success, data, errorCode } = res.data;
       if (!success) {
         this.handleErrorNotification(errorCode)
@@ -785,7 +783,6 @@ class CreateParcel extends React.Component {
         weight,
       )
       .then(e => {
-        console.log('getDynamicPrice',e)
         let details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
         if(success){
@@ -822,7 +819,6 @@ class CreateParcel extends React.Component {
 
     if (name === "declaredValue") {
       const packageInsurance = {...details.packageInsurance};
-      console.log('details.fixMatrix.value',details.fixMatrix.value)
       if(details.fixMatrix.value && details.fixMatrix.value !== 'none' ){
         let option = details.fixMatrix.options.find(e=>e.name === details.fixMatrix.value);
         if(option){
@@ -886,7 +882,6 @@ class CreateParcel extends React.Component {
           const { data, success, errorCode } = e.data;
           if (success) {
             let result = (data && data.stringValues && JSON.parse(data.stringValues)) || {matrix:[], fixMatrix:[]};
-            console.log('result',result)
             let details = {...this.state.details}
 
             if(Array.isArray(result)){

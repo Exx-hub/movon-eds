@@ -8,7 +8,7 @@ import {TableView} from '../../component/table'
 import TicketView from "../../component/ticketView";
 import ReactToPrint from 'react-to-print';
 import ManifestService from '../../service/Manifest';
-import {openNotificationWithIcon, clearCredential} from '../../utility'
+import {openNotificationWithIcon, clearCredential, getUser} from '../../utility'
 import {notification} from 'antd'
 
 import { 
@@ -309,6 +309,7 @@ class ManifestDetails extends React.Component{
 
   getReviewDetails = (data) =>{
     return {
+      noOfSticker: (getUser() && getUser().busCompanyId && getUser().busCompanyId.config && getUser().busCompanyId.config.parcel.noOfStickerCopy) || 2,
       packageName:data.packageInfo.packageName,
       packageWeight:data.packageInfo.packageWeight,
       packageQty: data.packageInfo.quantity,
