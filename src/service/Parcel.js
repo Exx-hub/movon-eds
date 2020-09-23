@@ -8,9 +8,9 @@ const BASE_URL = config.BASE_URL;
 const ParcelService = {
     getTrips : (stationId) => {
 
-        var currentTime = moment().utc().format('YYYY-MM-DDThh:mm:ss[Z]')
-        var todaysStartDate = moment().startOf('day').format('YYYY-MM-DDThh:mm:ss[Z]');
-        var tomorrowsStartTime = moment().add(1,'d').startOf('day').format('YYYY-MM-DDThh:mm:ss[Z]');
+       // var currentTime = moment().utc().format('YYYY-MM-DDThh:mm:ss[Z]')
+        //var todaysStartDate = moment().startOf('day').format('YYYY-MM-DDThh:mm:ss[Z]');
+        //var tomorrowsStartTime = moment().add(1,'d').startOf('day').format('YYYY-MM-DDThh:mm:ss[Z]');
 
         return axios({
             method: 'post',
@@ -21,13 +21,13 @@ const ParcelService = {
                 'x-auth-token' : getToken()
             },
             data : {
-                stationId: stationId,
-                //todaysStartDate: moment().subtract(1,'day').format('YYYY-MM-DDThh:mm:ss[Z]'),
-                //tomorrowsStartTime: moment().add(1,'day').format('YYYY-MM-DDThh:mm:ss[Z]'),
-                //currentTime: moment().format('YYYY-MM-DDThh:mm:ss[Z]')
-                todaysStartDate,
-                tomorrowsStartTime,
-                currentTime
+                //stationId: stationId,
+                todaysStartDate: moment().subtract(1,'day').format('YYYY-MM-DDThh:mm:ss[Z]'),
+                tomorrowsStartTime: moment().add(1,'day').format('YYYY-MM-DDThh:mm:ss[Z]'),
+                currentTime: moment().format('YYYY-MM-DDThh:mm:ss[Z]')
+                //todaysStartDate,
+                //tomorrowsStartTime,
+                //currentTime
             }
         })
     },

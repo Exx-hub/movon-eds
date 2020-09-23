@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Radio, Select } from "antd";
+import { Row, Col, Radio, Select, AutoComplete } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
 
@@ -64,10 +64,22 @@ function BicolIsarogForm(props) {
     busNumber,
     tripCode,
     driverFullName,
-    conductorFullName
+    conductorFullName,
   } = props.details;
 
   const enableInterConnection = props.enableInterConnection;
+  const _temList = destination.options.map(e=>(e.name))
+  const [tempList, setTempList] = React.useState(_temList);
+  
+
+  const doSearch = el =>{
+    const data = destination.options;
+    const toSearch = el.toLowerCase();
+    const tempParcelData = data.filter(e=>{
+      return e.name.toLowerCase().includes(toSearch) 
+    }).map(e=>(e.name))
+    setTempList(tempParcelData)
+  }
 
   return (
     <div className="create-parcel-form">
@@ -79,22 +91,31 @@ function BicolIsarogForm(props) {
               <span className="input-placeholder-title select-placeholder">
                 Destination*
               </span>
-              <Select
-                size="default"
-                onBlur={() => props.onBlur(destination.name)}
-                className={`${
-                  !destination.accepted ? "select-error-destination-form" : ""
-                }`}
-                onChange={(e) => props.onSelectChange(e, destination.name)}
-                value={destination.value}
+              <div style={{ display: "none" }}>
+                <Select
+                  size="default"
+                  onBlur={() => props.onBlur(destination.name)}
+                  className={`${
+                    !destination.accepted ? "select-error-destination-form" : ""
+                  }`}
+                  onChange={(e) => props.onSelectChange(e, destination.name)}
+                  value={destination.value}
+                  style={{ width: "100%" }}
+                >
+                  {destination.options.map((e) => (
+                    <Option key={e.value} value={e.value}>
+                      {e.name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+              <AutoComplete
+                dataSource={tempList}
                 style={{ width: "100%" }}
-              >
-                {destination.options.map((e) => (
-                  <Option key={e.value} value={e.value}>
-                    {e.name}
-                  </Option>
-                ))}
-              </Select>
+                onSelect={(e)=>  props.onSelectChange(destination.options.find(find=> find.name === e).endStation,destination.name) }
+                onSearch={doSearch}
+                placeholder="Destination"
+              />
               {!destination.accepted && (
                 <span className="select-input-error">
                   {destination.errorMessage || "Destination is required"}
@@ -208,14 +229,13 @@ function BicolIsarogForm(props) {
           </Col>
 
           <Col span={8} className="gutter-row">
-          <InputBox
-            detail={associateORNumber}
-            onChange={props.onChange}
-            placeholder={"Associate OR NO."}
-            title={"Associate OR NO"}
-          />
-        </Col>
-
+            <InputBox
+              detail={associateORNumber}
+              onChange={props.onChange}
+              placeholder={"Associate OR NO."}
+              title={"Associate OR NO"}
+            />
+          </Col>
         </Row>
       </div>
 
@@ -314,7 +334,6 @@ function BicolIsarogForm(props) {
         </Row>
 
         <Row>
-        
           <Col span={8} className="gutter-row">
             <InputBox
               type="number"
@@ -353,65 +372,60 @@ function BicolIsarogForm(props) {
         </Row>
       </div>
 
-    <div className="input-container-border" style={{display:'none'}}>
-      <h4 className="create-group-title">Bus Information</h4>
+      <div className="input-container-border" style={{ display: "none" }}>
+        <h4 className="create-group-title">Bus Information</h4>
 
-      <Row>
-        <Col span={12} className="gutter-row">
-          <InputBox
-            type="text"
-            detail={busNumber}
-            onChange={props.onChange}
-            errorMessage={
-              busNumber.errorMessage || "Bus Number is required"
-            }
-            title="Bus No."
-            placeholder="Bus Number"
-          />
-        </Col>
-        <Col span={12} className="gutter-row">
-        <InputBox
-            type="text"
-            detail={tripCode}
-            onChange={props.onChange}
-            errorMessage={
-              tripCode.errorMessage || "Trip Code is required"
-            }
-            title="Trip Code"
-            placeholder="Trip Code"
-          />
-        </Col>
-      </Row>
-      <Row>
-      <Col span={12} className="gutter-row">
-      <InputBox
-        type="text"
-        detail={driverFullName}
-        onChange={props.onChange}
-        errorMessage={
-          driverFullName.errorMessage || "Sender Name is required"
-        }
-        onBlur={() => props.onBlur(driverFullName.name)}
-        title="Driver Full Name"
-        placeholder="ex: Juan Dele Cruz"
-      />
-    </Col>
-    <Col span={12} className="gutter-row">
-    <InputBox
-        type="text"
-        detail={conductorFullName}
-        onChange={props.onChange}
-        errorMessage={
-          conductorFullName.errorMessage || "Sender Name is required"
-        }
-        onBlur={() => props.onBlur(driverFullName.name)}
-        title="Conductor Full Name"
-        placeholder="ex. Juan Dela Cruz"
-      />
-    </Col>
-      </Row>
-    
-    </div>
+        <Row>
+          <Col span={12} className="gutter-row">
+            <InputBox
+              type="text"
+              detail={busNumber}
+              onChange={props.onChange}
+              errorMessage={busNumber.errorMessage || "Bus Number is required"}
+              title="Bus No."
+              placeholder="Bus Number"
+            />
+          </Col>
+          <Col span={12} className="gutter-row">
+            <InputBox
+              type="text"
+              detail={tripCode}
+              onChange={props.onChange}
+              errorMessage={tripCode.errorMessage || "Trip Code is required"}
+              title="Trip Code"
+              placeholder="Trip Code"
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12} className="gutter-row">
+            <InputBox
+              type="text"
+              detail={driverFullName}
+              onChange={props.onChange}
+              errorMessage={
+                driverFullName.errorMessage || "Sender Name is required"
+              }
+              onBlur={() => props.onBlur(driverFullName.name)}
+              title="Driver Full Name"
+              placeholder="ex: Juan Dele Cruz"
+            />
+          </Col>
+          <Col span={12} className="gutter-row">
+            <InputBox
+              type="text"
+              detail={conductorFullName}
+              onChange={props.onChange}
+              errorMessage={
+                conductorFullName.errorMessage || "Sender Name is required"
+              }
+              onBlur={() => props.onBlur(driverFullName.name)}
+              title="Conductor Full Name"
+              placeholder="ex. Juan Dela Cruz"
+            />
+          </Col>
+        </Row>
+      </div>
 
       <div className="input-container-border">
         <h4 className="create-group-title">Customers Information</h4>
@@ -497,8 +511,6 @@ function BicolIsarogForm(props) {
           </Col>
         </Row>
       </div>
-
-      
     </div>
   );
 }
