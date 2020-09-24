@@ -1,2 +1,2 @@
-import { ScheduledTrips } from './list';
+import  ScheduledTrips from './list';
 export default ScheduledTrips;

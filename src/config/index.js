@@ -14,8 +14,6 @@ export const config = {
     }
 }
 
-//console.log('NODE_ENV',process)
-
 export const ERROR_CODES = {
     7002:{
         module:'LOGIN',

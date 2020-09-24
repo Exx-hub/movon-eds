@@ -16,6 +16,7 @@ import ReactToPrint from "react-to-print";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
+import ManifestService from "../../service/Manifest";
 import {
   getUser,
   openNotificationWithIcon,
@@ -29,12 +30,12 @@ const MIN_WIDTH = 800;
 
 const STEPS_LIST = [
   {
-    title: "Parcel Details",
-    description: "Fill up parcel information",
-  },
-  {
     title: "Parcel Image",
     description: "Take image of the parcel",
+  },
+  {
+    title: "Parcel Details",
+    description: "Fill up parcel information",
   },
   {
     title: "Select Trip",
@@ -415,26 +416,28 @@ class CreateParcel extends React.Component {
     }
    
     const stationId = this.USER && this.USER.assignedStation._id;
-    ParcelService.getTrips(stationId).then(e=>{
+
+    ManifestService.getRoutes().then(e=>{
+      console.log('ManifestService getRoutes', e)
       const{data, success, errorCode}=e.data;
       if(success){
-        if(data.trips){
+        if(data){
           const details = {...this.state.details}
           let _myOption =[] 
 
-          data.trips.data.forEach(e=>{
+          data.forEach(e=>{
             _myOption.push({
-              name:e.endStation.name,
-              value:e.endStation._id,
-              startStationId:e.startStation._id,
-              startStationName: e.startStation.name,
-              companyId:e.busCompanyId._id,
-              companyName: e.busCompanyId.name,
-              tripStartDateTime: e.tripStartDateTime,
-              busModel:e.bus.busModel,
-              busId:e.bus.busId,
-              tripsId:e._id,
-              endStation:e.endStation._id
+              name:e.endStationName,
+              value:e.end,
+              startStationId:e.start,
+              startStationName: e.startStationName,
+              //companyId:e.busCompanyId._id,
+              //companyName: e.busCompanyId.name,
+              //tripStartDateTime: e.tripStartDateTime,
+              //busModel:e.bus.busModel,
+              //busId:e.bus.busId,
+              //tripsId:e._id,
+              endStation:e.end
             })
             
           })
@@ -450,8 +453,8 @@ class CreateParcel extends React.Component {
 
           const destination = {...details.destination, ...{options:_myOption}}
           this.setState({
-            tripOption:_myOption,
-            trips:data.trips.data, 
+            //tripOption:_myOption,
+            //trips:data.trips.data, 
             details:{...details, ...{destination}}
           })
         }
@@ -459,6 +462,51 @@ class CreateParcel extends React.Component {
         this.handleErrorNotification(errorCode)
       }
     })
+
+    // ParcelService.getTrips(stationId).then(e=>{
+    //   const{data, success, errorCode}=e.data;
+    //   if(success){
+    //     if(data.trips){
+    //       const details = {...this.state.details}
+    //       let _myOption =[] 
+
+    //       data.trips.data.forEach(e=>{
+    //         _myOption.push({
+    //           name:e.endStation.name,
+    //           value:e.endStation._id,
+    //           startStationId:e.startStation._id,
+    //           startStationName: e.startStation.name,
+    //           companyId:e.busCompanyId._id,
+    //           companyName: e.busCompanyId.name,
+    //           tripStartDateTime: e.tripStartDateTime,
+    //           busModel:e.bus.busModel,
+    //           busId:e.bus.busId,
+    //           tripsId:e._id,
+    //           endStation:e.endStation._id
+    //         })
+            
+    //       })
+         
+    //       let clean=[]
+    //       _myOption = _myOption.filter(e=>{
+    //         if(!clean.includes(e.value)){
+    //           clean.push(e.value)
+    //           return true
+    //         }
+    //         return false;
+    //       })
+
+    //       const destination = {...details.destination, ...{options:_myOption}}
+    //       this.setState({
+    //         tripOption:_myOption,
+    //         trips:data.trips.data, 
+    //         details:{...details, ...{destination}}
+    //       })
+    //     }
+    //   }else{
+    //     this.handleErrorNotification(errorCode)
+    //   }
+    // })
 
     
   }
@@ -627,6 +675,17 @@ class CreateParcel extends React.Component {
     }
 
     if (currentStep === 0) {
+      if (isNull(packageImagePreview)) {
+        showNotification({
+          title: "Parcel Image Validation",
+          type: "error",
+          message: "Please take photo and continue",
+        });
+        return false;
+      }
+    }
+
+    if (currentStep === 1) {
 
       if (this.isRequiredDetailsHasNull()) {
         showNotification({
@@ -657,17 +716,6 @@ class CreateParcel extends React.Component {
         });
         this.setState({ details: tempDetails });
         return hasError;
-      }
-    }
-
-    if (currentStep === 1) {
-      if (isNull(packageImagePreview)) {
-        showNotification({
-          title: "Parcel Image Validation",
-          type: "error",
-          message: "Please take photo and continue",
-        });
-        return false;
       }
     }
 
@@ -972,7 +1020,7 @@ class CreateParcel extends React.Component {
     let view = null;
 
     switch (step) {
-      case 0:
+      case 1:
         view = (
           <>
             {
@@ -1017,7 +1065,7 @@ class CreateParcel extends React.Component {
           </>
         );
         break;
-      case 1:
+      case 0:
         view = (
           <>
             <WebCam
@@ -1037,6 +1085,7 @@ class CreateParcel extends React.Component {
         );
         break;
       case 2:
+     
         view = (
           <>
             <ScheduledTrips
@@ -1048,8 +1097,9 @@ class CreateParcel extends React.Component {
                 });
               }}
               selectedDestination={this.state.selectedDestination}
-              tripOption={this.state.tripOption}
-              tripShedules={this.state.trips}
+              //tripOption={_myOption}
+              //tripShedules={data.trips.data}
+              endStation = {this.state.details.destination.value}
               windowSize={this.state.width}
             />
             <StepControllerView
@@ -1060,6 +1110,7 @@ class CreateParcel extends React.Component {
             />
           </>
         );
+        
         break;
       case 3:
         view = (

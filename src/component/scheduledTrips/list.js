@@ -2,31 +2,85 @@ import React from 'react';
 import './scheduletrips.scss';
 import pin from '../../assets/destinationpin.png'
 import moment from 'moment';
+import ParcelService from '../../service/Parcel'
 
-export const ScheduledTrips = (props)=>{
-    return(
-        <div className="component-scheduled-trips">
-            <div className="details-view-parent-container">
-                <div className="list-title">
-                    <h2>Select Trip</h2>
-                    <span>{moment().format("hh:ss A - MMM DD, YYYY")}</span>
+ class ScheduledTrips extends React.Component{
+    // <DetailsView data={props.selectedDestination} {...props} onClick={()=>props.onSelect(props.selectedDestination)}/>
+  
+
+    state={
+        tripOption:[],
+        trips:undefined, 
+    }
+
+    componentDidMount(){
+    ParcelService.getTrips("stationId")
+    .then(e=>{
+        console.log('ParcelService e',e)
+         const{data, success, errorCode}= e.data;
+          if(success){
+            if(data.trips){
+              let _myOption =[] 
+    
+              data.trips.data.forEach(e=>{
+                  if(this.props.endStation === e.endStation._id){
+                    _myOption.push({
+                        name:e.endStation.name,
+                        value:e.endStation._id,
+                        startStationId:e.startStation._id,
+                        startStationName: e.startStation.name,
+                        companyId:e.busCompanyId._id,
+                        companyName: e.busCompanyId.name,
+                        tripStartDateTime: e.tripStartDateTime,
+                        busModel:e.bus.busModel,
+                        busId:e.bus.busId,
+                        tripsId:e._id,
+                        endStation:e.endStation._id
+                      })
+                  }
+              })
+             
+            //   let clean=[]
+            //   _myOption = _myOption.filter(e=>{
+            //     if(!clean.includes(e.value)){
+            //       clean.push(e.value)
+            //       return true
+            //     }
+            //     return false;
+            //   })
+    
+              this.setState({
+                tripOption:_myOption,
+                trips:data.trips.data, 
+              })
+              
+           }
+          }
+          else{
+            this.handleErrorNotification(errorCode)
+          }
+        })
+    }
+
+    render(){
+        return(
+            <div className="component-scheduled-trips">
+                <div className="details-view-parent-container">
+                    <div className="list-title">
+                        <h2>Select Trip</h2>
+                        <span>{moment().format("hh:ss A - MMM DD, YYYY")}</span>
+                    </div>
+                    {
+                        this.state.tripOption.map((e,i)=>(<DetailsView data={e}  key={i} onClick={()=>this.props.onSelect(e)}/>))
+                    }
                 </div>
-                <DetailsView data={props.selectedDestination} {...props} onClick={()=>props.onSelect(props.selectedDestination)}/>
-                {/* {
-                    props.tripOption.map((e,i)=>(<DetailsView data={e} {...props} key={i} onClick={()=>props.onSelect(e)}/>))
-                } */}
-            </div>
-        </div>)
+            </div>)
+    }
+
+    
 }
 
 const DetailsView = (props) =>{
-    // const{
-    //     bus,
-    //     busCompanyId,
-    //     endStation,
-    //     startStation,
-    //     tripStartDateTime
-    // }=props.data;
 
     const {
         name,
@@ -58,3 +112,5 @@ const DetailsView = (props) =>{
             </div>
     </div>)
 }
+
+export default ScheduledTrips;
