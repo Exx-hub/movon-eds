@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, DatePicker, Button, Row, Col, Select, Skeleton, Space, notification } from 'antd';
+import { Table, DatePicker, Button, Row, Col, Select, Skeleton, Space, notification, AutoComplete } from 'antd';
 import {openNotificationWithIcon, openNotificationWithDuration, clearCredential} from '../../utility'
 import ManifestService from '../../service/Manifest';
 import moment from 'moment';
@@ -67,7 +67,7 @@ class Manifest extends React.Component {
 
   state={
     endDay: moment().format(dateFormat),
-    startDay:moment().subtract(3, 'd').format(dateFormat),
+    startDay:moment().subtract(1, 'd').format(dateFormat),
     fetching:false,
     routes:undefined,
     routesList:{
@@ -75,7 +75,9 @@ class Manifest extends React.Component {
       options:[]
     },
     listOfTripDates:undefined,
-    selectedRoute:undefined
+    selectedRoute:undefined,
+    tempDestinationList:[],
+    selected:undefined
   }
 
   componentDidMount(){
@@ -98,17 +100,22 @@ class Manifest extends React.Component {
           return{
             data: e,
             value: i,
-            name: e.name
+            name: e.endStationName
           }
         })
 
         const params = new URLSearchParams(this.props.location.search);
         const routesIndex = params.get('route-id'); // bar
+        
+        const routesList = {...this.state.routesList,...{options, value: Number(routesIndex)}}
+        const tempDestinationList = data.filter(e=> e !== null || e!== "null").map(e=>(e.endStationName))
+        console.log('tempDestinationList',tempDestinationList)
 
         this.setState({
           routes:data, 
           selectedRoute:data[Number(routesIndex||0)],
-          routesList:{...this.state.routesList,...{options, value:Number(routesIndex)}}
+          routesList,
+          tempDestinationList
         });
         this.getManifestByDestination(data[Number(routesIndex||0)].start, data[Number(routesIndex||0)].end)
         
@@ -194,7 +201,7 @@ class Manifest extends React.Component {
         date:  moment(e._id).format('MMM DD, YYYY') ,
         count: e.count,
         origin: data.startStationName,
-        name: data.name,
+        name: this.state.selected.endStationName,
         destination: data.endStationName,
         startStationId:data.start,
         endStationId:data.end
@@ -208,10 +215,23 @@ class Manifest extends React.Component {
 
     if(startDay && endDay){
       this.setState({startDay,endDay},()=>{
-        const selectedRoute = this.state.selectedRoute;
-        this.getManifestByDestination(selectedRoute.start, selectedRoute.end)
+        const selectedRoute = this.state.selected;
+        if(selectedRoute){
+          console.log('selectedRoute',selectedRoute)
+          this.getManifestByDestination(selectedRoute.start, selectedRoute.end)
+        }
       });
     }
+  }
+
+  doSearch = el =>{
+    const data = this.state.routesList.options;
+    console.log('data',data)
+    const toSearch = el.toLowerCase();
+    const tempDestinationList = data.filter(e=>{
+      return e.name.toLowerCase().includes(toSearch) 
+    }).map(e=>(e.name))
+    this.setState({tempDestinationList})
   }
 
   render(){
@@ -219,6 +239,7 @@ class Manifest extends React.Component {
     return <div className="manifest-page">
       <Row style={{ marginTop: '2rem', marginBottom: '1rem' }}>
         <Col span={8}>
+        <div style={{display:'none'}}>
         {
           routesList && 
           <Select 
@@ -230,6 +251,21 @@ class Manifest extends React.Component {
             }
           </Select>
         }
+        </div>
+        <AutoComplete
+          dataSource={this.state.tempDestinationList}
+          style={{ width: '100%' }}
+          onSelect={(item)=>{
+            console.log('item',item)
+            let selected = this.state.routes.find(e=>e.endStationName === item);
+            if(selected){
+              this.setState({selected},()=>this.getManifestByDestination(selected.start, selected.end))
+              console.log('selected',selected)
+            }
+          }}
+          onSearch={(e)=>this.doSearch(e)}
+          placeholder="Destination"
+        />
         </Col>
         <Col offset={4} span={12}>
           <RangePicker
@@ -246,8 +282,8 @@ class Manifest extends React.Component {
           pagination={false}
           dataSource={this.dataSource()}
           onChange={this.onChangeTable} 
-          onPrint={(data)=>this.props.history.push('/manifest/print',{ data })}
-          onViewClick={(data)=>this.props.history.push('/manifest/details', { data }) }
+          onPrint={(data)=>this.props.history.push('/manifest/print',{ date:data.date, selected:this.state.selected })}
+          onViewClick={(data)=>this.props.history.push('/manifest/details',{ date:data.date, selected:this.state.selected })}
           /> :
           <Skeleton active />
       }

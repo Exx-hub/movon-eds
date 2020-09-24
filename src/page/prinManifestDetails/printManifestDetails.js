@@ -5,6 +5,9 @@ import { Layout, Button, Table, Col, Row, Tooltip } from 'antd';
 import { ArrowLeftOutlined, PrinterOutlined } from '@ant-design/icons';
 import './printManifestDetails.css'
 import ManifestService from '../../service/Manifest';
+import ParcelService from '../../service/Parcel';
+
+
 import {
   getUser
 } from "../../utility";
@@ -89,62 +92,68 @@ class PrintManifestDetails extends React.Component {
 
   componentDidMount(){
     this.printEl = React.createRef();
-    const state = (this.props.location.state && this.props.location.state.data) || undefined
-    if(!state){
-      this.props.history.goBack()
-    }
-
-    console.log('state',state)
-    console.log('getUser',getUser())
     const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
     this.companyTag = companyTag;
 
-    console.log('companyTag',companyTag)
-    let totalSales = 0;
+    const {
+      end,
+      endStationName,
+      startStationName,
+    } = this.props.location.state.selected;
 
-    ManifestService.getManifestByDate(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
+    let totalSales = 0;
+    const startStation = getUser().assignedStation._id;
+
+    console.log('date', this.props.location.state.date)
+    console.log('startStation', startStation)
+    console.log('end', end)
+
+    ManifestService.getManifestByDate(moment(this.props.location.state.date).format('MMM DD, YYYY'), startStation, end)
     .then(e=>{
       console.log('getManifestByDate',e)
       const data = e.data;
-      const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-      const routes1 = data[0].trips.startStationName
-      const routes2 = data[0].trips.endStationName;
-      const deliveryPerson = data[0].deliveryPersonInfo.deliveryPersonName
-      const tripCode = data[0].trips.displayId
-      const busCompanyName= data[0].busCompanyName;
       
-      const dddd = data.map(e=>(Number(e.priceDetails.totalPrice) - Number(e.priceDetails.convenienceFee)))
-      totalSales = dddd.reduce((accumulator, currentValue)=> accumulator + currentValue );
+      const departureTime = moment(this.props.location.state.date).format("MMM-DD-YYYY hh:mm A");
+      const routes1 = startStationName
+      const routes2 = endStationName;
+    
+      
+      if(data && data.length > 0){
+        const deliveryPerson = data[0].deliveryPersonInfo.deliveryPersonName
+        const tripCode = data[0].trips.displayId
+        const busCompanyName= data[0].busCompanyName;
+        const dddd = data.map(e=>(Number(e.priceDetails.totalPrice) - Number(e.priceDetails.convenienceFee)))
+        totalSales = dddd.reduce((accumulator, currentValue)=> accumulator + currentValue );
 
+        const dataSource = data.map((e,i)=>{
+          return {
+            key: i,
+            movonBillOfLading: e.displayId,
+            companyBillOfLading: e.billOfLading,
+            description: e.packageInfo.packageName,
+            weight: e.packageInfo.packageWeight,
+            amount: e.priceDetails.totalPrice - 10,
+            qty: e.packageInfo.quantity,
+            sender: e.senderInfo.senderName,
+            reciepient: e.recipientInfo.recipientName,
+            status: e.status,
+            busCompanyName: e.busCompanyName
+          }
+        })
 
-      const dataSource = data.map((e,i)=>{
-        return {
-          key: i,
-          movonBillOfLading: e.displayId,
-          companyBillOfLading: e.billOfLading,
-          description: e.packageInfo.packageName,
-          weight: e.packageInfo.packageWeight,
-          amount: e.priceDetails.totalPrice - 10,
-          qty: e.packageInfo.quantity,
-          sender: e.senderInfo.senderName,
-          reciepient: e.recipientInfo.recipientName,
-          status: e.status,
-          busCompanyName: e.busCompanyName
-        }
-      })
-
-      this.setState({
-        transactionDate: moment(state.date).format("MMM DD, YYYY"),
-        totalSales,
-        data, 
-        deliveryPerson, 
-        departureTime,
-        routes1,
-        routes2,
-        tripCode,
-        dataSource,
-        busCompanyName
-      })
+        this.setState({
+          transactionDate: moment(this.props.location.state.date).format("MMM DD, YYYY"),
+          totalSales,
+          data, 
+          deliveryPerson, 
+          departureTime,
+          routes1,
+          routes2,
+          tripCode,
+          dataSource,
+          busCompanyName
+        })
+      }
     })
   }
 

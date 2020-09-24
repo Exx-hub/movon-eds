@@ -82,9 +82,9 @@ function SiderContent(props) {
     <Row>
       <Col span={24} style={{ padding: '.25rem' }}>
         <InputBox title="Routes" value={props.state.routes} />
-        <InputBox title="MovOn Bill of Lading" value={props.state.movonBillOfLading} />
-        <InputBox title="Company Bill of Lading" value={props.state.coyBillOfLading} />
-        <InputBox title="Departure Date" value={props.state.departureTime} />
+        <InputBox title="Parcel Code" value={props.state.movonBillOfLading} />
+        <InputBox title="Bill of Lading" value={props.state.coyBillOfLading} />
+        <InputBox title="Transaction Date" value={props.state.departureTime} />
       </Col>
     </Row>
 
@@ -208,11 +208,26 @@ class ManifestDetails extends React.Component{
   }
 
   componentDidMount(){
-    const state = (this.props.location.state && this.props.location.state.data) || undefined
-    if(!(state && state.date)){
-      this.props.history.push('/')
-      return
-    }
+
+
+    let serverTime = moment("2020-09-24 23:21:33.000Z").format("YYYY-MM-DD HH:SS")
+    console.log('serverTime',serverTime)
+
+    const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
+    this.companyTag = companyTag;
+
+    const {
+      end,
+      endStationName,
+      startStationName,
+    } = this.props.location.state.selected;
+    const startStation = getUser().assignedStation._id;
+
+    const date = this.props.location.state.date
+
+    console.log('date', date)
+    console.log('startStation', startStation)
+    console.log('end', end)
 
     window.addEventListener("resize", (e) => {
       this.setState({
@@ -221,22 +236,22 @@ class ManifestDetails extends React.Component{
       });
     });
 
-    this.fetchManifest(moment(state.date).format('MMM DD, YYYY'),state.startStationId, state.endStationId)
+    this.fetchManifest(date, startStation, end, `${startStationName} to ${endStationName}`)
   }
 
-  fetchManifest = (date,startStationId,endStationId) =>{
+  fetchManifest = (date,startStationId,endStationId,_routes) =>{
 
-    ManifestService.getManifestByDate(date, startStationId, endStationId)
+    ManifestService.getManifestByDate(moment(date).format('MMM DD, YYYY'), startStationId, endStationId)
     .then(e=>{
       if(!e.data.success && e.data.errorCode){
         this.handleErrorNotification(e.data.errorCode)
         return;
       }
 
-      if(e.data){
+      if(e.data && e.data.length > 0){
         let data = e.data;
-        const departureTime = moment(data[0].trips.tripStartDateTime).format("MMM-DD-YYYY hh:mm A");
-        const arrivalTime = moment(data[0].trips.tripEndDateTime).format("MMM-DD-YYYY hh:mm A");
+        const departureTime = moment(date).format("MMM-DD-YYYY");
+        const arrivalTime = moment(date).format("MMM-DD-YYYY");
         const movonBillOfLading = data[0].displayId;
         const coyBillOfLading = data[0].billOfLading;
         const routes1 = data[0].trips.startStationName
@@ -252,7 +267,11 @@ class ManifestDetails extends React.Component{
           arrivalTime,
           movonBillOfLading,
           coyBillOfLading,
-          routes: `${routes1} - ${routes2}`,
+          routes: _routes,
+          fetching: false
+        });
+      }else{
+        this.setState({
           fetching: false
         });
       }

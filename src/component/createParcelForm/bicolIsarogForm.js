@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Row, Col, Radio, Select, AutoComplete } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
@@ -70,7 +70,6 @@ function BicolIsarogForm(props) {
   const enableInterConnection = props.enableInterConnection;
   const _temList = destination.options.map(e=>(e.name))
   const [tempList, setTempList] = React.useState(_temList);
-  
 
   const doSearch = el =>{
     const data = destination.options;
@@ -82,7 +81,7 @@ function BicolIsarogForm(props) {
   }
 
   return (
-    <div className="create-parcel-form">
+    <div className="create-parcel-form" >
       <div className="calculator-container-border">
         <span className="create-group-title">Select Station</span>
         <Row>
