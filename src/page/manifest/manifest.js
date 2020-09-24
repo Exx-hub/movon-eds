@@ -28,7 +28,7 @@ const TableRoutesView = (props) =>{
     defaultSortOrder: 'name',
   },
   {
-    title: 'Departure Date',
+    title: 'Sent Date',
     dataIndex: 'date',
     defaultSortOrder: 'descend',
     sorter: (a, b) => moment(a.date) - moment(b.date)
@@ -191,7 +191,7 @@ class Manifest extends React.Component {
       const data = this.state.routes[this.state.routesList.value]
       return {
         key: i,
-        date:  moment(e._id).format('MMM DD, YYYY hh:mm A') ,
+        date:  moment(e._id).format('MMM DD, YYYY') ,
         count: e.count,
         origin: data.startStationName,
         name: data.name,
