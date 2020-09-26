@@ -65,6 +65,7 @@ function BicolIsarogForm(props) {
     tripCode,
     driverFullName,
     conductorFullName,
+    sticker_quantity
   } = props.details;
 
   const enableInterConnection = props.enableInterConnection;
@@ -99,8 +100,7 @@ function BicolIsarogForm(props) {
                   }`}
                   onChange={(e) => props.onSelectChange(e, destination.name)}
                   value={destination.value}
-                  style={{ width: "100%" }}
-                >
+                  style={{ width: "100%" }}>
                   {destination.options.map((e) => (
                     <Option key={e.value} value={e.value}>
                       {e.name}
@@ -262,7 +262,7 @@ function BicolIsarogForm(props) {
         </Row>
 
         <Row>
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               onBlur={() => props.onBlur(declaredValue.name)}
@@ -274,7 +274,7 @@ function BicolIsarogForm(props) {
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               onBlur={() => props.onBlur(quantity.name)}
@@ -282,11 +282,23 @@ function BicolIsarogForm(props) {
               onChange={props.onChange}
               title="Quantity"
               errorMessage={quantity.errorMessage}
-              placeholder="Box / Parcel Count"
+              placeholder="Quantity"
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
+          <InputBox
+            type="number"
+            onBlur={() => props.onBlur(sticker_quantity.name)}
+            detail={sticker_quantity}
+            onChange={props.onChange}
+            title="Package Count"
+            errorMessage={sticker_quantity.errorMessage}
+            placeholder="Box / Parcel Count"
+          />
+        </Col>
+
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               onBlur={() => props.onBlur(packageWeight.name)}

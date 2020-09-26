@@ -320,7 +320,9 @@ export default class PriceMatrix extends React.Component {
             this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}] });
           }else{
             let { matrix, fixMatrix } = result;
-            fixMatrix = [...[{name:"", price:0, declaredValue:0}] ,...fixMatrix]
+            if(fixMatrix.length === 0){
+              fixMatrix = [...[{name:"", price:0, declaredValue:0}]]
+            }
             this.setState({ matrix, fixMatrix });
           }
          

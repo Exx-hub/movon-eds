@@ -48,6 +48,7 @@ function CreateParcelForm(props) {
     description,
     declaredValue,
     quantity,
+    sticker_quantity,
     systemFee,
     additionNote,
     packageInsurance,
@@ -184,11 +185,11 @@ function CreateParcelForm(props) {
           <Col span={8} className="gutter-row">
             <InputBox
               type="number"
-              onBlur={() => props.onBlur(quantity.name)}
-              detail={quantity}
+              onBlur={() => props.onBlur(sticker_quantity.name)}
+              detail={sticker_quantity}
               onChange={props.onChange}
-              title="Quantity"
-              errorMessage={quantity.errorMessage}
+              title="Package Count"
+              errorMessage={sticker_quantity.errorMessage}
               placeholder="Box / Parcel Count"
             />
           </Col>

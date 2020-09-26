@@ -208,11 +208,6 @@ class ManifestDetails extends React.Component{
   }
 
   componentDidMount(){
-
-
-    let serverTime = moment("2020-09-24 23:21:33.000Z").format("YYYY-MM-DD HH:SS")
-    console.log('serverTime',serverTime)
-
     const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
     this.companyTag = companyTag;
 
@@ -224,10 +219,6 @@ class ManifestDetails extends React.Component{
     const startStation = getUser().assignedStation._id;
 
     const date = this.props.location.state.date
-
-    console.log('date', date)
-    console.log('startStation', startStation)
-    console.log('end', end)
 
     window.addEventListener("resize", (e) => {
       this.setState({

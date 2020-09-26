@@ -23,6 +23,7 @@ import {
   clearCredential,
   debounce,
 } from "../../utility";
+import moment from 'moment'
 
 const { Content, Sider, Header } = Layout;
 
@@ -241,6 +242,12 @@ class CreateParcel extends React.Component {
         },
         quantity: {
           name: "quantity",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        sticker_quantity: {
+          name: "sticker_quantity",
           value: undefined,
           isRequired: true,
           accepted: true,
@@ -648,7 +655,7 @@ class CreateParcel extends React.Component {
       }}
     }
 
-    if(name === 'declaredValue' || name === 'quantity' || name==='packageWeight'){
+    if(name === 'declaredValue' || name === 'quantity' || name==='packageWeight' || name === 'sticker_quantity'){
       const isValid = Number(details[name].value) > -1;
       return {...details[name], 
         ...{ 
@@ -790,7 +797,7 @@ class CreateParcel extends React.Component {
       return;
     }
 
-    const enableBISystemFee = false;
+    const enableBISystemFee = true;
     if(enableBISystemFee){
       ParcelService.getConvenienceFee(qty).then(res=>updateState(res));
     }
@@ -849,7 +856,9 @@ class CreateParcel extends React.Component {
   onInputChange = (name, value) => {
     let details = {...this.state.details};
 
-    if(name === "quantity"){
+    console.log('onInputChange',name,value)
+
+    if(name === "sticker_quantity"){
       const isValid = Number(value) > -1;
       let item = { ...details[name], ...{ 
         errorMessage: isValid ? "" : "Invalid number",
@@ -860,6 +869,25 @@ class CreateParcel extends React.Component {
       this.setState({details},()=>{
         if(isValid){
           this.getConvinienceFee(value)
+        }
+      })
+      return
+    }
+
+    if(name === "quantity"){
+      const isValid = Number(value) > -1;
+      let item = { ...details[name], ...{ 
+        errorMessage: isValid ? "" : "Invalid number",
+        value, 
+        accepted: isValid } };
+      details = { ...details, ...{ [name]: item } };
+
+      this.setState({details},()=>{
+        if(isValid){
+          console.log('quantity=====>>')
+          console.log('quantity=====>>')
+          console.log('quantity=====>>')
+          this.updateTotalShippingCost()
         }
       })
       return
@@ -997,6 +1025,7 @@ class CreateParcel extends React.Component {
     const type = {...details.type, ...{value}}
     const paxs = {...details.paxs, ...{ value:0, isRequired: value !== 3, disabled: value === 3 }}
     const quantity = {...details.quantity, ...{ value:0 }}
+    const sticker_quantity = {...details.sticker_quantity, ...{ value:0 }}
     const packageWeight = {...details.packageWeight, ...{ value:0 }}
     const systemFee = {...details.systemFee, ...{ value:0 }}
     const totalShippingCost = {...details.totalShippingCost, ...{ value:0 }}
@@ -1009,6 +1038,7 @@ class CreateParcel extends React.Component {
       shippingCost,
       paxs, 
       quantity, 
+      sticker_quantity,
       packageWeight}}});
   }
 
@@ -1239,10 +1269,15 @@ class CreateParcel extends React.Component {
 
   updateTotalShippingCost = () =>{
     const currentDetails = {...this.state.details};
+    const quantity = currentDetails.quantity.value || 0;
     let total = parseFloat(currentDetails.shippingCost.value || 0) 
       + parseFloat(currentDetails.systemFee.value || 0)
         + parseFloat(currentDetails.packageInsurance.value || 0)
           + parseFloat(this.state.connectingCompanyComputation || 0)
+
+    if(Number(quantity) > 0){
+      total = Number(total) * Number(quantity)
+    }
     
     const totalShippingCost = {...currentDetails.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
     this.setState({details: {...currentDetails, ...{totalShippingCost}}})

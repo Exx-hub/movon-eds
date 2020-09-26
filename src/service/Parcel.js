@@ -53,6 +53,7 @@ const ParcelService = {
             description,
             declaredValue,
             quantity,
+            sticker_quantity,
             systemFee,
             additionNote,
             packageInsurance,
@@ -95,6 +96,7 @@ const ParcelService = {
         bodyFormData.set('estimatedValue', declaredValue.value)
         bodyFormData.set('accompanied', type.value !== CARGO_PADALA)
         bodyFormData.set('packageInsurance', PACKAGE_INSURANCE)
+        bodyFormData.set('sticker_quantity', sticker_quantity.value || 0)
         bodyFormData.set('quantity', quantity.value || 0)
         bodyFormData.set('price', shippingCost.value || 0)
         bodyFormData.set('additionalNote', additionNote.value)
@@ -113,7 +115,7 @@ const ParcelService = {
         bodyFormData.set('associatedOrigin', associatedOrigin)
         bodyFormData.set('associatedDestination', associatedDestination)
         bodyFormData.set('associatedAmount', associatedAmount)
-        bodyFormData.set('parcel_length', length.value || 0)
+        bodyFormData.set('parcel_length', (length && length.value) || 0)
         bodyFormData.set('totalShippingCost',totalShippingCost.value || 0)
         bodyFormData.set('busNumber',busNumber.value)
         bodyFormData.set('tripCode',tripCode.value)
