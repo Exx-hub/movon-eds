@@ -1,5 +1,5 @@
 export const config = {
-    //BASE_URL:"http://localhost:8002",
+    //BASE_URL:"http://localhost:9000",
     BASE_URL:"https://cargomovon.com/server",
     //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{

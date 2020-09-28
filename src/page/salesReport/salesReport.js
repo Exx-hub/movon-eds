@@ -8,7 +8,7 @@ import {
   Col,
   Space,
   notification,
-  Descriptions,
+  Skeleton,
   Layout,
   Tag,
   AutoComplete,
@@ -17,7 +17,6 @@ import { PrinterOutlined } from "@ant-design/icons";
 
 import {
   openNotificationWithIcon,
-  openNotificationWithDuration,
   getUser,
   clearCredential,
 } from "../../utility";
@@ -28,7 +27,6 @@ import ManifestService from "../../service/Manifest";
 import moment from "moment";
 import "./salesReport.scss";
 import ReactToPrint from "react-to-print";
-import { isThisTypeNode } from "typescript";
 
 const dateFormat = "MMM DD, YYYY";
 
@@ -61,13 +59,15 @@ class SalesReport extends React.Component {
 
   componentDidMount() {
     this.printEl = React.createRef();
-    console.log("user", this.state.user);
-
-    Promise.all([ManifestService.getRoutes(), this.getParcel()]).then(
+    Promise.all([this.getParcel()]).then(
       (resonses) => {
-        console.log("resonses", resonses);
         if (resonses[0]) {
-          const { data } = resonses[0].data;
+          const { data, success, errorCode} = resonses[0].data;
+          if(errorCode){
+            this.handleErrorNotification(errorCode)
+            return
+          }
+
           if (data) {
             const options = data.map((e, i) => {
               return {
@@ -84,7 +84,12 @@ class SalesReport extends React.Component {
           }
         }
         if (resonses[1]) {
-          this.parseParcel(resonses[1].data);
+          const { data, success, errorCode} = resonses[1].data;
+          if(errorCode){
+            this.handleErrorNotification(errorCode)
+            return
+          }
+          this.parseParcel(data);
         }
       }
     );
@@ -95,7 +100,6 @@ class SalesReport extends React.Component {
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
     const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end))  //(this.state.destination.data && this.state.destination.data.end) || null;
-    console.log('endStation',endStation)
     const busCompanyId = this.state.user.busCompanyId._id;
 
     return ParcelService.getAllParcel(
@@ -111,55 +115,62 @@ class SalesReport extends React.Component {
 
   parseParcel = (dataResult) => {
     try {
-      console.log("parseParcel", dataResult);
-      const { parcels, errorCode } = dataResult.data;
+      const { parcels, errorCode, success } = dataResult.data;
+      if(success && success === false){
+        this.handleErrorNotification(errorCode)
+        return;
+      }
 
-      let amout = 0;
-      const data = parcels.map((e) => {
-        const {
-          associatedAmount,
-          associatedCompanyId,
-          associatedDestination,
-          associatedOrigin,
-          associatedTariffRate,
-          billOfLading,
-          declaredValue,
-          destination,
-          origin,
-          packageName,
-          packageWeight,
-          price,
-          quantity,
-          recipient,
-          scanCode,
-          sender,
-          sentDate,
-          status,
-        } = e;
-        amout += Number(e.price);
-        return {
-          associatedAmount,
-          associatedCompanyId,
-          associatedDestination,
-          associatedOrigin,
-          associatedTariffRate,
-          billOfLading,
-          declaredValue,
-          destination,
-          origin,
-          packageName,
-          packageWeight,
-          price,
-          quantity,
-          recipient,
-          scanCode,
-          sender,
-          sentDate,
-          status,
-        };
-      });
-      this.setState({ data, totalAmount: amout.toFixed(2) });
-    } catch (error) {}
+      if(dataResult.status === 200){
+        let amout = 0;
+        const data = parcels.map((e) => {
+          const {
+            associatedAmount,
+            associatedCompanyId,
+            associatedDestination,
+            associatedOrigin,
+            associatedTariffRate,
+            billOfLading,
+            declaredValue,
+            destination,
+            origin,
+            packageName,
+            packageWeight,
+            price,
+            quantity,
+            recipient,
+            scanCode,
+            sender,
+            sentDate,
+            status,
+          } = e;
+          amout += Number(e.price);
+          return {
+            associatedAmount,
+            associatedCompanyId,
+            associatedDestination,
+            associatedOrigin,
+            associatedTariffRate,
+            billOfLading,
+            declaredValue,
+            destination,
+            origin,
+            packageName,
+            packageWeight,
+            price,
+            quantity,
+            recipient,
+            scanCode,
+            sender,
+            sentDate,
+            status,
+          };
+        });
+        this.setState({fetching:false, data, totalAmount: amout.toFixed(2) });
+      }
+    } catch (error) {
+
+    }
   };
 
   handleErrorNotification = (code) => {
@@ -185,9 +196,8 @@ class SalesReport extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay }, () => {
+      this.setState({fetching:true, startDay, endDay }, () => {
         this.getParcel().then((e) => {
-          console.log("e", e);
           this.parseParcel(e);
         });
       });
@@ -209,7 +219,6 @@ class SalesReport extends React.Component {
   };
 
   handleSelectChange = (e) => {
-    console.log("handleSelectChange", e);
     let destination = { ...this.state.destination };
     this.setState(
       {
@@ -217,11 +226,7 @@ class SalesReport extends React.Component {
           ...destination,
           ...{ value: e, data: destination.options[e].data },
         },
-      },
-      () => {
-        console.log("destination", this.state.destination);
-      }
-    );
+      });
   };
 
   downloadXls = () => {
@@ -252,21 +257,8 @@ class SalesReport extends React.Component {
       },
       busCompanyId,
       fileName
-    ).then((e) => console.log("parcel", e));
+    ).then();
   };
-
-  // <Select
-  //   size="large"
-  //   value={this.state.destination.value}
-  //   style={{ width: "50%" }}
-  //   onChange={this.handleSelectChange}
-  // >
-  //   {this.state.destination.options.map((e) => (
-  //     <Option key={e.value} value={e.value}>
-  //       {e.name}
-  //     </Option>
-  //   ))}
-  // </Select>
 
   doSearch = el =>{
     let data = this.state.destination.options.map(e=>(e.name));
@@ -326,21 +318,17 @@ class SalesReport extends React.Component {
             <Row>
             <Col span={12}>
               <AutoComplete
-                dataSource={this.state.templist}
                 style={{ width: "100%" }}
                 onSelect={(item) => {
-                  console.log("item", item);
                   let templist = [...this.state.templist]
                   let destination = {...this.state.destination}
                   let tags = [...this.state.tags]
                   let selected = destination.options.findIndex((e) => e.name === item);
-                  console.log("selected", selected);
                   templist = templist.filter((e,i)=> item !== e)
                   // if (selected) {
                     tags.push(destination.options[selected].name)
                     this.setState({ tags, templist },()=>{
                       this.getParcel().then((e) => {
-                        console.log("e", e);
                         this.parseParcel(e);
                       });
                     });
@@ -349,10 +337,12 @@ class SalesReport extends React.Component {
                 }}
                 onSearch={(e) => this.doSearch(e)}
                 placeholder="Destination"
-              />
+              > 
+              {
+                this.state.templist.map(e=>(<Option key={e}>{e}</Option>))
+              }
+               </AutoComplete>
             </Col>
-              
-
               <Col span={12}>
                 <RangePicker
                   size="large"
@@ -446,11 +436,15 @@ class SalesReport extends React.Component {
               </Row>
             </div>
 
-            <Table
-              pagination={false}
-              columns={this.props.source}
-              dataSource={this.state.data}
-            />
+            {
+              this.state.fetching ? <Skeleton /> : 
+              <Table
+                pagination={false}
+                columns={this.props.source}
+                dataSource={this.state.data}
+              />
+            }
+
           </div>
         </Content>
       </Layout>
