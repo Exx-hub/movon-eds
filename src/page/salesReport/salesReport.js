@@ -10,7 +10,8 @@ import {
   notification,
   Descriptions,
   Layout,
-  Divider,
+  Tag,
+  AutoComplete,
 } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 
@@ -27,6 +28,7 @@ import ManifestService from "../../service/Manifest";
 import moment from "moment";
 import "./salesReport.scss";
 import ReactToPrint from "react-to-print";
+import { isThisTypeNode } from "typescript";
 
 const dateFormat = "MMM DD, YYYY";
 
@@ -53,11 +55,13 @@ class SalesReport extends React.Component {
     data: [],
     isPrinting: false,
     totalAmount: 0,
+    tags: [],
+    templist:[]
   };
 
   componentDidMount() {
     this.printEl = React.createRef();
-    console.log('user',this.state.user)
+    console.log("user", this.state.user);
 
     Promise.all([ManifestService.getRoutes(), this.getParcel()]).then(
       (resonses) => {
@@ -69,14 +73,14 @@ class SalesReport extends React.Component {
               return {
                 data: e,
                 value: i,
-                name: e.name,
+                name: e.endStationName,
               };
             });
             let destination = { ...this.state.destination };
             destination.options = options;
             destination.value = 0;
             destination.data = options[0].data;
-            this.setState({ destination });
+            this.setState({ destination, templist: options.map(e=>(e.name)) });
           }
         }
         if (resonses[1]) {
@@ -90,8 +94,8 @@ class SalesReport extends React.Component {
     const startStation = this.state.user.assignedStation._id;
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
-    const endStation =
-      (this.state.destination.data && this.state.destination.data.end) || null;
+    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end))  //(this.state.destination.data && this.state.destination.data.end) || null;
+    console.log('endStation',endStation)
     const busCompanyId = this.state.user.busCompanyId._id;
 
     return ParcelService.getAllParcel(
@@ -183,8 +187,8 @@ class SalesReport extends React.Component {
     if (startDay && endDay) {
       this.setState({ startDay, endDay }, () => {
         this.getParcel().then((e) => {
-          console.log('e',e)
-          this.parseParcel(e)
+          console.log("e", e);
+          this.parseParcel(e);
         });
       });
     }
@@ -220,72 +224,135 @@ class SalesReport extends React.Component {
     );
   };
 
-  downloadXls = () =>{
-    
+  downloadXls = () => {
     const startStation = this.state.user.assignedStation._id;
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
-    const endStation = (this.state.destination.data && this.state.destination.data.end) || null;
+    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end))  
     const busCompanyId = this.state.user.busCompanyId._id;
     const fullName = this.state.user.personalInfo.fullName;
     const totalAmount = this.state.totalAmount;
-    const destination = (this.state.destination.data && this.state.destination.data.name) || ""
+    const destination =
+      (this.state.destination.data && this.state.destination.data.name) || "";
     const isP2P = this.props.isP2P || false;
     const title = this.props.title || "SUMMARY OF CARGO SALES";
     const fileName = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX";
 
-    return ParcelService.exportCargoParcel({
-      title,
-      dateFrom,
-      dateTo,
-      startStation,
-      endStation,
-      fullName,
-      totalAmount,
-      destination,
-      isP2P
-    },busCompanyId, fileName).then(e=>console.log('parcel',e))
+    return ParcelService.exportCargoParcel(
+      {
+        title,
+        dateFrom,
+        dateTo,
+        startStation,
+        endStation,
+        fullName,
+        totalAmount,
+        destination,
+        isP2P,
+      },
+      busCompanyId,
+      fileName
+    ).then((e) => console.log("parcel", e));
+  };
+
+  // <Select
+  //   size="large"
+  //   value={this.state.destination.value}
+  //   style={{ width: "50%" }}
+  //   onChange={this.handleSelectChange}
+  // >
+  //   {this.state.destination.options.map((e) => (
+  //     <Option key={e.value} value={e.value}>
+  //       {e.name}
+  //     </Option>
+  //   ))}
+  // </Select>
+
+  doSearch = el =>{
+    let data = this.state.destination.options.map(e=>(e.name));
+    if(this.state.tags.length > 0){
+      data = data.filter((e,i)=>!this.state.tags.includes(e))
+    }
+    const toSearch = el.toLowerCase();
+    const templist = data.filter(e=>e.toLowerCase().includes(toSearch)).map(e=>(e))
+    this.setState({templist})
   }
 
   render() {
     return (
       <Layout>
         <Content style={{ padding: "1rem" }}>
-          <Row justify="end" style={{ marginBottom: ".5rem" }}>
-            <Space>
-              <span>Download: </span>
-              <ReactToPrint
-                onBeforeGetContent={() => this.setState({ isPrinting: true })}
-                onAfterPrint={() => this.setState({ isPrinting: false })}
-                content={() => this.printEl.current}
-                trigger={() => {
-                  return (
-                    <Button>
-                      <PrinterOutlined /> <span>PDF</span>{" "}
-                    </Button>
-                  );
-                }}
-              />
-              <Button onClick={()=>this.downloadXls()}>XLS</Button>
-            </Space>
+          <Row style={{ marginBottom: ".5rem" }}>
+          <Col span={12}>
+          <div style={{ display: "flex", height: "100%" }}>
+            <div>
+              {this.state.tags.map((e, i) => (
+                <Tag
+                  key={e}
+                  closable
+                  onClose={(val) => {
+                    let tags = [...this.state.tags];
+                    const _tags = tags.filter(e=> tags[i] !== e );
+                    this.setState({ tags: _tags });
+                  }} >
+                  {" "}
+                  {e}
+                </Tag>
+              ))}
+            </div>
+          </div>
+        </Col>
+            <Col span={12}>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <span>Download: </span>
+                <ReactToPrint
+                  onBeforeGetContent={() => this.setState({ isPrinting: true })}
+                  onAfterPrint={() => this.setState({ isPrinting: false })}
+                  content={() => this.printEl.current}
+                  trigger={() => {
+                    return (
+                      <Button>
+                        <PrinterOutlined /> <span>PDF</span>{" "}
+                      </Button>
+                    );
+                  }}
+                />
+                <Button onClick={() => this.downloadXls()}>XLS</Button>
+              </div>
+            </Col>
           </Row>
 
           <div>
             <Row>
-              <Col span={12}>
-                <Select
-                  size="large"
-                  value={this.state.destination.value}
-                  style={{ width: "50%" }}
-                  onChange={this.handleSelectChange}
-                >
-                  {this.state.destination.options.map((e) => (
-                    <Option key={e.value} value={e.value}>
-                      {e.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
+            <Col span={12}>
+              <AutoComplete
+                dataSource={this.state.templist}
+                style={{ width: "100%" }}
+                onSelect={(item) => {
+                  console.log("item", item);
+                  let templist = [...this.state.templist]
+                  let destination = {...this.state.destination}
+                  let tags = [...this.state.tags]
+                  let selected = destination.options.findIndex((e) => e.name === item);
+                  console.log("selected", selected);
+                  templist = templist.filter((e,i)=> item !== e)
+                  // if (selected) {
+                    tags.push(destination.options[selected].name)
+                    this.setState({ tags, templist },()=>{
+                      this.getParcel().then((e) => {
+                        console.log("e", e);
+                        this.parseParcel(e);
+                      });
+                    });
+                  //   console.log("selected", selected);
+                  // }
+                }}
+                onSearch={(e) => this.doSearch(e)}
+                placeholder="Destination"
+              />
+            </Col>
+              
+
               <Col span={12}>
                 <RangePicker
                   size="large"
@@ -309,6 +376,15 @@ class SalesReport extends React.Component {
 
             <div style={{ padding: "1rem" }}>
               <Row>
+                <Col span={12}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                    }}
+                  ></div>
+                </Col>
                 <Col span={12}>
                   <div
                     style={{

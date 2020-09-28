@@ -117,7 +117,7 @@ class Manifest extends React.Component {
           routesList,
           tempDestinationList
         });
-        this.getManifestByDestination(data[Number(routesIndex||0)].start, data[Number(routesIndex||0)].end)
+        //this.getManifestByDestination(data[Number(routesIndex||0)].start, data[Number(routesIndex||0)].end)
         
       }
       });
@@ -194,14 +194,17 @@ class Manifest extends React.Component {
       return null;
     }
 
+    console.log('this.state.listOfTripDates',this.state.listOfTripDates)
+
     return this.state.listOfTripDates.map((e,i)=>{
       const data = this.state.routes[this.state.routesList.value]
+      console.log('data',data)
       return {
         key: i,
         date:  moment(e._id).format('MMM DD, YYYY') ,
         count: e.count,
         origin: data.startStationName,
-        name: this.state.selected.endStationName,
+        name: (this.state.selected && this.state.selected.endStationName) || "" ,
         destination: data.endStationName,
         startStationId:data.start,
         endStationId:data.end
