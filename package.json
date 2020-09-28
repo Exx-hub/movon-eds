@@ -22,7 +22,7 @@
     "typescript": "^3.9.5"
   },
   "scripts": {
-    "staging": "PORT=8002 HTTPS=true react-scripts start",
+    "start": "PORT=8002 HTTPS=true react-scripts start",
     "dev": "NODE_ENV=develop react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
