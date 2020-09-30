@@ -1,132 +1,27 @@
 import React from "react";
-import "./manifestDetails.scss";
+import "./searchModule.scss";
 import ParcelCard from "../../component/parcelCard";
 import ReviewDetails from "../../component/reviewDetails";
 import moment from "moment";
 import { config } from "../../config";
-import { TableView } from "../../component/table";
 import TicketView from "../../component/ticketView";
 import ReactToPrint from "react-to-print";
 import ManifestService from "../../service/Manifest";
-import {
-  openNotificationWithIcon,
-  clearCredential,
-  getUser,
-} from "../../utility";
-import { notification } from "antd";
-
-import {
-  FilterOutlined,
-  ArrowLeftOutlined,
-  CloseCircleOutlined,
-  ArrowsAltOutlined,
-} from "@ant-design/icons";
-
-import {
-  Layout,
-  Button,
-  Divider,
-  Col,
-  Row,
-  Select,
-  Input,
-  Switch,
-  Tooltip,
-  Skeleton,
-  Space,
-} from "antd";
+import Parcel from "../../service/Parcel";
+import {openNotificationWithIcon,clearCredential,getUser,debounce} from "../../utility";
+import {notification, Table} from "antd";
+import {CloseCircleOutlined} from "@ant-design/icons";
+import {Layout,Button,Col, Row, Input, Tooltip, Skeleton, Space } from "antd";
 
 const { Search } = Input;
-const { Option } = Select;
-const { Header} = Layout;
-
-const InputBox = (props) => {
-  return (
-    <div className="input-box" style={{ margin: ".5rem" }}>
-      <span>{props.title}</span>
-      <Input
-        className="input-box-item"
-        placeholder={props.placeholder}
-        disabled
-        value={props.value}
-      />
-    </div>
-  );
-};
-
-function SiderContent(props) {
-  return (
-    <section>
-      {!props.hidden && (
-        <>
-          <div className="filter-section">
-            <FilterOutlined style={{ color: "teal" }} />
-            <span> Filter</span>
-          </div>
-
-          <div className="view-toggle-section">
-            <span>View</span>
-            <Switch
-              checkedChildren="Card"
-              unCheckedChildren="Table"
-              checked={props.isCardView}
-              onChange={(e) =>
-                props.onChange({ name: "switch-view", value: e })
-              }
-            />
-          </div>
-          <Row>
-            <Col span={24} className="sider-content-col">
-              <div className="manifest-details-select">
-                <span>Parcel Status</span>
-                <Select
-                  defaultValue="all"
-                  style={{ width: "100%" }}
-                  onChange={(e) =>
-                    props.onChange({ name: "parcelStatus", value: e })
-                  }
-                >
-                  <Option value={0}>All</Option>
-                  <Option value={1}>Created</Option>
-                  <Option value={2}>Intransit</Option>
-                  <Option value={3}>Received</Option>
-                  <Option value={4}>Claimed</Option>
-                  <Option value={5}>Delivered</Option>
-                </Select>
-              </div>
-            </Col>
-          </Row>
-          <Divider />
-        </>
-      )}
-      <Row>
-        <Col span={24} style={{ padding: ".25rem" }}>
-          <InputBox title="Routes" value={props.state.routes} />
-          <InputBox title="Parcel Code" value={props.state.movonBillOfLading} />
-          <InputBox
-            title="Bill of Lading"
-            value={props.state.coyBillOfLading}
-          />
-          <InputBox
-            title="Transaction Date"
-            value={props.state.departureTime}
-          />
-        </Col>
-      </Row>
-    </section>
-  );
-}
+const { Content } = Layout;
 
 function CardView(props) {
   const dataSource = props.dataSource || [];
   return (
     <section className="card-view-section">
       {dataSource.map((e) => {
-        return (
-          <div style={{ width: "100%", marginBottom: "1rem" }}>
-            <ParcelCard value={e} onSelect={(e) => props.onSelect(e)} />
-          </div>
-        );
+        return <ParcelCard value={e} onSelect={(e) => props.onSelect(e)} />;
       })}
     </section>
   );
@@ -154,7 +49,12 @@ const ManifestDetailsTable = (props) => {
     //   ),
     // },
     {
-      title: "Bill Of Lading",
+      title: "Transaction Date",
+      dataIndex: "sentDate",
+      key: "sentDate",
+    },
+    {
+      title: "BL No.",
       dataIndex: "billOfLading",
       key: "billOfLading",
     },
@@ -193,36 +93,43 @@ const ManifestDetailsTable = (props) => {
       key: "travelStatus",
       sorter: (a, b) => a.name.travelStatus - b.name.travelStatus,
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <div style={{display:'flex', flexDirection:'row'}}>
-          <Button size="small" style={{fontSize:10.5}} onClick={()=>props.onSelect(record)}>Preview</Button>
-          <Button
-            disabled={record.travelStatus.toLowerCase() !== "created"}
-            size="small"
-            style={{
-              fontSize:10.5,
-              color: "white",
-              background: `${
-                record.travelStatus.toLowerCase() === "created"
-                  ? "teal"
-                  : "gray"
-              }`,
-            }}
-            onClick={() => props.onCheckIn(record._id)}>Check In</Button>
-            <Button disabled size="small" style={{fontSize:10.5}}>Arrived</Button>
-        </div>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (text, record) => (
+    //     <Space>
+    //       <Button
+    //         disabled={record.travelStatus.toLowerCase() !== "created"}
+    //         size="small"
+    //         style={{
+    //           color: "white",
+    //           fontWeight: "200",
+    //           background: `${
+    //             record.travelStatus.toLowerCase() === "created"
+    //               ? "teal"
+    //               : "gray"
+    //           }`,
+    //         }}
+    //         onClick={() => props.onCheckIn(record._id)}
+    //       >
+    //         {" "}
+    //         Check In{" "}
+    //       </Button>
+    //     </Space>
+    //   ),
+    // },
   ];
   return (
-    <TableView
+    <div className="SearchModule-table" style={{padding:'1rem'}}>
+    <Table
+      pagination={false}
+      className="table"
       columns={columns}
       dataSource={props.dataSource}
       onSelect={(record) => props.onSelect(record)}
     />
+    </div>
+    
   );
 };
 
@@ -230,7 +137,7 @@ const TABLE_CARD_VIEW = 1;
 const PREVIEW = 2;
 const TICKET = 3;
 
-class ManifestDetails extends React.Component {
+class SearchModule extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -248,27 +155,16 @@ class ManifestDetails extends React.Component {
       date: undefined,
       startStationId: undefined,
       endStationId: undefined,
+      parcelList:[]
     };
     this.printEl = React.createRef();
+    this.fetchParcelList = debounce(this.fetchParcelList,1000)
+
   }
 
   componentDidMount() {
-    const companyTag = getUser()
-      ? getUser().busCompanyId.config.parcel.tag
-      : undefined;
+    const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
     this.companyTag = companyTag;
-
-    console.log("this.props.location.state", this.props.location.state);
-
-    const {
-      end,
-      endStationName,
-      startStationName,
-    } = this.props.location.state.selected;
-
-    const startStation = getUser().assignedStation._id;
-
-    const date = this.props.location.state.date;
 
     window.addEventListener("resize", (e) => {
       this.setState({
@@ -276,14 +172,7 @@ class ManifestDetails extends React.Component {
         width: e.currentTarget.innerWidth,
       });
     });
-
-    this.fetchManifest(
-      date,
-      startStation,
-      end,
-      `${startStationName} to ${endStationName}`
-    );
-  }
+}
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
     ManifestService.getManifestByDate(
@@ -351,26 +240,6 @@ class ManifestDetails extends React.Component {
     }
   };
 
-  parseParcel = () => {
-    return this.state.tempParcelData
-      ? this.state.tempParcelData.map((e, i) => {
-          return {
-            key: i,
-            qrcode: e.scanCode,
-            billOfLading: e.billOfLading,
-            description: e.packageInfo.packageName,
-            sender: e.senderInfo.senderName,
-            receiver: e.recipientInfo.recipientName,
-            qty: e.packageInfo.quantity,
-            travelStatus: config.parcelStatus[e.status],
-            packageImg: e.packageInfo.packageImages,
-            tripId: e.tripId,
-            _id: e._id,
-          };
-        })
-      : [];
-  };
-
   onSelect = (value) => {
     const selectedItem = this.state.parcelData.filter(
       (e) => e._id === value._id
@@ -415,24 +284,40 @@ class ManifestDetails extends React.Component {
   };
 
   doSearch = (el) => {
-    const data = this.state.parcelData;
     const toSearch = el.toLowerCase();
-    const tempParcelData = data.filter((e) => {
-      const firstCondition =
-        e.scanCode.toLowerCase().includes(el.toLowerCase()) ||
-        e.packageInfo.packageName.toLowerCase().includes(toSearch) ||
-        e.senderInfo.senderName.toLowerCase().includes(toSearch) ||
-        e.billOfLading.toLowerCase().includes(toSearch) ||
-        e.recipientInfo.recipientName.toLowerCase().includes(toSearch);
-
-      if (this.state.status !== 0) {
-        return firstCondition && this.state.status === e.status;
-      } else {
-        return firstCondition;
-      }
-    });
-    this.setState({ searchValue: el, tempParcelData });
+    this.setState({ searchValue: toSearch, fetching:true },()=> this.fetchParcelList());
   };
+
+  fetchParcelList = () =>{
+    Parcel.searchParcel(this.state.searchValue)
+    .then(e=>{
+      console.log('response',e)
+      const{data, errorCode}=e.data;
+
+      if(errorCode){
+        this.handleErrorNotification(errorCode);
+        return;
+      }
+
+      const parcelList = data.map((e, i) => {
+        return {
+          key: i,
+          sentDate: moment(e.sentDate).format('MMM DD YYYY'),
+          qrcode: e.scanCode,
+          billOfLading: e.billOfLading,
+          description: e.packageInfo.packageName,
+          sender: e.senderInfo.senderName,
+          receiver: e.recipientInfo.recipientName,
+          qty: e.packageInfo.quantity,
+          travelStatus: config.parcelStatus[e.status],
+          packageImg: e.packageInfo.packageImages,
+          tripId: e.tripId,
+          _id: e._id,
+        };
+      })
+      this.setState({parcelList, fetching:false})
+    })
+  }
 
   handleErrorNotification = (code) => {
     console.log("error", code);
@@ -467,7 +352,7 @@ class ManifestDetails extends React.Component {
       case 1:
         View = (
           <div className="right-content-section">
-            <Row style={{ display: "none" }}>
+            <Row>
               <Col span={24}>
                 <div className="search-container">
                   <Search
@@ -584,63 +469,34 @@ class ManifestDetails extends React.Component {
     return View;
   };
 
-  doSorting = () => {};
-
   render() {
     const { width, currentView } = this.state;
     return (
-      <Layout className="manifest-details-page">
-        <Header className="home-header-view">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <Button
-                type="link"
-                onClick={() => {
-                  this.props.history.push("/manifest/list");
-                }}
-              >
-                <ArrowLeftOutlined
-                  style={{ fontSize: "20px", color: "#fff" }}
-                />
-                <span style={{ fontSize: "20px", color: "#fff" }}>
-                  Manifest Details
-                </span>
-              </Button>
-            </div>
-
+      <Layout className="SearchModule">
+        <Row justify="center" style={{margin:'1rem'}}>
+          <div className="search-container">
             <Search
-              style={{display:`${this.state.currentView !== 2 ? '' : 'none'}`}}
               value={this.state.searchValue}
               className="manifest-details-search-box"
               placeholder="Sender | Receiver | QR Code"
               onChange={(e) => this.doSearch(e.target.value)}
             />
-
-            <div style={{display:`${this.state.currentView !== 2 ? '' : 'none'}`}}>
-              <Switch
-                checkedChildren="Card View"
-                unCheckedChildren="Table View"
-                checked={this.state.isCardView}
-                onChange={(e) => this.setState({ isCardView: e })}
-              />
-            </div>
           </div>
-        </Header>
-
-        <Layout className="manifest-details-page-body">
-          {this.SwitchView()}
-        </Layout>
+        </Row>
+        <Content style={{ overflow: "scroll" }}>
+          {this.state.fetching ? (
+            <Skeleton active />
+          ) : (
+            <ManifestDetailsTable
+              onCheckIn={(tripId) => this.onCheckIn(tripId)}
+              dataSource={this.state.parcelList}
+              onSelect={(record) => this.onSelect(record)}
+            />
+          )}
+        </Content>
       </Layout>
     );
   }
 }
 
-
-export default ManifestDetails;
+export default SearchModule;

@@ -23,7 +23,7 @@ const TicketDetails = (props) =>{
         tripCode,
         createdAt,
         totalPrice,
-        noOfSticker
+        spCopy
     }= props.value;
 
     const code = props.code
@@ -31,11 +31,11 @@ const TicketDetails = (props) =>{
     const Populate = () =>{
         const View = (<>
         <Space className="details-txt">
-            <h4 className="span-description" style={{width:'120px'}}>Way Bill</h4>
+            <h4 className="span-description" style={{width:'120px'}}>Bill Of Lading</h4>
             <h4>:</h4>
                 <h4>{billOfLading}</h4>
         </Space>
-        <Space className="details-txt">
+        <Space className="details-txt" style={{display:'none'}}>
             <h4 className="span-description" style={{width:'120px'}}>Trip Code</h4>
             <h4>:</h4>
                 <h4>{tripCode}</h4>
@@ -66,11 +66,15 @@ const TicketDetails = (props) =>{
             <h4>:</h4>
                 <h4>{startStationName}</h4>
         </Space>
-        <Space className="details-txt">
-            <h4 className="span-description" style={{width:'120px'}}>Price</h4>
-            <h4>:</h4>
-            <h4>₱{parseFloat(totalPrice).toFixed(2)}</h4>
-        </Space>
+
+        {
+            Boolean(spCopy) &&  <Space className="details-txt">
+                <h4 className="span-description" style={{width:'120px'}}>Price</h4>
+                <h4>:</h4>
+                <h4>₱{parseFloat(totalPrice).toFixed(2)}</h4>
+            </Space>
+        }
+        
         <Space direction="horizontal"  className="details-txt">
         <h4 className="span-description">Quantity | Weight</h4>
         <h4>: &nbsp; {packageQty} {packageQty.length > 1 ? "pkgs." : "pkg"} &nbsp; - &nbsp; {packageWeight} {packageWeight.length > 1 ? "kgs." : "kg"}</h4>
@@ -125,7 +129,7 @@ const PCopy = (props) =>{
 
         let _view=[]
         for(let i=0; i < quantity; i++){
-            _view.push(<TicketDetails key={i} {...props} code={scanCode} /> )
+            _view.push(<TicketDetails spCopy={false} key={i} {...props} code={scanCode} /> )
         }
         return _view;
     }
@@ -137,7 +141,7 @@ const SpCopy = (props) =>{
         let _view=[]
         for(let i=0; i < props.value.subParcels.length; i++){
             const scanCode = props.value.subParcels[i].subParcelCode
-            _view.push(<TicketDetails key={i} {...props} code={scanCode} >  <span>{i+1} of {props.value.subParcels.length}</span> </TicketDetails>)
+            _view.push(<TicketDetails spCopy={true} key={i} {...props} code={scanCode} >  <span>{i+1} of {props.value.subParcels.length}</span> </TicketDetails>)
         }
         return _view;
     }

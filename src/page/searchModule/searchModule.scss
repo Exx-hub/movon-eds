@@ -1,16 +1,19 @@
+.SearchModule-table{
+    .table{
+        .ant-table table{
+            font-size: 10px !important;
+        }
+        .ant-table table{
+            font-size: 11px !important;
+        }
+    }
+   
+}
 
-
-.manifest-details-page{
+.SearchModule{
     display: flex;
     height: 100vh;
     overflow: hidden;
-
-    .ant-table table{
-        font-size: 12px !important;
-    }
-    .ant-table table{
-        font-size: 12px !important;
-    }
 
     .home-header-view{
         padding: 0px;
@@ -20,7 +23,8 @@
     .manifest-details-page-body{
         height: 90vh;
         background-color: #fff;
-        overflow: scroll;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
 
         .manifest-details-sider{
             border-right: 1px solid #d9d9d9;
@@ -31,7 +35,7 @@
         .right-content-section{
             overflow: scroll;
             height: 100%;
-            background-color: #fff;
+            background-color: #f5f5f5;
         }
 
         .manifest-review-details{
@@ -52,7 +56,7 @@
 
         .search-container{
             padding: 1rem;
-            padding-top: 1rem;
+            padding-top: 2rem;
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -65,7 +69,7 @@
 
     .manifest-details-search-box{
         border-radius: 10px;
-        font-size: 25px;
+        font-size: 28px;
         width: 450px;
 
         &:hover{

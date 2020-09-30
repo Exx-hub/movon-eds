@@ -342,6 +342,18 @@ const ParcelService = {
             link.click();
             link.remove();
         })
+    },
+    searchParcel: (searchItem)=>{
+        return axios({
+            method: 'get',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/list/search-all`,
+            headers: {
+                'x-auth-deviceid' : '1',
+                'x-auth-devicetype' : '1',
+                'x-auth-token' : getToken()
+            },
+            params:{ searchItem }
+        })
     }
 
 }

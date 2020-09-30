@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Row, Col, Radio, Select, AutoComplete } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
@@ -65,24 +65,27 @@ function BicolIsarogForm(props) {
     tripCode,
     driverFullName,
     conductorFullName,
-    sticker_quantity
+    sticker_quantity,
+    discount,
   } = props.details;
 
   const enableInterConnection = props.enableInterConnection;
-  const _temList = destination.options.map(e=>(e.name))
+  const _temList = destination.options.map((e) => e.name);
   const [tempList, setTempList] = React.useState(_temList);
 
-  const doSearch = el =>{
+  const doSearch = (el) => {
     const data = destination.options;
     const toSearch = el.toLowerCase();
-    const tempParcelData = data.filter(e=>{
-      return e.name.toLowerCase().includes(toSearch) 
-    }).map(e=>(e.name))
-    setTempList(tempParcelData)
-  }
+    const tempParcelData = data
+      .filter((e) => {
+        return e.name.toLowerCase().includes(toSearch);
+      })
+      .map((e) => e.name);
+    setTempList(tempParcelData);
+  };
 
   return (
-    <div className="create-parcel-form" >
+    <div className="create-parcel-form">
       <div className="calculator-container-border">
         <span className="create-group-title">Select Station</span>
         <Row>
@@ -100,7 +103,8 @@ function BicolIsarogForm(props) {
                   }`}
                   onChange={(e) => props.onSelectChange(e, destination.name)}
                   value={destination.value}
-                  style={{ width: "100%" }}>
+                  style={{ width: "100%" }}
+                >
                   {destination.options.map((e) => (
                     <Option key={e.value} value={e.value}>
                       {e.name}
@@ -111,7 +115,13 @@ function BicolIsarogForm(props) {
               <AutoComplete
                 dataSource={tempList}
                 style={{ width: "100%" }}
-                onSelect={(e)=>  props.onSelectChange(destination.options.find(find=> find.name === e).endStation,destination.name) }
+                onSelect={(e) =>
+                  props.onSelectChange(
+                    destination.options.find((find) => find.name === e)
+                      .endStation,
+                    destination.name
+                  )
+                }
                 onSearch={doSearch}
                 placeholder="Destination"
               />
@@ -287,16 +297,16 @@ function BicolIsarogForm(props) {
           </Col>
 
           <Col span={6} className="gutter-row">
-          <InputBox
-            type="number"
-            onBlur={() => props.onBlur(sticker_quantity.name)}
-            detail={sticker_quantity}
-            onChange={props.onChange}
-            title="Package Count"
-            errorMessage={sticker_quantity.errorMessage}
-            placeholder="Box / Parcel Count"
-          />
-        </Col>
+            <InputBox
+              type="number"
+              onBlur={() => props.onBlur(sticker_quantity.name)}
+              detail={sticker_quantity}
+              onChange={props.onChange}
+              title="Package Count"
+              errorMessage={sticker_quantity.errorMessage}
+              placeholder="Box / Parcel Count"
+            />
+          </Col>
 
           <Col span={6} className="gutter-row">
             <InputBox
@@ -312,7 +322,7 @@ function BicolIsarogForm(props) {
         </Row>
 
         <Row>
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               disabled={true}
               type="number"
@@ -323,7 +333,7 @@ function BicolIsarogForm(props) {
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               detail={systemFee}
@@ -333,7 +343,7 @@ function BicolIsarogForm(props) {
               placeholder="System Fee"
             />
           </Col>
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               detail={shippingCost}
@@ -342,10 +352,27 @@ function BicolIsarogForm(props) {
               placeholder="Shipping Cost"
             />
           </Col>
+          <Col span={6} className="gutter-row">
+            <span className="input-placeholder-title select-placeholder">
+              Discount Type
+            </span>
+            <Select
+              size="default"
+              onChange={(e) => props.onSelectChange(e, discount.name)}
+              value={discount.value}
+              style={{ width: "100%" }}
+            >
+              {discount.options.map((e) => (
+                <Option key={e.name} value={e.name}>
+                  {e.name}
+                </Option>
+              ))}
+            </Select>
+          </Col>
         </Row>
 
         <Row>
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               onBlur={() => props.onBlur(paxs.name)}
@@ -357,7 +384,7 @@ function BicolIsarogForm(props) {
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               detail={additionNote}
               onChange={props.onChange}
@@ -383,21 +410,11 @@ function BicolIsarogForm(props) {
         </Row>
       </div>
 
-      <div className="input-container-border" style={{ display: "none" }}>
+      <div className="input-container-border">
         <h4 className="create-group-title">Bus Information</h4>
 
         <Row>
-          <Col span={12} className="gutter-row">
-            <InputBox
-              type="text"
-              detail={busNumber}
-              onChange={props.onChange}
-              errorMessage={busNumber.errorMessage || "Bus Number is required"}
-              title="Bus No."
-              placeholder="Bus Number"
-            />
-          </Col>
-          <Col span={12} className="gutter-row">
+          <Col style={{ display: "none" }} span={12} className="gutter-row">
             <InputBox
               type="text"
               detail={tripCode}
@@ -408,8 +425,19 @@ function BicolIsarogForm(props) {
             />
           </Col>
         </Row>
+
         <Row>
-          <Col span={12} className="gutter-row">
+          <Col span={8} className="gutter-row">
+            <InputBox
+              type="text"
+              detail={busNumber}
+              onChange={props.onChange}
+              errorMessage={busNumber.errorMessage || "Bus Number is required"}
+              title="Bus No."
+              placeholder="Bus Number"
+            />
+          </Col>
+          <Col span={8} className="gutter-row">
             <InputBox
               type="text"
               detail={driverFullName}
@@ -422,7 +450,7 @@ function BicolIsarogForm(props) {
               placeholder="ex: Juan Dele Cruz"
             />
           </Col>
-          <Col span={12} className="gutter-row">
+          <Col span={8} className="gutter-row">
             <InputBox
               type="text"
               detail={conductorFullName}

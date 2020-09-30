@@ -410,8 +410,8 @@ class SalesReport extends React.Component {
                       justifyContent: "center",
                     }}
                   >
-                    <span style={{ width: 100, textAlign: "left" }}>
-                      Destination :{" "}
+                  <span style={{ width: 80, textAlign: "left" }}>
+                    Destination :{" "}
                     </span>
                     <span>{this.getDestination()}</span>
                   </div>

@@ -6,6 +6,8 @@ import movonLogo from '../../assets/movoncargo.png';
 import {clearCredential,getCredential, getUser} from '../../utility'
 import PriceMatrix from '../priceMatrix'
 import SalesReport from "../salesReport"
+import SearchModule from '../searchModule'
+
 import moment from 'moment'
 
 import './home.scss';
@@ -33,6 +35,8 @@ import {
   FileSearchOutlined,
   AppstoreAddOutlined,
   BarChartOutlined,
+  SearchOutlined,
+  InboxOutlined
 } from '@ant-design/icons';
 
 const { Header, Content, Sider } = Layout;
@@ -157,8 +161,9 @@ function Home(props) {
 
   const onNavigationMenuChange = (e) =>{
     switch(e.key){
-      case '2': props.history.push("/parcel"); break
-      case '3': props.history.push("/manifest/list"); break
+      case 'create-parcel': props.history.push("/parcel"); break
+      case 'search-parcel': props.history.push("/search-parcel"); break
+      case 'manifest-report': props.history.push("/manifest/list"); break
       case '4': props.history.push("/manifest/matrix"); break
       case '6': props.history.push("/report/sales/vli-bitsi"); break
       case '5': props.history.push("/report/sales/cargo"); break
@@ -215,16 +220,27 @@ function Home(props) {
           style={{marginTop:'1rem'}}
           theme="light" 
           defaultSelectedKeys={['1']} 
-          defaultOpenKeys={['sub1']}
+          defaultOpenKeys={['parcel']}
           mode="inline" 
           onClick={(e)=>{ onNavigationMenuChange(e) }}>
-            <Menu.Item key="2" icon={<AppstoreAddOutlined />}> Add Parcel </Menu.Item>
-            <Menu.Item key="3" icon={<AuditOutlined />}> Manifest </Menu.Item>
+            <SubMenu key="parcel" icon={<InboxOutlined />} title="Parcel">
+              <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>Create</Menu.Item>
+              <Menu.Item key="search-parcel" icon={<SearchOutlined />}>Search</Menu.Item>
+            </SubMenu>
+
+            <div style={{display:'none'}}>
+              <Menu.Item key="2" icon={<AppstoreAddOutlined />}> Add Parcel </Menu.Item>
+              <Menu.Item key="3" icon={<AuditOutlined />}> Manifest </Menu.Item>
+            </div>
+
             <Menu.Item key="4" icon={<FileSearchOutlined />}> Matrix </Menu.Item>
+            <Menu.Item key="manifest-report" icon={<BarChartOutlined />}>Manifest</Menu.Item>
+            
             <SubMenu key="sub1" icon={<BarChartOutlined />} title="Reports">
               <Menu.Item key="5" icon={<BarChartOutlined />}>Cargo Sales</Menu.Item>
-              {getUser() && getUser().busCompanyId && getUser().busCompanyId.config.parcel.tag === "bicol-isarog" && <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
-          </SubMenu>
+            {getUser() && getUser().busCompanyId && getUser().busCompanyId.config.parcel.tag === "bicol-isarog" && <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
+            </SubMenu>
+
           </Menu>
         </Sider>
         <Layout >
@@ -242,6 +258,10 @@ function Home(props) {
                 <Reports {...props}/>
               </Route>
 
+              <Route path="/search-parcel">
+                <SearchModule {...props}/>
+              </Route>
+
               <Route path="/report/sales/cargo">
                 <SalesReport 
                   source={tableSourceBitsi}
@@ -257,7 +277,7 @@ function Home(props) {
                   title="SUMMARY OF VLI-BITSI SALES"/>
               </Route>
 
-              <Redirect from="/" to="/manifest/list" />
+              <Redirect from="/" to="/search-parcel" />
             </Switch>
           </Content>
         </Layout>

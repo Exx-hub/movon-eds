@@ -360,6 +360,13 @@ class CreateParcel extends React.Component {
           isRequired: false,
           accepted: true,
         },
+        discount: {
+          name: "discount",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          options: [{name:"employee-discount",rate:10}],
+        },
       },
       enalbeBicolIsarogWays:false,
       declaredValueAdditionFee:0.1,
@@ -425,7 +432,6 @@ class CreateParcel extends React.Component {
     const stationId = this.USER && this.USER.assignedStation._id;
 
     ManifestService.getRoutes().then(e=>{
-      console.log('ManifestService getRoutes', e)
       const{data, success, errorCode}=e.data;
       if(success){
         if(data){
@@ -856,8 +862,6 @@ class CreateParcel extends React.Component {
   onInputChange = (name, value) => {
     let details = {...this.state.details};
 
-    console.log('onInputChange',name,value)
-
     if(name === "sticker_quantity"){
       const isValid = Number(value) > -1;
       let item = { ...details[name], ...{ 
@@ -884,9 +888,6 @@ class CreateParcel extends React.Component {
 
       this.setState({details},()=>{
         if(isValid){
-          console.log('quantity=====>>')
-          console.log('quantity=====>>')
-          console.log('quantity=====>>')
           this.updateTotalShippingCost()
         }
       })
@@ -971,6 +972,13 @@ class CreateParcel extends React.Component {
             this.handleErrorNotification(errorCode);
           }
         })
+    }
+
+    if(name === 'discount'){
+      const discount = {...details.discount, ...{ value, accepted:true}}
+      const additionNote = {...details.additionNote, ...{ value, accepted:true}}
+      details = {...details, ...{discount,additionNote}}
+      this.setState({ details }, ()=>this.updateTotalShippingCost());
     }
 
     if(name === 'fixMatrix'){
@@ -1269,14 +1277,23 @@ class CreateParcel extends React.Component {
 
   updateTotalShippingCost = () =>{
     const currentDetails = {...this.state.details};
-    const quantity = currentDetails.quantity.value || 0;
+    const quantity = Number(currentDetails.quantity.value || 0);
+    let discountIndex = currentDetails.discount.options.findIndex(e=>e.name === currentDetails.discount.value)
+    const discount = discountIndex > -1 ? Number(currentDetails.discount.options[discountIndex].rate || 0) : 0
+
     let total = parseFloat(currentDetails.shippingCost.value || 0) 
       + parseFloat(currentDetails.systemFee.value || 0)
         + parseFloat(currentDetails.packageInsurance.value || 0)
           + parseFloat(this.state.connectingCompanyComputation || 0)
+    
+    total = Number(total)
 
-    if(Number(quantity) > 0){
-      total = Number(total) * Number(quantity)
+    if(quantity > 0){
+      total = total * quantity
+    }
+
+    if(discount > 0){
+      total = total * ((100 - discount) / 100)
     }
     
     const totalShippingCost = {...currentDetails.totalShippingCost,...{value:parseFloat(total).toFixed(2)}}
