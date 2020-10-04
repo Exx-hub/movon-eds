@@ -54,15 +54,17 @@ class SalesReport extends React.Component {
     isPrinting: false,
     totalAmount: 0,
     tags: [],
-    templist:[]
+    templist:[],
+    templistValue:undefined
   };
 
   componentDidMount() {
     this.printEl = React.createRef();
-    Promise.all([this.getParcel()]).then(
+    Promise.all([ManifestService.getRoutes(),this.getParcel()]).then(
       (resonses) => {
         if (resonses[0]) {
           const { data, success, errorCode} = resonses[0].data;
+          console.log()
           if(errorCode){
             this.handleErrorNotification(errorCode)
             return
@@ -99,7 +101,7 @@ class SalesReport extends React.Component {
     const startStation = this.state.user.assignedStation._id;
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
-    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end))  //(this.state.destination.data && this.state.destination.data.end) || null;
+    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end))  
     const busCompanyId = this.state.user.busCompanyId._id;
 
     return ParcelService.getAllParcel(
@@ -267,7 +269,7 @@ class SalesReport extends React.Component {
     }
     const toSearch = el.toLowerCase();
     const templist = data.filter(e=>e.toLowerCase().includes(toSearch)).map(e=>(e))
-    this.setState({templist})
+    this.setState({templist, templistValue:el})
   }
 
   render() {
@@ -276,7 +278,7 @@ class SalesReport extends React.Component {
         <Content style={{ padding: "1rem" }}>
           <Row style={{ marginBottom: ".5rem" }}>
           <Col span={12}>
-          <div style={{ display: "flex", height: "100%" }}>
+          <div style={{ display: "flex", height: "500%" }}>
             <div>
               {this.state.tags.map((e, i) => (
                 <Tag
@@ -318,7 +320,7 @@ class SalesReport extends React.Component {
             <Row>
             <Col span={12}>
               <AutoComplete
-                style={{ width: "100%" }}
+                style={{ width: "50%" }}
                 onSelect={(item) => {
                   let templist = [...this.state.templist]
                   let destination = {...this.state.destination}
@@ -336,6 +338,7 @@ class SalesReport extends React.Component {
                   // }
                 }}
                 onSearch={(e) => this.doSearch(e)}
+                value={this.state.templistValue}
                 placeholder="Destination"
               > 
               {
@@ -371,7 +374,6 @@ class SalesReport extends React.Component {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "center",
                     }}
                   ></div>
                 </Col>
@@ -380,7 +382,6 @@ class SalesReport extends React.Component {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "center",
                     }}
                   ></div>
                 </Col>
@@ -389,7 +390,6 @@ class SalesReport extends React.Component {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "center",
                     }}
                   >
                     <span style={{ width: 80, textAlign: "left" }}>
@@ -406,14 +406,11 @@ class SalesReport extends React.Component {
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
+                      flexDirection: "row"
                     }}
                   >
-                  <span style={{ width: 80, textAlign: "left" }}>
-                    Destination :{" "}
-                    </span>
-                    <span>{this.getDestination()}</span>
+                  <span style={{ width: 80 }}> Destination: </span>
+                  <span>{this.getDestination()}</span>
                   </div>
                 </Col>
 
@@ -422,13 +419,11 @@ class SalesReport extends React.Component {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "center",
+                      justifyContent: "flex-end",
                     }}
                   >
-                    <span style={{ width: 80, textAlign: "left" }}>
-                      Prepared:
-                    </span>
-                    <span style={{ width: 200, textAlign: "left" }}>
+                    <span style={{ width: 80}}>Prepared: </span>
+                    <span>
                       {this.getPreparedBy()}
                     </span>
                   </div>

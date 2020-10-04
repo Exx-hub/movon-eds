@@ -154,6 +154,11 @@ const ManifestDetailsTable = (props) => {
     //   ),
     // },
     {
+      title: "Transaction Date",
+      dataIndex: "sentDate",
+      key: "sentDate",
+    },
+    {
       title: "Bill Of Lading",
       dataIndex: "billOfLading",
       key: "billOfLading",
@@ -268,7 +273,8 @@ class ManifestDetails extends React.Component {
 
     const startStation = getUser().assignedStation._id;
 
-    const date = this.props.location.state.date;
+    const date = moment(new Date(this.props.location.state.date)).format("YYYY-MM-DD");
+    console.log('date',date)
 
     window.addEventListener("resize", (e) => {
       this.setState({
@@ -287,19 +293,21 @@ class ManifestDetails extends React.Component {
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
     ManifestService.getManifestByDate(
-      moment(date).format("MMM DD, YYYY"),
+      date,
       startStationId,
       endStationId
     ).then((e) => {
-      if (!e.data.success && e.data.errorCode) {
+      console.log('e',e)
+
+      if (e.data.errorCode) {
         this.handleErrorNotification(e.data.errorCode);
         return;
       }
 
       if (e.data && e.data.length > 0) {
         let data = e.data;
-        const departureTime = moment(date).format("MMM-DD-YYYY");
-        const arrivalTime = moment(date).format("MMM-DD-YYYY");
+        const departureTime = date //moment(date).format("MMM-DD-YYYY");
+        const arrivalTime = date //moment(date).format("MMM-DD-YYYY");
         const movonBillOfLading = data[0].displayId;
         const coyBillOfLading = data[0].billOfLading;
         const routes1 = data[0].trips.startStationName;
@@ -358,6 +366,7 @@ class ManifestDetails extends React.Component {
             key: i,
             qrcode: e.scanCode,
             billOfLading: e.billOfLading,
+            sentDate: moment(e.sentDate).format('MMM DD, YYYY'),
             description: e.packageInfo.packageName,
             sender: e.senderInfo.senderName,
             receiver: e.recipientInfo.recipientName,

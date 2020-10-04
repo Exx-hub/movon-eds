@@ -176,7 +176,7 @@ class SearchModule extends React.Component {
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
     ManifestService.getManifestByDate(
-      moment(date).format("MMM DD, YYYY"),
+      date,
       startStationId,
       endStationId
     ).then((e) => {
