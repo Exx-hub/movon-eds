@@ -43,8 +43,8 @@ const STEPS_LIST = [
     description: "Choose from available trips",
   },
   {
-    title: "Validate Information",
-    description: "Finalize your data",
+    title: "Validation",
+    description: "Check your data",
   },
   {
     title: "Print",
@@ -1343,7 +1343,7 @@ class CreateParcel extends React.Component {
           <div style={{ float: "left" }}>
             <Button type="link" onClick={() => this.props.history.push('/')}>
               <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
-              <span style={{ fontSize: "20px", color: "#fff" }}>Create Parcel</span>
+              <span style={{ fontSize: "20px", color: "#fff" }}>Home</span>
             </Button>
           </div>
         </Header>
