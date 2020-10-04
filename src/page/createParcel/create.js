@@ -43,7 +43,7 @@ const STEPS_LIST = [
     description: "Choose from available trips",
   },
   {
-    title: "Preview Parcel",
+    title: "Validate Information",
     description: "Finalize your data",
   },
   {

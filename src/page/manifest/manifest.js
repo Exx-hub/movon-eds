@@ -38,15 +38,15 @@ const TableRoutesView = (props) => {
     //   defaultSortOrder: 'descend',
     // },
     {
-      title: "Destination",
-      dataIndex: "name",
-      defaultSortOrder: "name",
-    },
-    {
-      title: "Sent Date",
+      title: "Transaction Date",
       dataIndex: "date",
       defaultSortOrder: "descend",
       sorter: (a, b) => moment(a.date) - moment(b.date),
+    },
+    {
+      title: "Destination",
+      dataIndex: "name",
+      defaultSortOrder: "name",
     },
     {
       title: "Parcel",
@@ -184,7 +184,7 @@ class Manifest extends React.Component {
         console.log("getManifestDateRange", e);
         const { data, success, errorCode } = e.data;
         if (success) {
-          this.setState({ listOfTripDates: data || [], fetching: false });
+          this.setState({ listOfTripDates: data[0].data || [], fetching: false });
           return;
         }
         this.handleErrorNotification(errorCode);
@@ -227,15 +227,13 @@ class Manifest extends React.Component {
     if (!this.state.listOfTripDates) {
       return null;
     }
-
     console.log("this.state.listOfTripDates", this.state.listOfTripDates);
 
     return this.state.listOfTripDates.map((e, i) => {
       const data = this.state.routes[this.state.routesList.value];
-      console.log("data", data);
       return {
         key: i,
-        date: moment(e._id).format("MMM DD, YYYY"),
+        date: moment(e._id).format("MMMM DD, YYYY"),
         count: e.count,
         origin: data.startStationName,
         name: (this.state.selected && this.state.selected.endStationName) || "",
