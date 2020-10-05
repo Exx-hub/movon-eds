@@ -29,7 +29,7 @@ const ManifestService = {
         })
     },
 
-    getManifestDateRange: (startTripDate, endTripDate, startStation, endStation) => {
+    getManifestDateRange: (startTripDate, endTripDate, startStation, endStation, page, limit) => {
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/range/${startTripDate}/${endTripDate}/${startStation}/${endStation}`,
@@ -37,7 +37,8 @@ const ManifestService = {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
                 'x-auth-token' : getToken()
-            }
+            },
+            params:{page, limit}
         })
     },
 

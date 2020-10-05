@@ -10,6 +10,7 @@ import {
   Space,
   notification,
   AutoComplete,
+  Pagination,
 } from "antd";
 import {
   openNotificationWithIcon,
@@ -104,6 +105,9 @@ class Manifest extends React.Component {
     selectedRoute: undefined,
     tempDestinationList: [],
     selected: undefined,
+    page: 0,
+    limit: 10,
+    totalRecords: 50,
   };
 
   componentDidMount() {
@@ -179,12 +183,18 @@ class Manifest extends React.Component {
         this.state.startDay,
         this.state.endDay,
         startStationId,
-        endStationId
+        endStationId,
+        this.state.page,
+        this.state.limit
       ).then((e) => {
         console.log("getManifestDateRange", e);
         const { data, success, errorCode } = e.data;
         if (success) {
-          this.setState({ listOfTripDates: data[0].data || [], fetching: false });
+          this.setState({
+            listOfTripDates: data[0].data || [],
+            fetching: false,
+            totalRecords: (data && Array.isArray(data[0].pageInfo) && data[0].pageInfo.length > 0 && data[0].pageInfo[0].count) || 0
+          });
           return;
         }
         this.handleErrorNotification(errorCode);
@@ -325,26 +335,42 @@ class Manifest extends React.Component {
           </Col>
         </Row>
         {!fetching ? (
-          <TableRoutesView
-            routes={routes}
-            pagination={false}
-            dataSource={this.dataSource()}
-            onChange={this.onChangeTable}
-            onPrint={(data) =>
-              this.props.history.push("/manifest/print", {
-                date: data.date,
-                selected: this.state.selected,
-              })
-            }
-            onViewClick={(data) =>
-              this.props.history.push("/manifest/details", {
-                date: data.date,
-                selected: this.state.selected,
-              })
-            }
-          />
+          <>
+            <TableRoutesView
+              routes={routes}
+              pagination={false}
+              dataSource={this.dataSource()}
+              onChange={this.onChangeTable}
+              onPrint={(data) =>
+                this.props.history.push("/manifest/print", {
+                  date: data.date,
+                  selected: this.state.selected,
+                })
+              }
+              onViewClick={(data) =>
+                this.props.history.push("/manifest/details", {
+                  date: data.date,
+                  selected: this.state.selected,
+                })
+              }
+            />
+          </>
         ) : (
           <Skeleton active />
+        )}
+        {this.dataSource() && this.dataSource().length > 0 && (
+          <Pagination
+            onChange={(page) =>{
+              this.setState({ page: page -1 }, ()=>{
+                const selectedRoute = this.state.selected;
+                if (selectedRoute) {
+                  this.getManifestByDestination(selectedRoute.start, selectedRoute.end);
+                }
+              })
+            }}
+            defaultCurrent={this.state.page}
+            total={this.state.totalRecords}
+          />
         )}
       </div>
     );
