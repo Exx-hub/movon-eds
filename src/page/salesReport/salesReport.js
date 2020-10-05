@@ -41,8 +41,8 @@ class SalesReport extends React.Component {
     transactions: null,
     summary: {},
     user: getUser(),
-    endDay: moment().format(dateFormat),
-    startDay: moment().subtract(1, "d").format(dateFormat),
+    endDay: moment().add(1, "d").format(dateFormat),
+    startDay: moment().format(dateFormat),
     destination: {
       options: [],
       value: undefined,
@@ -215,9 +215,7 @@ class SalesReport extends React.Component {
   };
 
   getDestination = () => {
-    return (
-      (this.state.destination.data && this.state.destination.data.name) || ""
-    );
+    return (this.state.tags.length > 0 && this.state.tags.join()) || "All" ;
   };
 
   handleSelectChange = (e) => {
@@ -239,8 +237,7 @@ class SalesReport extends React.Component {
     const busCompanyId = this.state.user.busCompanyId._id;
     const fullName = this.state.user.personalInfo.fullName;
     const totalAmount = this.state.totalAmount;
-    const destination =
-      (this.state.destination.data && this.state.destination.data.name) || "";
+    const destination = this.getDestination();
     const isP2P = this.props.isP2P || false;
     const title = this.props.title || "SUMMARY OF CARGO SALES";
     const fileName = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX";
