@@ -218,6 +218,10 @@ class SalesReport extends React.Component {
     return (this.state.tags.length > 0 && this.state.tags.join()) || "All" ;
   };
 
+  getDate = () =>{
+    return  this.state.startDay === this.state.endDay ? this.state.endDay :  `${this.state.startDay} - ${this.state.endDay}`;
+  }
+
   handleSelectChange = (e) => {
     let destination = { ...this.state.destination };
     this.setState(
@@ -359,8 +363,7 @@ class SalesReport extends React.Component {
 
           <div style={{ marginTop: "1.2rem" }} ref={this.printEl}>
             <Header
-              startDay={this.state.startDay}
-              endDay={this.state.endDay}
+              date={this.getDate()}
               title={this.props.title}
             />
 
@@ -457,7 +460,7 @@ function Header(props) {
     >
       <h3>{props.title}</h3>
       <Space>
-        <span>{props.startDay}</span> -<span>{props.endDay}</span>
+        <span>{props.date}</span>
       </Space>
     </div>
   );

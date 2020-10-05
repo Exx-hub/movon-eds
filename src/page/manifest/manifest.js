@@ -93,8 +93,8 @@ const TableRoutesView = (props) => {
 
 class Manifest extends React.Component {
   state = {
-    endDay: moment().format(dateFormat),
-    startDay: moment().subtract(1, "d").format(dateFormat),
+    endDay: moment().add(1,'d').format(dateFormat),
+    startDay: moment().format(dateFormat),
     fetching: false,
     routes: undefined,
     routesList: {
