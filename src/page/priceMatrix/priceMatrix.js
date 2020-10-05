@@ -176,13 +176,15 @@ export default class PriceMatrix extends React.Component {
       }
     }
 
-    if (
-      matrix[0].tariffRate === 0 &&
-      matrix[0].exceededPerKilo === 0 &&
-      matrix[0].price === 0 &&
-      matrix[0].declaredValueRate === 0 &&
-      matrix[0].maxAllowedWeight === 0
-    ) { hasError = true; }
+    const isNull = item =>{
+      return item === 0 || item === undefined || item === null || item === ""
+    }
+
+    hasError = isNull(matrix[0].tariffRate) || 
+    isNull(matrix[0].exceededPerKilo) || 
+    isNull(matrix[0].price) || 
+    isNull(matrix[0].declaredValueRate) || 
+    isNull(matrix[0].maxAllowedWeight);
 
     if(hasError){
       notification["error"]({
