@@ -299,24 +299,24 @@ function BicolIsarogForm(props) {
           <Col span={6} className="gutter-row">
             <InputBox
               type="number"
-              onBlur={() => props.onBlur(sticker_quantity.name)}
-              detail={sticker_quantity}
-              onChange={props.onChange}
-              title="Package Count"
-              errorMessage={sticker_quantity.errorMessage}
-              placeholder="Box / Parcel Count"
-            />
-          </Col>
-
-          <Col span={6} className="gutter-row">
-            <InputBox
-              type="number"
               onBlur={() => props.onBlur(packageWeight.name)}
               detail={packageWeight}
               onChange={props.onChange}
               placeholder="Weight (kg)"
               errorMessage={packageWeight.errorMessage}
               title="Weight"
+            />
+          </Col>
+
+          <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
+              onBlur={() => props.onBlur(length.name)}
+              detail={length}
+              onChange={props.onChange}
+              placeholder="Length(meter)"
+              errorMessage={length.errorMessage}
+              title="Length"
             />
           </Col>
         </Row>
@@ -353,6 +353,20 @@ function BicolIsarogForm(props) {
             />
           </Col>
           <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
+              onBlur={() => props.onBlur(sticker_quantity.name)}
+              detail={sticker_quantity}
+              onChange={props.onChange}
+              title="Package Count"
+              errorMessage={sticker_quantity.errorMessage}
+              placeholder="Box / Parcel Count"
+            />
+          </Col>
+        </Row>
+
+        <Row>
+          <Col span={6} className="gutter-row">
             <span className="input-placeholder-title select-placeholder">
               Discount Type
             </span>
@@ -369,9 +383,7 @@ function BicolIsarogForm(props) {
               ))}
             </Select>
           </Col>
-        </Row>
 
-        <Row>
           <Col span={6} className="gutter-row">
             <InputBox
               type="number"
@@ -448,6 +460,7 @@ function BicolIsarogForm(props) {
               onBlur={() => props.onBlur(driverFullName.name)}
               title="Driver Full Name"
               placeholder="ex: Juan Dele Cruz"
+              showError={driverFullName.hasError || false}
             />
           </Col>
           <Col span={8} className="gutter-row">
@@ -458,9 +471,10 @@ function BicolIsarogForm(props) {
               errorMessage={
                 conductorFullName.errorMessage || "Sender Name is required"
               }
-              onBlur={() => props.onBlur(driverFullName.name)}
+              onBlur={() => props.onBlur(conductorFullName.name)}
               title="Conductor Full Name"
               placeholder="ex. Juan Dela Cruz"
+              showError={conductorFullName.hasError || false}
             />
           </Col>
         </Row>

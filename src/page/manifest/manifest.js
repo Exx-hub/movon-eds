@@ -359,6 +359,7 @@ class Manifest extends React.Component {
           <Skeleton active />
         )}
         {this.dataSource() && this.dataSource().length > 0 && (
+          <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1rem'}}>
           <Pagination
             onChange={(page) =>{
               this.setState({ page: page -1 }, ()=>{
@@ -371,7 +372,7 @@ class Manifest extends React.Component {
             defaultCurrent={this.state.page}
             total={this.state.totalRecords}
           />
-        )}
+        </div>)}
       </div>
     );
   }
