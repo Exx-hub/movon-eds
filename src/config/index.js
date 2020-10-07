@@ -45,4 +45,10 @@ export const ERROR_CODES = {
         message: "Bus Configuration Error",
         description: "No configuration found. Please contact Movon technical support!"
     },
+    4012:{
+        module:'PARCEL',
+        code: 'PARCEL_PRICE_CONFIG_NOT_FOUND',
+        message: "BL Number Exist",
+        description: "Please replace your bill of lading number and continue."
+    },
 }
