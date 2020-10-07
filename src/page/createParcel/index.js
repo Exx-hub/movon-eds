@@ -628,7 +628,7 @@ class CreateParcel extends React.Component {
       }}
     }
 
-    if(name === 'senderName' || name === 'recieverName' || name === 'driverFullName' || name === "conductorName" ){
+    if(name === 'senderName' || name === 'recieverName' || name === 'driverFullName' || name === "conductorFullName" ){
       let isValid = true;
       if(details[name].value){
         const fullName =  details[name].value.trim().split(" ");
@@ -647,6 +647,7 @@ class CreateParcel extends React.Component {
 
       return {...details[name], ...{
         accepted: isValid,
+        hasError: !isValid,
         errorMessage: !isValid ? "Invalid name!" : ""
       }}
     }

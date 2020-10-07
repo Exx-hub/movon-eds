@@ -460,6 +460,7 @@ function BicolIsarogForm(props) {
               onBlur={() => props.onBlur(driverFullName.name)}
               title="Driver Full Name"
               placeholder="ex: Juan Dele Cruz"
+              showError={driverFullName.hasError || false}
             />
           </Col>
           <Col span={8} className="gutter-row">
@@ -470,9 +471,10 @@ function BicolIsarogForm(props) {
               errorMessage={
                 conductorFullName.errorMessage || "Sender Name is required"
               }
-              onBlur={() => props.onBlur(driverFullName.name)}
+              onBlur={() => props.onBlur(conductorFullName.name)}
               title="Conductor Full Name"
               placeholder="ex. Juan Dela Cruz"
+              showError={conductorFullName.hasError || false}
             />
           </Col>
         </Row>
