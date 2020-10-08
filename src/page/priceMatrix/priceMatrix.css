@@ -24,6 +24,7 @@
     border: 1px solid rgba(0,0,0,.2);
     font-weight: 200; 
     padding: .7rem;
+    font-size: 1em;
 }
 
 .btn-add-row{

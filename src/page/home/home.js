@@ -3,7 +3,7 @@ import Manifest from '../manifest';
 import Reports from '../reports';
 import User from '../../service/User';
 import movonLogo from '../../assets/movoncargo.png';
-import {clearCredential,getCredential, getUser} from '../../utility'
+import {clearCredential,getCredential, UserProfile} from '../../utility'
 import PriceMatrix from '../priceMatrix'
 import SalesReport from "../salesReport"
 import SearchModule from '../searchModule'
@@ -151,6 +151,7 @@ const tableSourceBitsi = [
 function Home(props) {
 
   const [state, setState] = React.useState({});
+  const UserProfileObject = new UserProfile()
 
   React.useEffect(() => {
     if(!state.user){
@@ -238,7 +239,7 @@ function Home(props) {
             
             <SubMenu key="sub1" icon={<BarChartOutlined />} title="Reports">
               <Menu.Item key="5" icon={<BarChartOutlined />}>Cargo Sales</Menu.Item>
-            {getUser() && getUser().busCompanyId && getUser().busCompanyId.config.parcel.tag === "bicol-isarog" && <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
+            { UserProfileObject.isIsarogLiners() && <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
             </SubMenu>
 
           </Menu>
