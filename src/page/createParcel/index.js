@@ -29,7 +29,7 @@ import moment from 'moment'
 const { Content, Sider, Header } = Layout;
 
 const MIN_WIDTH = 800;
-
+const disableBISystemFee = true;
 const STEPS_LIST = [
   {
     title: "Parcel Image",
@@ -766,10 +766,11 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
-    const enableBISystemFee = true;
-    if(enableBISystemFee && this.state.enalbeBicolIsarogWays){
+    if(disableBISystemFee && this.state.enalbeBicolIsarogWays){
       return;
     }
+
+    console.log('pass===>>>')
 
     const setSystemFee = (value) =>{
       let details = {...this.state.details}
@@ -848,14 +849,12 @@ class CreateParcel extends React.Component {
       )
       .then(e => {
         let details = {...this.state.details}
-        console.log('dynamic price',e)
         const{ data, success, errorCode }=e.data;
         if(success){
           const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.totalCost).toFixed(2)}}
           const packageInsurance = {...details.packageInsurance, ...{value:parseFloat(data.declaredRate).toFixed(2)}}
           details = {...details, ...{shippingCost}}
           details = {...details, ...{packageInsurance}}
-          console.log('1lengthRate',parseFloat(data.lengthRate).toFixed(2))
           this.setState({
             leghtRate: parseFloat(data.lengthRate).toFixed(2),
             details:{...details, ...{shippingCost}}},()=>this.updateTotalShippingCost())
