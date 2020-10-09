@@ -107,9 +107,9 @@ const tableSourceBitsi = [
     render: text => moment(text).format('MMM DD, YYYY')
   },
   {
-    title: 'DESTINATION',
-    dataIndex: 'destination',
-    key: 'destination,'
+    title: 'BL NO.',
+    dataIndex: 'billOfLading',
+    key: 'billOfLading',
   },
   {
     title: 'SENDER',
@@ -117,9 +117,24 @@ const tableSourceBitsi = [
     key: 'sender,'
   },
   {
+    title: 'SENDER PHONE#.',
+    dataIndex: 'senderPhoneNo',
+    key: 'senderPhoneNo,'
+  },
+  {
     title: 'RECEIVER',
     dataIndex: 'recipient',
     key: 'recipient,'
+  },
+  {
+    title: 'RECEIVER PHONE#',
+    dataIndex: 'recipientPhoneNo',
+    key: 'recipientPhoneNo,'
+  },
+  {
+    title: 'DESTINATION',
+    dataIndex: 'destination',
+    key: 'destination,'
   },
   {
     title: 'WEIGHT',
@@ -132,14 +147,14 @@ const tableSourceBitsi = [
     key: 'declaredValue',
   },
   {
-    title: 'BL NO.',
-    dataIndex: 'billOfLading',
-    key: 'billOfLading',
-  },
-  {
     title: 'DESCRIPTION',
     dataIndex: 'packageName',
     key: 'packageName',
+  },
+  {
+    title: 'REMARKS',
+    dataIndex: 'remarks',
+    key: 'remarks',
   },
   {
     title: 'AMOUNT',
