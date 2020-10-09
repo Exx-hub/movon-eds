@@ -375,7 +375,7 @@ class CreateParcel extends React.Component {
       noOfStickerCopy:2,
       connectingCompanyComputation:0,
       tariffRate:undefined,
-      
+      leghtRate:0
     };
   
   }
@@ -811,12 +811,18 @@ class CreateParcel extends React.Component {
       return;
     }
 
+    console.log('passss=====.>')
+    console.log('passss=====.>')
+    console.log('passss=====.>')
+    console.log('passss=====.>')
+
     const{ 
       destination, 
       declaredValue, 
       paxs, 
       packageWeight, 
-      type
+      type,
+      length
     }= this.state.details
 
     const busCompanyId =  (this.USER && this.USER.busCompanyId._id) || undefined;
@@ -825,6 +831,7 @@ class CreateParcel extends React.Component {
     const endStation = selectedOption.endStation || undefined;
     const decValue = declaredValue.value ? parseFloat(declaredValue.value).toFixed(2) : undefined;
     const pax = paxs.value || 0;
+    const parcel_length = length.value || 0;
     const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined
 
     if(!isNull(busCompanyId) && !isNull(startStation) && !isNull(endStation) && !isNull(weight) && !isNull(decValue) ){
@@ -837,16 +844,21 @@ class CreateParcel extends React.Component {
         pax,
         startStation,
         weight,
+        parcel_length
       )
       .then(e => {
         let details = {...this.state.details}
+        console.log('dynamic price',e)
         const{ data, success, errorCode }=e.data;
         if(success){
           const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.totalCost).toFixed(2)}}
           const packageInsurance = {...details.packageInsurance, ...{value:parseFloat(data.declaredRate).toFixed(2)}}
           details = {...details, ...{shippingCost}}
           details = {...details, ...{packageInsurance}}
-          this.setState({details:{...details, ...{shippingCost}}})
+          console.log('1lengthRate',parseFloat(data.lengthRate).toFixed(2))
+          this.setState({
+            leghtRate: parseFloat(data.lengthRate).toFixed(2),
+            details:{...details, ...{shippingCost}}},()=>this.updateTotalShippingCost())
         }else{
           this.handleErrorNotification(errorCode)
         }
@@ -1265,7 +1277,8 @@ class CreateParcel extends React.Component {
     let total = parseFloat(currentDetails.shippingCost.value || 0) 
       + parseFloat(currentDetails.systemFee.value || 0)
         + parseFloat(currentDetails.packageInsurance.value || 0)
-          + parseFloat(this.state.connectingCompanyComputation || 0)
+          + parseFloat(this.state.leghtRate)
+            + parseFloat(this.state.connectingCompanyComputation || 0)
     
     total = Number(total)
 

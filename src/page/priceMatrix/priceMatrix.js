@@ -189,8 +189,10 @@ export default class PriceMatrix extends React.Component {
     isNull(matrix[0].exceededPerKilo) || 
     isNull(matrix[0].price) || 
     isNull(matrix[0].declaredValueRate) || 
-    isNull(matrix[0].maxAllowedLength) || 
-    isNull(matrix[0].maxAllowedLengthRate) || 
+    isNull(matrix[0].maxAllowedLengthRate1) || 
+    isNull(matrix[0].maxAllowedLengthRate2) || 
+    isNull(matrix[0].maxAllowedLength1) || 
+    isNull(matrix[0].maxAllowedLength2) || 
     isNull(matrix[0].maxAllowedWeight);
 
     if(hasError){
@@ -335,12 +337,14 @@ export default class PriceMatrix extends React.Component {
             if(fixMatrix.length === 0){
               fixMatrix = [...[{name:"", price:0, declaredValue:0}]]
             }
+
+            console.log('matrix',matrix)
             
             let _matrix = [...matrix];
             _matrix[0].maxAllowedLength1 = _matrix[0].maxAllowedLength[0]
             _matrix[0].maxAllowedLength2 = _matrix[0].maxAllowedLength[1]
-            _matrix[0].lenghtRate1 = _matrix[0].maxAllowedLengthRate[0]
-            _matrix[0].lenghtRate2 = _matrix[0].maxAllowedLengthRate[1]
+            _matrix[0].maxAllowedLengthRate1 = _matrix[0].maxAllowedLengthRate[0]
+            _matrix[0].maxAllowedLengthRate2 = _matrix[0].maxAllowedLengthRate[1]
            
             delete _matrix[0].maxAllowedLength;
             delete _matrix[0].maxAllowedLengthRate;
@@ -636,16 +640,16 @@ export default class PriceMatrix extends React.Component {
           <div className="matrix-item">
             <Input
               type="number"
-              value={e["lenghtRate1"]}
+              value={e["maxAllowedLengthRate1"]}
               onChange={(e) =>
-                this.matrixItemChange("lenghtRate1", e.target.value, i)
+                this.matrixItemChange("maxAllowedLengthRate1", e.target.value, i)
               }
             />
             <Input
               type="number"
-              value={e["lenghtRate2"]}
+              value={e["maxAllowedLengthRate2"]}
               onChange={(e) =>
-                this.matrixItemChange("lenghtRate2", e.target.value, i)
+                this.matrixItemChange("maxAllowedLengthRate2", e.target.value, i)
               }
             />
           </div>
