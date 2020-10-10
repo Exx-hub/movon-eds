@@ -422,6 +422,8 @@ class CreateParcel extends React.Component {
         noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
       }
 
+      console.log("enalbeBicolIsarogWays",this.UserProfileObject.isIsarogLiners())
+
       this.setState({
         enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
         noOfStickerCopy,

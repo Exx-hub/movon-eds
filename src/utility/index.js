@@ -85,6 +85,7 @@ export class UserProfile{
       this.credential = JSON.parse(localStorage.getItem('credential'));
     }
     if(this.credential){
+      console.log(this.credential)
       this.token = this.credential.token;
       this.user = this.credential.user;
     }  
@@ -110,14 +111,16 @@ export class UserProfile{
   }
 
   getBusCompanyTag(){
-    if(this.user){
-      const{tag}=this.getBusCompany();
+    if(this.getBusCompany()){
+      let tag = this.getBusCompany().tag || ((this.getBusCompany().config.parcel && this.getBusCompany().config.parcel.tag) || undefined  )
       return tag ? tag.toLowerCase() : undefined
     }
+    return undefined;
   }
 
   isIsarogLiners(){
     if(this.getBusCompanyTag()){
+      console.log("tag====>>",this.getBusCompanyTag().toLowerCase())
       return "isarog-liner" === this.getBusCompanyTag().toLowerCase();
     }
     return false;
@@ -129,7 +132,6 @@ export class UserProfile{
     }
     return false;
   }
-
 }
 
 export const clearCredential = () =>{
