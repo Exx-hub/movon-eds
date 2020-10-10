@@ -35,36 +35,42 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 class SalesReport extends React.Component {
-  state = {
-    fetching: false,
-    exporting: false,
-    transactions: null,
-    summary: {},
-    user: getUser(),
-    endDay: moment().add(1, "d").format(dateFormat),
-    startDay: moment().format(dateFormat),
-    destination: {
-      options: [],
-      value: undefined,
-      name: "",
-      data: undefined,
-    },
-    assignedStation: undefined,
-    data: [],
-    isPrinting: false,
-    totalAmount: 0,
-    tags: [],
-    templist:[],
-    templistValue:undefined
-  };
+  
+  
+  constructor(){
+    super()
+    this.state = {
+      fetching: false,
+      exporting: false,
+      transactions: null,
+      summary: {},
+      user: getUser(),
+      endDay: moment().add(1, "d").format(dateFormat),
+      startDay: moment().format(dateFormat),
+      destination: {
+        options: [],
+        value: undefined,
+        name: "",
+        data: undefined,
+      },
+      assignedStation: undefined,
+      data: [],
+      isPrinting: false,
+      totalAmount: 0,
+      tags: [],
+      templist:[],
+      templistValue:undefined
+    };
+  }  
+
 
   componentDidMount() {
     this.printEl = React.createRef();
     Promise.all([ManifestService.getRoutes(),this.getParcel()]).then(
       (resonses) => {
         if (resonses[0]) {
-          const { data, success, errorCode} = resonses[0].data;
-          console.log()
+          const { data, errorCode} = resonses[0].data;
+
           if(errorCode){
             this.handleErrorNotification(errorCode)
             return
@@ -73,6 +79,7 @@ class SalesReport extends React.Component {
           if (data) {
             const options = data.map((e, i) => {
               return {
+                key:i,
                 data: e,
                 value: i,
                 name: e.endStationName,
@@ -101,7 +108,9 @@ class SalesReport extends React.Component {
     const startStation = this.state.user.assignedStation._id;
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
-    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end))  
+    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end)) 
+    console.log('endStation', endStation)
+ 
     const busCompanyId = this.state.user.busCompanyId._id;
 
     return ParcelService.getAllParcel(
@@ -125,47 +134,31 @@ class SalesReport extends React.Component {
 
       if(dataResult.status === 200){
         let amout = 0;
-        const data = parcels.map((e) => {
-          const {
-            associatedAmount,
-            associatedCompanyId,
-            associatedDestination,
-            associatedOrigin,
-            associatedTariffRate,
-            billOfLading,
-            declaredValue,
-            destination,
-            origin,
-            packageName,
-            packageWeight,
-            price,
-            quantity,
-            recipient,
-            scanCode,
-            sender,
-            sentDate,
-            status,
-          } = e;
+        const data = parcels.map((e,i) => {
           amout += Number(e.price);
           return {
-            associatedAmount,
-            associatedCompanyId,
-            associatedDestination,
-            associatedOrigin,
-            associatedTariffRate,
-            billOfLading,
-            declaredValue,
-            destination,
-            origin,
-            packageName,
-            packageWeight,
-            price,
-            quantity,
-            recipient,
-            scanCode,
-            sender,
-            sentDate,
-            status,
+            key:i,
+            associatedAmount: e.associatedAmount,
+            associatedCompanyId: e.associatedCompanyId,
+            associatedDestination:e.associatedDestination,
+            associatedOrigin:e.associatedOrigin,
+            associatedTariffRate:e.associatedTariffRate,
+            billOfLading:e.billOfLading,
+            declaredValue:e.declaredValue,
+            destination:e.destination,
+            origin:e.origin,
+            packageName:e.packageName,
+            packageWeight:e.packageWeight,
+            price:e.price,
+            quantity:e.quantity,
+            recipient:e.recipient,
+            scanCode:e.scanCode,
+            sender:e.sender,
+            sentDate:e.sentDate,
+            status:e.status,
+            recipientPhoneNo:e.recipientPhoneNo,
+            senderPhoneNo:e.senderPhoneNo,
+            remarks: e.remarks === 'undefined' ? '' : e.remarks
           };
         });
         this.setState({fetching:false, data, totalAmount: amout.toFixed(2) });
@@ -432,12 +425,16 @@ class SalesReport extends React.Component {
             </div>
 
             {
-              this.state.fetching ? <Skeleton /> : 
-              <Table
+              this.state.fetching ? <Skeleton active/> : 
+              <div style={{overflow:'scroll'}}>
+                <Table
+                rowKey={e => e.key}
                 pagination={false}
                 columns={this.props.source}
                 dataSource={this.state.data}
               />
+              </div>
+              
             }
 
           </div>

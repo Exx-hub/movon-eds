@@ -163,9 +163,6 @@ class SearchModule extends React.Component {
   }
 
   componentDidMount() {
-    const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
-    this.companyTag = companyTag;
-
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,

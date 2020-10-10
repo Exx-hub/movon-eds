@@ -136,7 +136,7 @@ const ParcelService = {
         })
     },
 
-    getDynamicPrice: (busCompanyId, claimAmount, endStation, type, paxNumber ,startStation, weight) => {
+    getDynamicPrice: (busCompanyId, claimAmount, endStation, type, paxNumber ,startStation, weight, length) => {
             let accompaniedValue = ''
             switch (type) {
                 case 2:
@@ -167,6 +167,7 @@ const ParcelService = {
                     accompaniedValue,
                     isAccompanied: type !== 3,
                     paxNumber: type === 3 ? 0 : paxNumber,
+                    parcel_length: length
                 }
             })
     },

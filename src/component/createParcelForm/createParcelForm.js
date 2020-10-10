@@ -1,5 +1,5 @@
-import React from "react";
-import { Row, Col, Radio, Select } from "antd";
+import React, { useEffect } from "react";
+import { Row, Col, Radio, Select, AutoComplete } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
 
@@ -10,7 +10,7 @@ function InputBox(props) {
   const isRequired = (props.detail && props.detail.isRequired) || false;
   const name = (props.detail && props.detail.name) || null;
   const accepted = (props.detail && props.detail.accepted) || false;
-  const value = (props.detail && props.detail.value) || "";
+  const value = props.value || (props.detail && props.detail.value) || "";
 
   return (
     <div style={{ marginBottom: ".4rem", minHeight: "55px" }}>
@@ -36,7 +36,7 @@ function InputBox(props) {
   );
 }
 
-function CreateParcelForm(props) {
+function BicolIsarogForm(props) {
   const {
     senderName,
     senderMobile,
@@ -48,7 +48,6 @@ function CreateParcelForm(props) {
     description,
     declaredValue,
     quantity,
-    sticker_quantity,
     systemFee,
     additionNote,
     packageInsurance,
@@ -65,10 +64,26 @@ function CreateParcelForm(props) {
     busNumber,
     tripCode,
     driverFullName,
-    conductorFullName
+    conductorFullName,
+    sticker_quantity,
+    discount,
   } = props.details;
+  const lengthRate = props.lengthRate
 
   const enableInterConnection = props.enableInterConnection;
+  const _temList = destination.options.map((e) => e.name);
+  const [tempList, setTempList] = React.useState(_temList);
+
+  const doSearch = (el) => {
+    const data = destination.options;
+    const toSearch = el.toLowerCase();
+    const tempParcelData = data
+      .filter((e) => {
+        return e.name.toLowerCase().includes(toSearch);
+      })
+      .map((e) => e.name);
+    setTempList(tempParcelData);
+  };
 
   return (
     <div className="create-parcel-form">
@@ -80,22 +95,37 @@ function CreateParcelForm(props) {
               <span className="input-placeholder-title select-placeholder">
                 Destination*
               </span>
-              <Select
-                size="default"
-                onBlur={() => props.onBlur(destination.name)}
-                className={`${
-                  !destination.accepted ? "select-error-destination-form" : ""
-                }`}
-                onChange={(e) => props.onSelectChange(e, destination.name)}
-                value={destination.value}
+              <div style={{ display: "none" }}>
+                <Select
+                  size="default"
+                  onBlur={() => props.onBlur(destination.name)}
+                  className={`${
+                    !destination.accepted ? "select-error-destination-form" : ""
+                  }`}
+                  onChange={(e) => props.onSelectChange(e, destination.name)}
+                  value={destination.value}
+                  style={{ width: "100%" }}
+                >
+                  {destination.options.map((e) => (
+                    <Option key={e.value} value={e.value}>
+                      {e.name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+              <AutoComplete
+                dataSource={tempList}
                 style={{ width: "100%" }}
-              >
-                {destination.options.map((e) => (
-                  <Option key={e.value} value={e.value}>
-                    {e.name}
-                  </Option>
-                ))}
-              </Select>
+                onSelect={(e) =>
+                  props.onSelectChange(
+                    destination.options.find((find) => find.name === e)
+                      .endStation,
+                    destination.name
+                  )
+                }
+                onSearch={doSearch}
+                placeholder="Destination"
+              />
               {!destination.accepted && (
                 <span className="select-input-error">
                   {destination.errorMessage || "Destination is required"}
@@ -143,7 +173,80 @@ function CreateParcelForm(props) {
             </div>
           </Col>
         </Row>
-        
+        <Row className={`${enableInterConnection ? "" : "hide"}`}>
+          <Col className="gutter-row" span={8}>
+            <div className="select-destination-form-container">
+              <span className="input-placeholder-title select-placeholder">
+                Associate
+              </span>
+              <Select
+                size="default"
+                onBlur={() => props.onBlur(connectingCompany.name)}
+                className={`${
+                  !connectingCompany.accepted
+                    ? "select-error-destination-form"
+                    : ""
+                }`}
+                onChange={(e) =>
+                  props.onSelectChange(e, connectingCompany.name)
+                }
+                value={connectingCompany.value}
+                style={{ width: "100%" }}
+              >
+                {connectingCompany.options.map((e) => (
+                  <Option key={e._id} value={e._id}>
+                    {e.name}
+                  </Option>
+                ))}
+              </Select>
+              {!connectingCompany.accepted && (
+                <span className="select-input-error">
+                  {connectingCompany.errorMessage || "Bus Company is required"}
+                </span>
+              )}
+            </div>
+          </Col>
+
+          <Col className="gutter-row" span={8}>
+            <div className="select-destination-form-container">
+              <span className="input-placeholder-title select-placeholder">
+                Associate Routes
+              </span>
+              <Select
+                size="default"
+                onBlur={() => props.onBlur(connectingRoutes.name)}
+                className={`${
+                  !connectingRoutes.accepted
+                    ? "select-error-destination-form"
+                    : ""
+                }`}
+                onChange={(e) => props.onSelectChange(e, connectingRoutes.name)}
+                value={connectingRoutes.value}
+                style={{ width: "100%" }}
+              >
+                {connectingRoutes.options.map((e) => (
+                  <Option key={e.end} value={e.end}>
+                    {e.endStationName}
+                  </Option>
+                ))}
+              </Select>
+              {!connectingRoutes.accepted && (
+                <span className="select-input-error">
+                  {connectingRoutes.errorMessage || "Bus Company is required"}
+                </span>
+              )}
+            </div>
+          </Col>
+
+          <Col span={8} className="gutter-row">
+            <InputBox
+              detail={associateORNumber}
+              onChange={props.onChange}
+              placeholder={"Associate OR NO."}
+              title={"Associate OR NO"}
+            />
+          </Col>
+        </Row>
       </div>
 
       <div className="calculator-container-border">
@@ -170,7 +273,7 @@ function CreateParcelForm(props) {
         </Row>
 
         <Row>
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               onBlur={() => props.onBlur(declaredValue.name)}
@@ -182,19 +285,7 @@ function CreateParcelForm(props) {
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
-            <InputBox
-              type="number"
-              onBlur={() => props.onBlur(sticker_quantity.name)}
-              detail={sticker_quantity}
-              onChange={props.onChange}
-              title="Package Count"
-              errorMessage={sticker_quantity.errorMessage}
-              placeholder="Box / Parcel Count"
-            />
-          </Col>
-
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               onBlur={() => props.onBlur(packageWeight.name)}
@@ -205,10 +296,35 @@ function CreateParcelForm(props) {
               title="Weight"
             />
           </Col>
+
+          <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
+              onBlur={() => props.onBlur(length.name)}
+              detail={length}
+              onChange={props.onChange}
+              placeholder="Length (meter)"
+              errorMessage={length.errorMessage}
+              title="Length"
+            />
+          </Col>
+
+          <Col span={6} className="gutter-row">
+          <InputBox
+            type="number"
+            onBlur={() => props.onBlur(quantity.name)}
+            detail={quantity}
+            onChange={props.onChange}
+            title="Quantity"
+            errorMessage={quantity.errorMessage}
+            placeholder="Quantity"
+          />
+        </Col>
+
         </Row>
 
         <Row>
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               disabled={true}
               type="number"
@@ -219,7 +335,7 @@ function CreateParcelForm(props) {
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               detail={systemFee}
@@ -229,7 +345,16 @@ function CreateParcelForm(props) {
               placeholder="System Fee"
             />
           </Col>
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
+              title="Length Rate"
+              placeholder="Length Rate"
+              disabled={true}
+              value={lengthRate}
+            />
+          </Col>
+          <Col span={6} className="gutter-row">
             <InputBox
               type="number"
               detail={shippingCost}
@@ -238,23 +363,40 @@ function CreateParcelForm(props) {
               placeholder="Shipping Cost"
             />
           </Col>
+          
         </Row>
 
         <Row>
-        
-          <Col span={8} className="gutter-row">
-            <InputBox
-              type="number"
-              onBlur={() => props.onBlur(paxs.name)}
-              detail={paxs}
-              onChange={props.onChange}
-              errorMessage={paxs.errorMessage}
-              title="Number of Pax"
-              placeholder="Number of Pax"
-            />
+        <Col span={6} className="gutter-row">
+        <InputBox
+          type="number"
+          onBlur={() => props.onBlur(sticker_quantity.name)}
+          detail={sticker_quantity}
+          onChange={props.onChange}
+          title="Package Count"
+          errorMessage={sticker_quantity.errorMessage}
+          placeholder="Box / Parcel Count"
+        />
+      </Col>
+          <Col span={6} className="gutter-row">
+            <span className="input-placeholder-title select-placeholder">
+              Discount Type
+            </span>
+            <Select
+              size="default"
+              onChange={(e) => props.onSelectChange(e, discount.name)}
+              value={discount.value}
+              style={{ width: "100%" }}
+            >
+              {discount.options.map((e) => (
+                <Option key={e.name} value={e.name}>
+                  {e.name}
+                </Option>
+              ))}
+            </Select>
           </Col>
 
-          <Col span={8} className="gutter-row">
+          <Col span={6} className="gutter-row">
             <InputBox
               detail={additionNote}
               onChange={props.onChange}
@@ -263,20 +405,33 @@ function CreateParcelForm(props) {
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
-            {!enableInterConnection && (
-              <InputBox
-                className={`${length ? "" : "hide"}`}
-                type="number"
-                onBlur={() => props.onBlur(paxs.name)}
-                detail={length}
-                onChange={props.onChange}
-                errorMessage={paxs.errorMessage}
-                title="Length in Meter"
-                placeholder="length"
-              />
-            )}
-          </Col>
+          <Col span={6} className="gutter-row">
+          <InputBox
+            type="number"
+            onBlur={() => props.onBlur(paxs.name)}
+            detail={paxs}
+            onChange={props.onChange}
+            errorMessage={paxs.errorMessage}
+            title="Number of Pax"
+            placeholder="Number of Pax"
+          />
+        </Col>
+          {
+          //   <Col span={8} className="gutter-row">
+          //   {!enableInterConnection && (
+          //     <InputBox
+          //       className={`${length ? "" : "hide"}`}
+          //       type="number"
+          //       onBlur={() => props.onBlur(paxs.name)}
+          //       detail={length}
+          //       onChange={props.onChange}
+          //       errorMessage={paxs.errorMessage}
+          //       title="Length in Meter"
+          //       placeholder="length"
+          //     />
+          //   )}
+          // </Col>
+          }
         </Row>
       </div>
 
@@ -364,10 +519,8 @@ function CreateParcelForm(props) {
           </Col>
         </Row>
       </div>
-
-      
     </div>
   );
 }
 
-export default CreateParcelForm;
+export default BicolIsarogForm;

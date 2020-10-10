@@ -10,7 +10,7 @@ function InputBox(props) {
   const isRequired = (props.detail && props.detail.isRequired) || false;
   const name = (props.detail && props.detail.name) || null;
   const accepted = (props.detail && props.detail.accepted) || false;
-  const value = (props.detail && props.detail.value) || "";
+  const value = props.value || (props.detail && props.detail.value) || "";
 
   return (
     <div style={{ marginBottom: ".4rem", minHeight: "55px" }}>
@@ -68,6 +68,7 @@ function BicolIsarogForm(props) {
     sticker_quantity,
     discount,
   } = props.details;
+  const lengthRate = props.lengthRate
 
   const enableInterConnection = props.enableInterConnection;
   const _temList = destination.options.map((e) => e.name);
@@ -287,18 +288,6 @@ function BicolIsarogForm(props) {
           <Col span={6} className="gutter-row">
             <InputBox
               type="number"
-              onBlur={() => props.onBlur(quantity.name)}
-              detail={quantity}
-              onChange={props.onChange}
-              title="Quantity"
-              errorMessage={quantity.errorMessage}
-              placeholder="Quantity"
-            />
-          </Col>
-
-          <Col span={6} className="gutter-row">
-            <InputBox
-              type="number"
               onBlur={() => props.onBlur(packageWeight.name)}
               detail={packageWeight}
               onChange={props.onChange}
@@ -314,11 +303,24 @@ function BicolIsarogForm(props) {
               onBlur={() => props.onBlur(length.name)}
               detail={length}
               onChange={props.onChange}
-              placeholder="Length(meter)"
+              placeholder="Length (meter)"
               errorMessage={length.errorMessage}
               title="Length"
             />
           </Col>
+
+          <Col span={6} className="gutter-row">
+          <InputBox
+            type="number"
+            onBlur={() => props.onBlur(quantity.name)}
+            detail={quantity}
+            onChange={props.onChange}
+            title="Quantity"
+            errorMessage={quantity.errorMessage}
+            placeholder="Quantity"
+          />
+        </Col>
+
         </Row>
 
         <Row>
@@ -346,26 +348,36 @@ function BicolIsarogForm(props) {
           <Col span={6} className="gutter-row">
             <InputBox
               type="number"
+              title="Length Rate"
+              placeholder="Length Rate"
+              disabled={true}
+              value={lengthRate}
+            />
+          </Col>
+          <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
               detail={shippingCost}
               onChange={props.onChange}
               title="Shipping Cost"
               placeholder="Shipping Cost"
             />
           </Col>
-          <Col span={6} className="gutter-row">
-            <InputBox
-              type="number"
-              onBlur={() => props.onBlur(sticker_quantity.name)}
-              detail={sticker_quantity}
-              onChange={props.onChange}
-              title="Package Count"
-              errorMessage={sticker_quantity.errorMessage}
-              placeholder="Box / Parcel Count"
-            />
-          </Col>
+          
         </Row>
 
         <Row>
+        <Col span={6} className="gutter-row">
+        <InputBox
+          type="number"
+          onBlur={() => props.onBlur(sticker_quantity.name)}
+          detail={sticker_quantity}
+          onChange={props.onChange}
+          title="Package Count"
+          errorMessage={sticker_quantity.errorMessage}
+          placeholder="Box / Parcel Count"
+        />
+      </Col>
           <Col span={6} className="gutter-row">
             <span className="input-placeholder-title select-placeholder">
               Discount Type
@@ -386,18 +398,6 @@ function BicolIsarogForm(props) {
 
           <Col span={6} className="gutter-row">
             <InputBox
-              type="number"
-              onBlur={() => props.onBlur(paxs.name)}
-              detail={paxs}
-              onChange={props.onChange}
-              errorMessage={paxs.errorMessage}
-              title="Number of Pax"
-              placeholder="Number of Pax"
-            />
-          </Col>
-
-          <Col span={6} className="gutter-row">
-            <InputBox
               detail={additionNote}
               onChange={props.onChange}
               title="Additional Note"
@@ -405,20 +405,33 @@ function BicolIsarogForm(props) {
             />
           </Col>
 
-          <Col span={8} className="gutter-row">
-            {!enableInterConnection && (
-              <InputBox
-                className={`${length ? "" : "hide"}`}
-                type="number"
-                onBlur={() => props.onBlur(paxs.name)}
-                detail={length}
-                onChange={props.onChange}
-                errorMessage={paxs.errorMessage}
-                title="Length in Meter"
-                placeholder="length"
-              />
-            )}
-          </Col>
+          <Col span={6} className="gutter-row">
+          <InputBox
+            type="number"
+            onBlur={() => props.onBlur(paxs.name)}
+            detail={paxs}
+            onChange={props.onChange}
+            errorMessage={paxs.errorMessage}
+            title="Number of Pax"
+            placeholder="Number of Pax"
+          />
+        </Col>
+          {
+          //   <Col span={8} className="gutter-row">
+          //   {!enableInterConnection && (
+          //     <InputBox
+          //       className={`${length ? "" : "hide"}`}
+          //       type="number"
+          //       onBlur={() => props.onBlur(paxs.name)}
+          //       detail={length}
+          //       onChange={props.onChange}
+          //       errorMessage={paxs.errorMessage}
+          //       title="Length in Meter"
+          //       placeholder="length"
+          //     />
+          //   )}
+          // </Col>
+          }
         </Row>
       </div>
 

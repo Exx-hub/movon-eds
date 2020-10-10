@@ -13,11 +13,7 @@ import {
 import { PlusOutlined, SaveOutlined, DeleteFilled } from "@ant-design/icons";
 import MatrixService from "../../service/Matrix";
 import ParcelService from "../../service/Parcel";
-import {
-  openNotificationWithIcon,
-  getUser,
-  clearCredential,
-} from "../../utility";
+import {openNotificationWithIcon,getUser,clearCredential, UserProfile} from "../../utility";
 import "./priceMatrix.css";
 
 const { Option } = Select;
@@ -27,8 +23,10 @@ const initMatrix = {
   pricePerKilo: 0,
   declaredValueRate: 0,
   maxAllowedWeight: 0,
-  maxAllowedLenght: 0,
-  lenghtRate: 0,
+  maxAllowedLengthRate1: 0,
+  maxAllowedLengthRate2: 0,
+  maxAllowedLength1: 0,
+  maxAllowedLength2: 0,
   exceededPerKilo: 0,
   tariffRate: 0,
   excessOneMeter: 0,
@@ -46,36 +44,42 @@ const initConnectingMatrix = {
 };
 
 export default class PriceMatrix extends React.Component {
-  state = {
-    matrix: [{ ...initMatrix }],
-    connectingMatrix: [{ ...initConnectingMatrix }],
-    routes: undefined,
-    selectedRoute: undefined,
-    routesList: [],
-    startStation: undefined,
-    connectingRoutes: {
-      name: "connectingRoutes",
-      value: undefined,
-      isRequired: true,
-      accepted: true,
-      options: [],
-    },
-    connectingRoutesOrigin: {
-      name: "connectingRoutesOrigin",
-      value: undefined,
-      isRequired: true,
-      accepted: true,
-      options: [],
-    },
-    connectingCompany: {
-      name: "connectingCompany",
-      value: undefined,
-      isRequired: true,
-      accepted: true,
-      options: [],
-    },
-    fixMatrix: [{}],
-  };
+
+  
+  constructor(){
+    super();
+    this.state = {
+      matrix: [{ ...initMatrix }],
+      connectingMatrix: [{ ...initConnectingMatrix }],
+      routes: undefined,
+      selectedRoute: undefined,
+      routesList: [],
+      startStation: undefined,
+      connectingRoutes: {
+        name: "connectingRoutes",
+        value: undefined,
+        isRequired: true,
+        accepted: true,
+        options: [],
+      },
+      connectingRoutesOrigin: {
+        name: "connectingRoutesOrigin",
+        value: undefined,
+        isRequired: true,
+        accepted: true,
+        options: [],
+      },
+      connectingCompany: {
+        name: "connectingCompany",
+        value: undefined,
+        isRequired: true,
+        accepted: true,
+        options: [],
+      },
+      fixMatrix: [{}],
+    };
+    this.UserProfileObject = new UserProfile();
+  }
 
   componentDidMount() {
     this.user = getUser();
@@ -120,6 +124,7 @@ export default class PriceMatrix extends React.Component {
 
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
+      console.log('getConnectingBusPartners',e.data)
       if (success) {
         if (data.connectingRoutes.length > 0) {
           const connectingCompany = { ...this.state.connectingCompany };
@@ -169,7 +174,7 @@ export default class PriceMatrix extends React.Component {
     let hasError = false;
     let fixMatrix = [...this.state.fixMatrix]
 
-    for(let x=0; x<this.state.fixMatrix.length; x++){
+    for(let x=0; x < this.state.fixMatrix.length; x++){
       if(fixMatrix[x].name === '' || fixMatrix[x].price === 0){
         hasError = true;
         break;
@@ -184,6 +189,10 @@ export default class PriceMatrix extends React.Component {
     isNull(matrix[0].exceededPerKilo) || 
     isNull(matrix[0].price) || 
     isNull(matrix[0].declaredValueRate) || 
+    isNull(matrix[0].maxAllowedLengthRate1) || 
+    isNull(matrix[0].maxAllowedLengthRate2) || 
+    isNull(matrix[0].maxAllowedLength1) || 
+    isNull(matrix[0].maxAllowedLength2) || 
     isNull(matrix[0].maxAllowedWeight);
 
     if(hasError){
@@ -200,6 +209,8 @@ export default class PriceMatrix extends React.Component {
       maxAllowedWeight: e.maxAllowedWeight,
       exceededPerKilo: e.exceededPerKilo,
       tariffRate: e.tariffRate,
+      maxAllowedLength: [e.maxAllowedLength1, e.maxAllowedLength2] ,
+      maxAllowedLengthRate: [e.maxAllowedLengthRate1, e.maxAllowedLengthRate2],
     }));
 
     this.saveMatrix({
@@ -259,7 +270,7 @@ export default class PriceMatrix extends React.Component {
       matrix[0].pricePerKilo === 0 &&
       matrix[0].declaredValueRate === 0 &&
       matrix[0].maxAllowedWeight === 0 &&
-      matrix[0].maxAllowedLenght === 0 &&
+      matrix[0].maxAllowedLength === 0 &&
       matrix[0].lenghtRate === 0
     ) {
       notification["error"]({
@@ -274,7 +285,7 @@ export default class PriceMatrix extends React.Component {
       pricePerKilo: e.pricePerKilo,
       declaredValueRate: e.declaredValueRate,
       maxAllowedWeight: e.maxAllowedWeight,
-      maxAllowedLenght: e.maxAllowedLenght,
+      maxAllowedLength: e.maxAllowedLength,
       lenghtRate: e.lenghtRate,
       excessOneMeter: e.excessOneMeter,
       excessTwoMeter: e.excessTwoMeter,
@@ -310,7 +321,8 @@ export default class PriceMatrix extends React.Component {
         destination,
       }).then((e) => {
         const { data, success, errorCode } = e.data;
-        if (success) {
+
+        if (Boolean(success)) {
           let result = (data &&
             data.stringValues &&
             JSON.parse(data.stringValues)) || {
@@ -325,6 +337,18 @@ export default class PriceMatrix extends React.Component {
             if(fixMatrix.length === 0){
               fixMatrix = [...[{name:"", price:0, declaredValue:0}]]
             }
+
+            console.log('matrix',matrix)
+            
+            let _matrix = [...matrix];
+            _matrix[0].maxAllowedLength1 = _matrix[0].maxAllowedLength[0]
+            _matrix[0].maxAllowedLength2 = _matrix[0].maxAllowedLength[1]
+            _matrix[0].maxAllowedLengthRate1 = _matrix[0].maxAllowedLengthRate[0]
+            _matrix[0].maxAllowedLengthRate2 = _matrix[0].maxAllowedLengthRate[1]
+           
+            delete _matrix[0].maxAllowedLength;
+            delete _matrix[0].maxAllowedLengthRate;
+
             this.setState({ matrix, fixMatrix });
           }
          
@@ -349,6 +373,7 @@ export default class PriceMatrix extends React.Component {
       MatrixService.getMatrix({ busCompanyId, origin, destination }).then(
         (e) => {
           const { data, success, errorCode } = e.data;
+          console.log('fetchConnectingMatrix',e.data)
           if (success) {
             let connectingMatrix = [{ ...initConnectingMatrix }];
             if (data && data.stringValues) {
@@ -525,26 +550,38 @@ export default class PriceMatrix extends React.Component {
     return (
       <>
         <Row>
-          <Col className="header-input-group" span={5}>
+          <Col className="header-input-group" span={4}>
             Declared Value Rate(%)
           </Col>
-          <Col className="header-input-group" span={5}>
-            Allowed Weight (kgs.)
+
+          <Col className="header-input-group" span={3}>
+            Max Weight (kgs.)
           </Col>
-          <Col className="header-input-group" span={5}>
-            Exceeded Per Kilo (kgs.)
+
+          <Col className="header-input-group" span={3}>
+            Excess Kilo Rate (kgs.)
           </Col>
+
           <Col className="header-input-group" span={4}>
+            Max Length (meters)
+          </Col>
+
+          <Col className="header-input-group" span={4}>
+            Excess Length Rate (%)
+          </Col>
+          
+          <Col className="header-input-group" span={3}>
             Tariff Rate(%)
           </Col>
-          <Col className="header-input-group" span={5}>
+
+          <Col className="header-input-group" span={3}>
             Price (PHP)
           </Col>
         </Row>
 
         {this.state.matrix.map((e, i) => (
-          <Row>
-            <Col span={5}>
+          <Row key={i}>
+            <Col span={4}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -559,7 +596,7 @@ export default class PriceMatrix extends React.Component {
                 />
               </div>
             </Col>
-            <Col span={5}>
+            <Col span={3}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -570,7 +607,7 @@ export default class PriceMatrix extends React.Component {
                 />
               </div>
             </Col>
-            <Col span={5}>
+            <Col span={3}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -582,6 +619,42 @@ export default class PriceMatrix extends React.Component {
               </div>
             </Col>
             <Col span={4}>
+            <div className="matrix-item">
+              <Input
+                type="number"
+                value={e["maxAllowedLength1"]} 
+                onChange={(e) =>
+                  this.matrixItemChange("maxAllowedLength1", e.target.value, i)
+                }
+              />
+              <Input
+                type="number"
+                value={e["maxAllowedLength2"]} 
+                onChange={(e) =>
+                  this.matrixItemChange("maxAllowedLength2", e.target.value, i)
+                }
+              />
+            </div>
+          </Col>
+          <Col span={4}>
+          <div className="matrix-item">
+            <Input
+              type="number"
+              value={e["maxAllowedLengthRate1"]}
+              onChange={(e) =>
+                this.matrixItemChange("maxAllowedLengthRate1", e.target.value, i)
+              }
+            />
+            <Input
+              type="number"
+              value={e["maxAllowedLengthRate2"]}
+              onChange={(e) =>
+                this.matrixItemChange("maxAllowedLengthRate2", e.target.value, i)
+              }
+            />
+          </div>
+        </Col>
+            <Col span={3}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -593,7 +666,7 @@ export default class PriceMatrix extends React.Component {
                 />
               </div>
             </Col>
-            <Col span={5}>
+            <Col span={3}>
               <div className="matrix-item">
                 <Input
                   type="number"
@@ -612,7 +685,7 @@ export default class PriceMatrix extends React.Component {
           <span style={{paddingBottom:'2rem', paddingTop:'2rem', fontSize:'14px'}}>Fix Price</span>
           {this.state.fixMatrix.map((e, index) => {
             return (
-              <div style={{ width: "100%" }}>
+              <div key={index} style={{ width: "100%" }}>
                 <Row>
                   <Col style={{ paddingBottom: "0.2rem" }}>
                     <span style={{fontSize:'12px'}}>Description</span>
@@ -872,133 +945,128 @@ export default class PriceMatrix extends React.Component {
     const connectingRoutes = { ...this.state.connectingRoutes };
     const connectingCompany = { ...this.state.connectingCompany };
     const options = connectingCompany.options;
-    const tag = this.user && this.user.busCompanyId.config.parcel.tag;
 
     let view = Skeleton;
-
-    switch (tag) {
-      case "five-star":
-        view = this.fiveStartMatrix();
-        break;
-
-      case "bicol-isarog":
-        view = (
-          <>
-            {this.bicolIsarogMatrix()}
-            {connectingCompany.options.length > 0 && (
-              <Row>
-                <div className="bicol-isarog-matrix">
-                  <Divider />
-                  <h1 className="bus-company-name">
-                    {(options.value
-                      ? options[
-                          options.map((e) => e._id).indexOf(options.value)
-                        ]
-                      : options.length > 0 && options[0].name) ||
-                      "Connecting Routes"}{" "}
-                    Matrix
-                  </h1>
-                  <Row justify="left" className="bicol-isarog-select-group">
-                    <Col span={8} style={{ paddingRight: ".5rem" }}>
-                      {options && options.length > 0 && (
-                        <>
-                          <span>Associate</span>
-                          <Select
-                            placeholder="Associate"
-                            style={{ width: "100%" }}
-                            value={connectingCompany.value}
-                            defaultValue={
-                              options && options.length > 0 && options[0]._id
-                            }
-                            onChange={(e) =>
-                              this.setState(
-                                {
-                                  connectingCompany: {
-                                    ...{ connectingCompany },
-                                    ...{ value: e },
-                                  },
+    console.log('this.UserProfileObject.isIsarogLiners()',this.UserProfileObject.isIsarogLiners())
+    if(this.UserProfileObject.isIsarogLiners()){
+      view = (
+        <>
+          {this.bicolIsarogMatrix()}
+          {connectingCompany.options.length > 0 && (
+            <Row>
+              <div className="bicol-isarog-matrix">
+                <Divider />
+                <h1 className="bus-company-name">
+                  {(options.value
+                    ? options[
+                        options.map((e) => e._id).indexOf(options.value)
+                      ]
+                    : options.length > 0 && options[0].name) ||
+                    "Connecting Routes"}{" "}
+                  Matrix
+                </h1>
+                <Row justify="left" className="bicol-isarog-select-group">
+                  <Col span={8} style={{ paddingRight: ".5rem" }}>
+                    {options && options.length > 0 && (
+                      <>
+                        <span>Associate</span>
+                        <Select
+                          placeholder="Associate"
+                          style={{ width: "100%" }}
+                          value={connectingCompany.value}
+                          defaultValue={
+                            options && options.length > 0 && options[0]._id
+                          }
+                          onChange={(e) =>
+                            this.setState(
+                              {
+                                connectingCompany: {
+                                  ...{ connectingCompany },
+                                  ...{ value: e },
                                 },
-                                () => this.getConnectingRoutes(e)
-                              )
-                            }
-                          >
-                            {options.map((e, i) => (
-                              <Option key={i} value={e._id}>
-                                {e.name}
-                              </Option>
-                            ))}
-                          </Select>
-                        </>
-                      )}
-                    </Col>
-                    <Col span={8}>
-                      {connectingRoutesOrigin.options.length > 0 && (
-                        <div className="select-padding">
-                          <span>Origin</span>
-                          <Select
-                            style={{ width: "100%" }}
-                            placeholder="Destination"
-                            value={connectingRoutesOrigin.value}
-                            onChange={(e) =>
-                              this.setState(
-                                {
-                                  connectingRoutesOrigin: {
-                                    ...connectingRoutesOrigin,
-                                    ...{ value: e },
-                                  },
+                              },
+                              () => this.getConnectingRoutes(e)
+                            )
+                          }
+                        >
+                          {options.map((e, i) => (
+                            <Option key={i} value={e._id}>
+                              {e.name}
+                            </Option>
+                          ))}
+                        </Select>
+                      </>
+                    )}
+                  </Col>
+                  <Col span={8}>
+                    {connectingRoutesOrigin.options.length > 0 && (
+                      <div className="select-padding">
+                        <span>Origin</span>
+                        <Select
+                          style={{ width: "100%" }}
+                          placeholder="Destination"
+                          value={connectingRoutesOrigin.value}
+                          onChange={(e) =>
+                            this.setState(
+                              {
+                                connectingRoutesOrigin: {
+                                  ...connectingRoutesOrigin,
+                                  ...{ value: e },
                                 },
-                                () => this.fetchConnectingMatrix()
-                              )
-                            }
-                          >
-                            {connectingRoutesOrigin.options.map((e, i) => (
-                              <Option key={i} value={e.start}>
-                                {e.startStationName}
-                              </Option>
-                            ))}
-                          </Select>
-                        </div>
-                      )}
-                    </Col>
-                    <Col span={8}>
-                      {connectingRoutes.options && (
-                        <div className="select-padding">
-                          <span>Destination</span>
-                          <Select
-                            style={{ width: "100%" }}
-                            placeholder="Destination"
-                            value={connectingRoutes.value}
-                            onChange={(e) =>
-                              this.setState(
-                                {
-                                  connectingRoutes: {
-                                    ...connectingRoutes,
-                                    ...{ value: e },
-                                  },
+                              },
+                              () => this.fetchConnectingMatrix()
+                            )
+                          }
+                        >
+                          {connectingRoutesOrigin.options.map((e, i) => (
+                            <Option key={i} value={e.start}>
+                              {e.startStationName}
+                            </Option>
+                          ))}
+                        </Select>
+                      </div>
+                    )}
+                  </Col>
+                  <Col span={8}>
+                    {connectingRoutes.options && (
+                      <div className="select-padding">
+                        <span>Destination</span>
+                        <Select
+                          style={{ width: "100%" }}
+                          placeholder="Destination"
+                          value={connectingRoutes.value}
+                          onChange={(e) =>
+                            this.setState(
+                              {
+                                connectingRoutes: {
+                                  ...connectingRoutes,
+                                  ...{ value: e },
                                 },
-                                () => this.fetchConnectingMatrix()
-                              )
-                            }
-                          >
-                            {connectingRoutes.options.map((e, i) => (
-                              <Option value={e.end}>{e.endStationName}</Option>
-                            ))}
-                          </Select>
-                        </div>
-                      )}
-                    </Col>
-                  </Row>
-                  {this.connectingMatrix()}
-                </div>
-              </Row>
-            )}
-          </>
-        );
-        break;
-
-      default:
-        break;
+                              },
+                              () => this.fetchConnectingMatrix()
+                            )
+                          }
+                        >
+                          {connectingRoutes.options.map((e, i) => (
+                            <Option value={e.end}>{e.endStationName}</Option>
+                          ))}
+                        </Select>
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+                {this.connectingMatrix()}
+              </div>
+            </Row>
+          )}
+        </>
+      )
     }
+
+    if(this.UserProfileObject.isFiveStar()){
+      view = this.fiveStartMatrix();
+    }
+
     return view;
   };
 

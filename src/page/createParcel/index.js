@@ -22,13 +22,13 @@ import {
   openNotificationWithIcon,
   clearCredential,
   debounce,
+  UserProfile
 } from "../../utility";
-import moment from 'moment'
 
 const { Content, Sider, Header } = Layout;
 
 const MIN_WIDTH = 800;
-
+const disableBISystemFee = true;
 const STEPS_LIST = [
   {
     title: "Parcel Image",
@@ -140,256 +140,262 @@ const parceResponseData = (data) =>{
 
 class CreateParcel extends React.Component {
 
-  state = {
-    width: window.innerWidth, 
-    height: window.innerHeight,
-    packageImagePreview: null,
-    currentStep: 0,
-    verifiedSteps: 0,
-    trips: undefined,
-    selectedTrip: undefined,
-    createParcelResponseData: undefined,
-    previousButtonName: "Previous",
-    nextButtonName: "Next",
-    page: 1,
-    checkIn: false,
-    isLoading: false,
-    billOfLading: {
-      name: "billOfLading",
-      value: undefined,
-      isRequired: true,
-      accepted: true,
-    },
-    details: {
-      senderName: {
-        name: "senderName",
+  constructor(){
+    super();
+    this.state = {
+      width: window.innerWidth, 
+      height: window.innerHeight,
+      packageImagePreview: null,
+      currentStep: 0,
+      verifiedSteps: 0,
+      trips: undefined,
+      selectedTrip: undefined,
+      createParcelResponseData: undefined,
+      previousButtonName: "Previous",
+      nextButtonName: "Next",
+      page: 1,
+      checkIn: false,
+      isLoading: false,
+      billOfLading: {
+        name: "billOfLading",
         value: undefined,
         isRequired: true,
         accepted: true,
       },
-      senderMobile: {
-        name: "senderMobile",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
+      details: {
+        senderName: {
+          name: "senderName",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        senderMobile: {
+          name: "senderMobile",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        senderEmail: {
+          name: "senderEmail",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          hasError: false,
+        },
+        recieverName: {
+          name: "recieverName",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        recieverMobile: {
+          name: "recieverMobile",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        recieverEmail: {
+          name: "recieverEmail",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          hasError: false,
+        },
+        destination: {
+          name: "destination",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+          options: [],
+        },
+        connectingCompany:{
+          name: "connectingCompany",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          options: [],
+        },
+        connectingRoutes:{
+          name: "connectingRoutes",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          options: [],
+        },
+        associateORNumber:{
+          name: "associateORNumber",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        description: {
+          name: "description",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        declaredValue: {
+          name: "declaredValue",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        quantity: {
+          name: "quantity",
+          value: 1,
+          isRequired: true,
+          accepted: true,
+          disabled:true
+        },
+        sticker_quantity: {
+          name: "sticker_quantity",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        systemFee: {
+          name: "systemFee",
+          value: 0,
+          isRequired: false,
+          accepted: true,
+          disabled:true,
+  
+        },
+        additionNote: {
+          name: "additionNote",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        packageInsurance: {
+          name: "packageInsurance",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          title:"",
+          placeholder:"Declared Value Rate",
+        },
+        type: {
+          name: "type",
+          value: 3,
+          isRequired: false,
+          accepted: true,
+          options: [
+            {
+              value: 1,
+              name: "Excess AC",
+              disabled:true,
+            },
+            {
+              value: 2,
+              name: "Excess Non AC",
+              disabled:true,
+            },
+            {
+              value: 3,
+              name: "Cargo Padala",
+              disabled:false,
+            },
+          ],
+        },
+        packageWeight: {
+          name: "packageWeight",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+        },
+        shippingCost: {
+          name: "shippingCost",
+          value: 0,
+          isRequired: false,
+          accepted: true,
+          disabled:true
+        },
+        totalShippingCost: {
+          name: "totalShippingCost",
+          value: 0,
+          isRequired: false,
+          accepted: true,
+        },
+        paxs: {
+          name: "paxs",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          disabled: true,
+        },
+        length: {
+          name: "length",
+          value: 0,
+          isRequired: true,
+          accepted: true,
+        },
+        fixMatrix:{
+          name: "fixMatrix",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          options: [],
+        },
+        busNumber: {
+          name: "busNumber",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        tripCode: {
+          name: "tripCode",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        driverFullName: {
+          name: "driverFullName",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        conductorFullName: {
+          name: "conductorFullName",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        discount: {
+          name: "discount",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          options: [{name:"employee-discount",rate:10}],
+        },
       },
-      senderEmail: {
-        name: "senderEmail",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        hasError: false,
-      },
-      recieverName: {
-        name: "recieverName",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      recieverMobile: {
-        name: "recieverMobile",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      recieverEmail: {
-        name: "recieverEmail",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        hasError: false,
-      },
-      destination: {
-        name: "destination",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-        options: [],
-      },
-      connectingCompany:{
-        name: "connectingCompany",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        options: [],
-      },
-      connectingRoutes:{
-        name: "connectingRoutes",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        options: [],
-      },
-      associateORNumber:{
-        name: "associateORNumber",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-      },
-      description: {
-        name: "description",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      declaredValue: {
-        name: "declaredValue",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      quantity: {
-        name: "quantity",
-        value: 1,
-        isRequired: true,
-        accepted: true,
-      },
-      sticker_quantity: {
-        name: "sticker_quantity",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      systemFee: {
-        name: "systemFee",
-        value: 0,
-        isRequired: false,
-        accepted: true,
-        disabled:true,
-
-      },
-      additionNote: {
-        name: "additionNote",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-      },
-      packageInsurance: {
-        name: "packageInsurance",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        title:"",
-        placeholder:"Declared Value Rate",
-      },
-      type: {
-        name: "type",
-        value: 3,
-        isRequired: false,
-        accepted: true,
-        options: [
-          {
-            value: 1,
-            name: "Excess AC",
-            disabled:true,
-          },
-          {
-            value: 2,
-            name: "Excess Non AC",
-            disabled:true,
-          },
-          {
-            value: 3,
-            name: "Cargo Padala",
-            disabled:false,
-          },
-        ],
-      },
-      packageWeight: {
-        name: "packageWeight",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      shippingCost: {
-        name: "shippingCost",
-        value: 0,
-        isRequired: false,
-        accepted: true,
-        disabled:true
-      },
-      totalShippingCost: {
-        name: "totalShippingCost",
-        value: 0,
-        isRequired: false,
-        accepted: true,
-      },
-      paxs: {
-        name: "paxs",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        disabled: true,
-      },
-      length: {
-        name: "length",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
-      fixMatrix:{
-        name: "fixMatrix",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        options: [],
-      },
-      busNumber: {
-        name: "busNumber",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-      },
-      tripCode: {
-        name: "tripCode",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-      },
-      driverFullName: {
-        name: "driverFullName",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-      },
-      conductorFullName: {
-        name: "conductorFullName",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-      },
-      discount: {
-        name: "discount",
-        value: undefined,
-        isRequired: false,
-        accepted: true,
-        options: [{name:"employee-discount",rate:10}],
-      },
-    },
-    enalbeBicolIsarogWays:false,
-    declaredValueAdditionFee:0.1,
-    noOfStickerCopy:2,
-    connectingCompanyComputation:0,
-    tariffRate:undefined,
-    
-  };
-
-  componentWillUnmount(){
+      enalbeBicolIsarogWays:false,
+      declaredValueAdditionFee:0.1,
+      noOfStickerCopy:2,
+      connectingCompanyComputation:0,
+      tariffRate:undefined,
+      lengthRate:0
+    };
+    this.UserProfileObject = new UserProfile();
     this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
     this.computePrice = debounce(this.computePrice,1000)
     this.getMatrixFare = debounce(this.getMatrixFare,1000)
     this.printEl = React.createRef();
-    window.removeEventListener("resize",e=>console.log('remove events',e))
-  }
 
-  componentDidMount(){
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,
         width: e.currentTarget.innerWidth,
       });
     });
+  }
 
+  componentWillUnmount(){
+    this.UserProfileObject = null;
+    window.removeEventListener("resize",e=>console.log('remove events',e))
+  }
+
+  componentDidMount(){
     this.USER = getUser();
     const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined;
     this.origin = this.USER.assignedStation._id
@@ -416,17 +422,13 @@ class CreateParcel extends React.Component {
         noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
       }
 
-    //   const length = {...details.length, ...{isRequired: false}};
-    //   details = {...details, ...{length}}
       this.setState({
-        enalbeBicolIsarogWays: busCompanyId.externalCompany === 1,
+        enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
         noOfStickerCopy,
         details
       })
     }
    
-    const stationId = this.USER && this.USER.assignedStation._id;
-
     ManifestService.getRoutes().then(e=>{
       const{data, success, errorCode}=e.data;
       if(success){
@@ -442,7 +444,6 @@ class CreateParcel extends React.Component {
               startStationName: e.startStationName,
               endStation:e.end
             })
-            
           })
          
           let clean=[]
@@ -455,67 +456,15 @@ class CreateParcel extends React.Component {
           })
 
           const destination = {...details.destination, ...{options:_myOption}}
-          this.setState({
-            //tripOption:_myOption,
-            //trips:data.trips.data, 
-            details:{...details, ...{destination}}
-          })
+          this.setState({details:{...details, ...{destination}}})
         }
       }else{
         this.handleErrorNotification(errorCode)
       }
     })
-
-    // ParcelService.getTrips(stationId).then(e=>{
-    //   const{data, success, errorCode}=e.data;
-    //   if(success){
-    //     if(data.trips){
-    //       const details = {...this.state.details}
-    //       let _myOption =[] 
-
-    //       data.trips.data.forEach(e=>{
-    //         _myOption.push({
-    //           name:e.endStation.name,
-    //           value:e.endStation._id,
-    //           startStationId:e.startStation._id,
-    //           startStationName: e.startStation.name,
-    //           companyId:e.busCompanyId._id,
-    //           companyName: e.busCompanyId.name,
-    //           tripStartDateTime: e.tripStartDateTime,
-    //           busModel:e.bus.busModel,
-    //           busId:e.bus.busId,
-    //           tripsId:e._id,
-    //           endStation:e.endStation._id
-    //         })
-            
-    //       })
-         
-    //       let clean=[]
-    //       _myOption = _myOption.filter(e=>{
-    //         if(!clean.includes(e.value)){
-    //           clean.push(e.value)
-    //           return true
-    //         }
-    //         return false;
-    //       })
-
-    //       const destination = {...details.destination, ...{options:_myOption}}
-    //       this.setState({
-    //         tripOption:_myOption,
-    //         trips:data.trips.data, 
-    //         details:{...details, ...{destination}}
-    //       })
-    //     }
-    //   }else{
-    //     this.handleErrorNotification(errorCode)
-    //   }
-    // })
-
-    
   }
 
   handleErrorNotification = (code) =>{
-
     if(isNull(code)){
       showNotification({
         title: "Server Error",
@@ -762,8 +711,7 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
-    const enableBISystemFee = true;
-    if(enableBISystemFee && this.state.enalbeBicolIsarogWays){
+    if(disableBISystemFee && this.state.enalbeBicolIsarogWays){
       return;
     }
 
@@ -812,7 +760,8 @@ class CreateParcel extends React.Component {
       declaredValue, 
       paxs, 
       packageWeight, 
-      type
+      type,
+      length
     }= this.state.details
 
     const busCompanyId =  (this.USER && this.USER.busCompanyId._id) || undefined;
@@ -821,6 +770,7 @@ class CreateParcel extends React.Component {
     const endStation = selectedOption.endStation || undefined;
     const decValue = declaredValue.value ? parseFloat(declaredValue.value).toFixed(2) : undefined;
     const pax = paxs.value || 0;
+    const parcel_length = length.value || 0;
     const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined
 
     if(!isNull(busCompanyId) && !isNull(startStation) && !isNull(endStation) && !isNull(weight) && !isNull(decValue) ){
@@ -833,16 +783,20 @@ class CreateParcel extends React.Component {
         pax,
         startStation,
         weight,
+        parcel_length
       )
       .then(e => {
         let details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
+        console.log('getDynamic e', e)
         if(success){
           const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.totalCost).toFixed(2)}}
           const packageInsurance = {...details.packageInsurance, ...{value:parseFloat(data.declaredRate).toFixed(2)}}
           details = {...details, ...{shippingCost}}
           details = {...details, ...{packageInsurance}}
-          this.setState({details:{...details, ...{shippingCost}}})
+          this.setState({
+            lengthRate: parseFloat(data.lengthRate).toFixed(2),
+            details:{...details, ...{shippingCost}}},()=>this.updateTotalShippingCost())
         }else{
           this.handleErrorNotification(errorCode)
         }
@@ -984,7 +938,11 @@ class CreateParcel extends React.Component {
         details.shippingCost.value = price;
         details.packageWeight.disabled = true;
         details.packageWeight.value = 0;
-        this.setState({details},()=>this.updateTotalShippingCost())
+        details.length.disabled = true;
+        details.length.value = 0;
+        details.quantity.disabled = false
+        details.quantity.value = 1
+        this.setState({lengthRate:0, details},()=>this.updateTotalShippingCost())
 
       }else{
         details.fixMatrix.value = 'none';
@@ -997,8 +955,12 @@ class CreateParcel extends React.Component {
         details.declaredValue.value = 0
         details.shippingCost.value = 0;
         details.packageWeight.value = 0;
-        this.setState({details},()=>this.updateTotalShippingCost())
+        details.length.disabled = true;
+        details.length.value = 0;
+        details.quantity.disabled = true
+        details.quantity.value = 1
 
+        this.setState({lengthRate:0, details},()=>this.updateTotalShippingCost())
       }
      
     }
@@ -1047,6 +1009,7 @@ class CreateParcel extends React.Component {
                   if(item)
                     this.setState({details:{...this.state.details, ...{[name]:item}}})
                 }}
+                lengthRate={this.state.lengthRate}
                 details={this.state.details}
                 onTypeChange={(e) => this.onTypeChange(e.target.value)}
                 onSelectChange={(value,name) => this.onSelectChange(value, name)}
@@ -1060,6 +1023,7 @@ class CreateParcel extends React.Component {
                   if(item)
                     this.setState({details:{...this.state.details, ...{[name]:item}}})
                 }}
+                lengthRate={this.state.lengthRate}
                 details={this.state.details}
                 onTypeChange={(e) => this.onTypeChange(e.target.value)}
                 onSelectChange={(value,name) => this.onSelectChange(value, name)}
@@ -1261,7 +1225,8 @@ class CreateParcel extends React.Component {
     let total = parseFloat(currentDetails.shippingCost.value || 0) 
       + parseFloat(currentDetails.systemFee.value || 0)
         + parseFloat(currentDetails.packageInsurance.value || 0)
-          + parseFloat(this.state.connectingCompanyComputation || 0)
+          + parseFloat(this.state.lengthRate)
+            + parseFloat(this.state.connectingCompanyComputation || 0)
     
     total = Number(total)
 
