@@ -24,7 +24,6 @@ import {
   debounce,
   UserProfile
 } from "../../utility";
-import moment from 'moment'
 
 const { Content, Sider, Header } = Layout;
 
@@ -141,7 +140,6 @@ const parceResponseData = (data) =>{
 
 class CreateParcel extends React.Component {
 
-  
   constructor(){
     super();
     this.state = {
@@ -247,6 +245,7 @@ class CreateParcel extends React.Component {
           value: 1,
           isRequired: true,
           accepted: true,
+          disabled:true
         },
         sticker_quantity: {
           name: "sticker_quantity",
@@ -327,7 +326,7 @@ class CreateParcel extends React.Component {
         },
         length: {
           name: "length",
-          value: undefined,
+          value: 0,
           isRequired: true,
           accepted: true,
         },
@@ -375,16 +374,8 @@ class CreateParcel extends React.Component {
       noOfStickerCopy:2,
       connectingCompanyComputation:0,
       tariffRate:undefined,
-      leghtRate:0
+      lengthRate:0
     };
-  
-  }
-
-  componentWillUnmount(){
-    window.removeEventListener("resize",e=>console.log('remove events',e))
-  }
-
-  componentDidMount(){
     this.UserProfileObject = new UserProfile();
     this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
     this.computePrice = debounce(this.computePrice,1000)
@@ -397,7 +388,14 @@ class CreateParcel extends React.Component {
         width: e.currentTarget.innerWidth,
       });
     });
+  }
 
+  componentWillUnmount(){
+    this.UserProfileObject = null;
+    window.removeEventListener("resize",e=>console.log('remove events',e))
+  }
+
+  componentDidMount(){
     this.USER = getUser();
     const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined;
     this.origin = this.USER.assignedStation._id
@@ -446,7 +444,6 @@ class CreateParcel extends React.Component {
               startStationName: e.startStationName,
               endStation:e.end
             })
-            
           })
          
           let clean=[]
@@ -459,67 +456,15 @@ class CreateParcel extends React.Component {
           })
 
           const destination = {...details.destination, ...{options:_myOption}}
-          this.setState({
-            //tripOption:_myOption,
-            //trips:data.trips.data, 
-            details:{...details, ...{destination}}
-          })
+          this.setState({details:{...details, ...{destination}}})
         }
       }else{
         this.handleErrorNotification(errorCode)
       }
     })
-
-    // ParcelService.getTrips(stationId).then(e=>{
-    //   const{data, success, errorCode}=e.data;
-    //   if(success){
-    //     if(data.trips){
-    //       const details = {...this.state.details}
-    //       let _myOption =[] 
-
-    //       data.trips.data.forEach(e=>{
-    //         _myOption.push({
-    //           name:e.endStation.name,
-    //           value:e.endStation._id,
-    //           startStationId:e.startStation._id,
-    //           startStationName: e.startStation.name,
-    //           companyId:e.busCompanyId._id,
-    //           companyName: e.busCompanyId.name,
-    //           tripStartDateTime: e.tripStartDateTime,
-    //           busModel:e.bus.busModel,
-    //           busId:e.bus.busId,
-    //           tripsId:e._id,
-    //           endStation:e.endStation._id
-    //         })
-            
-    //       })
-         
-    //       let clean=[]
-    //       _myOption = _myOption.filter(e=>{
-    //         if(!clean.includes(e.value)){
-    //           clean.push(e.value)
-    //           return true
-    //         }
-    //         return false;
-    //       })
-
-    //       const destination = {...details.destination, ...{options:_myOption}}
-    //       this.setState({
-    //         tripOption:_myOption,
-    //         trips:data.trips.data, 
-    //         details:{...details, ...{destination}}
-    //       })
-    //     }
-    //   }else{
-    //     this.handleErrorNotification(errorCode)
-    //   }
-    // })
-
-    
   }
 
   handleErrorNotification = (code) =>{
-
     if(isNull(code)){
       showNotification({
         title: "Server Error",
@@ -770,8 +715,6 @@ class CreateParcel extends React.Component {
       return;
     }
 
-    console.log('pass===>>>')
-
     const setSystemFee = (value) =>{
       let details = {...this.state.details}
       let systemFee= {...this.state.details.systemFee}
@@ -812,11 +755,6 @@ class CreateParcel extends React.Component {
       return;
     }
 
-    console.log('passss=====.>')
-    console.log('passss=====.>')
-    console.log('passss=====.>')
-    console.log('passss=====.>')
-
     const{ 
       destination, 
       declaredValue, 
@@ -850,13 +788,14 @@ class CreateParcel extends React.Component {
       .then(e => {
         let details = {...this.state.details}
         const{ data, success, errorCode }=e.data;
+        console.log('getDynamic e', e)
         if(success){
           const shippingCost = {...details.shippingCost, ...{value:parseFloat(data.totalCost).toFixed(2)}}
           const packageInsurance = {...details.packageInsurance, ...{value:parseFloat(data.declaredRate).toFixed(2)}}
           details = {...details, ...{shippingCost}}
           details = {...details, ...{packageInsurance}}
           this.setState({
-            leghtRate: parseFloat(data.lengthRate).toFixed(2),
+            lengthRate: parseFloat(data.lengthRate).toFixed(2),
             details:{...details, ...{shippingCost}}},()=>this.updateTotalShippingCost())
         }else{
           this.handleErrorNotification(errorCode)
@@ -999,7 +938,11 @@ class CreateParcel extends React.Component {
         details.shippingCost.value = price;
         details.packageWeight.disabled = true;
         details.packageWeight.value = 0;
-        this.setState({details},()=>this.updateTotalShippingCost())
+        details.length.disabled = true;
+        details.length.value = 0;
+        details.quantity.disabled = false
+        details.quantity.value = 1
+        this.setState({lengthRate:0, details},()=>this.updateTotalShippingCost())
 
       }else{
         details.fixMatrix.value = 'none';
@@ -1012,8 +955,12 @@ class CreateParcel extends React.Component {
         details.declaredValue.value = 0
         details.shippingCost.value = 0;
         details.packageWeight.value = 0;
-        this.setState({details},()=>this.updateTotalShippingCost())
+        details.length.disabled = true;
+        details.length.value = 0;
+        details.quantity.disabled = true
+        details.quantity.value = 1
 
+        this.setState({lengthRate:0, details},()=>this.updateTotalShippingCost())
       }
      
     }
@@ -1062,6 +1009,7 @@ class CreateParcel extends React.Component {
                   if(item)
                     this.setState({details:{...this.state.details, ...{[name]:item}}})
                 }}
+                lengthRate={this.state.lengthRate}
                 details={this.state.details}
                 onTypeChange={(e) => this.onTypeChange(e.target.value)}
                 onSelectChange={(value,name) => this.onSelectChange(value, name)}
@@ -1276,7 +1224,7 @@ class CreateParcel extends React.Component {
     let total = parseFloat(currentDetails.shippingCost.value || 0) 
       + parseFloat(currentDetails.systemFee.value || 0)
         + parseFloat(currentDetails.packageInsurance.value || 0)
-          + parseFloat(this.state.leghtRate)
+          + parseFloat(this.state.lengthRate)
             + parseFloat(this.state.connectingCompanyComputation || 0)
     
     total = Number(total)
