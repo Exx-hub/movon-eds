@@ -366,7 +366,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          options: [{name:"employee-discount",rate:10}],
+          options: [{name:"employee-discount",rate:20}],
         },
       },
       enalbeBicolIsarogWays:false,
