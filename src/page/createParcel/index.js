@@ -1023,6 +1023,7 @@ class CreateParcel extends React.Component {
                   if(item)
                     this.setState({details:{...this.state.details, ...{[name]:item}}})
                 }}
+                lengthRate={this.state.lengthRate}
                 details={this.state.details}
                 onTypeChange={(e) => this.onTypeChange(e.target.value)}
                 onSelectChange={(value,name) => this.onSelectChange(value, name)}
