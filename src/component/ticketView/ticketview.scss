@@ -9,151 +9,93 @@
         margin:.5rem;
     }
 
-    .to-bold h5{
-        font-weight: bold;
-        //font-size: 13px;
+    .date-created{
+        margin-top: 1rem;
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+    
+    .package-indicator-sp{
+        margin-top: 1rem;
+        font-size: 3em;
     }
 
-    .title h5{
+    .package-indicator{
+        margin-top: 3rem;
+        font-size: 1.5em;
+        font-weight: 200;
+    }
+
+    .customer-copy-text{
+        margin-top: .5rem;
         font-weight: bold;
-        //font-size: 13px;
+        font-size: 1.1em;
+        font-weight: 200;
+    }
+
+    .pkg-text{
+        font-size: .8em;
+        font-weight: 200;
+    }
+
+    .sp-copy-margin{
+        margin-top: 1rem;
+    }
+
+    .image-logo-container{
+        width: 100%;
+        height: 50px;
+        margin-top: .5rem;
+        margin-left: .5rem;
+        margin-bottom: 1rem;
+        
+        .movon-logo{
+            height: 60%;
+            width: 90px;
+            margin-right: 3rem;
+            margin-top: .5rem;
+            margin-left: .5rem;
+        }
+
+        .partner-logo{
+            height: 110%;
+            width: 110px;
+            margin-right: 1rem;
+        }
     }
 
     .ticket-details{
         border:1px dashed gray;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         width: 5.4in;
         height: 4.0416in;
-
-        h3{
-            margin-left: 1rem;
-        }
-
-        .image-logo-container{
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: center;
-            width: 100%;
-            height: 50px;
-            margin-top: .5rem;
-    
-            .movon-logo{
-                height: 50%;
-                width: 80px;
-                margin-right: 3rem;
-            }
-    
-            .partner-logo{
-                height: 110%;
-                width: 110px;
-            }
-        }
-
-        .code-date-container{
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-
-            .code-date-container-item1{
-                font-size: 20px;
-                font-weight: bold;
-            }
-
-            .code-date-container-destination{
-                font-size: 16px;
-                font-style: bold;
-                text-align: center;
-            }
-            
-        }
-
-        .destination-container{
-
-            .destination{
-                color: black;
-                //font-size: 20px;
-                font-weight: bold;
-                margin-right: .5rem;
-            }
-            .destination-value{
-                color: black;
-                font-weight: bold;
-                //font-size: 20px;
-            }
-        }
-    }
-
-    .qr-section{
-        display: flex;
-        flex-direction: column;
-        width: 70%;
-        justify-content: space-between;
-        align-items: center;
-        flex-grow: 1;
-        margin-right: 1rem;
-
-        .qr-container{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-
-            .qr-code-img{
-                padding: 10px;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;;
-                align-items: flex-start;;
-
-                h5{
-                    margin-top: 1rem;
-                    font-size: 18px;
-                    font-weight: bold;
-                    text-align: left;
-                    width: 100%;
-                }
-            }
-        }
-
-        .parcel-count{
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-            font-size: 22px;
-            font-weight: bold;
-        }
-    }
-
-    .ticket-view-populate-section{
-        margin-top: .5rem;
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    .details-txt{
-        font-size: 1.15em;
-        height: 20px;
-        color: black;
-        height: 25px;
-
-        .span-description {
-            width: 100px !important;
-            font-size: .6em;
-          }
-
-        // h5{
-        //     font-size: 16px;
-        //     font-weight: bold;
-        // }
-       
-    }
-    .code-date-container-item2{
-        margin-top: 1rem;
-        font-size: 1rem;
     }
 }
+
+.bottom-destination-text{
+    margin-top: .3rem;
+    font-size: 3em;
+    line-height: 1em;
+    color: black;
+    font-weight: bold;
+}
+
+.bottom-blNo-text{
+    font-size: 1.5em;
+    padding-bottom: 1rem;
+    color: black;
+    font-weight: bold;
+}
+
+.details-title-text{
+    font-size: 1.3em;
+    font-weight: 200;
+}
+
+.details-value-text{
+    font-size: 1.3em;
+    font-weight: 500;
+}
+
