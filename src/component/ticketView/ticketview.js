@@ -7,8 +7,6 @@ import { config } from "../../config";
 import moment from "moment";
 import { getUser, modifyName } from "../../utility";
 
-
-
 function TextItem(props){
     return (
         <Row style={{marginBottom:'.3rem'}}>
@@ -47,7 +45,7 @@ const TicketDetails = (props) => {
             </Row>
             <Row justify="center">
             {
-                Boolean(props.spCopy) ? <span className="package-indicator-sp">1/1</span> : 
+                Boolean(props.spCopy) ? <span className="package-indicator-sp">{props.parcelCount}</span> : 
                 <>
                     <span className="package-indicator"> {packageQty} <span className="pkg-text">pkg.</span> </span>
                     <span className="customer-copy-text">{`Customer's Copy`}</span>
@@ -113,12 +111,12 @@ const SpCopy = (props) => {
         senderName,
         senderPhone,
         startStationName,
-        totalPrice,
       } = props.value;  
 
     let _view = [];
     for (let i = 0; i < props.value.subParcels.length; i++) {
       const scanCode = props.value.subParcels[i].subParcelCode;
+      const parcelCount = i + 1 +"/"+ props.value.subParcels.length
       const parcelInfo=[
         {title:"Sender", value:modifyName(senderName)},
         {title:"Mobile No.", value:senderPhone},
@@ -128,11 +126,7 @@ const SpCopy = (props) => {
         {title:"Origin", value: startStationName},
     ]
       _view.push(
-        <TicketDetails spCopy={true} parcelInfo={parcelInfo} key={i} {...props} code={scanCode}>
-          <span>
-            {i + 1} of {props.value.subParcels.length}
-          </span>
-        </TicketDetails>
+        <TicketDetails spCopy={true} parcelInfo={parcelInfo} key={i} {...props} code={scanCode} parcelCount={parcelCount}/>
       );
     }
     return _view;
