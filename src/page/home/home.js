@@ -190,8 +190,9 @@ function Home(props) {
         {key:"matrix-vli", destination: alterPath("/matrix/victory-liners"), action:()=>{}},
         {key:"sales-vli-bitsi", destination: alterPath("/report/sales/vli-bitsi"), action:()=>{}},
         {key:"sales-cargo", destination: alterPath("/report/sales/cargo"), action:()=>{}},
-        {key:"drop-down-setting",  name:'Setting', type:'menu', destination: alterPath("/drop-down-setting"), icon:()=><SettingOutlined/>, action:()=>userProfileObject.logout(User)},
-        {key:"drop-down-logout", name:'Logout', type:'menu', destination: alterPath("/drop-down-logout"), icon:()=><PoweroffOutlined/>, action:()=>{}},
+        {key:"drop-down-setting",  name:'Setting', type:'menu', destination: alterPath("/drop-down-setting"), icon:()=><SettingOutlined/>, action:()=>{}},
+        {key:"drop-down-logout", name:'Logout', type:'menu', destination: alterPath("/drop-down-logout"), icon:()=><PoweroffOutlined/>,action:()=>userProfileObject.logout(User)
+        },
       ])
     }
   },[state,menuData,userProfileObject]);
@@ -214,16 +215,9 @@ function Home(props) {
       {
         menu.map(e=>{
           const IconMenu = e.icon;
-          return <Menu.Item key="drop-down-setting"> <IconMenu/> {e.name} </Menu.Item>
+          return <Menu.Item key={e.key}> <IconMenu/> {e.name} </Menu.Item>
         })
       }
-        <Menu.Item key="drop-down-setting">
-          <SettingOutlined /> Setting
-        </Menu.Item>
-        <Menu.Divider />
-        <Menu.Item key="drop-down-logout">
-          <PoweroffOutlined /> Logout
-        </Menu.Item>
       </Menu>
     );
   }

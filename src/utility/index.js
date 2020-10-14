@@ -92,6 +92,10 @@ export class UserProfile{
   }
 
   logout(User){
+    console.log('passsss===>>logout')
+    console.log('passsss===>>logout')
+    console.log('passsss===>>logout')
+    console.log('passsss===>>logout')
     User.logout(this.token)
     .then(this.clearData())
     .catch(this.clearData());
