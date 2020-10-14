@@ -91,6 +91,19 @@ export class UserProfile{
     }  
   }
 
+  logout(User){
+    User.logout(this.token)
+    .then(this.clearData())
+    .catch(this.clearData());
+  }
+
+  clearData(){
+    localStorage.setItem('credential',null)
+    this.token = null;
+    this.user = null;
+    this.credential = null
+  }
+
   getToken(){
     return this.token
   }
@@ -132,6 +145,8 @@ export class UserProfile{
     }
     return false;
   }
+
+
 }
 
 export const clearCredential = () =>{
@@ -187,8 +202,16 @@ export const debounce = (func, wait) => {
   };
 };
 
-export const envPath = (path) => {
-  const env =  process.env.NODE_ENV;
-  return process.env.NODE_ENV === 'development' ? '/staging' : '/production' + path
-};
+export const alterPath = (path, props) =>{
+  console.log('process.env.NODE_ENV',process.env.NODE_ENV)
+  return process.env.NODE_ENV === 'development' ? '/staging' + path : path
+}
+
+export const modifyName = fullName =>{
+  fullName = fullName.toLowerCase();
+  const i = fullName.split(" ")
+  return i.map(name=>{
+      return name.charAt(0).toUpperCase() + name.slice(1) + " "
+  })
+}
   
