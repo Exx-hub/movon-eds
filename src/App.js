@@ -1,30 +1,29 @@
 import React from 'react';
+import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import Login from './page/login'
 import CreateParcel from './page/createParcel'
 import ManifestDetails from './page/manifestDetails'
 import PrinManifestDetails from './page/prinManifestDetails'
-import {getCredential} from './utility'
+import {getCredential,alterPath} from './utility'
 import Home from './page/home'
 import 'antd/dist/antd.css';
 import './App.scss';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect
-} from "react-router-dom";
 
 function App() {
+
+  const ProtectedRoute = (params) => {
+    return getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
+  } 
 
   return (
     <Router>
       <Switch>
-          <Route exact={true} path="/login" render={props=> <Login {...props} />} />
-          <Route exact={true} path="/parcel" render={props=> getCredential() ? <CreateParcel {...props}/> : <Redirect to="/login" /> }/>
-          <Route exact={true} path="/manifest/details" render={props=> getCredential() ? <ManifestDetails {...props}/>: <Redirect to="/login" /> }/>
-          <Route exact={true} path="/manifest/print/" render={props=> getCredential() ? <PrinManifestDetails {...props}/> : <Redirect to="/login" /> }/>
-          <Route path="/" render={props=> getCredential() ? <Home {...props}/> : <Redirect to="/login" /> }/>
-        </Switch>
+      <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
+      <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={ManifestDetails}/>
+      <ProtectedRoute exact={true} path={alterPath("/manifest/print/")} component={PrinManifestDetails} />
+      <ProtectedRoute exact={true} path={alterPath("/create-parcel")} component={CreateParcel}  /> 
+      <ProtectedRoute path={alterPath("/")} component={Home}  /> 
+      </Switch>
     </Router>
   );
 

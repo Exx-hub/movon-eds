@@ -12,6 +12,7 @@ import {
   openNotificationWithIcon,
   clearCredential,
   getUser,
+  alterPath,
 } from "../../utility";
 import { notification } from "antd";
 
@@ -456,7 +457,7 @@ class ManifestDetails extends React.Component {
     if (code === 1000) {
       openNotificationWithIcon("error", code);
       clearCredential();
-      this.props.history.push("/");
+      this.props.history.push(alterPath("/"));
       return;
     }
     openNotificationWithIcon("error", code);
@@ -612,7 +613,7 @@ class ManifestDetails extends React.Component {
               <Button
                 type="link"
                 onClick={() => {
-                  this.props.history.push("/manifest/list");
+                  this.props.history.push(alterPath("/manifest/list"));
                 }}
               >
                 <ArrowLeftOutlined

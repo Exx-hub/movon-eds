@@ -4,7 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { RoundedButton } from '../../component/button'
 import movoncargo from '../../assets/movoncargo.png';
 import User from '../../service/User';
-import { getCredential, setCredential, clearCredential, openNotificationWithIcon } from '../../utility'
+import { getCredential, setCredential, clearCredential, openNotificationWithIcon, alterPath } from '../../utility'
 import './login.scss'
 
 function Login(props) {
@@ -16,7 +16,7 @@ function Login(props) {
 
   React.useEffect(() => {
     if(getCredential()){
-      props.history.push('/')
+      props.history.push(alterPath('/'))
     }
   },[props.history]);
 
@@ -32,7 +32,7 @@ function Login(props) {
     if(code === 1000){
       openNotificationWithIcon('error', code, ()=>{
         clearCredential();
-        this.props.history.push('/')
+        this.props.history.push(alterPath('/'))
       })
       return;
     }
@@ -48,7 +48,7 @@ function Login(props) {
       setState({...state, ...{isLoading:false}})
       if(success){
         setCredential({ user: data.user, token: data.token});
-        props.history.push('/')
+        props.history.push(alterPath('/'))
         return;
       }
       handleErrorNotification(errorCode)    

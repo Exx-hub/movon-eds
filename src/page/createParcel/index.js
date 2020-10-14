@@ -22,7 +22,8 @@ import {
   openNotificationWithIcon,
   clearCredential,
   debounce,
-  UserProfile
+  UserProfile,
+  alterPath
 } from "../../utility";
 
 const { Content, Sider, Header } = Layout;
@@ -479,7 +480,7 @@ class CreateParcel extends React.Component {
     if(code === 1000){
       openNotificationWithIcon('error', code);
       clearCredential();
-      this.props.history.push('/');
+      this.props.history.push(alterPath('/'));
       return;
     }
     openNotificationWithIcon('error', code);
@@ -1285,7 +1286,7 @@ class CreateParcel extends React.Component {
       <Layout className="create-parcelview-parent-container">
         <Header className="home-header-view" style={{ padding: 0 }}>
           <div style={{ float: "left" }}>
-            <Button type="link" onClick={() => this.props.history.push('/')}>
+            <Button type="link" onClick={() => this.props.history.push(alterPath('/'))}>
               <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
               <span style={{ fontSize: "20px", color: "#fff" }}>Home</span>
             </Button>

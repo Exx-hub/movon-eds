@@ -9,6 +9,7 @@ import ParcelService from '../../service/Parcel';
 
 
 import {
+  alterPath,
   getUser
 } from "../../utility";
 
@@ -170,7 +171,7 @@ class PrintManifestDetails extends React.Component {
         <Header className="home-header-view">
         <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
         <div>
-          <Button type="link" onClick={() => this.props.history.goBack()}>
+          <Button type="link" onClick={() => this.props.history.push(alterPath('/'))}>
           <ArrowLeftOutlined style={{ fontSize: '16px', color: '#fff' }} />
             <span style={{ fontSize: "20px", color: "#fff" }}>Print Manifest</span>
           </Button>
