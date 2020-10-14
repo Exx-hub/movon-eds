@@ -29,7 +29,7 @@ import {
 const { Content, Sider, Header } = Layout;
 
 const MIN_WIDTH = 800;
-const disableBISystemFee = true;
+const disableBISystemFee = false;
 const STEPS_LIST = [
   {
     title: "Parcel Image",
@@ -423,8 +423,6 @@ class CreateParcel extends React.Component {
         noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
       }
 
-      console.log("enalbeBicolIsarogWays",this.UserProfileObject.isIsarogLiners())
-
       this.setState({
         enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
         noOfStickerCopy,
@@ -714,7 +712,8 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
-    if(disableBISystemFee && this.state.enalbeBicolIsarogWays){
+    //disable system fee
+    if(this.state.enalbeBicolIsarogWays){
       return;
     }
 
@@ -1172,7 +1171,7 @@ class CreateParcel extends React.Component {
           return;
         }
 
-        if(this.state.enalbeBicolIsarogWays){
+        //if(this.state.enalbeBicolIsarogWays){
 
           this.computePrice();
 
@@ -1198,13 +1197,14 @@ class CreateParcel extends React.Component {
               })
             }
           }
-        }else{
-          this.getMatrixFare({
-            declaredValue:currentDetails.declaredValue.value,
-            weight:currentDetails.packageWeight.value,
-            length:currentDetails.length.value || 0
-          });
-        }
+        //}
+        //else{
+          // this.getMatrixFare({
+          //   declaredValue:currentDetails.declaredValue.value,
+          //   weight:currentDetails.packageWeight.value,
+          //   length:currentDetails.length.value || 0
+          // });
+        //}
       }
     }
 
