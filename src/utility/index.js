@@ -111,11 +111,18 @@ export class UserProfile{
 
   getAssignedStation(){
     if(this.user){
-      const {_id, name}=this.user.assignedStation
-      return { _id, name }
+      return this.user.assignedStation || undefined
     }
     return undefined;
   }
+
+  getAssignedStationId(){
+    if(this.getAssignedStation()){
+      return this.getAssignedStation()._id || undefined
+    }
+    return undefined;
+  }
+
 
   getBusCompany(){
     if(this.user){
@@ -124,6 +131,12 @@ export class UserProfile{
     return undefined;
   }
 
+  getBusCompanyId(){
+    if(this.getBusCompany()){
+      return this.getBusCompany()._id || undefined
+    }
+    return undefined;
+  }
   getBusCompanyTag(){
     if(this.getBusCompany()){
       let tag = this.getBusCompany().tag || ((this.getBusCompany().config.parcel && this.getBusCompany().config.parcel.tag) || undefined  )
@@ -141,7 +154,7 @@ export class UserProfile{
 
   getDiscount(){
     if(this.getBusCompany()){
-      return this.getBusCompany().config && this.getBusCompany().config.discount || []
+      return (this.getBusCompany().config && this.getBusCompany().config.discount) || []
     }
     return [];
   }
@@ -162,7 +175,11 @@ export class UserProfile{
 
   getStickerCount(){
     if(this.getBusCompany()){
-      return (this.getBusCompany().config && this.getBusCompany().config.noOfStickerCopy) || 1
+      const count = (this.getBusCompany().config && this.getBusCompany().config.noOfStickerCopy) || 1;
+      console.log('====>>count',count)
+      console.log('====>>count',count)
+      console.log('====>>count',count)
+      return count;
     }
     return 1;
   }

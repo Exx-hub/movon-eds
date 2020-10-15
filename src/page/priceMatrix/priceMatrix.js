@@ -9,6 +9,7 @@ import {
   Input,
   Skeleton,
   Divider,
+  AutoComplete
 } from "antd";
 
 import { PlusOutlined, SaveOutlined, DeleteFilled } from "@ant-design/icons";
@@ -78,11 +79,13 @@ export default class PriceMatrix extends React.Component {
             }
             return false;
           });
+          
           this.setState({
             routes: data,
             selectedRoute: data[0],
             routesList: { ...this.state.routesList, ...{ options } },
             startStation: this.user.assignedStation,
+            tempDestinationList: options.map(e=>(e.name))
           });
         }
       } else {
@@ -177,12 +180,13 @@ export default class PriceMatrix extends React.Component {
   };
 
   onDestinationSelect = (e) => {
-    const origin = this.state.startStation._id;
-    const destination = e;
+
+    let index = this.state.routesList.options.find(i=>String(i.name) === String(e));
+    const destination = (index && index.value) || undefined;
     this.setState({ selectedRoute: e }, () => {
       MatrixService.getMatrix({
         busCompanyId: this.busCompanyId,
-        origin,
+        origin:this.state.startStation._id,
         destination,
       }).then((e) => {
         const { data, success, errorCode } = e.data;
@@ -231,6 +235,12 @@ export default class PriceMatrix extends React.Component {
     this.setState({ fixMatrix });
   };
 
+  doSearch = (el) => {
+    const toSearch = el.toLowerCase();
+    const tempDestinationList = this.state.routesList.options.filter((e) => e.name.toLowerCase().includes(toSearch)).map((e) => e.name);
+    this.setState({ tempDestinationList });
+  };
+
   render() {
     return (
       <Layout>
@@ -259,15 +269,15 @@ export default class PriceMatrix extends React.Component {
               {this.state.routesList.options && (
                 <>
                   <span>Destination</span>
-                  <Select
+                  <AutoComplete
                     style={{ width: "100%" }}
+                    onSelect={(e) => this.onDestinationSelect(e)}
+                    onSearch={(e) => this.doSearch(e)}
                     placeholder="Destination"
-                    onChange={(e) => this.onDestinationSelect(e)}
                   >
-                    {this.state.routesList.options.map((e, i) => (
-                      <Option value={e.value}>{e.name}</Option>
-                    ))}
-                  </Select>
+                  {this.state.tempDestinationList.map((e, i) => (<Option value={e}>{e}</Option>))}
+                  </AutoComplete>
+                  
                 </>
               )}
             </Col>
@@ -436,7 +446,7 @@ export default class PriceMatrix extends React.Component {
                   <Col
                     style={{ paddingLeft: "0.2rem", paddingBottom: "0.2rem" }}
                   >
-                    <span style={{fontSize:'12px'}}>Declared Value</span>
+                    <span style={{fontSize:'12px'}}>Declared Value Rate (%)</span>
                     <Input
                       type="number"
                       name="declaredValue"

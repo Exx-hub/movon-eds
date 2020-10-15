@@ -397,12 +397,7 @@ class CreateParcel extends React.Component {
   }
 
   componentDidMount(){
-    this.USER = getUser();
-    const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined;
-    this.origin = this.USER.assignedStation._id
-    this.busCompanyId = busCompanyId._id;
-    let {details, noOfStickerCopy} = {...this.state};
-
+    let {details} = {...this.state};
     ParcelService.getConnectingBusPartners().then((e)=>{
       const{success, data, errorCode}=e.data;
       if(success){
@@ -417,18 +412,11 @@ class CreateParcel extends React.Component {
       }
     })
 
-    if(busCompanyId){
-      const parcel = busCompanyId.config.parcel || undefined;
-      if(parcel){
-        noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
-      }
-
-      this.setState({
-        enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
-        noOfStickerCopy,
-        details
-      })
-    }
+    this.setState({
+      enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
+      noOfStickerCopy: this.UserProfileObject.getStickerCount(),
+      details
+    })
    
     ManifestService.getRoutes().then(e=>{
       const{data, success, errorCode}=e.data;
@@ -736,13 +724,7 @@ class CreateParcel extends React.Component {
       setSystemFee((data && data.convenienceFee) || 0)
     }
 
-    if(this.USER 
-        && this.USER.busCompanyId 
-          && this.USER.busCompanyId.config 
-            && this.USER.busCompanyId.config.parcel 
-              && this.USER.busCompanyId.config.parcel.tag 
-                && this.USER.busCompanyId.config.parcel.tag === 'five-star'){
-                
+    if(this.UserProfileObject.isFiveStar()){
       ParcelService.getFiveStarConvenienceFee(qty).then(res=>updateState(res))
       return;
     }
@@ -765,8 +747,8 @@ class CreateParcel extends React.Component {
       length
     }= this.state.details
 
-    const busCompanyId =  (this.USER && this.USER.busCompanyId._id) || undefined;
-    const startStation =  (this.USER && this.USER.assignedStation._id) || undefined;
+    const busCompanyId =  this.UserProfileObject.getBusCompanyId();
+    const startStation =  this.UserProfileObject.getAssignedStationId();
     const selectedOption = destination.options.filter(e=>e.value === destination.value)[0]
     const endStation = selectedOption.endStation || undefined;
     const decValue = declaredValue.value ? parseFloat(declaredValue.value).toFixed(2) : undefined;
@@ -886,7 +868,7 @@ class CreateParcel extends React.Component {
       details = {...details, ...{destination}}
       this.setState({ details, selectedDestination });
 
-      MatrixService.getMatrix({ busCompanyId: this.busCompanyId, origin:this.origin, destination:value })
+      MatrixService.getMatrix({ busCompanyId: this.UserProfileObject.getBusCompanyId(), origin:this.UserProfileObject.getAssignedStationId(), destination:value })
         .then(e => {
           const { data, success, errorCode } = e.data;
           if (success) {
@@ -1246,9 +1228,8 @@ class CreateParcel extends React.Component {
 
   getMatrixFare = ({weight,declaredValue, length}) =>{
     const{ details, selectedDestination }=this.state
-    const origin = this.USER && this.USER.assignedStation._id;
     MatrixService.getMatrixComputation({
-      origin,
+      origin: this.UserProfileObject.getAssignedStationId(),
       destination: selectedDestination.value,
       declaredValue,
       weight,

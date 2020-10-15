@@ -117,7 +117,7 @@ class Manifest extends React.Component {
       ManifestService.getRoutes().then((e) => {
         console.log("getRoutes", e);
         const { errorCode, success, data } = e.data;
-        if (!success && errorCode) {
+        if (!Boolean(success) && errorCode) {
           this.handleErrorNotification(errorCode);
         } else {
           this.setState({ fetching: false });
