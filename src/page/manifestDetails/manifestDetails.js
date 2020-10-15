@@ -272,6 +272,8 @@ class ManifestDetails extends React.Component {
   }
 
   componentDidMount() {
+    this.userProfileObject = new UserProfile();
+
     const {
       end,
       endStationName,
@@ -392,12 +394,7 @@ class ManifestDetails extends React.Component {
 
   getReviewDetails = (data) => {
     return {
-      noOfSticker:
-        (getUser() &&
-          getUser().busCompanyId &&
-          getUser().busCompanyId.config &&
-          getUser().busCompanyId.config.parcel.noOfStickerCopy) ||
-        2,
+      noOfSticker:this.userProfileObject.getStickerCount(),
       packageName: data.packageInfo.packageName,
       packageWeight: data.packageInfo.packageWeight,
       packageQty: data.packageInfo.quantity,

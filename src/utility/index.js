@@ -160,6 +160,13 @@ export class UserProfile{
     return false;
   }
 
+  getStickerCount(){
+    if(this.getBusCompany()){
+      return (this.getBusCompany().config && this.getBusCompany().config.noOfStickerCopy) || 1
+    }
+    return 1;
+  }
+
 
 }
 
