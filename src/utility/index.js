@@ -133,7 +133,6 @@ export class UserProfile{
 
   isIsarogLiners(){
     if(this.getBusCompanyTag()){
-      console.log("tag====>>",this.getBusCompanyTag().toLowerCase())
       return "isarog-liner" === this.getBusCompanyTag().toLowerCase();
     }
     return false;
@@ -203,7 +202,6 @@ export const debounce = (func, wait) => {
 };
 
 export const alterPath = (path, props) =>{
-  console.log('process.env.NODE_ENV',process.env.NODE_ENV)
   //return process.env.NODE_ENV === 'development' ? '/staging' + path : path;
   return path;
 }
