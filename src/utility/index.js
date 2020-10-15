@@ -131,6 +131,13 @@ export class UserProfile{
     return undefined;
   }
 
+  isEnabledCargo(){
+    if(this.getBusCompany()){
+      return this.getBusCompany().cargoStatus || false;
+    }
+    return false;
+  }
+
   isIsarogLiners(){
     if(this.getBusCompanyTag()){
       return "isarog-liner" === this.getBusCompanyTag().toLowerCase();
