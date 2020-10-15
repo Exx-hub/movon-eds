@@ -29,7 +29,6 @@ import {
 const { Content, Sider, Header } = Layout;
 
 const MIN_WIDTH = 800;
-const disableBISystemFee = false;
 const STEPS_LIST = [
   {
     title: "Parcel Image",
@@ -367,7 +366,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          options: [{name:"employee-discount",rate:10}],
+          options: [],
         },
       },
       enalbeBicolIsarogWays:false,
@@ -712,8 +711,7 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
-    //disable system fee
-    if(this.state.enalbeBicolIsarogWays){
+    if(this.UserProfileObject.enableCargoSystemFee()){
       return;
     }
 

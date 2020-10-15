@@ -89,6 +89,7 @@ export class UserProfile{
       this.token = this.credential.token;
       this.user = this.credential.user;
     }  
+
   }
 
   logout(User){
@@ -131,11 +132,18 @@ export class UserProfile{
     return undefined;
   }
 
-  isEnabledCargo(){
+  enableCargoSystemFee(){
     if(this.getBusCompany()){
-      return this.getBusCompany().cargoStatus || false;
+      return Boolean(this.getBusCompany().cargoStatus || 1) 
     }
     return false;
+  }
+
+  getDiscount(){
+    if(this.getBusCompany()){
+      return this.getBusCompany().config && this.getBusCompany().config.discount || []
+    }
+    return [];
   }
 
   isIsarogLiners(){

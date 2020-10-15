@@ -55,7 +55,7 @@ function Login(props) {
       setState({...state, ...{isLoading:false}})
       if(success){
         setCredential({ user: data.user, token: data.token});
-        if(!userProfileObject.isEnabledCargo()){
+        if(Number((data.user && data.user.status) || '0') === 0){
           notification['error']({
             message: "Diabled Account",
             description: "Unable to access your account",
