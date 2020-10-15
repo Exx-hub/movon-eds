@@ -92,10 +92,6 @@ export class UserProfile{
   }
 
   logout(User){
-    console.log('passsss===>>logout')
-    console.log('passsss===>>logout')
-    console.log('passsss===>>logout')
-    console.log('passsss===>>logout')
     User.logout(this.token)
     .then(this.clearData())
     .catch(this.clearData());
@@ -208,7 +204,8 @@ export const debounce = (func, wait) => {
 
 export const alterPath = (path, props) =>{
   console.log('process.env.NODE_ENV',process.env.NODE_ENV)
-  return process.env.NODE_ENV === 'development' ? '/staging' + path : path
+  //return process.env.NODE_ENV === 'development' ? '/staging' + path : path;
+  return path;
 }
 
 export const modifyName = fullName =>{
