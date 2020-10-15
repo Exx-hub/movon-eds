@@ -377,7 +377,6 @@ class CreateParcel extends React.Component {
       lengthRate:0
     };
     this.UserProfileObject = new UserProfile();
-    console.log('user',this.UserProfileObject.getUser())
     this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
     this.computePrice = debounce(this.computePrice,1000)
     this.getMatrixFare = debounce(this.getMatrixFare,1000)
