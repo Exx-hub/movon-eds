@@ -209,7 +209,6 @@ function Home(props) {
 
   const menu = ()=> {
     const menu  = menuData.filter(e=>e.type === 'menu');
-    console.log('menu',menu)
     return (
       <Menu onClick={(e)=>{ onNavigationMenuChange(e) }}>
       {
@@ -262,12 +261,12 @@ function Home(props) {
             
             <SubMenu key="sales-report" icon={<BarChartOutlined />} title="Reports">
               <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>Cargo Sales</Menu.Item>
-            { userProfileObject.isIsarogLiners() && <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
+            { Boolean(userProfileObject.isIsarogLiners()) && <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
             </SubMenu>
 
             <SubMenu key="matrix" icon={<FileSearchOutlined />} title="Matrix">
               <Menu.Item key="matrix-own" icon={<AppstoreAddOutlined />}>{userProfileObject.getBusCompany().name}</Menu.Item>
-              <Menu.Item key="matrix-vli" icon={<SearchOutlined />}>Victory Liners</Menu.Item>
+              { Boolean(userProfileObject.isIsarogLiners()) && <Menu.Item key="matrix-vli" icon={<SearchOutlined />}>Victory Liners</Menu.Item>}
             </SubMenu>
 
           </Menu>
