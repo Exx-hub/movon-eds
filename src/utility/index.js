@@ -166,8 +166,6 @@ export class UserProfile{
     }
     return 1;
   }
-
-
 }
 
 export const clearCredential = () =>{
