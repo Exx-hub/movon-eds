@@ -14,6 +14,7 @@ import {
   getUser,
   alterPath,
   modifyName,
+  UserProfile,
 } from "../../utility";
 import { notification } from "antd";
 
@@ -271,13 +272,6 @@ class ManifestDetails extends React.Component {
   }
 
   componentDidMount() {
-    const companyTag = getUser()
-      ? getUser().busCompanyId.config.parcel.tag
-      : undefined;
-    this.companyTag = companyTag;
-
-    console.log("this.props.location.state", this.props.location.state);
-
     const {
       end,
       endStationName,
@@ -285,11 +279,7 @@ class ManifestDetails extends React.Component {
     } = this.props.location.state.selected;
 
     const startStation = getUser().assignedStation._id;
-
-    const date = moment(new Date(this.props.location.state.date)).format(
-      "YYYY-MM-DD"
-    );
-    console.log("date", date);
+    const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
 
     window.addEventListener("resize", (e) => {
       this.setState({
