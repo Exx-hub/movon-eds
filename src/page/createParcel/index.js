@@ -101,15 +101,16 @@ const getReviewDetails = (state) =>{
 }
 
 const parceResponseData = (data) =>{
-  const USER = getUser();
-  const logo = (USER && USER.busCompanyId.logo) || undefined;
-  const name = USER && USER.busCompanyId.name
-  
+
+  const userProfile = new UserProfile();
+  const logo = userProfile.getBusCompany() && userProfile.getBusCompany().logo || undefined;
+  const name = userProfile.getBusCompany() && userProfile.getBusCompany().name
+  const noOfSticker = userProfile.getStickerCount() || 1
+
   const endStationName = data.trips ? data.trips.endStationName : data.endStation.name
   const startStationName = data.trips ? data.trips.startStationName : data.startStation.name
-
   return {
-    noOfSticker: (getUser() && getUser().busCompanyId && getUser().busCompanyId.config && getUser().busCompanyId.config.parcel.noOfStickerCopy) || 2,
+    noOfSticker,
     packageName:data.packageInfo.packageName,
     packageWeight:data.packageInfo.packageWeight,
     packageQty: data.packageInfo.quantity,
