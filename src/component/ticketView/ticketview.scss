@@ -14,6 +14,12 @@
         font-size: 1.5em;
         font-weight: 600;
     }
+
+    .scan-code-text{
+        margin-top: 0.2rem;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
     
     .package-indicator-sp{
         margin-top: 1rem;
@@ -27,7 +33,6 @@
     }
 
     .customer-copy-text{
-        margin-top: .5rem;
         font-weight: bold;
         font-size: 1.1em;
         font-weight: 200;
@@ -69,8 +74,8 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        width: 5.4in;
-        height: 4.0416in;
+        width: 6in;
+        height: 4.468in;
     }
 }
 
@@ -90,12 +95,13 @@
 }
 
 .details-title-text{
-    font-size: 1.3em;
+    font-size: 1.5em;
     font-weight: 200;
 }
 
 .details-value-text{
-    font-size: 1.3em;
-    font-weight: 500;
+    font-size: 1.5em;
+    font-weight: bold;
+
 }
 
