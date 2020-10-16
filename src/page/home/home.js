@@ -28,7 +28,7 @@ import {
 } from 'antd';
 
 import {
-  AuditOutlined,
+  FileMarkdownOutlined,
   UserOutlined,
   PoweroffOutlined,
   SettingOutlined,
@@ -257,16 +257,16 @@ function Home(props) {
               <Menu.Item key="search-parcel" icon={<SearchOutlined />}>Search</Menu.Item>
             </SubMenu>
 
-            <Menu.Item key="manifest-report" icon={<BarChartOutlined />}>Manifest</Menu.Item>
+            <Menu.Item key="manifest-report" icon={<FileSearchOutlined />}>Manifest</Menu.Item>
             
             <SubMenu key="sales-report" icon={<BarChartOutlined />} title="Reports">
               <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>Cargo Sales</Menu.Item>
             { Boolean(userProfileObject.isIsarogLiners()) && <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
             </SubMenu>
 
-            <SubMenu key="matrix" icon={<FileSearchOutlined />} title="Matrix">
-              <Menu.Item key="matrix-own" icon={<AppstoreAddOutlined />}>{userProfileObject.getBusCompany().name}</Menu.Item>
-              { Boolean(userProfileObject.isIsarogLiners()) && <Menu.Item key="matrix-vli" icon={<SearchOutlined />}>Victory Liners</Menu.Item>}
+            <SubMenu key="matrix" icon={<FileMarkdownOutlined />} title="Matrix">
+              <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>{userProfileObject.getBusCompany().name}</Menu.Item>
+              { Boolean(userProfileObject.isIsarogLiners()) && <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>Victory Liners</Menu.Item>}
             </SubMenu>
 
           </Menu>

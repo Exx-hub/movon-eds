@@ -163,6 +163,7 @@ export default class PriceMatrix extends React.Component {
       maxAllowedLengthRate: [e.maxAllowedLengthRate1, e.maxAllowedLengthRate2],
     }));
 
+
     MatrixService.create({
       busCompanyId: this.busCompanyId,
       origin: this.state.startStation._id,
@@ -183,7 +184,8 @@ export default class PriceMatrix extends React.Component {
 
     let index = this.state.routesList.options.find(i=>String(i.name) === String(e));
     const destination = (index && index.value) || undefined;
-    this.setState({ selectedRoute: e }, () => {
+    console.log("----->>destination",destination)
+    this.setState({ selectedRoute: destination }, () => {
       MatrixService.getMatrix({
         busCompanyId: this.busCompanyId,
         origin:this.state.startStation._id,
