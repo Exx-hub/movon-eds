@@ -3,9 +3,8 @@ import "./ticketview.scss";
 import { QRCode } from "react-qr-svg";
 import { Row, Col } from "antd";
 import movon from "../../assets/movon3.png";
-import { config } from "../../config";
 import moment from "moment";
-import { getUser, modifyName } from "../../utility";
+import { modifyName } from "../../utility";
 
 function TextItem(props) {
   return (
@@ -55,8 +54,7 @@ const TicketDetails = (props) => {
             ) : (
               <div style={{display:'flex',flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                 <span className="package-indicator">
-                  {" "}
-                  {packageQty} <span className="pkg-text">pkg.</span>{" "}
+                  {packageQty} <span className="pkg-text">pkg.</span>
                 </span>
               <span className="customer-copy-text">{`Customer's Copy`}</span>
               </div>
@@ -95,7 +93,7 @@ const PCopy = (props) => {
       totalPrice,
     } = props.value;
 
-    const quantity = 50//props.value.noOfSticker;
+    const quantity = props.value.noOfSticker;
     const scanCode = props.value.scanCode;
 
     const parcelInfo = [
