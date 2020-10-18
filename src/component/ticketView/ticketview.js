@@ -95,7 +95,7 @@ const PCopy = (props) => {
       totalPrice,
     } = props.value;
 
-    const quantity = props.value.noOfSticker;
+    const quantity = 50//props.value.noOfSticker;
     const scanCode = props.value.scanCode;
 
     const parcelInfo = [
