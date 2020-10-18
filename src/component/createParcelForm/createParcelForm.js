@@ -379,24 +379,6 @@ function BicolIsarogForm(props) {
         />
       </Col>
           <Col span={6} className="gutter-row">
-            <span className="input-placeholder-title select-placeholder">
-              Discount Type
-            </span>
-            <Select
-              size="default"
-              onChange={(e) => props.onSelectChange(e, discount.name)}
-              value={discount.value}
-              style={{ width: "100%" }}
-            >
-              {discount.options.map((e) => (
-                <Option key={e.name} value={e.name}>
-                  {e.name}
-                </Option>
-              ))}
-            </Select>
-          </Col>
-
-          <Col span={6} className="gutter-row">
             <InputBox
               detail={additionNote}
               onChange={props.onChange}
@@ -416,22 +398,6 @@ function BicolIsarogForm(props) {
             placeholder="Number of Pax"
           />
         </Col>
-          {
-          //   <Col span={8} className="gutter-row">
-          //   {!enableInterConnection && (
-          //     <InputBox
-          //       className={`${length ? "" : "hide"}`}
-          //       type="number"
-          //       onBlur={() => props.onBlur(paxs.name)}
-          //       detail={length}
-          //       onChange={props.onChange}
-          //       errorMessage={paxs.errorMessage}
-          //       title="Length in Meter"
-          //       placeholder="length"
-          //     />
-          //   )}
-          // </Col>
-          }
         </Row>
       </div>
 

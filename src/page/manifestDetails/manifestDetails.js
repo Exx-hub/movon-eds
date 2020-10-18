@@ -12,6 +12,9 @@ import {
   openNotificationWithIcon,
   clearCredential,
   getUser,
+  alterPath,
+  modifyName,
+  UserProfile,
 } from "../../utility";
 import { notification } from "antd";
 
@@ -38,7 +41,7 @@ import {
 
 const { Search } = Input;
 const { Option } = Select;
-const { Header} = Layout;
+const { Header } = Layout;
 
 const InputBox = (props) => {
   return (
@@ -202,13 +205,19 @@ const ManifestDetailsTable = (props) => {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <div style={{display:'flex', flexDirection:'row'}}>
-          <Button size="small" style={{fontSize:10.5}} onClick={()=>props.onSelect(record)}>Preview</Button>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <Button
+            size="small"
+            style={{ fontSize: 10.5 }}
+            onClick={() => props.onSelect(record)}
+          >
+            Preview
+          </Button>
           <Button
             disabled={record.travelStatus.toLowerCase() !== "created"}
             size="small"
             style={{
-              fontSize:10.5,
+              fontSize: 10.5,
               color: "white",
               background: `${
                 record.travelStatus.toLowerCase() === "created"
@@ -216,8 +225,13 @@ const ManifestDetailsTable = (props) => {
                   : "gray"
               }`,
             }}
-            onClick={() => props.onCheckIn(record._id)}>Check In</Button>
-            <Button disabled size="small" style={{fontSize:10.5}}>Arrived</Button>
+            onClick={() => props.onCheckIn(record._id)}
+          >
+            Check In
+          </Button>
+          <Button disabled size="small" style={{ fontSize: 10.5 }}>
+            Arrived
+          </Button>
         </div>
       ),
     },
@@ -258,12 +272,7 @@ class ManifestDetails extends React.Component {
   }
 
   componentDidMount() {
-    const companyTag = getUser()
-      ? getUser().busCompanyId.config.parcel.tag
-      : undefined;
-    this.companyTag = companyTag;
-
-    console.log("this.props.location.state", this.props.location.state);
+    this.userProfileObject = new UserProfile();
 
     const {
       end,
@@ -272,9 +281,7 @@ class ManifestDetails extends React.Component {
     } = this.props.location.state.selected;
 
     const startStation = getUser().assignedStation._id;
-
-    const date = moment(new Date(this.props.location.state.date)).format("YYYY-MM-DD");
-    console.log('date',date)
+    const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
 
     window.addEventListener("resize", (e) => {
       this.setState({
@@ -292,46 +299,44 @@ class ManifestDetails extends React.Component {
   }
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
-    ManifestService.getManifestByDate(
-      date,
-      startStationId,
-      endStationId
-    ).then((e) => {
-      console.log('e',e)
+    ManifestService.getManifestByDate(date, startStationId, endStationId).then(
+      (e) => {
+        console.log("e", e);
 
-      if (e.data.errorCode) {
-        this.handleErrorNotification(e.data.errorCode);
-        return;
+        if (e.data.errorCode) {
+          this.handleErrorNotification(e.data.errorCode);
+          return;
+        }
+
+        if (e.data && e.data.length > 0) {
+          let data = e.data;
+          const departureTime = date; //moment(date).format("MMM-DD-YYYY");
+          const arrivalTime = date; //moment(date).format("MMM-DD-YYYY");
+          const movonBillOfLading = data[0].displayId;
+          const coyBillOfLading = data[0].billOfLading;
+          const routes1 = data[0].trips.startStationName;
+          const routes2 = data[0].trips.endStationName;
+
+          this.setState({
+            date,
+            startStationId,
+            endStationId,
+            tempParcelData: data,
+            parcelData: data,
+            departureTime,
+            arrivalTime,
+            movonBillOfLading,
+            coyBillOfLading,
+            routes: _routes,
+            fetching: false,
+          });
+        } else {
+          this.setState({
+            fetching: false,
+          });
+        }
       }
-
-      if (e.data && e.data.length > 0) {
-        let data = e.data;
-        const departureTime = date //moment(date).format("MMM-DD-YYYY");
-        const arrivalTime = date //moment(date).format("MMM-DD-YYYY");
-        const movonBillOfLading = data[0].displayId;
-        const coyBillOfLading = data[0].billOfLading;
-        const routes1 = data[0].trips.startStationName;
-        const routes2 = data[0].trips.endStationName;
-
-        this.setState({
-          date,
-          startStationId,
-          endStationId,
-          tempParcelData: data,
-          parcelData: data,
-          departureTime,
-          arrivalTime,
-          movonBillOfLading,
-          coyBillOfLading,
-          routes: _routes,
-          fetching: false,
-        });
-      } else {
-        this.setState({
-          fetching: false,
-        });
-      }
-    });
+    );
   };
 
   onSiderChange = (name, value) => {
@@ -366,10 +371,10 @@ class ManifestDetails extends React.Component {
             key: i,
             qrcode: e.scanCode,
             billOfLading: e.billOfLading,
-            sentDate: moment(e.sentDate).format('MMM DD, YYYY'),
+            sentDate: moment(e.sentDate).format("MMM DD, YYYY"),
             description: e.packageInfo.packageName,
-            sender: e.senderInfo.senderName,
-            receiver: e.recipientInfo.recipientName,
+            sender: modifyName(e.senderInfo.senderName || ""),
+            receiver: modifyName(e.recipientInfo.recipientName || ""),
             qty: e.packageInfo.quantity,
             travelStatus: config.parcelStatus[e.status],
             packageImg: e.packageInfo.packageImages,
@@ -389,12 +394,7 @@ class ManifestDetails extends React.Component {
 
   getReviewDetails = (data) => {
     return {
-      noOfSticker:
-        (getUser() &&
-          getUser().busCompanyId &&
-          getUser().busCompanyId.config &&
-          getUser().busCompanyId.config.parcel.noOfStickerCopy) ||
-        2,
+      noOfSticker:this.userProfileObject.getStickerCount(),
       packageName: data.packageInfo.packageName,
       packageWeight: data.packageInfo.packageWeight,
       packageQty: data.packageInfo.quantity,
@@ -456,7 +456,7 @@ class ManifestDetails extends React.Component {
     if (code === 1000) {
       openNotificationWithIcon("error", code);
       clearCredential();
-      this.props.history.push("/");
+      this.props.history.push(alterPath("/"));
       return;
     }
     openNotificationWithIcon("error", code);
@@ -612,7 +612,7 @@ class ManifestDetails extends React.Component {
               <Button
                 type="link"
                 onClick={() => {
-                  this.props.history.push("/manifest/list");
+                  this.props.history.push(alterPath("/manifest/list"));
                 }}
               >
                 <ArrowLeftOutlined
@@ -624,22 +624,25 @@ class ManifestDetails extends React.Component {
               </Button>
             </div>
 
-            <Search
-              style={{display:`${this.state.currentView !== 2 ? '' : 'none'}`}}
-              value={this.state.searchValue}
-              className="manifest-details-search-box"
-              placeholder="Sender | Receiver | QR Code"
-              onChange={(e) => this.doSearch(e.target.value)}
-            />
+            {this.state.currentView !== TICKET && this.state.currentView !== PREVIEW &&(
+              <>
+                <Search
+                  value={this.state.searchValue}
+                  className="manifest-details-search-box"
+                  placeholder="Sender | Receiver | QR Code"
+                  onChange={(e) => this.doSearch(e.target.value)}
+                />
 
-            <div style={{display:`${this.state.currentView !== 2 ? '' : 'none'}`}}>
-              <Switch
-                checkedChildren="Card View"
-                unCheckedChildren="Table View"
-                checked={this.state.isCardView}
-                onChange={(e) => this.setState({ isCardView: e })}
-              />
-            </div>
+                <div>
+                  <Switch
+                    checkedChildren="Card View"
+                    unCheckedChildren="Table View"
+                    checked={this.state.isCardView}
+                    onChange={(e) => this.setState({ isCardView: e })}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </Header>
 
@@ -650,6 +653,5 @@ class ManifestDetails extends React.Component {
     );
   }
 }
-
 
 export default ManifestDetails;

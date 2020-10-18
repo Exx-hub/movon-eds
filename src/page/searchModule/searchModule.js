@@ -8,7 +8,7 @@ import TicketView from "../../component/ticketView";
 import ReactToPrint from "react-to-print";
 import ManifestService from "../../service/Manifest";
 import Parcel from "../../service/Parcel";
-import {openNotificationWithIcon,clearCredential,getUser,debounce} from "../../utility";
+import {openNotificationWithIcon,clearCredential,getUser,debounce, alterPath} from "../../utility";
 import {notification, Table} from "antd";
 import {CloseCircleOutlined} from "@ant-design/icons";
 import {Layout,Button,Col, Row, Input, Tooltip, Skeleton, Space } from "antd";
@@ -329,7 +329,7 @@ class SearchModule extends React.Component {
     if (code === 1000) {
       openNotificationWithIcon("error", code);
       clearCredential();
-      this.props.history.push("/");
+      this.props.history.push(alterPath("/"));
       return;
     }
     openNotificationWithIcon("error", code);

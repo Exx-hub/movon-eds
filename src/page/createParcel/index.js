@@ -18,17 +18,16 @@ import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
 import ManifestService from "../../service/Manifest";
 import {
-  getUser,
   openNotificationWithIcon,
   clearCredential,
   debounce,
-  UserProfile
+  UserProfile,
+  alterPath
 } from "../../utility";
 
 const { Content, Sider, Header } = Layout;
 
 const MIN_WIDTH = 800;
-const disableBISystemFee = true;
 const STEPS_LIST = [
   {
     title: "Parcel Image",
@@ -101,15 +100,16 @@ const getReviewDetails = (state) =>{
 }
 
 const parceResponseData = (data) =>{
-  const USER = getUser();
-  const logo = (USER && USER.busCompanyId.logo) || undefined;
-  const name = USER && USER.busCompanyId.name
-  
+
+  const userProfile = new UserProfile();
+  const logo = userProfile.getBusCompany() && userProfile.getBusCompany().logo || undefined;
+  const name = userProfile.getBusCompany() && userProfile.getBusCompany().name
+  const noOfSticker = userProfile.getStickerCount() || 1
+
   const endStationName = data.trips ? data.trips.endStationName : data.endStation.name
   const startStationName = data.trips ? data.trips.startStationName : data.startStation.name
-
   return {
-    noOfSticker: (getUser() && getUser().busCompanyId && getUser().busCompanyId.config && getUser().busCompanyId.config.parcel.noOfStickerCopy) || 2,
+    noOfSticker,
     packageName:data.packageInfo.packageName,
     packageWeight:data.packageInfo.packageWeight,
     packageQty: data.packageInfo.quantity,
@@ -396,12 +396,7 @@ class CreateParcel extends React.Component {
   }
 
   componentDidMount(){
-    this.USER = getUser();
-    const busCompanyId = (this.USER && this.USER.busCompanyId) || undefined;
-    this.origin = this.USER.assignedStation._id
-    this.busCompanyId = busCompanyId._id;
-    let {details, noOfStickerCopy} = {...this.state};
-
+    let {details} = {...this.state};
     ParcelService.getConnectingBusPartners().then((e)=>{
       const{success, data, errorCode}=e.data;
       if(success){
@@ -416,20 +411,11 @@ class CreateParcel extends React.Component {
       }
     })
 
-    if(busCompanyId){
-      const parcel = busCompanyId.config.parcel || undefined;
-      if(parcel){
-        noOfStickerCopy = parcel.noOfStickerCopy ? parcel.noOfStickerCopy : noOfStickerCopy
-      }
-
-      console.log("enalbeBicolIsarogWays",this.UserProfileObject.isIsarogLiners())
-
-      this.setState({
-        enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
-        noOfStickerCopy,
-        details
-      })
-    }
+    this.setState({
+      enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
+      noOfStickerCopy: this.UserProfileObject.getStickerCount(),
+      details
+    })
    
     ManifestService.getRoutes().then(e=>{
       const{data, success, errorCode}=e.data;
@@ -479,7 +465,7 @@ class CreateParcel extends React.Component {
     if(code === 1000){
       openNotificationWithIcon('error', code);
       clearCredential();
-      this.props.history.push('/');
+      this.props.history.push(alterPath('/'));
       return;
     }
     openNotificationWithIcon('error', code);
@@ -604,7 +590,7 @@ class CreateParcel extends React.Component {
     }
 
     if(name === 'declaredValue' || name === 'quantity' || name==='packageWeight' || name === 'sticker_quantity'){
-      const isValid = Number(details[name].value) > -1;
+      const isValid = Number(details[name].value) > 0;
       return {...details[name], 
         ...{ 
           accepted: isValid, 
@@ -713,7 +699,7 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
-    if(disableBISystemFee && this.state.enalbeBicolIsarogWays){
+    if(this.UserProfileObject.enableCargoSystemFee()){
       return;
     }
 
@@ -737,13 +723,7 @@ class CreateParcel extends React.Component {
       setSystemFee((data && data.convenienceFee) || 0)
     }
 
-    if(this.USER 
-        && this.USER.busCompanyId 
-          && this.USER.busCompanyId.config 
-            && this.USER.busCompanyId.config.parcel 
-              && this.USER.busCompanyId.config.parcel.tag 
-                && this.USER.busCompanyId.config.parcel.tag === 'five-star'){
-                
+    if(this.UserProfileObject.isFiveStar()){
       ParcelService.getFiveStarConvenienceFee(qty).then(res=>updateState(res))
       return;
     }
@@ -766,8 +746,8 @@ class CreateParcel extends React.Component {
       length
     }= this.state.details
 
-    const busCompanyId =  (this.USER && this.USER.busCompanyId._id) || undefined;
-    const startStation =  (this.USER && this.USER.assignedStation._id) || undefined;
+    const busCompanyId =  this.UserProfileObject.getBusCompanyId();
+    const startStation =  this.UserProfileObject.getAssignedStationId();
     const selectedOption = destination.options.filter(e=>e.value === destination.value)[0]
     const endStation = selectedOption.endStation || undefined;
     const decValue = declaredValue.value ? parseFloat(declaredValue.value).toFixed(2) : undefined;
@@ -887,7 +867,7 @@ class CreateParcel extends React.Component {
       details = {...details, ...{destination}}
       this.setState({ details, selectedDestination });
 
-      MatrixService.getMatrix({ busCompanyId: this.busCompanyId, origin:this.origin, destination:value })
+      MatrixService.getMatrix({ busCompanyId: this.UserProfileObject.getBusCompanyId(), origin:this.UserProfileObject.getAssignedStationId(), destination:value })
         .then(e => {
           const { data, success, errorCode } = e.data;
           if (success) {
@@ -1171,7 +1151,7 @@ class CreateParcel extends React.Component {
           return;
         }
 
-        if(this.state.enalbeBicolIsarogWays){
+        //if(this.state.enalbeBicolIsarogWays){
 
           this.computePrice();
 
@@ -1197,13 +1177,14 @@ class CreateParcel extends React.Component {
               })
             }
           }
-        }else{
-          this.getMatrixFare({
-            declaredValue:currentDetails.declaredValue.value,
-            weight:currentDetails.packageWeight.value,
-            length:currentDetails.length.value || 0
-          });
-        }
+        //}
+        //else{
+          // this.getMatrixFare({
+          //   declaredValue:currentDetails.declaredValue.value,
+          //   weight:currentDetails.packageWeight.value,
+          //   length:currentDetails.length.value || 0
+          // });
+        //}
       }
     }
 
@@ -1246,9 +1227,8 @@ class CreateParcel extends React.Component {
 
   getMatrixFare = ({weight,declaredValue, length}) =>{
     const{ details, selectedDestination }=this.state
-    const origin = this.USER && this.USER.assignedStation._id;
     MatrixService.getMatrixComputation({
-      origin,
+      origin: this.UserProfileObject.getAssignedStationId(),
       destination: selectedDestination.value,
       declaredValue,
       weight,
@@ -1285,7 +1265,7 @@ class CreateParcel extends React.Component {
       <Layout className="create-parcelview-parent-container">
         <Header className="home-header-view" style={{ padding: 0 }}>
           <div style={{ float: "left" }}>
-            <Button type="link" onClick={() => this.props.history.push('/')}>
+            <Button type="link" onClick={() => this.props.history.push(alterPath('/'))}>
               <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
               <span style={{ fontSize: "20px", color: "#fff" }}>Home</span>
             </Button>

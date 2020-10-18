@@ -5,6 +5,10 @@
     height: 100vh;
     overflow: hidden;
 
+    .none{
+        display: none;
+    }
+
     .ant-table table{
         font-size: 12px !important;
     }

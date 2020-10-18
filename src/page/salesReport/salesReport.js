@@ -19,6 +19,7 @@ import {
   openNotificationWithIcon,
   getUser,
   clearCredential,
+  alterPath,
 } from "../../utility";
 
 import ParcelService from "../../service/Parcel";
@@ -180,7 +181,7 @@ class SalesReport extends React.Component {
     if (code === 1000) {
       openNotificationWithIcon("error", code);
       clearCredential();
-      this.props.history.push("/");
+      this.props.history.push(alterPath("/"));
       return;
     }
     openNotificationWithIcon("error", code);

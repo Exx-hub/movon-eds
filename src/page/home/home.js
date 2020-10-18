@@ -3,8 +3,8 @@ import Manifest from '../manifest';
 import Reports from '../reports';
 import User from '../../service/User';
 import movonLogo from '../../assets/movoncargo.png';
-import {clearCredential,getCredential, UserProfile} from '../../utility'
-import PriceMatrix from '../priceMatrix'
+import {clearCredential,getCredential, UserProfile, alterPath} from '../../utility'
+import { PriceMatrix, VictoryLinerMatrix } from '../priceMatrix'
 import SalesReport from "../salesReport"
 import SearchModule from '../searchModule'
 
@@ -28,7 +28,7 @@ import {
 } from 'antd';
 
 import {
-  AuditOutlined,
+  FileMarkdownOutlined,
   UserOutlined,
   PoweroffOutlined,
   SettingOutlined,
@@ -163,51 +163,63 @@ const tableSourceBitsi = [
   }
 ];
 
+
 function Home(props) {
 
   const [state, setState] = React.useState({});
-  const UserProfileObject = new UserProfile()
+  //const userProfileObject = new UserProfile()
+  const [menuData,setMenuData] = React.useState([])
+  const [userProfileObject,setUserProfileObject] = React.useState(new UserProfile())
 
   React.useEffect(() => {
+
+    if(!setUserProfileObject){
+      setUserProfileObject(new UserProfile());
+    }
+
     if(!state.user){
       const{user} = getCredential();
       setState({...state, ...{user}})
     }
-  },[state]);
+    if(menuData.length < 1){
+      setMenuData([
+        {key:"create-parcel", destination: alterPath("/create-parcel"), action:()=>{}},
+        {key:"search-parcel", destination: alterPath("/search-parcel"), action:()=>{}},
+        {key:"manifest-report", destination: alterPath("/manifest/list"), action:()=>{}},
+        {key:"matrix-own", destination: alterPath("/matrix/own"), action:()=>{}},
+        {key:"matrix-vli", destination: alterPath("/matrix/victory-liners"), action:()=>{}},
+        {key:"sales-vli-bitsi", destination: alterPath("/report/sales/vli-bitsi"), action:()=>{}},
+        {key:"sales-cargo", destination: alterPath("/report/sales/cargo"), action:()=>{}},
+        {key:"drop-down-setting",  name:'Setting', type:'menu', destination: alterPath("/drop-down-setting"), icon:()=><SettingOutlined/>, action:()=>{}},
+        {key:"drop-down-logout", name:'Logout', type:'menu', destination: alterPath("/drop-down-logout"), icon:()=><PoweroffOutlined/>,action:()=>userProfileObject.logout(User)
+        },
+      ])
+    }
+  },[state,menuData,userProfileObject]);
 
   const onNavigationMenuChange = (e) =>{
-    switch(e.key){
-      case 'create-parcel': props.history.push("/parcel"); break
-      case 'search-parcel': props.history.push("/search-parcel"); break
-      case 'manifest-report': props.history.push("/manifest/list"); break
-      case '4': props.history.push("/manifest/matrix"); break
-      case '6': props.history.push("/report/sales/vli-bitsi"); break
-      case '5': props.history.push("/report/sales/cargo"); break
-      case 'drop-down-logout' : 
-        const{ token }=getCredential();
-        User.logout(token).then();
-        clearCredential();
-        props.history.push('/');
-        
+    for(let i=0; i<menuData.length; i++){
+      if(menuData[i].key === e.key){
+        menuData[i].action();
+        props.history.push(menuData[i].destination || alterPath('/'))
         break;
-      case 'drop-down-setting' : 
-        console.log('onNavigationMenuChange e',e); 
-        break;
-      default: break;
+      }
     }
   }
 
-  const menu = (
-    <Menu onClick={(e)=>{ onNavigationMenuChange(e) }}>
-      <Menu.Item key="drop-down-setting">
-        <SettingOutlined /> Setting
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="drop-down-logout">
-        <PoweroffOutlined /> Logout
-      </Menu.Item>
-    </Menu>
-  );
+  const menu = ()=> {
+    const menu  = menuData.filter(e=>e.type === 'menu');
+    return (
+      <Menu onClick={(e)=>{ onNavigationMenuChange(e) }}>
+      {
+        menu.map(e=>{
+          const IconMenu = e.icon;
+          return <Menu.Item key={e.key}> <IconMenu/> {e.name} </Menu.Item>
+        })
+      }
+      </Menu>
+    );
+  }
 
   return (
     <Layout className="home-page-container">
@@ -239,53 +251,58 @@ function Home(props) {
           defaultOpenKeys={['parcel']}
           mode="inline" 
           onClick={(e)=>{ onNavigationMenuChange(e) }}>
+
             <SubMenu key="parcel" icon={<InboxOutlined />} title="Parcel">
               <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>Create</Menu.Item>
               <Menu.Item key="search-parcel" icon={<SearchOutlined />}>Search</Menu.Item>
             </SubMenu>
 
-            <div style={{display:'none'}}>
-              <Menu.Item key="2" icon={<AppstoreAddOutlined />}> Add Parcel </Menu.Item>
-              <Menu.Item key="3" icon={<AuditOutlined />}> Manifest </Menu.Item>
-            </div>
-
-            <Menu.Item key="4" icon={<FileSearchOutlined />}> Matrix </Menu.Item>
-            <Menu.Item key="manifest-report" icon={<BarChartOutlined />}>Manifest</Menu.Item>
+            <Menu.Item key="manifest-report" icon={<FileSearchOutlined />}>Manifest</Menu.Item>
             
-            <SubMenu key="sub1" icon={<BarChartOutlined />} title="Reports">
-              <Menu.Item key="5" icon={<BarChartOutlined />}>Cargo Sales</Menu.Item>
-            { UserProfileObject.isIsarogLiners() && <Menu.Item key="6" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
+            <SubMenu key="sales-report" icon={<BarChartOutlined />} title="Reports">
+              <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>Cargo Sales</Menu.Item>
+            { Boolean(userProfileObject.isIsarogLiners()) && <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>VLI - BITSI Sales</Menu.Item>}
+            </SubMenu>
+
+            <SubMenu key="matrix" icon={<FileMarkdownOutlined />} title="Matrix">
+              <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>{userProfileObject.getBusCompany().name}</Menu.Item>
+              { Boolean(userProfileObject.isIsarogLiners()) && <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>Victory Liners</Menu.Item>}
             </SubMenu>
 
           </Menu>
         </Sider>
         <Layout >
           <Content className={'home-content'}>
+
             <Switch>
-              <Route path="/manifest/matrix">
+              <Route path={alterPath('/matrix/own')}>
                 <PriceMatrix {...props}/>
               </Route>
 
-              <Route path="/manifest/list">
+              <Route path={alterPath('/matrix/victory-liners')}>
+                <VictoryLinerMatrix {...props}/>
+              </Route>
+
+              <Route path={alterPath('/manifest/list')}>
                 <Manifest {...props}/>
               </Route>
 
-              <Route path="/reports">
+              <Route path={alterPath('/reports"')}>
                 <Reports {...props}/>
               </Route>
 
-              <Route path="/search-parcel">
+              <Route path={alterPath('/search-parcel')}>
                 <SearchModule {...props}/>
               </Route>
 
-              <Route path="/report/sales/cargo">
+              <Route path={alterPath('/report/sales/cargo')}>
                 <SalesReport 
                   source={tableSourceBitsi}
                   {...props} 
                   title="SUMMARY OF CARGO SALES"/>
               </Route>
 
-              <Route path="/report/sales/vli-bitsi">
+              <Route path={alterPath('/report/sales/vli-bitsi')}>
                 <SalesReport 
                   source={tableSourceVliBitsi}
                   isP2P={true}
@@ -293,7 +310,7 @@ function Home(props) {
                   title="SUMMARY OF VLI-BITSI SALES"/>
               </Route>
 
-              <Redirect from="/" to="/search-parcel" />
+              <Redirect from="/" to={ alterPath('/search-parcel')} />
             </Switch>
           </Content>
         </Layout>

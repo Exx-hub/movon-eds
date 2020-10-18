@@ -16,6 +16,7 @@ import {
   openNotificationWithIcon,
   openNotificationWithDuration,
   clearCredential,
+  alterPath,
 } from "../../utility";
 import ManifestService from "../../service/Manifest";
 import moment from "moment";
@@ -116,7 +117,7 @@ class Manifest extends React.Component {
       ManifestService.getRoutes().then((e) => {
         console.log("getRoutes", e);
         const { errorCode, success, data } = e.data;
-        if (!success && errorCode) {
+        if (!Boolean(success) && errorCode) {
           this.handleErrorNotification(errorCode);
         } else {
           this.setState({ fetching: false });
@@ -170,7 +171,7 @@ class Manifest extends React.Component {
     if (code === 1000) {
       openNotificationWithIcon("error", code);
       clearCredential();
-      this.props.history.push("/");
+      this.props.history.push(alterPath("/"));
       return;
     }
     openNotificationWithIcon("error", code);
@@ -209,7 +210,7 @@ class Manifest extends React.Component {
   onForceLogout = (errorCode) => {
     openNotificationWithDuration("error", errorCode);
     clearCredential();
-    this.props.history.push("/login");
+    this.props.history.push(alterPath("/login"));
   };
 
   onChangeTable = (pagination, filters, sorter, extra) => {};
@@ -226,7 +227,7 @@ class Manifest extends React.Component {
       () => {
         this.getManifestByDestination(data.start, data.end);
         this.props.history.push({
-          pathname: "/manifest/list",
+          pathname: alterPath("/manifest/list"),
           search: `?route-id=${value}`,
         });
       }
@@ -342,13 +343,13 @@ class Manifest extends React.Component {
               dataSource={this.dataSource()}
               onChange={this.onChangeTable}
               onPrint={(data) =>
-                this.props.history.push("/manifest/print", {
+                this.props.history.push(alterPath("/manifest/print"), {
                   date: data.date,
                   selected: this.state.selected,
                 })
               }
               onViewClick={(data) =>
-                this.props.history.push("/manifest/details", {
+                this.props.history.push(alterPath("/manifest/details"), {
                   date: data.date,
                   selected: this.state.selected,
                 })

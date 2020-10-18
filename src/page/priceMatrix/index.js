@@ -1,2 +1,7 @@
 import PriceMatrix from './priceMatrix';
-export default PriceMatrix;
+import VictoryLinerMatrix from './victoryLinerMatrix';
+
+export {
+    PriceMatrix,
+    VictoryLinerMatrix
+}

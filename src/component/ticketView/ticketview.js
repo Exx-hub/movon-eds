@@ -1,176 +1,168 @@
-import React from 'react';
-import './ticketview.scss';
+import React from "react";
+import "./ticketview.scss";
 import { QRCode } from "react-qr-svg";
-import {Space} from 'antd';
-import movon from '../../assets/movon3.png';
-import {config} from '../../config'
-import moment from 'moment'
-import {getUser} from '../../utility'
+import { Row, Col } from "antd";
+import movon from "../../assets/movon3.png";
+import moment from "moment";
+import { modifyName } from "../../utility";
 
-const TicketDetails = (props) =>{
-
-    const{
-        billOfLading,
-        packageQty,
-        packageWeight,
-        recipientName,
-        recipientPhone,
-        senderName,
-        senderPhone,
-        busCompanyLogo,
-        endStationName,
-        startStationName,
-        tripCode,
-        createdAt,
-        totalPrice,
-        spCopy
-    }= props.value;
-
-    const code = props.code
-
-    const Populate = () =>{
-        const View = (<>
-        <Space className="details-txt">
-            <h4 className="span-description" style={{width:'120px'}}>Bill Of Lading</h4>
-            <h4>:</h4>
-                <h4>{billOfLading}</h4>
-        </Space>
-        <Space className="details-txt" style={{display:'none'}}>
-            <h4 className="span-description" style={{width:'120px'}}>Trip Code</h4>
-            <h4>:</h4>
-                <h4>{tripCode}</h4>
-        </Space>
-        <Space className="details-txt">
-            <h4 className="span-description" style={{width:'120px'}}>Sender</h4>
-            <h4>:</h4>
-                <h4>{senderName}</h4>
-        </Space>
-        <Space className="details-txt">
-            <h4 className="span-description" style={{width:'120px'}}>Mobile Number</h4>
-            <h4>:</h4>
-                <h4>{senderPhone}</h4>
-        </Space>
-        <Space className="details-txt">
-            <h4 className="span-description" style={{width:'120px'}}>Receiver</h4>
-            <h4>:</h4>
-                <h4>{recipientName}</h4>
-        </Space>
-        <Space className="details-txt" style={{margin:0}}>
-            <h4 className="span-description" style={{width:'120px'}}>Mobile Number</h4>
-            <h4>:</h4>
-                <h4>{recipientPhone}</h4>
-        </Space>
-        <br />
-        <Space className="details-txt">
-            <h4 className="span-description" style={{width:'120px'}}>Origin</h4>
-            <h4>:</h4>
-                <h4>{startStationName}</h4>
-        </Space>
-
-        {
-            Boolean(spCopy) &&  <Space className="details-txt">
-                <h4 className="span-description" style={{width:'120px'}}>Price</h4>
-                <h4>:</h4>
-                <h4>₱{parseFloat(totalPrice).toFixed(2)}</h4>
-            </Space>
-        }
-        
-        <Space direction="horizontal"  className="details-txt">
-        <h4 className="span-description">Quantity | Weight</h4>
-        <h4>: &nbsp; {packageQty} {packageQty.length > 1 ? "pkgs." : "pkg"} &nbsp; - &nbsp; {packageWeight} {packageWeight.length > 1 ? "kgs." : "kg"}</h4>
-        </Space>
-        </>)
-        return View
-    }
-
-    return (
-        <div className="ticket-details">
-            <div style={{display:'flex', flexDirection:'row', marginRight:'1rem', height:'100%'}}>
-                <div className="qr-section">
-                    <div className="qr-container">
-                        <div className="qr-code-img">
-                            <QRCode
-                                bgColor="#FFFFFF"
-                                fgColor="#000000"
-                                level="Q"
-                                style={{ width: 150 }}
-                                value={code}
-                            />
-                            <h4 className="code-date-container-item2">{code}</h4>
-                        </div>
-                    </div>
-                    <div className="code-date-container">
-                        <h4 className="code-date-container-item1">{moment(createdAt).format('MMM DD, YYYY')}</h4>
-                        <h4 className="code-date-container-destination">{endStationName}</h4>
-                    </div>
-                    <div className="parcel-count"> {props.children} </div>
-                </div>
-                <div style={{
-                    display:'flex', 
-                    flexDirection:'column', 
-                    justifyContent:'flex-start',
-                    alignItems:'flex-start'
-                    }}>
-                    <div className="image-logo-container">
-                        <img src={movon} className="movon-logo" alt="movon"/>
-                        <img src={busCompanyLogo} className="partner-logo" alt="partner"/>
-                    </div>
-                    <div className="ticket-view-populate-section"><Populate /></div>
-                </div>
-            </div>
-        </div>
-    )
+function TextItem(props) {
+  return (
+    <Row style={{ marginBottom: ".4rem" }}>
+      <Col span={8}>
+        <span className="details-title-text">{props.title}</span>
+      </Col>
+      <Col span={16}>
+        <span className="details-value-text">{props.value}</span>
+      </Col>
+    </Row>
+  );
 }
 
-const PCopy = (props) =>{
-    if(props){
-        const quantity = props.value.noOfSticker;
-        const scanCode = props.value.scanCode;
+const TicketDetails = (props) => {
+  const {
+    billOfLading,
+    packageQty,
+    busCompanyLogo,
+    endStationName,
+    createdAt,
+    scanCode
+  } = props.value;
 
-        let _view=[]
-        for(let i=0; i < quantity; i++){
-            _view.push(<TicketDetails spCopy={false} key={i} {...props} code={scanCode} /> )
-        }
-        return _view;
+  const code = props.code;
+  const parcelInfo = props.parcelInfo || [];
+
+  return (
+    <div className="ticket-details">
+      <Row justify="space-between" style={{ width: "100%" }}>
+        <Col span={7} style={{ borderRight: "1px dashed gray" }}>
+          <Row justify="center">
+            <QRCode
+              bgColor="#FFFFFF"
+              fgColor="#000000"
+              level="Q"
+              style={{ width: 120, marginTop: ".8rem" }}
+              value={code}
+            />
+          </Row>
+          <Row justify="center" className="scan-code-text">{scanCode}</Row>
+          <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
+          
+          <Row justify="center">
+            {Boolean(props.spCopy) ? (
+              <span className="package-indicator-sp">{props.parcelCount}</span>
+            ) : (
+              <div style={{display:'flex',flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                <span className="package-indicator">
+                  {packageQty} <span className="pkg-text">pkg.</span>
+                </span>
+              <span className="customer-copy-text">{`Customer's Copy`}</span>
+              </div>
+            )}
+          </Row>
+        </Col>
+        <Col span={17} style={{ paddingLeft: ".5rem" }}>
+          <Row justify="space-between" className="image-logo-container">
+            <img src={movon} className="movon-logo" alt="movon" />
+            <img src={busCompanyLogo} className="partner-logo" alt="partner" />
+          </Row>
+          {parcelInfo.map((e) => (
+            <TextItem title={e.title} value={e.value} />
+          ))}
+        </Col>
+      </Row>
+      <Row style={{ height:'100%', borderTop: "1px dashed gray", display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center' }}>
+          <div style={{width:'100%', textAlign:'center'}}>
+            <span className="bottom-destination-text">{endStationName}</span>
+          </div>  
+          <div style={{width:'100%', textAlign:'center'}}><span className="bottom-blNo-text">Bill Of Lading ({billOfLading})</span>
+          </div>
+      </Row>
+    </div>
+  );
+};
+
+const PCopy = (props) => {
+  if (props) {
+    const {
+      recipientName,
+      recipientPhone,
+      senderName,
+      senderPhone,
+      startStationName,
+      totalPrice,
+    } = props.value;
+
+    const quantity = props.value.noOfSticker;
+    const scanCode = props.value.scanCode;
+
+    const parcelInfo = [
+      { title: "Sender", value: modifyName(senderName) },
+      { title: "Mobile No.", value: senderPhone },
+      { title: "Reciever", value: modifyName(recipientName) },
+      { title: "Mobile No.", value: recipientPhone },
+      { title: "Origin", value: startStationName },
+      { title: "Price", value: totalPrice },
+    ];
+
+    let _view = [];
+    for (let i = 0; i < quantity; i++) {
+      _view.push(
+        <TicketDetails
+          parcelInfo={parcelInfo}
+          key={i}
+          {...props}
+          code={scanCode}
+        />
+      );
     }
-    return null;
-}
+    return _view;
+  }
+  return null;
+};
 
-const SpCopy = (props) =>{
-    if(props){
-        let _view=[]
-        for(let i=0; i < props.value.subParcels.length; i++){
-            const scanCode = props.value.subParcels[i].subParcelCode
-            _view.push(<TicketDetails spCopy={true} key={i} {...props} code={scanCode} >  <span>{i+1} of {props.value.subParcels.length}</span> </TicketDetails>)
-        }
-        return _view;
+const SpCopy = (props) => {
+  if (props) {
+    const {
+      recipientName,
+      recipientPhone,
+      senderName,
+      senderPhone,
+      startStationName,
+    } = props.value;
+
+    let _view = [];
+    for (let i = 0; i < props.value.subParcels.length; i++) {
+      const scanCode = props.value.subParcels[i].subParcelCode;
+      const parcelCount = i + 1 + "/" + props.value.subParcels.length;
+      const parcelInfo = [
+        { title: "Sender", value: modifyName(senderName) },
+        { title: "Mobile No.", value: senderPhone },
+        { title: "Reciever", value: modifyName(recipientName) },
+        { title: "Mobile No.", value: recipientPhone },
+        { title: "Origin", value: startStationName },
+      ];
+      _view.push(
+        <TicketDetails
+          spCopy={true}
+          parcelInfo={parcelInfo}
+          key={i}
+          {...props}
+          code={scanCode}
+          parcelCount={parcelCount}
+        />
+      );
     }
-    return null;
-}
+    return _view;
+  }
+  return null;
+};
 
-const CompanyCopy = (props) =>{
-    if(props){
-        const USER = getUser();
-        let noOfStickerCopy = config.ticket.totalCopy;
-        if(USER){
-            noOfStickerCopy = USER.busCompanyId && USER.busCompanyId.config && USER.busCompanyId.config.parcel.noOfStickerCopy;
-        }
-        const quantity = noOfStickerCopy || config.ticket.totalCopy;
-        const scanCode = props.value.subParcels[0].subParcelCode;
-        
-        let _view=[]
-        for(let i=0; i<quantity; i++){
-            _view.push(<TicketDetails key={i} {...props} code={scanCode} />)  
-        }
-        return _view;
-    }
-    return null;
-}
-
-export const TicketView = (props) =>{
-    return (
+export const TicketView = (props) => {
+  return (
     <div className="component-ticketview-container">
-        {props.value && <PCopy {...props} />}
-        {props.value && <SpCopy {...props}/>} 
-    </div>);
-}
+      {props.value && <PCopy {...props} />}
+      {props.value && <SpCopy {...props} />}
+    </div>
+  );
+};

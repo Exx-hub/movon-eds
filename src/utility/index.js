@@ -89,6 +89,20 @@ export class UserProfile{
       this.token = this.credential.token;
       this.user = this.credential.user;
     }  
+
+  }
+
+  logout(User){
+    User.logout(this.token)
+    .then(this.clearData())
+    .catch(this.clearData());
+  }
+
+  clearData(){
+    localStorage.setItem('credential',null)
+    this.token = null;
+    this.user = null;
+    this.credential = null
   }
 
   getToken(){
@@ -97,11 +111,18 @@ export class UserProfile{
 
   getAssignedStation(){
     if(this.user){
-      const {_id, name}=this.user.assignedStation
-      return { _id, name }
+      return this.user.assignedStation || undefined
     }
     return undefined;
   }
+
+  getAssignedStationId(){
+    if(this.getAssignedStation()){
+      return this.getAssignedStation()._id || undefined
+    }
+    return undefined;
+  }
+
 
   getBusCompany(){
     if(this.user){
@@ -110,6 +131,12 @@ export class UserProfile{
     return undefined;
   }
 
+  getBusCompanyId(){
+    if(this.getBusCompany()){
+      return this.getBusCompany()._id || undefined
+    }
+    return undefined;
+  }
   getBusCompanyTag(){
     if(this.getBusCompany()){
       let tag = this.getBusCompany().tag || ((this.getBusCompany().config.parcel && this.getBusCompany().config.parcel.tag) || undefined  )
@@ -118,9 +145,22 @@ export class UserProfile{
     return undefined;
   }
 
+  enableCargoSystemFee(){
+    if(this.getBusCompany()){
+      return Boolean(this.getBusCompany().cargoStatus || 1) 
+    }
+    return false;
+  }
+
+  getDiscount(){
+    if(this.getBusCompany()){
+      return (this.getBusCompany().config && this.getBusCompany().config.discount) || []
+    }
+    return [];
+  }
+
   isIsarogLiners(){
     if(this.getBusCompanyTag()){
-      console.log("tag====>>",this.getBusCompanyTag().toLowerCase())
       return "isarog-liner" === this.getBusCompanyTag().toLowerCase();
     }
     return false;
@@ -131,6 +171,17 @@ export class UserProfile{
       return "five-star" === this.getBusCompanyTag().toLowerCase();
     }
     return false;
+  }
+
+  getStickerCount(){
+    if(this.getBusCompany()){
+      const count = (this.getBusCompany().config && this.getBusCompany().config.noOfStickerCopy) || 1;
+      console.log('====>>count',count)
+      console.log('====>>count',count)
+      console.log('====>>count',count)
+      return count;
+    }
+    return 1;
   }
 }
 
@@ -187,8 +238,16 @@ export const debounce = (func, wait) => {
   };
 };
 
-export const envPath = (path) => {
-  const env =  process.env.NODE_ENV;
-  return process.env.NODE_ENV === 'development' ? '/staging' : '/production' + path
-};
+export const alterPath = (path, props) =>{
+  //return process.env.NODE_ENV === 'development' ? '/staging' + path : path;
+  return path;
+}
+
+export const modifyName = fullName =>{
+  fullName = fullName.toLowerCase();
+  const i = fullName.split(" ")
+  return i.map(name=>{
+      return name.charAt(0).toUpperCase() + name.slice(1) + " "
+  })
+}
   
