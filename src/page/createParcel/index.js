@@ -700,7 +700,7 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
-    if(this.UserProfileObject.enableCargoSystemFee()){
+    if(!this.UserProfileObject.enableCargoSystemFee()){
       return;
     }
 
