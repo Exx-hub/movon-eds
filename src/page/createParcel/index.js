@@ -590,7 +590,7 @@ class CreateParcel extends React.Component {
     }
 
     if(name === 'declaredValue' || name === 'quantity' || name==='packageWeight' || name === 'sticker_quantity'){
-      const isValid = Number(details[name].value) > 0;
+      const isValid = Number(details[name].value) > -1;
       return {...details[name], 
         ...{ 
           accepted: isValid, 
