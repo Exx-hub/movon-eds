@@ -145,9 +145,9 @@ export class UserProfile{
     return undefined;
   }
 
-  enableCargoSystemFee(){
+  disableCargoSystemFee(){
     if(this.getBusCompany()){
-      return Boolean(this.getBusCompany().cargoStatus || 1) 
+      return this.getBusCompany().cargoStatus === 0; 
     }
     return false;
   }

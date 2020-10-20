@@ -163,12 +163,12 @@ class SearchModule extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener("resize", (e) => {
-      this.setState({
-        height: e.currentTarget.innerHeight,
-        width: e.currentTarget.innerWidth,
-      });
-    });
+    // window.addEventListener("resize", (e) => {
+    //   this.setState({
+    //     height: e.currentTarget.innerHeight,
+    //     width: e.currentTarget.innerWidth,
+    //   });
+    // });
 }
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
