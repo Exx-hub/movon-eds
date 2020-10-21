@@ -7,7 +7,7 @@ import {getCredential, UserProfile, alterPath} from '../../utility'
 import { PriceMatrix, VictoryLinerMatrix } from '../priceMatrix'
 import SalesReport from "../salesReport"
 import SearchModule from '../searchModule'
-import UserProfileModule from '../changePassword'
+import {EditUserProfileModule,ViewUserProfileModule} from '../userProfileModule'
 
 import moment from 'moment'
 
@@ -304,8 +304,12 @@ function Home(props) {
                   title="SUMMARY OF CARGO SALES"/>
               </Route>
 
-              <Route path={alterPath('/user-profile')}>
-                <UserProfileModule {...props}/>
+              <Route exact={true} path={alterPath('/user-profile')}>
+                <ViewUserProfileModule {...props}/>
+              </Route>
+
+              <Route exact={true} path={alterPath('/user-profile/edit')}>
+                <EditUserProfileModule {...props}/>
               </Route>
               
 
