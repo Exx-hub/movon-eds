@@ -3,10 +3,11 @@ import Manifest from '../manifest';
 import Reports from '../reports';
 import User from '../../service/User';
 import movonLogo from '../../assets/movoncargo.png';
-import {clearCredential,getCredential, UserProfile, alterPath} from '../../utility'
+import {getCredential, UserProfile, alterPath} from '../../utility'
 import { PriceMatrix, VictoryLinerMatrix } from '../priceMatrix'
 import SalesReport from "../salesReport"
 import SearchModule from '../searchModule'
+import UserProfileModule from '../changePassword'
 
 import moment from 'moment'
 
@@ -190,7 +191,8 @@ function Home(props) {
         {key:"matrix-vli", destination: alterPath("/matrix/victory-liners"), action:()=>{}},
         {key:"sales-vli-bitsi", destination: alterPath("/report/sales/vli-bitsi"), action:()=>{}},
         {key:"sales-cargo", destination: alterPath("/report/sales/cargo"), action:()=>{}},
-        {key:"drop-down-setting",  name:'Setting', type:'menu', destination: alterPath("/drop-down-setting"), icon:()=><SettingOutlined/>, action:()=>{}},
+        {key:"drop-down-profile",  name:'Profile', type:'menu', destination: alterPath("/user-profile"), icon:()=><SettingOutlined/>, action:()=>{}},
+        //{key:"drop-down-setting",  name:'Setting', type:'menu', destination: alterPath("/drop-down-setting"), icon:()=><SettingOutlined/>, action:()=>{}},
         {key:"drop-down-logout", name:'Logout', type:'menu', destination: alterPath("/drop-down-logout"), icon:()=><PoweroffOutlined/>,action:()=>userProfileObject.logout(User)
         },
       ])
@@ -301,6 +303,11 @@ function Home(props) {
                   {...props} 
                   title="SUMMARY OF CARGO SALES"/>
               </Route>
+
+              <Route path={alterPath('/user-profile')}>
+                <UserProfileModule {...props}/>
+              </Route>
+              
 
               <Route path={alterPath('/report/sales/vli-bitsi')}>
                 <SalesReport 

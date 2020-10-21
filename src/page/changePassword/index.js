@@ -1,2 +1,2 @@
-import ChangePassword from './changePassword';
-export default ChangePassword;
+import UserProfileModule from './changePassword';
+export default UserProfileModule;
