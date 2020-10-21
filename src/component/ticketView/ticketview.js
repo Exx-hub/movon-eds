@@ -66,8 +66,8 @@ const TicketDetails = (props) => {
             <img src={movon} className="movon-logo" alt="movon" />
             <img src={busCompanyLogo} className="partner-logo" alt="partner" />
           </Row>
-          {parcelInfo.map((e) => (
-            <TextItem title={e.title} value={e.value} />
+          {parcelInfo.map((e,i) => (
+            <TextItem key={i} title={e.title} value={e.value} />
           ))}
         </Col>
       </Row>
@@ -75,7 +75,7 @@ const TicketDetails = (props) => {
           <div style={{width:'100%', textAlign:'center'}}>
             <span className="bottom-destination-text">{endStationName}</span>
           </div>  
-          <div style={{width:'100%', textAlign:'center'}}><span className="bottom-blNo-text">Bill Of Lading ({billOfLading})</span>
+          <div style={{width:'100%', textAlign:'center'}}><span className="bottom-blNo-text">Bill Of Lading - {billOfLading}</span>
           </div>
       </Row>
     </div>
@@ -110,7 +110,7 @@ const PCopy = (props) => {
       _view.push(
         <TicketDetails
           parcelInfo={parcelInfo}
-          key={i}
+          key={"p-"+i}
           {...props}
           code={scanCode}
         />
@@ -144,9 +144,9 @@ const SpCopy = (props) => {
       ];
       _view.push(
         <TicketDetails
+          key={"sp-"+i}
           spCopy={true}
           parcelInfo={parcelInfo}
-          key={i}
           {...props}
           code={scanCode}
           parcelCount={parcelCount}

@@ -273,16 +273,6 @@ class ManifestDetails extends React.Component {
 
   componentDidMount() {
     this.userProfileObject = new UserProfile();
-
-    const {
-      end,
-      endStationName,
-      startStationName,
-    } = this.props.location.state.selected;
-
-    const startStation = getUser().assignedStation._id;
-    const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
-
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,
@@ -290,12 +280,29 @@ class ManifestDetails extends React.Component {
       });
     });
 
-    this.fetchManifest(
-      date,
-      startStation,
-      end,
-      `${startStationName} to ${endStationName}`
-    );
+    if(this.props.location.state){
+
+      const {
+        end,
+        endStationName,
+        startStationName,
+      } = this.props.location.state.selected;
+  
+      const startStation = getUser().assignedStation._id;
+      const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
+      this.fetchManifest(
+        date,
+        startStation,
+        end,
+        `${startStationName} to ${endStationName}`
+      );
+    }
+
+    
+  }
+
+  componentDidUpdate(oldProps,oldState){
+    console.log("pass")
   }
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
