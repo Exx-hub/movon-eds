@@ -26,7 +26,6 @@ const TicketDetails = (props) => {
     busCompanyLogo,
     endStationName,
     createdAt,
-    scanCode
   } = props.value;
 
   const code = props.code;
@@ -45,7 +44,7 @@ const TicketDetails = (props) => {
               value={code}
             />
           </Row>
-          <Row justify="center" className="scan-code-text">{scanCode}</Row>
+          <Row justify="center" className="scan-code-text">{code}</Row>
           <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
           
           <Row justify="center">
@@ -91,10 +90,9 @@ const PCopy = (props) => {
       senderPhone,
       startStationName,
       totalPrice,
+      noOfSticker,
+      scanCode
     } = props.value;
-
-    const quantity = props.value.noOfSticker;
-    const scanCode = props.value.scanCode;
 
     const parcelInfo = [
       { title: "Sender", value: modifyName(senderName) },
@@ -106,7 +104,7 @@ const PCopy = (props) => {
     ];
 
     let _view = [];
-    for (let i = 0; i < quantity; i++) {
+    for (let i = 0; i < noOfSticker; i++) {
       _view.push(
         <TicketDetails
           parcelInfo={parcelInfo}
