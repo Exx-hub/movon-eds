@@ -169,6 +169,7 @@ class SearchModule extends React.Component {
     //     width: e.currentTarget.innerWidth,
     //   });
     // });
+    this.fetchParcelList()
 }
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
