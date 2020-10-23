@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Button, Row, Space, notification, Descriptions, Layout, Divider } from 'antd';
-import { openNotificationWithIcon, openNotificationWithDuration, getUser, clearCredential } from '../../utility';
+import { openNotificationWithIcon, openNotificationWithDuration, UserProfile } from '../../utility';
 import ParcelService from '../../service/Parcel';
 import moment from 'moment';
 import './reports.scss';
@@ -79,8 +79,8 @@ class Reports extends React.Component {
       exporting: false,
       transactions: null,
       summary: {},
-      user: getUser(),
     };
+    this.userProfileObject = UserProfile()
   }
 
   componentDidMount () {
@@ -88,8 +88,8 @@ class Reports extends React.Component {
       this.setState({ fetching: true });
 
       Promise.all([
-        ParcelService.getTransactions(this.state.user.busCompanyId._id),
-        ParcelService.getTransactionSummary(this.state.user.busCompanyId._id),
+        ParcelService.getTransactions(this.userProfileObject.getBusCompanyId()),
+        ParcelService.getTransactionSummary(this.userProfileObject.getBusCompanyId()),
       ]).then(responses => {
 
         const { errorCode0, success: success0, parcels } = responses[0].data;
@@ -115,7 +115,7 @@ class Reports extends React.Component {
       this.setState({ exporting: true });
       console.log('exporting transactions');
       ParcelService
-      .exportTransactions(this.state.user.busCompanyId._id)
+      .exportTransactions(this.userProfileObject.getBusCompanyId())
       .then(() => {
         this.setState({ exporting: false });
       });
@@ -135,17 +135,11 @@ class Reports extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon('error', code);
-      clearCredential();
+      this.userProfileObject.clearData()
       this.props.history.push('/');
       return;
     }
     openNotificationWithIcon('error', code);
-  }
-
-  onForceLogout = (errorCode) => {
-    openNotificationWithDuration('error', errorCode);
-    clearCredential();
-    this.props.history.push('/login')
   }
 
   render() {

@@ -10,7 +10,8 @@ import ParcelService from '../../service/Parcel';
 
 import {
   alterPath,
-  getUser
+  getUser,
+  UserProfile
 } from "../../utility";
 
 const { Header } = Layout
@@ -93,8 +94,7 @@ class PrintManifestDetails extends React.Component {
 
   componentDidMount(){
     this.printEl = React.createRef();
-    const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
-    this.companyTag = companyTag;
+    this.companyTag = UserProfile.getBusCompanyTag();
 
     const {
       end,
@@ -103,7 +103,7 @@ class PrintManifestDetails extends React.Component {
     } = this.props.location.state.selected;
 
     let totalSales = 0;
-    const startStation = getUser().assignedStation._id;
+    const startStation = UserProfile.getAssignedStationId();;
 
     console.log('date', this.props.location.state.date)
     console.log('startStation', startStation)

@@ -1,35 +1,12 @@
 import {notification} from 'antd';
 import { ERROR_CODES} from '../config'
+import UserProfileClass from './userprofile'
 
-// export const useWindowSize = () =>{
-//     const isClient = typeof window === 'object';
-  
-//     function getSize() {
-//       return {
-//         width: isClient ? window.innerWidth : undefined,
-//         height: isClient ? window.innerHeight : undefined
-//       };
-//     }
-  
-//     const [windowSize, setWindowSize] = useState(getSize);
-  
-//     useEffect(() => {
-//       if (!isClient) {
-//         return false;
-//       }
-      
-//       function handleResize() {
-//         setWindowSize(getSize());
-//       }
-  
-//       window.addEventListener('resize', handleResize);
-//       return () => window.removeEventListener('resize', handleResize);
-//     }, []); // Empty array ensures that effect is only run on mount and unmount
-  
-//     return windowSize;
-// }
+const UserProfile = (data)=>{
+  return new UserProfileClass(data)
+} 
 
-export const dataURLtoFile = (dataurl, filename) => {
+const dataURLtoFile = (dataurl, filename) => {
   if(dataurl){
       var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -41,160 +18,7 @@ export const dataURLtoFile = (dataurl, filename) => {
   return null;
 }
 
-export const getCredential = () =>{
-  const credential = localStorage.getItem('credential') || null;
-  return JSON.parse(credential)
-}
-
-export const setCredential = (data) =>{
-  localStorage.setItem('credential',JSON.stringify(data)) 
-}
-
-export const getToken = () =>{
-  let token = null
-  const credential = localStorage.getItem('credential') || null;
-  if(credential){
-    token = (JSON.parse(credential)).token
-  }
-  return token
-}
-
-export const getUser = () =>{
-  try {
-    let user = null
-    const credential = localStorage.getItem('credential') || undefined;
-    if(credential){
-      user = JSON.parse(credential).user
-      return user ? user : null;
-    }
-  } catch (error) {
-    return null
-  }
-}
-
-
-export class UserProfile{
-
-  user = undefined
-  credential = undefined;
-  token = undefined
-  busCompany = undefined
-
-  constructor(){
-    if(localStorage.getItem('credential')){
-      this.credential = JSON.parse(localStorage.getItem('credential'));
-    }
-    if(this.credential){
-      console.log(this.credential)
-      this.token = this.credential.token;
-      this.user = this.credential.user;
-    }  
-
-  }
-
-  logout(User){
-    User.logout(this.token)
-    .then(this.clearData())
-    .catch(this.clearData());
-  }
-
-  clearData(){
-    localStorage.setItem('credential',null)
-    this.token = null;
-    this.user = null;
-    this.credential = null
-  }
-
-  getToken(){
-    return this.token
-  }
-
-  getAssignedStation(){
-    if(this.user){
-      return this.user.assignedStation || undefined
-    }
-    return undefined;
-  }
-
-  getAssignedStationId(){
-    if(this.getAssignedStation()){
-      return this.getAssignedStation()._id || undefined
-    }
-    return undefined;
-  }
-
-
-  getBusCompany(){
-    if(this.user){
-      return this.user.busCompanyId
-    }
-    return undefined;
-  }
-
-  getBusCompanyId(){
-    if(this.getBusCompany()){
-      return this.getBusCompany()._id || undefined
-    }
-    return undefined;
-  }
-  getBusCompanyTag(){
-    if(this.getBusCompany()){
-      let tag = this.getBusCompany().tag || ((this.getBusCompany().config.parcel && this.getBusCompany().config.parcel.tag) || undefined  )
-      return tag ? tag.toLowerCase() : undefined
-    }
-    return undefined;
-  }
-
-  disableCargoSystemFee(){
-    if(this.getBusCompany()){
-      return this.getBusCompany().cargoStatus === 0; 
-    }
-    return false;
-  }
-
-  getDiscount(){
-    if(this.getBusCompany()){
-      return (this.getBusCompany().config && this.getBusCompany().config.discount) || []
-    }
-    return [];
-  }
-
-  isIsarogLiners(){
-    if(this.getBusCompanyTag()){
-      return "isarog-liner" === this.getBusCompanyTag().toLowerCase();
-    }
-    return false;
-  }
-
-  isFiveStar(){
-    if(this.getBusCompanyTag()){
-      return "five-star" === this.getBusCompanyTag().toLowerCase();
-    }
-    return false;
-  }
-
-  getStickerCount(){
-    if(this.getBusCompany()){
-      const count = (this.getBusCompany().config && this.getBusCompany().config.noOfStickerCopy) || 1;
-      console.log('====>>count',count)
-      console.log('====>>count',count)
-      console.log('====>>count',count)
-      return count;
-    }
-    return 1;
-  }
-}
-
-export const clearCredential = () =>{
-  localStorage.setItem('credential',null) 
-}
-
- /**
-    @param {string} type - success, info, warning, error
-    @param {number} code - 000
-  */
-
- export const openNotificationWithIcon = (type, code, func) => {
+const openNotificationWithIcon = (type, code, func) => {
   console.log('[UTILITY]:erroCode',code)
 
   const erCode = (ERROR_CODES && ERROR_CODES[code]) || undefined;
@@ -208,7 +32,7 @@ export const clearCredential = () =>{
   });
 };
 
-export const openNotificationWithDuration = (type, code, func) => {
+const openNotificationWithDuration = (type, code, func) => {
   notification[type]({
     duration:5,
     onClose: func || null,
@@ -217,14 +41,14 @@ export const openNotificationWithDuration = (type, code, func) => {
   });
 };
 
-export const openNotification = (type, {title, message}) => {
+const openNotification = (type, {title, message}) => {
   notification[type]({
     message: title,
     description: message,
   });
 };
 
-export const debounce = (func, wait) => {
+const debounce = (func, wait) => {
   let timeout;
 
   return function executedFunction(...args) {
@@ -238,16 +62,27 @@ export const debounce = (func, wait) => {
   };
 };
 
-export const alterPath = (path, props) =>{
+const alterPath = (path, props) =>{
   //return process.env.NODE_ENV === 'development' ? '/staging' + path : path;
   return path;
 }
 
-export const modifyName = fullName =>{
+const modifyName = fullName =>{
   fullName = fullName.toLowerCase();
   const i = fullName.split(" ")
   return i.map(name=>{
       return name.charAt(0).toUpperCase() + name.slice(1) + " "
   })
+}
+
+export{
+  modifyName, 
+  alterPath, 
+  debounce, 
+  openNotification, 
+  openNotificationWithDuration, 
+  openNotificationWithIcon,
+  UserProfile, 
+  dataURLtoFile
 }
   

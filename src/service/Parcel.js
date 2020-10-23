@@ -1,9 +1,12 @@
 import axios from 'axios';
 import moment from 'moment';
 import {config} from '../config';
-import {getToken} from '../utility'
+import {UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
+const userProfileObject = UserProfile()
+
+console.log("----token",userProfileObject.getToken())
 
 const ParcelService = {
     getTrips : (stationId) => {
@@ -18,7 +21,7 @@ const ParcelService = {
             headers : {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             data : {
                 //stationId: stationId,
@@ -129,7 +132,7 @@ const ParcelService = {
             headers : {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             data: bodyFormData,
             config: { headers : {'Content-Type': 'multipart/form-data'} }
@@ -156,7 +159,7 @@ const ParcelService = {
                 headers: {
                     'x-auth-deviceid' : '1',
                     'x-auth-devicetype' : '1',
-                    'x-auth-token' : getToken()
+                    'x-auth-token' : userProfileObject.getToken()
                 },
                 data: {
                     claimAmount,
@@ -179,7 +182,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             data: {
                 declaredValue, 
@@ -197,7 +200,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -209,7 +212,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -221,7 +224,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -234,7 +237,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -247,7 +250,7 @@ const ParcelService = {
             headers : {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -260,7 +263,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -273,7 +276,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             responseType: 'arraybuffer',
         }).then(response => {
@@ -296,7 +299,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             params:{              
                 "dateFrom": params.dateFrom,
@@ -319,7 +322,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             responseType: 'arraybuffer',
             params:{              
@@ -351,7 +354,7 @@ const ParcelService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             params:{ searchItem }
         })

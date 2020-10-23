@@ -3,10 +3,11 @@ import Manifest from '../manifest';
 import Reports from '../reports';
 import User from '../../service/User';
 import movonLogo from '../../assets/movoncargo.png';
-import {clearCredential,getCredential, UserProfile, alterPath} from '../../utility'
+import { UserProfile, alterPath} from '../../utility'
 import { PriceMatrix, VictoryLinerMatrix } from '../priceMatrix'
 import SalesReport from "../salesReport"
 import SearchModule from '../searchModule'
+import Transaction from '../transactionModule'
 
 import moment from 'moment'
 
@@ -166,24 +167,15 @@ const tableSourceBitsi = [
 
 function Home(props) {
 
-  const [state, setState] = React.useState({});
-  //const userProfileObject = new UserProfile()
+  //const [state, setState] = React.useState({});
   const [menuData,setMenuData] = React.useState([])
-  const [userProfileObject,setUserProfileObject] = React.useState(new UserProfile())
+  const [userProfileObject] = React.useState(UserProfile())
 
   React.useEffect(() => {
-
-    if(!setUserProfileObject){
-      setUserProfileObject(new UserProfile());
-    }
-
-    if(!state.user){
-      const{user} = getCredential();
-      setState({...state, ...{user}})
-    }
     if(menuData.length < 1){
       setMenuData([
         {key:"create-parcel", destination: alterPath("/create-parcel"), action:()=>{}},
+        {key:"transaction-parcel", destination: alterPath("/transaction-parcel"), action:()=>{}},
         {key:"search-parcel", destination: alterPath("/search-parcel"), action:()=>{}},
         {key:"manifest-report", destination: alterPath("/manifest/list"), action:()=>{}},
         {key:"matrix-own", destination: alterPath("/matrix/own"), action:()=>{}},
@@ -195,7 +187,7 @@ function Home(props) {
         },
       ])
     }
-  },[state,menuData,userProfileObject]);
+  },[menuData,userProfileObject]);
 
   const onNavigationMenuChange = (e) =>{
     for(let i=0; i<menuData.length; i++){
@@ -229,11 +221,11 @@ function Home(props) {
             <img src={movonLogo} style={{height:'50px'}} alt="logo"/>  
           </Col>
           {
-            state.user && <Col span={12}>
+            userProfileObject.getUser() && <Col span={12}>
               <div className={'header-nav'}>
                 <Dropdown overlay={menu} trigger={['click']}>
                   <Button className={'home-nav-link'} type="link" onClick={e => e.preventDefault()}>
-                    Hi {state.user.personalInfo.firstName}!  
+                    Hi {userProfileObject.getUser().personalInfo.firstName}!  
                     <UserOutlined style={{fontSize:'24px'}}/>
                   </Button>
                 </Dropdown>
@@ -255,6 +247,7 @@ function Home(props) {
             <SubMenu key="parcel" icon={<InboxOutlined />} title="Parcel">
               <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>Create</Menu.Item>
               <Menu.Item key="search-parcel" icon={<SearchOutlined />}>Search</Menu.Item>
+              <Menu.Item key="transaction-parcel" icon={<SearchOutlined />}>Transactions</Menu.Item>
             </SubMenu>
 
             <Menu.Item key="manifest-report" icon={<FileSearchOutlined />}>Manifest</Menu.Item>
@@ -275,8 +268,13 @@ function Home(props) {
           <Content className={'home-content'}>
 
             <Switch>
-              <Route path={alterPath('/matrix/own')}>
+
+                <Route path={alterPath('/matrix/own')}>
                 <PriceMatrix {...props}/>
+              </Route>
+
+              <Route path={alterPath('/transaction-parcel')}>
+                <Transaction {...props}/>
               </Route>
 
               <Route path={alterPath('/matrix/victory-liners')}>
@@ -300,6 +298,17 @@ function Home(props) {
                   source={tableSourceBitsi}
                   {...props} 
                   title="SUMMARY OF CARGO SALES"/>
+              </Route>
+
+              <Route path={alterPath('/report/sales/cargo')}>
+                <SalesReport 
+                  source={tableSourceBitsi}
+                  {...props} 
+                  title="SUMMARY OF CARGO SALES"/>
+              </Route>
+
+              <Route path={alterPath('/search-parcel')}>
+                <SearchModule {...props}/>
               </Route>
 
               <Route path={alterPath('/report/sales/vli-bitsi')}>

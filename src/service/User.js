@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {config} from '../config';
-import {getToken} from '../utility'
+import {getToken,UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
 
@@ -27,7 +27,7 @@ const User = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : UserProfile().getToken()
             }
         })
     },
@@ -39,7 +39,7 @@ const User = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : UserProfile().getToken()
             }
         })
     }

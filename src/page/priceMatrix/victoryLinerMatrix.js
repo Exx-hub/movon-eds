@@ -10,10 +10,17 @@ import {
   Skeleton,
   Divider,
 } from "antd";
+
 import { PlusOutlined, SaveOutlined, DeleteFilled } from "@ant-design/icons";
 import MatrixService from "../../service/Matrix";
 import ParcelService from "../../service/Parcel";
-import {openNotificationWithIcon,getUser,clearCredential, UserProfile, alterPath} from "../../utility";
+import {
+  openNotificationWithIcon,
+  UserProfile,
+  alterPath,
+} from "../../utility";
+import FixPriceMatrix from './fixMatrix'
+
 import "./priceMatrix.css";
 
 const { Option } = Select;
@@ -44,9 +51,7 @@ const initConnectingMatrix = {
 };
 
 export default class VictoryLinerMatrix extends React.Component {
-
-  
-  constructor(){
+  constructor() {
     super();
     this.state = {
       matrix: [{ ...initMatrix }],
@@ -76,21 +81,15 @@ export default class VictoryLinerMatrix extends React.Component {
         accepted: true,
         options: [],
       },
+      matrix:[],
       fixMatrix: [{}],
     };
-    this.UserProfileObject = new UserProfile();
+    this.userProfileObject = UserProfile();
   }
 
   componentDidMount() {
-    this.user = getUser();
-    this.busCompanyId = (this.user && this.user.busCompanyId._id) || undefined;
-
-    if (!this.user) {
-      this.props.history.push(alterPath("/"));
-    }
-
-    const stationId = this.use && this.use.assignedStation._id;
-    ParcelService.getTrips(stationId).then((e) => {
+    
+    ParcelService.getTrips(this.userProfileObject.getAssignedStationId()).then((e) => {
       const { data, success, errorCode } = e.data;
       if (success) {
         if (data.trips) {
@@ -114,7 +113,7 @@ export default class VictoryLinerMatrix extends React.Component {
             routes: data,
             selectedRoute: data[0],
             routesList: { ...this.state.routesList, ...{ options } },
-            startStation: this.user.assignedStation,
+            startStation: this.userProfileObject.getAssignedStation(),
           });
         }
       } else {
@@ -147,7 +146,7 @@ export default class VictoryLinerMatrix extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      clearCredential();
+      this.userProfileObject.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -164,6 +163,7 @@ export default class VictoryLinerMatrix extends React.Component {
     const connectingCompany = this.state.connectingCompany;
     const origin = this.state.connectingRoutesOrigin.value;
     const destination = this.state.connectingRoutes.value;
+    const{matrix,fixMatrix}=this.state;
 
     if (!origin || !destination) {
       notification["error"]({
@@ -172,16 +172,6 @@ export default class VictoryLinerMatrix extends React.Component {
       });
       return;
     }
-
-    const stringValues = this.state.connectingMatrix.map((e) => ({
-      price: e.price,
-      declaredValueMax: e.declaredValueMax,
-      declaredValueMin: e.declaredValueMin,
-      weightMax: e.weightMax,
-      weightMin: e.weightMin,
-      handlingFee: e.handlingFee,
-      tariffRate: e.tariffRate,
-    }));
 
     const busCompanyId =
       connectingCompany.value ||
@@ -193,8 +183,9 @@ export default class VictoryLinerMatrix extends React.Component {
       busCompanyId,
       origin,
       destination,
-      stringValues: JSON.stringify(stringValues),
-    }).then((e) => {
+      stringValues: JSON.stringify({matrix,fixMatrix}),
+    })
+    .then((e) => {
       const { success, errorCode } = e.data;
       if (success)
         notification["success"]({
@@ -203,6 +194,7 @@ export default class VictoryLinerMatrix extends React.Component {
         });
       else this.handleErrorNotification(errorCode);
     });
+
   };
 
   fetchConnectingMatrix = () => {
@@ -219,11 +211,27 @@ export default class VictoryLinerMatrix extends React.Component {
       MatrixService.getMatrix({ busCompanyId, origin, destination }).then(
         (e) => {
           const { data, success, errorCode } = e.data;
-          console.log('fetchConnectingMatrix',e.data)
+          console.log("fetchConnectingMatrix", e.data);
           if (success) {
             let connectingMatrix = [{ ...initConnectingMatrix }];
+            let matrix = [];
+            let fixMatrix = [];
+
             if (data && data.stringValues) {
               connectingMatrix = JSON.parse(data.stringValues);
+              console.log("connectingMatrix",connectingMatrix)
+              if(connectingMatrix){
+                if(Array.isArray(connectingMatrix)){
+                  matrix = [...connectingMatrix];
+                  fixMatrix = [{name:"", price:0, declaredValue:0}]
+                }else{
+                  if(typeof connectingMatrix === 'object' && (connectingMatrix !== null || connectingMatrix !== undefined)){
+                    matrix = [...connectingMatrix.matrix];
+                    fixMatrix = [...connectingMatrix.fixMatrix];
+                  }
+                }
+                this.setState({matrix,fixMatrix});
+              }
             }
             this.setState({ connectingMatrix });
           } else {
@@ -263,6 +271,12 @@ export default class VictoryLinerMatrix extends React.Component {
     });
   };
 
+  onFixMatrixChange = (index, name, value) => {
+    let fixMatrix = [...this.state.fixMatrix];
+    fixMatrix[index][name] = value;
+    this.setState({ fixMatrix });
+  };
+
   render() {
     const connectingRoutesOrigin = { ...this.state.connectingRoutesOrigin };
     const connectingRoutes = { ...this.state.connectingRoutes };
@@ -272,259 +286,282 @@ export default class VictoryLinerMatrix extends React.Component {
     return (
       <Layout>
         <div className="price-matrix-module">
-        {connectingCompany.options.length > 0 && (
-          <Row>
-            <div className="bicol-isarog-matrix">
-              <h1 className="bus-company-name">
-                {(options.value
-                  ? options[
-                      options.map((e) => e._id).indexOf(options.value)
-                    ]
-                  : options.length > 0 && options[0].name) ||
-                  "Connecting Routes"}{" "}
-                Matrix
-              </h1>
-              <Row justify="left" className="bicol-isarog-select-group">
-                <Col span={8} style={{ paddingRight: ".5rem" }}>
-                  {options && options.length > 0 && (
-                    <>
-                      <span>Associate</span>
-                      <Select
-                        placeholder="Associate"
-                        style={{ width: "100%" }}
-                        value={connectingCompany.value}
-                        defaultValue={
-                          options && options.length > 0 && options[0]._id
-                        }
-                        onChange={(e) =>
-                          this.setState(
-                            {
-                              connectingCompany: {
-                                ...{ connectingCompany },
-                                ...{ value: e },
+          {connectingCompany.options.length > 0 && (
+            <Row>
+              <div className="bicol-isarog-matrix">
+                <h1 className="bus-company-name">
+                  {(options.value
+                    ? options[options.map((e) => e._id).indexOf(options.value)]
+                    : options.length > 0 && options[0].name) ||
+                    "Connecting Routes"}{" "}
+                  Matrix
+                </h1>
+                <Row justify="left" className="bicol-isarog-select-group">
+                  <Col span={8} style={{ paddingRight: ".5rem" }}>
+                    {options && options.length > 0 && (
+                      <>
+                        <span>Associate</span>
+                        <Select
+                          placeholder="Associate"
+                          style={{ width: "100%" }}
+                          value={connectingCompany.value}
+                          defaultValue={
+                            options && options.length > 0 && options[0]._id
+                          }
+                          onChange={(e) =>
+                            this.setState(
+                              {
+                                connectingCompany: {
+                                  ...{ connectingCompany },
+                                  ...{ value: e },
+                                },
                               },
-                            },
-                            () => this.getConnectingRoutes(e)
-                          )
-                        }
-                      >
-                        {options.map((e, i) => (
-                          <Option key={i} value={e._id}>
-                            {e.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </>
-                  )}
-                </Col>
-                <Col span={8}>
-                  {connectingRoutesOrigin.options.length > 0 && (
-                    <div className="select-padding">
-                      <span>Origin</span>
-                      <Select
-                        style={{ width: "100%" }}
-                        placeholder="Destination"
-                        value={connectingRoutesOrigin.value}
-                        onChange={(e) =>
-                          this.setState(
-                            {
-                              connectingRoutesOrigin: {
-                                ...connectingRoutesOrigin,
-                                ...{ value: e },
+                              () => this.getConnectingRoutes(e)
+                            )
+                          }
+                        >
+                          {options.map((e, i) => (
+                            <Option key={i} value={e._id}>
+                              {e.name}
+                            </Option>
+                          ))}
+                        </Select>
+                      </>
+                    )}
+                  </Col>
+                  <Col span={8}>
+                    {connectingRoutesOrigin.options.length > 0 && (
+                      <div className="select-padding">
+                        <span>Origin</span>
+                        <Select
+                          style={{ width: "100%" }}
+                          placeholder="Destination"
+                          value={connectingRoutesOrigin.value}
+                          onChange={(e) =>
+                            this.setState(
+                              {
+                                connectingRoutesOrigin: {
+                                  ...connectingRoutesOrigin,
+                                  ...{ value: e },
+                                },
                               },
-                            },
-                            () => this.fetchConnectingMatrix()
-                          )
-                        }
-                      >
-                        {connectingRoutesOrigin.options.map((e, i) => (
-                          <Option key={i} value={e.start}>
-                            {e.startStationName}
-                          </Option>
-                        ))}
-                      </Select>
-                    </div>
-                  )}
-                </Col>
-                <Col span={8}>
-                  {connectingRoutes.options && (
-                    <div className="select-padding">
-                      <span>Destination</span>
-                      <Select
-                        style={{ width: "100%" }}
-                        placeholder="Destination"
-                        value={connectingRoutes.value}
-                        onChange={(e) =>
-                          this.setState(
-                            {
-                              connectingRoutes: {
-                                ...connectingRoutes,
-                                ...{ value: e },
+                              () => this.fetchConnectingMatrix()
+                            )
+                          }
+                        >
+                          {connectingRoutesOrigin.options.map((e, i) => (
+                            <Option key={i} value={e.start}>
+                              {e.startStationName}
+                            </Option>
+                          ))}
+                        </Select>
+                      </div>
+                    )}
+                  </Col>
+                  <Col span={8}>
+                    {connectingRoutes.options && (
+                      <div className="select-padding">
+                        <span>Destination</span>
+                        <Select
+                          style={{ width: "100%" }}
+                          placeholder="Destination"
+                          value={connectingRoutes.value}
+                          onChange={(e) =>
+                            this.setState(
+                              {
+                                connectingRoutes: {
+                                  ...connectingRoutes,
+                                  ...{ value: e },
+                                },
                               },
-                            },
-                            () => this.fetchConnectingMatrix()
-                          )
-                        }
-                      >
-                        {connectingRoutes.options.map((e, i) => (
-                          <Option value={e.end}>{e.endStationName}</Option>
-                        ))}
-                      </Select>
-                    </div>
-                  )}
-                </Col>
-              </Row>
-              <Row>
-          <Col span={4} className="header-input-group">
-            Min Declared Value
-          </Col>
-          <Col span={4} className="header-input-group">
-            Max Declared Value
-          </Col>
-          <Col span={4} className="header-input-group">
-            Min Weight (kgs.)
-          </Col>
-          <Col span={3} className="header-input-group">
-            Max Weight (kgs.)
-          </Col>
-          <Col span={3} className="header-input-group">
-            Price
-          </Col>
-          <Col span={3} className="header-input-group">
-            Handling Fee
-          </Col>
-          <Col span={3} className="header-input-group">
-            Tarif Rate (%){" "}
-          </Col>
-        </Row>
+                              () => this.fetchConnectingMatrix()
+                            )
+                          }
+                        >
+                          {connectingRoutes.options.map((e, i) => (
+                            <Option value={e.end}>{e.endStationName}</Option>
+                          ))}
+                        </Select>
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={4} className="header-input-group">
+                    Min Declared Value
+                  </Col>
+                  <Col span={4} className="header-input-group">
+                    Max Declared Value
+                  </Col>
+                  <Col span={4} className="header-input-group">
+                    Min Weight (kgs.)
+                  </Col>
+                  <Col span={3} className="header-input-group">
+                    Max Weight (kgs.)
+                  </Col>
+                  <Col span={3} className="header-input-group">
+                    Price
+                  </Col>
+                  <Col span={3} className="header-input-group">
+                    Handling Fee
+                  </Col>
+                  <Col span={3} className="header-input-group">
+                    Tarif Rate (%){" "}
+                  </Col>
+                </Row>
 
-        {this.state.connectingMatrix.map((e, i) => (
-          <Row key={i}>
-            <Col span={4}>
-              <div className="matrix-item">
-                <Input
-                  key={i}
-                  type="number"
-                  value={e["declaredValueMin"]}
-                  onChange={(e) =>
-                    this.connectingMatrixChange(
-                      "declaredValueMin",
-                      e.target.value,
-                      i
-                    )
-                  }
-                />
-              </div>
-            </Col>
-            <Col span={4}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e["declaredValueMax"]}
-                  onChange={(e) =>
-                    this.connectingMatrixChange(
-                      "declaredValueMax",
-                      e.target.value,
-                      i
-                    )
-                  }
-                />
-              </div>
-            </Col>
-            <Col span={4}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e["weightMin"]}
-                  onChange={(e) =>
-                    this.connectingMatrixChange("weightMin", e.target.value, i)
-                  }
-                />
-              </div>
-            </Col>
-            <Col span={3}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e["weightMax"]}
-                  onChange={(e) =>
-                    this.connectingMatrixChange("weightMax", e.target.value, i)
-                  }
-                />
-              </div>
-            </Col>
-            <Col span={3}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e["price"]}
-                  onChange={(e) =>
-                    this.connectingMatrixChange("price", e.target.value, i)
-                  }
-                />
-              </div>
-            </Col>
-            <Col span={3}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e["handlingFee"]}
-                  onChange={(e) =>
-                    this.connectingMatrixChange(
-                      "handlingFee",
-                      e.target.value,
-                      i
-                    )
-                  }
-                />
-              </div>
-            </Col>
-            <Col span={3}>
-              <div className="matrix-item">
-                <Input
-                  type="number"
-                  value={e["tariffRate"]}
-                  onChange={(e) =>
-                    this.connectingMatrixChange("tariffRate", e.target.value, i)
-                  }
-                />
-              </div>
-            </Col>
-          </Row>
-        ))}
-        <Row style={{ marginTop: "1rem" }}>
-          <Col span={12} style={{ paddingRight: ".5rem" }}>
-            <Button
-              className="btn-add-row"
-              block
-              icon={<PlusOutlined />}
-              onClick={() =>
-                this.setState({
-                  connectingMatrix: [
-                    ...this.state.connectingMatrix,
-                    ...[{ ...initConnectingMatrix }],
-                  ],
-                })
-              }
-            >
-              Add Row
-            </Button>
-          </Col>
+                {this.state.matrix.map((e, i) => (
+                  <Row key={i}>
+                    <Col span={4}>
+                      <div className="matrix-item">
+                        <Input
+                          key={i}
+                          type="number"
+                          value={e["declaredValueMin"]}
+                          onChange={(e) =>
+                            this.connectingMatrixChange(
+                              "declaredValueMin",
+                              e.target.value,
+                              i
+                            )
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col span={4}>
+                      <div className="matrix-item">
+                        <Input
+                          type="number"
+                          value={e["declaredValueMax"]}
+                          onChange={(e) =>
+                            this.connectingMatrixChange(
+                              "declaredValueMax",
+                              e.target.value,
+                              i
+                            )
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col span={4}>
+                      <div className="matrix-item">
+                        <Input
+                          type="number"
+                          value={e["weightMin"]}
+                          onChange={(e) =>
+                            this.connectingMatrixChange(
+                              "weightMin",
+                              e.target.value,
+                              i
+                            )
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col span={3}>
+                      <div className="matrix-item">
+                        <Input
+                          type="number"
+                          value={e["weightMax"]}
+                          onChange={(e) =>
+                            this.connectingMatrixChange(
+                              "weightMax",
+                              e.target.value,
+                              i
+                            )
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col span={3}>
+                      <div className="matrix-item">
+                        <Input
+                          type="number"
+                          value={e["price"]}
+                          onChange={(e) =>
+                            this.connectingMatrixChange(
+                              "price",
+                              e.target.value,
+                              i
+                            )
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col span={3}>
+                      <div className="matrix-item">
+                        <Input
+                          type="number"
+                          value={e["handlingFee"]}
+                          onChange={(e) =>
+                            this.connectingMatrixChange(
+                              "handlingFee",
+                              e.target.value,
+                              i
+                            )
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col span={3}>
+                      <div className="matrix-item">
+                        <Input
+                          type="number"
+                          value={e["tariffRate"]}
+                          onChange={(e) =>
+                            this.connectingMatrixChange(
+                              "tariffRate",
+                              e.target.value,
+                              i
+                            )
+                          }
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                ))}
 
-          <Col span={12}>
-            <Button
-              onClick={() => this.saveConnectingMatrix()}
-              type="danger"
-              block
-              icon={<SaveOutlined />}
-            >
-              Save
-            </Button>
-          </Col>
-        </Row>
-            </div>
-          </Row>
-        )}
+                <Row style={{ marginTop: "1rem" }}>
+                  <Col span={12} style={{ paddingRight: ".5rem" }}>
+                    <Button
+                      className="btn-add-row"
+                      block
+                      icon={<PlusOutlined />}
+                      onClick={() =>
+                        this.setState({
+                          connectingMatrix: [
+                            ...this.state.connectingMatrix,
+                            ...[{ ...initConnectingMatrix }],
+                          ],
+                        })
+                      }
+                    >
+                      Add Row
+                    </Button>
+                  </Col>
+
+                  <Col span={12}>
+                    <Button
+                      onClick={() => this.saveConnectingMatrix()}
+                      type="danger"
+                      block
+                      icon={<SaveOutlined />}
+                    >
+                      Save
+                    </Button>
+                  </Col>
+                </Row>
+                <Row><Col>
+                <FixPriceMatrix 
+                  onFixMatrixChange={this.onFixMatrixChange}
+                  fixMatrix={this.state.fixMatrix}
+                  onAddMoreItem={(fixMatrix)=>this.setState({fixMatrix})}
+                  onDeleteItem={(fixMatrix)=>this.setState({fixMatrix})}
+                  />
+                </Col></Row>        
+                </div>
+            </Row>
+          )}
         </div>
       </Layout>
     );

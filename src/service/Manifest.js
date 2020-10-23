@@ -1,8 +1,9 @@
 import axios from 'axios';
 import {config} from '../config';
-import {getToken} from '../utility'
+import {getToken, UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
+const userProfileObject = UserProfile()
 
 const ManifestService = {
     getRoutes: () => {
@@ -12,7 +13,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -24,7 +25,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -36,7 +37,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             params:{page, limit}
         })
@@ -50,7 +51,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -62,7 +63,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -74,7 +75,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -86,7 +87,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -98,7 +99,7 @@ const ManifestService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             data:{
                 parcelId

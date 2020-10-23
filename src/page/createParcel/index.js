@@ -19,7 +19,6 @@ import MatrixService from "../../service/Matrix";
 import ManifestService from "../../service/Manifest";
 import {
   openNotificationWithIcon,
-  clearCredential,
   debounce,
   UserProfile,
   alterPath
@@ -101,8 +100,8 @@ const getReviewDetails = (state) =>{
 
 const parceResponseData = (data) =>{
 
-  const userProfile = new UserProfile();
-  const logo = userProfile.getBusCompany() && userProfile.getBusCompany().logo || undefined;
+  const userProfile = UserProfile();
+  const logo = (userProfile.getBusCompany() && userProfile.getBusCompany().logo) || undefined;
   const name = userProfile.getBusCompany() && userProfile.getBusCompany().name
   const noOfSticker = userProfile.getStickerCount() || 1
 
@@ -376,7 +375,7 @@ class CreateParcel extends React.Component {
       tariffRate:undefined,
       lengthRate:0
     };
-    this.UserProfileObject = new UserProfile();
+    this.userProfileObject = UserProfile();
     this.getConvinienceFee = debounce(this.getConvinienceFee,1000)
     this.computePrice = debounce(this.computePrice,1000)
     this.getMatrixFare = debounce(this.getMatrixFare,1000)
@@ -391,7 +390,7 @@ class CreateParcel extends React.Component {
   }
 
   componentWillUnmount(){
-    this.UserProfileObject = null;
+    this.userProfileObject = null;
     window.removeEventListener("resize",e=>console.log('remove events',e))
   }
 
@@ -412,8 +411,8 @@ class CreateParcel extends React.Component {
     })
 
     this.setState({
-      enalbeBicolIsarogWays: this.UserProfileObject.isIsarogLiners(),
-      noOfStickerCopy: this.UserProfileObject.getStickerCount(),
+      enalbeBicolIsarogWays: this.userProfileObject.isIsarogLiners(),
+      noOfStickerCopy: this.userProfileObject.getStickerCount(),
       details
     })
    
@@ -464,7 +463,7 @@ class CreateParcel extends React.Component {
 
     if(code === 1000){
       openNotificationWithIcon('error', code);
-      clearCredential();
+      this.userProfileObject.clearData()
       this.props.history.push(alterPath('/'));
       return;
     }
@@ -699,7 +698,7 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty) =>{
 
-    if(this.UserProfileObject.disableCargoSystemFee()){
+    if(this.userProfileObject.disableCargoSystemFee()){
       return;
     }
 
@@ -723,7 +722,7 @@ class CreateParcel extends React.Component {
       setSystemFee((data && data.convenienceFee) || 0)
     }
 
-    if(this.UserProfileObject.isFiveStar()){
+    if(this.userProfileObject.isFiveStar()){
       ParcelService.getFiveStarConvenienceFee(qty).then(res=>updateState(res))
       return;
     }
@@ -746,8 +745,8 @@ class CreateParcel extends React.Component {
       length
     }= this.state.details
 
-    const busCompanyId =  this.UserProfileObject.getBusCompanyId();
-    const startStation =  this.UserProfileObject.getAssignedStationId();
+    const busCompanyId =  this.userProfileObject.getBusCompanyId();
+    const startStation =  this.userProfileObject.getAssignedStationId();
     const selectedOption = destination.options.filter(e=>e.value === destination.value)[0]
     const endStation = selectedOption.endStation || undefined;
     const decValue = declaredValue.value ? parseFloat(declaredValue.value).toFixed(2) : undefined;
@@ -867,7 +866,7 @@ class CreateParcel extends React.Component {
       details = {...details, ...{destination}}
       this.setState({ details, selectedDestination });
 
-      MatrixService.getMatrix({ busCompanyId: this.UserProfileObject.getBusCompanyId(), origin:this.UserProfileObject.getAssignedStationId(), destination:value })
+      MatrixService.getMatrix({ busCompanyId: this.userProfileObject.getBusCompanyId(), origin:this.userProfileObject.getAssignedStationId(), destination:value })
         .then(e => {
           const { data, success, errorCode } = e.data;
           if (success) {
@@ -1228,7 +1227,7 @@ class CreateParcel extends React.Component {
   getMatrixFare = ({weight,declaredValue, length}) =>{
     const{ details, selectedDestination }=this.state
     MatrixService.getMatrixComputation({
-      origin: this.UserProfileObject.getAssignedStationId(),
+      origin: this.userProfileObject.getAssignedStationId(),
       destination: selectedDestination.value,
       declaredValue,
       weight,

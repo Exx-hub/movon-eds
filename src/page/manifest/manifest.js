@@ -15,8 +15,8 @@ import {
 import {
   openNotificationWithIcon,
   openNotificationWithDuration,
-  clearCredential,
   alterPath,
+  UserProfile,
 } from "../../utility";
 import ManifestService from "../../service/Manifest";
 import moment from "moment";
@@ -93,6 +93,7 @@ const TableRoutesView = (props) => {
 };
 
 class Manifest extends React.Component {
+
   state = {
     endDay: moment().add(1,'d').format(dateFormat),
     startDay: moment().format(dateFormat),
@@ -110,6 +111,12 @@ class Manifest extends React.Component {
     limit: 10,
     totalRecords: 50,
   };
+
+  constructor(props){
+    super(props);
+    this.userProfileObject = UserProfile()
+  }
+  
 
   componentDidMount() {
     this.setState({ fetching: true });
@@ -170,7 +177,7 @@ class Manifest extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      clearCredential();
+      this.userProfileObject.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -209,7 +216,7 @@ class Manifest extends React.Component {
 
   onForceLogout = (errorCode) => {
     openNotificationWithDuration("error", errorCode);
-    clearCredential();
+    this.userProfileObject.clearData();
     this.props.history.push(alterPath("/login"));
   };
 

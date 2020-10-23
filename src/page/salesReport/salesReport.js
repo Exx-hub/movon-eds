@@ -12,14 +12,14 @@ import {
   Layout,
   Tag,
   AutoComplete,
+  Pagination,
 } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 
 import {
   openNotificationWithIcon,
-  getUser,
-  clearCredential,
   alterPath,
+  UserProfile,
 } from "../../utility";
 
 import ParcelService from "../../service/Parcel";
@@ -36,16 +36,13 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 class SalesReport extends React.Component {
-  
-  
-  constructor(){
-    super()
+  constructor() {
+    super();
     this.state = {
       fetching: false,
       exporting: false,
       transactions: null,
       summary: {},
-      user: getUser(),
       endDay: moment().add(1, "d").format(dateFormat),
       startDay: moment().format(dateFormat),
       destination: {
@@ -59,28 +56,30 @@ class SalesReport extends React.Component {
       isPrinting: false,
       totalAmount: 0,
       tags: [],
-      templist:[],
-      templistValue:undefined
+      templist: [],
+      templistValue: undefined,
+      page: 0,
+      totalRecords: 0,
     };
-  }  
-
+    this.userProfileObject = UserProfile();
+  }
 
   componentDidMount() {
     this.printEl = React.createRef();
-    Promise.all([ManifestService.getRoutes(),this.getParcel()]).then(
+    Promise.all([ManifestService.getRoutes(), this.getParcel()]).then(
       (resonses) => {
         if (resonses[0]) {
-          const { data, errorCode} = resonses[0].data;
+          const { data, errorCode } = resonses[0].data;
 
-          if(errorCode){
-            this.handleErrorNotification(errorCode)
-            return
+          if (errorCode) {
+            this.handleErrorNotification(errorCode);
+            return;
           }
 
           if (data) {
             const options = data.map((e, i) => {
               return {
-                key:i,
+                key: i,
                 data: e,
                 value: i,
                 name: e.endStationName,
@@ -90,14 +89,17 @@ class SalesReport extends React.Component {
             destination.options = options;
             destination.value = 0;
             destination.data = options[0].data;
-            this.setState({ destination, templist: options.map(e=>(e.name)) });
+            this.setState({
+              destination,
+              templist: options.map((e) => e.name),
+            });
           }
         }
         if (resonses[1]) {
-          const { data, success, errorCode} = resonses[1].data;
-          if(errorCode){
-            this.handleErrorNotification(errorCode)
-            return
+          const { data, success, errorCode } = resonses[1].data;
+          if (errorCode) {
+            this.handleErrorNotification(errorCode);
+            return;
           }
           this.parseParcel(data);
         }
@@ -106,13 +108,15 @@ class SalesReport extends React.Component {
   }
 
   getParcel = () => {
-    const startStation = this.state.user.assignedStation._id;
+    const startStation = this.user;
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
-    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end)) 
-    console.log('endStation', endStation)
- 
-    const busCompanyId = this.state.user.busCompanyId._id;
+    const endStation = this.state.destination.options
+      .filter((e) => this.state.tags.includes(e.name))
+      .map((e) => e.data.end);
+    console.log("endStation", endStation);
+
+    const busCompanyId = this.userProfileObject.getBusCompanyId();
 
     return ParcelService.getAllParcel(
       {
@@ -128,45 +132,43 @@ class SalesReport extends React.Component {
   parseParcel = (dataResult) => {
     try {
       const { parcels, errorCode, success } = dataResult.data;
-      if(success && success === false){
-        this.handleErrorNotification(errorCode)
+      if (success && success === false) {
+        this.handleErrorNotification(errorCode);
         return;
       }
 
-      if(dataResult.status === 200){
+      if (dataResult.status === 200) {
         let amout = 0;
-        const data = parcels.map((e,i) => {
+        const data = parcels.map((e, i) => {
           amout += Number(e.price);
           return {
-            key:i,
+            key: i,
             associatedAmount: e.associatedAmount,
             associatedCompanyId: e.associatedCompanyId,
-            associatedDestination:e.associatedDestination,
-            associatedOrigin:e.associatedOrigin,
-            associatedTariffRate:e.associatedTariffRate,
-            billOfLading:e.billOfLading,
-            declaredValue:e.declaredValue,
-            destination:e.destination,
-            origin:e.origin,
-            packageName:e.packageName,
-            packageWeight:e.packageWeight,
-            price:e.price,
-            quantity:e.quantity,
-            recipient:e.recipient,
-            scanCode:e.scanCode,
-            sender:e.sender,
-            sentDate:e.sentDate,
-            status:e.status,
-            recipientPhoneNo:e.recipientPhoneNo,
-            senderPhoneNo:e.senderPhoneNo,
-            remarks: e.remarks === 'undefined' ? '' : e.remarks
+            associatedDestination: e.associatedDestination,
+            associatedOrigin: e.associatedOrigin,
+            associatedTariffRate: e.associatedTariffRate,
+            billOfLading: e.billOfLading,
+            declaredValue: e.declaredValue,
+            destination: e.destination,
+            origin: e.origin,
+            packageName: e.packageName,
+            packageWeight: e.packageWeight,
+            price: e.price,
+            quantity: e.quantity,
+            recipient: e.recipient,
+            scanCode: e.scanCode,
+            sender: e.sender,
+            sentDate: e.sentDate,
+            status: e.status,
+            recipientPhoneNo: e.recipientPhoneNo,
+            senderPhoneNo: e.senderPhoneNo,
+            remarks: e.remarks === "undefined" ? "" : e.remarks,
           };
         });
-        this.setState({fetching:false, data, totalAmount: amout.toFixed(2) });
+        this.setState({ fetching: false, data, totalAmount: amout.toFixed(2) });
       }
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
 
   handleErrorNotification = (code) => {
@@ -180,7 +182,7 @@ class SalesReport extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      clearCredential();
+      this.userProfileObject.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -192,7 +194,7 @@ class SalesReport extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({fetching:true, startDay, endDay }, () => {
+      this.setState({ fetching: true, startDay, endDay }, () => {
         this.getParcel().then((e) => {
           this.parseParcel(e);
         });
@@ -201,7 +203,7 @@ class SalesReport extends React.Component {
   };
 
   getPreparedBy = () => {
-    return this.state.user.personalInfo.fullName;
+    return (this.userProfileObject.getPersonFullName()) || "";
   };
 
   getTotalAmount = () => {
@@ -209,31 +211,34 @@ class SalesReport extends React.Component {
   };
 
   getDestination = () => {
-    return (this.state.tags.length > 0 && this.state.tags.join()) || "All" ;
+    return (this.state.tags.length > 0 && this.state.tags.join()) || "All";
   };
 
-  getDate = () =>{
-    return  this.state.startDay === this.state.endDay ? this.state.endDay :  `${this.state.startDay} - ${this.state.endDay}`;
-  }
+  getDate = () => {
+    return this.state.startDay === this.state.endDay
+      ? this.state.endDay
+      : `${this.state.startDay} - ${this.state.endDay}`;
+  };
 
   handleSelectChange = (e) => {
     let destination = { ...this.state.destination };
-    this.setState(
-      {
-        destination: {
-          ...destination,
-          ...{ value: e, data: destination.options[e].data },
-        },
-      });
+    this.setState({
+      destination: {
+        ...destination,
+        ...{ value: e, data: destination.options[e].data },
+      },
+    });
   };
 
   downloadXls = () => {
-    const startStation = this.state.user.assignedStation._id;
+    const startStation = this.userProfileObject.getAssignedStationId();
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
-    const endStation = this.state.destination.options.filter(e=>this.state.tags.includes(e.name)).map(e=>(e.data.end))  
-    const busCompanyId = this.state.user.busCompanyId._id;
-    const fullName = this.state.user.personalInfo.fullName;
+    const endStation = this.state.destination.options
+      .filter((e) => this.state.tags.includes(e.name))
+      .map((e) => e.data.end);
+    const busCompanyId = this.userProfileObject.getBusCompanyId();
+    const fullName = this.userProfileObject.getPersonFullName();
     const totalAmount = this.state.totalAmount;
     const destination = this.getDestination();
     const isP2P = this.props.isP2P || false;
@@ -257,40 +262,43 @@ class SalesReport extends React.Component {
     ).then();
   };
 
-  doSearch = el =>{
-    let data = this.state.destination.options.map(e=>(e.name));
-    if(this.state.tags.length > 0){
-      data = data.filter((e,i)=>!this.state.tags.includes(e))
+  doSearch = (el) => {
+    let data = this.state.destination.options.map((e) => e.name);
+    if (this.state.tags.length > 0) {
+      data = data.filter((e, i) => !this.state.tags.includes(e));
     }
     const toSearch = el.toLowerCase();
-    const templist = data.filter(e=>e.toLowerCase().includes(toSearch)).map(e=>(e))
-    this.setState({templist, templistValue:el})
-  }
+    const templist = data
+      .filter((e) => e.toLowerCase().includes(toSearch))
+      .map((e) => e);
+    this.setState({ templist, templistValue: el });
+  };
 
   render() {
     return (
       <Layout>
         <Content style={{ padding: "1rem" }}>
           <Row style={{ marginBottom: ".5rem" }}>
-          <Col span={12}>
-          <div style={{ display: "flex", height: "500%" }}>
-            <div>
-              {this.state.tags.map((e, i) => (
-                <Tag
-                  key={e}
-                  closable
-                  onClose={(val) => {
-                    let tags = [...this.state.tags];
-                    const _tags = tags.filter(e=> tags[i] !== e );
-                    this.setState({ tags: _tags });
-                  }} >
-                  {" "}
-                  {e}
-                </Tag>
-              ))}
-            </div>
-          </div>
-        </Col>
+            <Col span={12}>
+              <div style={{ display: "flex", height: "500%" }}>
+                <div>
+                  {this.state.tags.map((e, i) => (
+                    <Tag
+                      key={e}
+                      closable
+                      onClose={(val) => {
+                        let tags = [...this.state.tags];
+                        const _tags = tags.filter((e) => tags[i] !== e);
+                        this.setState({ tags: _tags });
+                      }}
+                    >
+                      {" "}
+                      {e}
+                    </Tag>
+                  ))}
+                </div>
+              </div>
+            </Col>
             <Col span={12}>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <span>Download: </span>
@@ -313,34 +321,36 @@ class SalesReport extends React.Component {
 
           <div>
             <Row>
-            <Col span={12}>
-              <AutoComplete
-                style={{ width: "50%" }}
-                onSelect={(item) => {
-                  let templist = [...this.state.templist]
-                  let destination = {...this.state.destination}
-                  let tags = [...this.state.tags]
-                  let selected = destination.options.findIndex((e) => e.name === item);
-                  templist = templist.filter((e,i)=> item !== e)
-                  // if (selected) {
-                    tags.push(destination.options[selected].name)
-                    this.setState({ tags, templist },()=>{
+              <Col span={12}>
+                <AutoComplete
+                  style={{ width: "50%" }}
+                  onSelect={(item) => {
+                    let templist = [...this.state.templist];
+                    let destination = { ...this.state.destination };
+                    let tags = [...this.state.tags];
+                    let selected = destination.options.findIndex(
+                      (e) => e.name === item
+                    );
+                    templist = templist.filter((e, i) => item !== e);
+                    // if (selected) {
+                    tags.push(destination.options[selected].name);
+                    this.setState({ tags, templist }, () => {
                       this.getParcel().then((e) => {
                         this.parseParcel(e);
                       });
                     });
-                  //   console.log("selected", selected);
-                  // }
-                }}
-                onSearch={(e) => this.doSearch(e)}
-                value={this.state.templistValue}
-                placeholder="Destination"
-              > 
-              {
-                this.state.templist.map(e=>(<Option key={e}>{e}</Option>))
-              }
-               </AutoComplete>
-            </Col>
+                    //   console.log("selected", selected);
+                    // }
+                  }}
+                  onSearch={(e) => this.doSearch(e)}
+                  value={this.state.templistValue}
+                  placeholder="Destination"
+                >
+                  {this.state.templist.map((e) => (
+                    <Option key={e}>{e}</Option>
+                  ))}
+                </AutoComplete>
+              </Col>
               <Col span={12}>
                 <RangePicker
                   size="large"
@@ -356,10 +366,7 @@ class SalesReport extends React.Component {
           </div>
 
           <div style={{ marginTop: "1.2rem" }} ref={this.printEl}>
-            <Header
-              date={this.getDate()}
-              title={this.props.title}
-            />
+            <Header date={this.getDate()} title={this.props.title} />
 
             <div style={{ padding: "1rem" }}>
               <Row>
@@ -400,11 +407,11 @@ class SalesReport extends React.Component {
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "row"
+                      flexDirection: "row",
                     }}
                   >
-                  <span style={{ width: 80 }}> Destination: </span>
-                  <span>{this.getDestination()}</span>
+                    <span style={{ width: 80 }}> Destination: </span>
+                    <span>{this.getDestination()}</span>
                   </div>
                 </Col>
 
@@ -416,28 +423,45 @@ class SalesReport extends React.Component {
                       justifyContent: "flex-end",
                     }}
                   >
-                    <span style={{ width: 80}}>Prepared: </span>
-                    <span>
-                      {this.getPreparedBy()}
-                    </span>
+                    <span style={{ width: 80 }}>Prepared: </span>
+                    <span>{this.getPreparedBy()}</span>
                   </div>
                 </Col>
               </Row>
             </div>
 
-            {
-              this.state.fetching ? <Skeleton active/> : 
-              <div style={{overflow:'scroll'}}>
-                <Table
-                rowKey={e => e.key}
-                pagination={false}
-                columns={this.props.source}
-                dataSource={this.state.data}
-              />
-              </div>
-              
-            }
-
+            {this.state.fetching ? (
+              <Skeleton active />
+            ) : (
+              <>
+                <div style={{ overflow: "scroll" }}>
+                  <Table
+                    rowKey={(e) => e.key}
+                    pagination={false}
+                    columns={this.props.source}
+                    dataSource={this.state.data}
+                  />
+                </div>
+                {
+                  this.state.data.length > 0 && <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <Pagination
+                    onChange={(page) => {
+                      this.setState({ page });
+                    }}
+                    defaultCurrent={this.state.page}
+                    total={this.state.totalRecords}
+                  />
+                </div>
+                }
+                
+              </>
+            )}
           </div>
         </Content>
       </Layout>

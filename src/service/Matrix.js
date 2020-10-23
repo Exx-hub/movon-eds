@@ -1,8 +1,9 @@
 import axios from 'axios';
 import {config} from '../config';
-import {getToken} from '../utility'
+import {getToken,UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
+const userProfileObject = UserProfile()
 
 const MatrixService = {
     create: (data) => {
@@ -12,7 +13,7 @@ const MatrixService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             data
         })
@@ -24,7 +25,7 @@ const MatrixService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -36,7 +37,7 @@ const MatrixService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             params:{
                 origin:params.origin,
@@ -56,7 +57,7 @@ const MatrixService = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-token' : userProfileObject.getToken()
             },
             data:{
                 busCompanyId, origin, destination, weight, declaredValue

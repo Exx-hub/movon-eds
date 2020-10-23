@@ -15,7 +15,8 @@ import {
 import { PlusOutlined, SaveOutlined, DeleteFilled } from "@ant-design/icons";
 import MatrixService from "../../service/Matrix";
 import ParcelService from "../../service/Parcel";
-import {openNotificationWithIcon,getUser,clearCredential, UserProfile, alterPath} from "../../utility";
+import {openNotificationWithIcon, UserProfile, alterPath} from "../../utility";
+import FixPriceMatrix from './fixMatrix'
 import "./priceMatrix.css";
 
 const { Option } = Select;
@@ -47,18 +48,13 @@ export default class PriceMatrix extends React.Component {
       startStation: undefined,
       fixMatrix: [{}],
     };
-    this.UserProfileObject = new UserProfile();
+    this.userProfileObject = UserProfile();
   }
 
   componentDidMount() {
-    this.user = getUser();
-    this.busCompanyId = (this.user && this.user.busCompanyId._id) || undefined;
+    this.busCompanyId = this.userProfileObject.getBusCompanyId();
+    const stationId = this.userProfileObject.getAssignedStationId();
 
-    if (!this.user) {
-      this.props.history.push(alterPath("/"));
-    }
-
-    const stationId = this.use && this.use.assignedStation._id;
     ParcelService.getTrips(stationId).then((e) => {
       const { data, success, errorCode } = e.data;
       if (success) {
@@ -84,7 +80,7 @@ export default class PriceMatrix extends React.Component {
             routes: data,
             selectedRoute: data[0],
             routesList: { ...this.state.routesList, ...{ options } },
-            startStation: this.user.assignedStation,
+            startStation: this.userProfileObject.getAssignedStation(),
             tempDestinationList: options.map(e=>(e.name))
           });
         }
@@ -105,7 +101,7 @@ export default class PriceMatrix extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      clearCredential();
+      this.userProfileObject.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -202,7 +198,7 @@ export default class PriceMatrix extends React.Component {
 
           console.log('MATRIX', result)
           if(Array.isArray(result)){
-            this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}] });
+            this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}]});
           }else{
             let { matrix, fixMatrix } = result;
             if(fixMatrix.length === 0){
@@ -248,7 +244,7 @@ export default class PriceMatrix extends React.Component {
       <Layout>
         <div className="price-matrix-module">
           <h1 className="bus-company-name">
-            {this.user && this.user.busCompanyId.name}
+            {this.userProfileObject.getBusCompanyName()}
           </h1>
           <Row justify="left" className="select-group-origin-destination">
             <Col span={8} style={{ paddingRight: ".5rem" }}>
@@ -444,95 +440,4 @@ export default class PriceMatrix extends React.Component {
   }
 }
 
-function FixPriceMatrix(props) {
-  let fixMatrix = props.fixMatrix ? [...props.fixMatrix] : [];
 
-  return(<div style={{ display:`${fixMatrix.length > 0 ? 'block' : 'none'}`, marginTop: "3rem" }}>
-          <span style={{paddingBottom:'2rem', paddingTop:'2rem', fontSize:'14px'}}>Fix Price</span>
-          {fixMatrix.map((e, index) => {
-            return (
-              <div key={index} style={{ width: "100%" }}>
-                <Row>
-                  <Col style={{ paddingBottom: "0.2rem" }}>
-                    <span style={{fontSize:'12px'}}>Description</span>
-                    <Input
-                      value={e.name}
-                      onChange={(e) =>
-                        props.onFixMatrixChange(index, "name", e.target.value)
-                      }
-                      name="description"
-                    />
-                  </Col>
-                  <Col
-                    style={{ paddingLeft: "0.2rem", paddingBottom: "0.2rem" }}
-                  >
-                    <span style={{fontSize:'12px'}}>Price</span>
-                    <Input
-                      type="number"
-                      name="price"
-                      onChange={(e) =>
-                        props.onFixMatrixChange(index, "price", e.target.value)
-                      }
-                      value={e.price}
-                    />
-                  </Col>
-                  <Col
-                    style={{ paddingLeft: "0.2rem", paddingBottom: "0.2rem" }}
-                  >
-                    <span style={{fontSize:'12px'}}>Declared Value Rate (%)</span>
-                    <Input
-                      type="number"
-                      name="declaredValue"
-                      onChange={(e) =>
-                        props.onFixMatrixChange(
-                          index,
-                          "declaredValue",
-                          e.target.value
-                        )
-                      }
-                      value={e.declaredValue}
-                    />
-                  </Col>
-                  <Col
-                    style={{ paddingLeft: "0.2rem", marginTop:'1.4rem', paddingBottom: "0.2rem" }}
-                  >
-                    <Button
-                      onClick={() => {
-                        let _fixMatrix = [...fixMatrix];
-                        _fixMatrix.splice(index, 1);
-                        // this.setState({ fixMatrix });
-                        props.onDeleteItem(_fixMatrix)
-                      }}
-                      shape="circle"
-                      type="danger"
-                    >
-                      {" "}
-                      <DeleteFilled />{" "}
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
-            );
-          })}
-
-          <Row>
-            <Button
-              onClick={() => {
-                const _fixMatrix = [...fixMatrix];
-                if(_fixMatrix[_fixMatrix.length-1].name === "" && _fixMatrix[_fixMatrix.length-1].price === 0){
-                  notification["error"]({
-                    description: "Description is required or Price should not be zero",
-                    message: "Please fill up missing fields",
-                  });
-                  return;
-                }
-                _fixMatrix.push({ name: "", price: 0, declaredValue:0 });
-                props.onAddMoreItem(_fixMatrix)
-                //this.setState({ fixMatrix });
-              }}
-            >
-              Add More
-            </Button>
-          </Row>
-        </div>)
-}
