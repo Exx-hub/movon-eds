@@ -1,5 +1,3 @@
-
-
 class UserProfileClass{
 
   user = undefined
@@ -7,21 +5,23 @@ class UserProfileClass{
   token = undefined
   busCompany = undefined
 
-  constructor(data){
+  constructor(){
+      if(localStorage.getItem('credential')){
+        this.credential = JSON.parse(localStorage.getItem('credential'));
+        this.token = this.credential.token;
+        this.user = this.credential.user;
+      }
+  }
+
+  setCredential(data){
     if(data){
       localStorage.setItem('credential',JSON.stringify(data)) 
-      this.credential = JSON.parse(localStorage.getItem('credential'));
+      if(localStorage.getItem('credential')){
+        this.credential = JSON.parse(localStorage.getItem('credential'));
+        this.token = this.credential.token;
+        this.user = this.credential.user;
+      }
     }
-    else{
-      const cred = localStorage.getItem('credential',undefined)
-      this.credential = cred ? JSON.parse(cred) : undefined;
-    }
-
-    if(this.credential){
-      console.log(this.credential)
-      this.token = this.credential.token;
-      this.user = this.credential.user;
-    }  
   }
 
   getCredential(){
@@ -141,13 +141,11 @@ class UserProfileClass{
   getStickerCount(){
     if(this.getBusCompany()){
       const count = (this.getBusCompany().config && this.getBusCompany().config.noOfStickerCopy) || 1;
-      console.log('====>>count',count)
-      console.log('====>>count',count)
-      console.log('====>>count',count)
       return count;
     }
     return 1;
   }
 }
 
-module.exports = UserProfileClass;
+const userPofile = new UserProfileClass()
+module.exports = userPofile;

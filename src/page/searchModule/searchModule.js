@@ -50,7 +50,7 @@ class SearchModule extends React.Component {
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
-    this.userProfileObject = UserProfile();
+    this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
@@ -128,7 +128,6 @@ class SearchModule extends React.Component {
 
   fetchParcelList = () => {
     Parcel.searchParcel(this.state.searchValue).then((e) => {
-      console.log("response", e);
       const { data, errorCode } = e.data;
 
       if (errorCode) {
@@ -157,7 +156,6 @@ class SearchModule extends React.Component {
   };
 
   handleErrorNotification = (code) => {
-    console.log("error", code);
     if (!code) {
       notification["error"]({
         message: "Server Error",

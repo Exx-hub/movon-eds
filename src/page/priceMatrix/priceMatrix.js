@@ -48,7 +48,7 @@ export default class PriceMatrix extends React.Component {
       startStation: undefined,
       fixMatrix: [{}],
     };
-    this.userProfileObject = UserProfile();
+    this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
@@ -196,7 +196,6 @@ export default class PriceMatrix extends React.Component {
             fixMatrix: [],
           };
 
-          console.log('MATRIX', result)
           if(Array.isArray(result)){
             this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}]});
           }else{

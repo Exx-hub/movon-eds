@@ -14,12 +14,13 @@ function Login(props) {
     staffId: "",
     password: ""
   });
+  const [userProfileObject] = React.useState(UserProfile)
 
   React.useEffect(() => {
-    if(UserProfile().getCredential()){
+    if(userProfileObject.getCredential()){
       props.history.push(alterPath('/'))
     }
-  },[props.history,state]);
+  },[userProfileObject,props.history,state]);
 
   const handleErrorNotification = (code) =>{
     if(!code){
@@ -32,7 +33,7 @@ function Login(props) {
 
     if(code === 1000){
       openNotificationWithIcon('error', code, ()=>{
-        UserProfile().clearData();
+        UserProfile.clearData();
         this.props.history.push(alterPath('/'))
       })
       return;
@@ -44,14 +45,13 @@ function Login(props) {
     setState({...state, ...{ isLoading: true } });
 
     User.login(state.staffId, state.password).then(e => {
-      console.log('login',e)
       const { data, success, errorCode } = e.data;
       if(errorCode){
         handleErrorNotification(errorCode)
       }
       setState({...state, ...{isLoading:false}})
       if(success){
-        UserProfile({ user: data.user, token: data.token});
+        UserProfile.setCredential({ user: data.user, token: data.token});
         if(Number((data.user && data.user.status) || '0') === 0){
           notification['error']({
             message: "Diabled Account",

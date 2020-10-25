@@ -27,7 +27,7 @@ const User = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : UserProfile().getToken()
+                'x-auth-token' : UserProfile.getToken()
             }
         })
     },
@@ -39,7 +39,7 @@ const User = {
             headers: {
                 'x-auth-deviceid' : '1',
                 'x-auth-devicetype' : '1',
-                'x-auth-token' : UserProfile().getToken()
+                'x-auth-token' : UserProfile.getToken()
             }
         })
     }

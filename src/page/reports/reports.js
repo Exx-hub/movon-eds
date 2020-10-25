@@ -80,7 +80,7 @@ class Reports extends React.Component {
       transactions: null,
       summary: {},
     };
-    this.userProfileObject = UserProfile()
+    this.userProfileObject = UserProfile
   }
 
   componentDidMount () {
@@ -113,7 +113,6 @@ class Reports extends React.Component {
   exportAll = () => {
     try {
       this.setState({ exporting: true });
-      console.log('exporting transactions');
       ParcelService
       .exportTransactions(this.userProfileObject.getBusCompanyId())
       .then(() => {

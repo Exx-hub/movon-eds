@@ -61,7 +61,7 @@ class SalesReport extends React.Component {
       page: 0,
       totalRecords: 0,
     };
-    this.userProfileObject = UserProfile();
+    this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
@@ -114,7 +114,6 @@ class SalesReport extends React.Component {
     const endStation = this.state.destination.options
       .filter((e) => this.state.tags.includes(e.name))
       .map((e) => e.data.end);
-    console.log("endStation", endStation);
 
     const busCompanyId = this.userProfileObject.getBusCompanyId();
 

@@ -84,7 +84,7 @@ export default class VictoryLinerMatrix extends React.Component {
       matrix:[],
       fixMatrix: [{}],
     };
-    this.userProfileObject = UserProfile();
+    this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
@@ -211,7 +211,6 @@ export default class VictoryLinerMatrix extends React.Component {
       MatrixService.getMatrix({ busCompanyId, origin, destination }).then(
         (e) => {
           const { data, success, errorCode } = e.data;
-          console.log("fetchConnectingMatrix", e.data);
           if (success) {
             let connectingMatrix = [{ ...initConnectingMatrix }];
             let matrix = [];
@@ -219,7 +218,6 @@ export default class VictoryLinerMatrix extends React.Component {
 
             if (data && data.stringValues) {
               connectingMatrix = JSON.parse(data.stringValues);
-              console.log("connectingMatrix",connectingMatrix)
               if(connectingMatrix){
                 if(Array.isArray(connectingMatrix)){
                   matrix = [...connectingMatrix];

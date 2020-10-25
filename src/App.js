@@ -11,14 +11,13 @@ import './App.scss';
 
 function App() {
 
-  //const [userProfileObject] = React.useState(UserProfile())
-  // React.useEffect(() => {
-  //   console.log('[App] userProfileObject',userProfileObject.getCredential())
-  // },[userProfileObject]);
+  const [userProfileObject] = React.useState(UserProfile)
+  React.useEffect(() => {
+    
+  },[userProfileObject]);
 
   const ProtectedRoute = (params) => {
-    console.log("UserProfile().getCredential()",UserProfile())
-    return UserProfile().getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
+    return UserProfile.getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
   } 
 
   return (

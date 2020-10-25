@@ -4,9 +4,7 @@ import {config} from '../config';
 import {UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
-const userProfileObject = UserProfile()
-
-console.log("----token",userProfileObject.getToken())
+const userProfileObject = UserProfile;
 
 const ParcelService = {
     getTrips : (stationId) => {
@@ -292,7 +290,6 @@ const ParcelService = {
     },
 
     getAllParcel: (params,busCompanyId)=>{
-        console.log('params',params)
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,

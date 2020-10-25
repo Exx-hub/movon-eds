@@ -58,10 +58,8 @@ class Transaction extends React.Component {
 
   constructor(props){
     super(props);
-    this.userProfileObject = UserProfile()
+    this.userProfileObject = UserProfile
   }
-
-  
 
   handleErrorNotification = (code) => {
     if (!code) {

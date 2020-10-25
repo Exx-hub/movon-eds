@@ -3,7 +3,7 @@ import {config} from '../config';
 import {getToken, UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
-const userProfileObject = UserProfile()
+const userProfileObject = UserProfile
 
 const ManifestService = {
     getRoutes: () => {

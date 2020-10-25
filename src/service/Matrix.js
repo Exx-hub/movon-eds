@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {config} from '../config';
-import {getToken,UserProfile} from '../utility'
+import {UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
-const userProfileObject = UserProfile()
+const userProfileObject = UserProfile
 
 const MatrixService = {
     create: (data) => {
@@ -50,7 +50,6 @@ const MatrixService = {
     },
 
     onConnectingRoutesComputation: (busCompanyId, origin, destination, weight, declaredValue) => {
-        console.log('passs sevice----->>>>')
         return axios({
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/matrix/connecting-routes/computation`,

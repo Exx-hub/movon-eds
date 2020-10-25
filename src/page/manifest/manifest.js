@@ -114,7 +114,7 @@ class Manifest extends React.Component {
 
   constructor(props){
     super(props);
-    this.userProfileObject = UserProfile()
+    this.userProfileObject = UserProfile
   }
   
 
@@ -122,7 +122,6 @@ class Manifest extends React.Component {
     this.setState({ fetching: true });
     try {
       ManifestService.getRoutes().then((e) => {
-        console.log("getRoutes", e);
         const { errorCode, success, data } = e.data;
         if (!Boolean(success) && errorCode) {
           this.handleErrorNotification(errorCode);
@@ -150,7 +149,6 @@ class Manifest extends React.Component {
           const tempDestinationList = data
             .filter((e) => e !== null || e !== "null")
             .map((e) => e.endStationName);
-          console.log("tempDestinationList", tempDestinationList);
 
           this.setState({
             routes: data,
@@ -195,7 +193,6 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
-        console.log("getManifestDateRange", e);
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState({
@@ -223,8 +220,6 @@ class Manifest extends React.Component {
   onChangeTable = (pagination, filters, sorter, extra) => {};
 
   handleSelectChange = (value) => {
-    console.log("handleSelectChange value", value);
-
     const data = this.state.routes[value];
     this.setState(
       {
@@ -245,7 +240,6 @@ class Manifest extends React.Component {
     if (!this.state.listOfTripDates) {
       return null;
     }
-    console.log("this.state.listOfTripDates", this.state.listOfTripDates);
 
     return this.state.listOfTripDates.map((e, i) => {
       const data = this.state.routes[this.state.routesList.value];
@@ -270,7 +264,6 @@ class Manifest extends React.Component {
       this.setState({ startDay, endDay }, () => {
         const selectedRoute = this.state.selected;
         if (selectedRoute) {
-          console.log("selectedRoute", selectedRoute);
           this.getManifestByDestination(selectedRoute.start, selectedRoute.end);
         }
       });
@@ -279,7 +272,6 @@ class Manifest extends React.Component {
 
   doSearch = (el) => {
     const data = this.state.routesList.options;
-    console.log("data", data);
     const toSearch = el.toLowerCase();
     const tempDestinationList = data
       .filter((e) => {
@@ -315,7 +307,6 @@ class Manifest extends React.Component {
               dataSource={this.state.tempDestinationList}
               style={{ width: "100%" }}
               onSelect={(item) => {
-                console.log("item", item);
                 let selected = this.state.routes.find(
                   (e) => e.endStationName === item
                 );
@@ -323,7 +314,6 @@ class Manifest extends React.Component {
                   this.setState({ selected }, () =>
                     this.getManifestByDestination(selected.start, selected.end)
                   );
-                  console.log("selected", selected);
                 }
               }}
               onSearch={(e) => this.doSearch(e)}

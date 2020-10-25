@@ -266,7 +266,7 @@ class ManifestDetails extends React.Component {
       endStationId: undefined,
     };
     this.printEl = React.createRef();
-    this.userProfileObject = UserProfile();
+    this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
@@ -294,19 +294,11 @@ class ManifestDetails extends React.Component {
         `${startStationName} to ${endStationName}`
       );
     }
-
-    
-  }
-
-  componentDidUpdate(oldProps,oldState){
-    console.log("pass")
   }
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
     ManifestService.getManifestByDate(date, startStationId, endStationId).then(
       (e) => {
-        console.log("e", e);
-
         if (e.data.errorCode) {
           this.handleErrorNotification(e.data.errorCode);
           return;
@@ -448,7 +440,6 @@ class ManifestDetails extends React.Component {
   };
 
   handleErrorNotification = (code) => {
-    console.log("error", code);
     if (!code) {
       notification["error"]({
         message: "Server Error",
@@ -467,9 +458,7 @@ class ManifestDetails extends React.Component {
   };
 
   onCheckIn = (id) => {
-    console.log("checkin id", id);
     ManifestService.checkParcelById(id).then((e) => {
-      console.log("e checkParcelById", e);
       window.location.reload(true);
     });
   };
