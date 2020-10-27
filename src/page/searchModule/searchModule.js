@@ -47,6 +47,7 @@ class SearchModule extends React.Component {
       page: 0,
       totalRecords: 0,
       columns: [],
+      limit: 10
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -127,7 +128,7 @@ class SearchModule extends React.Component {
   };
 
   fetchParcelList = () => {
-    Parcel.searchParcel(this.state.searchValue).then((e) => {
+    Parcel.parcelPagination(this.state.page, this.state.limit, this.state.searchValue).then((e) => {
       const { data, errorCode } = e.data;
 
       if (errorCode) {
