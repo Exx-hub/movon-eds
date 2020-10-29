@@ -20,6 +20,8 @@ import {
   Skeleton,
   Pagination,
   Space,
+  Menu,
+  Dropdown
 } from "antd";
 import User from "../../service/User";
 
@@ -44,9 +46,10 @@ class SearchModule extends React.Component {
       startStationId: undefined,
       endStationId: undefined,
       parcelList: [],
-      page: 0,
+      page: 1,
       totalRecords: 0,
       columns: [],
+      limit: 10
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -102,16 +105,27 @@ class SearchModule extends React.Component {
           title: "Action",
           key: "action",
           render: (text, record) => (
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Button disabled={!Boolean(record.travelStatus === 2)} size="small" onClick={() => {}}>
-                Arraived 
-              </Button>
-              <Button disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
-                Void
-              </Button>
-              <Button disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
-                Edit
-              </Button>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Dropdown 
+                trigger={['click']}
+                placement="bottomCenter"
+                overlay={
+                  <Menu>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 2)} size="small" onClick={() => {}}>
+                      Arrived
+                    </Menu.Item>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
+                      Void
+                    </Menu.Item>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
+                      Edit
+                    </Menu.Item>
+                  </Menu>
+                }>
+                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                  Edit
+                </a>
+              </Dropdown>
             </div>
           ),
         },
@@ -127,15 +141,15 @@ class SearchModule extends React.Component {
   };
 
   fetchParcelList = () => {
-    Parcel.searchParcel(this.state.searchValue).then((e) => {
+    const page = this.state.page - 1;
+    Parcel.parcelPagination(page, this.state.limit, this.state.searchValue).then((e) => {
       const { data, errorCode } = e.data;
-
       if (errorCode) {
         this.handleErrorNotification(errorCode);
         return;
       }
 
-      const parcelList = data.map((e, i) => {
+      const parcelList = data.list.map((e, i) => {
         return {
           key: i,
           sentDate: moment(e.sentDate).format("MMM DD YYYY"),
@@ -148,10 +162,10 @@ class SearchModule extends React.Component {
           travelStatus: e.status,
           packageImg: e.packageInfo.packageImages,
           tripId: e.tripId,
-          _id: e._id,
+          _id: e._id
         };
       });
-      this.setState({ parcelList, fetching: false });
+      this.setState({ parcelList, fetching: false, totalRecords: data.pagination.totalRecords });
     });
   };
 
@@ -205,10 +219,11 @@ class SearchModule extends React.Component {
                 />
               </div>
               {this.state.parcelList.length > 0 && (
-                <div style={{ display: "flex", justifyContent: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center", padding: "1rem" }}>
                   <Pagination
                     onChange={(page) => {
-                      this.setState({ page });
+                      this.setState({page});
+                      this.fetchParcelList();
                     }}
                     defaultCurrent={this.state.page}
                     total={this.state.totalRecords}

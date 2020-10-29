@@ -11,8 +11,8 @@ const MatrixService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
             data
@@ -23,8 +23,8 @@ const MatrixService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix?busCompanyId=${params.busCompanyId}&origin=${params.origin}&destination=${params.destination}`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
         })
@@ -35,8 +35,8 @@ const MatrixService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix-computation`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
             params:{
@@ -54,8 +54,8 @@ const MatrixService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/matrix/connecting-routes/computation`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
             data:{
