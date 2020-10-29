@@ -11,7 +11,7 @@ const ManifestService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifestOutboundStations`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -23,7 +23,7 @@ const ManifestService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startStation}/${endStation}/${limit}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -35,7 +35,7 @@ const ManifestService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/range/${startTripDate}/${endTripDate}/${startStation}/${endStation}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
@@ -49,7 +49,7 @@ const ManifestService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startTripDate}/${startStation}/${endStation}/${page}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -61,7 +61,7 @@ const ManifestService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest-parcel-list/${tripId}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -73,7 +73,7 @@ const ManifestService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/board-all-parcel/${tripId}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -85,7 +85,7 @@ const ManifestService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/by-date?date=${date}&startStation=${startStation}&endStation=${endStation}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -97,7 +97,7 @@ const ManifestService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/update-status`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },

@@ -18,7 +18,7 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/home/trips`,
             headers : {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
@@ -129,7 +129,7 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/create`,
             headers : {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
@@ -156,7 +156,7 @@ const ParcelService = {
                 method: 'post',
                 url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/calculate`,
                 headers: {
-                    'x-auth-deviceid' : '1',
+                    'x-auth-deviceid' : config.header.deviceId,
                     'x-auth-devicetype' : config.header.deviceType,
                     'x-auth-token' : userProfileObject.getToken()
                 },
@@ -179,7 +179,7 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/calculate-by-matrix/`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
@@ -197,7 +197,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/parcel-convenience-fee/${quantity}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -209,7 +209,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/convenience-fee?quantity=${quantity}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -221,7 +221,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/list/connecting-partners`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -234,7 +234,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -247,7 +247,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${companyId}/connecting-routes`,
             headers : {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -260,7 +260,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/summary`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             }
@@ -273,7 +273,7 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/export`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
@@ -295,7 +295,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },
@@ -318,7 +318,7 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list/export`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
             },

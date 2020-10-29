@@ -14,7 +14,7 @@ const User = {
                 password: password
             },
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType
             }
         })
@@ -25,7 +25,7 @@ const User = {
             method: 'put',
             url: `${BASE_URL}/api/v1/account/delivery-person/home/logout`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : UserProfile.getToken()
             }
@@ -37,7 +37,7 @@ const User = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/token/`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : UserProfile.getToken()
             }

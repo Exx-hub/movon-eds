@@ -7,7 +7,7 @@ const Scan = {
             method: 'post',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/scan`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : Config.api_token
             },
@@ -24,7 +24,7 @@ const Scan = {
             method: 'post',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/subParcelTagging`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : Config.api_token
             },
@@ -39,7 +39,7 @@ const Scan = {
             method: 'post',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/{parcelId}/verify-claim-otp`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : Config.api_token
             },

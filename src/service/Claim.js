@@ -7,7 +7,7 @@ const Claim = {
             method: 'get',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/claim-trip-list`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : Config.api_token
             }
@@ -19,7 +19,7 @@ const Claim = {
             method: 'get',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/claim-parcel-list/${tripId}`,
             headers: {
-                'x-auth-deviceid' : '1',
+                'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : Config.api_token
             },
