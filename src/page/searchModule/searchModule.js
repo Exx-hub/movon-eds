@@ -20,6 +20,8 @@ import {
   Skeleton,
   Pagination,
   Space,
+  Menu,
+  Dropdown
 } from "antd";
 import User from "../../service/User";
 
@@ -103,16 +105,27 @@ class SearchModule extends React.Component {
           title: "Action",
           key: "action",
           render: (text, record) => (
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Button disabled={!Boolean(record.travelStatus === 2)} size="small" onClick={() => {}}>
-                Arraived 
-              </Button>
-              <Button disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
-                Void
-              </Button>
-              <Button disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
-                Edit
-              </Button>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Dropdown 
+                trigger={['click']}
+                placement="bottomCenter"
+                overlay={
+                  <Menu>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 2)} size="small" onClick={() => {}}>
+                      Arrived
+                    </Menu.Item>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
+                      Void
+                    </Menu.Item>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
+                      Edit
+                    </Menu.Item>
+                  </Menu>
+                }>
+                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                  Edit
+                </a>
+              </Dropdown>
             </div>
           ),
         },
