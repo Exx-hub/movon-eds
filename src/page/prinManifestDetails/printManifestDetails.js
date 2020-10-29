@@ -93,9 +93,6 @@ class PrintManifestDetails extends React.Component {
 
   componentDidMount(){
     this.printEl = React.createRef();
-    const companyTag = getUser() ? getUser().busCompanyId.config.parcel.tag : undefined;
-    this.companyTag = companyTag;
-
     const {
       end,
       endStationName,
@@ -105,13 +102,8 @@ class PrintManifestDetails extends React.Component {
     let totalSales = 0;
     const startStation = getUser().assignedStation._id;
 
-    console.log('date', this.props.location.state.date)
-    console.log('startStation', startStation)
-    console.log('end', end)
-
     ManifestService.getManifestByDate(moment(this.props.location.state.date).format('MMM DD, YYYY'), startStation, end)
     .then(e=>{
-      console.log('getManifestByDate',e)
       const data = e.data;
       
       const departureTime = moment(this.props.location.state.date).format("MMM-DD-YYYY hh:mm A");
@@ -204,7 +196,7 @@ class PrintManifestDetails extends React.Component {
                 </Col>
 
                 <Col span={6}>
-                  <h3 className="col-value">{this.companyTag === 'bicol-isarog' ? `Edsa Cubao - ${routes2}` : `${routes1}-${routes2}`}</h3>
+                  <h3 className="col-value">{`${routes1}-${routes2}`}</h3>
                   <h3 className="col-value">{this.state.dataSource.length}</h3>
                 </Col>
 
