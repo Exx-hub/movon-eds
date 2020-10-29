@@ -44,7 +44,7 @@ class SearchModule extends React.Component {
       startStationId: undefined,
       endStationId: undefined,
       parcelList: [],
-      page: 0,
+      page: 1,
       totalRecords: 0,
       columns: [],
       limit: 10
@@ -128,15 +128,15 @@ class SearchModule extends React.Component {
   };
 
   fetchParcelList = () => {
-    Parcel.parcelPagination(this.state.page, this.state.limit, this.state.searchValue).then((e) => {
+    const page = this.state.page - 1;
+    Parcel.parcelPagination(page, this.state.limit, this.state.searchValue).then((e) => {
       const { data, errorCode } = e.data;
-
       if (errorCode) {
         this.handleErrorNotification(errorCode);
         return;
       }
 
-      const parcelList = data.map((e, i) => {
+      const parcelList = data.list.map((e, i) => {
         return {
           key: i,
           sentDate: moment(e.sentDate).format("MMM DD YYYY"),
@@ -149,10 +149,10 @@ class SearchModule extends React.Component {
           travelStatus: e.status,
           packageImg: e.packageInfo.packageImages,
           tripId: e.tripId,
-          _id: e._id,
+          _id: e._id
         };
       });
-      this.setState({ parcelList, fetching: false });
+      this.setState({ parcelList, fetching: false, totalRecords: data.pagination.totalRecords });
     });
   };
 
@@ -206,10 +206,11 @@ class SearchModule extends React.Component {
                 />
               </div>
               {this.state.parcelList.length > 0 && (
-                <div style={{ display: "flex", justifyContent: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center", padding: "1rem" }}>
                   <Pagination
                     onChange={(page) => {
-                      this.setState({ page });
+                      this.setState({page});
+                      this.fetchParcelList();
                     }}
                     defaultCurrent={this.state.page}
                     total={this.state.totalRecords}

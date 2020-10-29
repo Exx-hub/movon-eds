@@ -3,14 +3,18 @@ export const config = {
     BASE_URL:"https://cargomovon.com/server",
     //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
-        1:'created', 
-        2:'intransit', 
-        3:'received', 
-        4:'claimed',  
+        1:'created',
+        2:'intransit',
+        3:'received',
+        4:'claimed',
         5:'delivered'
     },
     ticket:{
         totalCopy:6
+    },
+    header: {
+        deviceId: '1',
+        deviceType: '3'
     }
 }
 

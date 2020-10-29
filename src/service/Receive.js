@@ -8,7 +8,7 @@ const Receive ={
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/receive-trip-list`,
             headers: {
                 'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
+                'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : Config.api_token
             }
         })
@@ -20,7 +20,7 @@ const Receive ={
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/receive-parcel-list/${tripId}`,
             headers: {
                 'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
+                'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : Config.api_token
             }
         })
