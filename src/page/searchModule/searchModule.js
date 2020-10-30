@@ -106,7 +106,7 @@ class SearchModule extends React.Component {
           key: "action",
           render: (text, record) => (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <Dropdown 
+              <Dropdown
                 trigger={['click']}
                 placement="bottomCenter"
                 overlay={
