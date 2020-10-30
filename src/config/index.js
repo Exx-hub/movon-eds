@@ -17,8 +17,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '2.201030.1'
+        build: '2.201030.2'
     }
+
 }
 
 export const ERROR_CODES = {

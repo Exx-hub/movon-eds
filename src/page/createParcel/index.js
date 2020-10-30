@@ -411,7 +411,7 @@ class CreateParcel extends React.Component {
 
   componentWillUnmount() {
     this.userProfileObject = null;
-    window.removeEventListener("resize");
+    window.removeEventListener("resize", this.updateValue);
   }
 
   componentDidMount() {
