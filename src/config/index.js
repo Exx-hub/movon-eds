@@ -15,6 +15,9 @@ export const config = {
     header: {
         deviceId: '1',
         deviceType: '3'
+    },
+    version: {
+        build: '2.201030.1'
     }
 }
 

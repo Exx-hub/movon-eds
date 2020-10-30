@@ -11,6 +11,8 @@ import {
   notification,
   AutoComplete,
   Pagination,
+  Menu,
+  Dropdown
 } from "antd";
 import {
   openNotificationWithIcon,
@@ -61,23 +63,36 @@ const TableRoutesView = (props) => {
       key: "action",
       render: (text, record) => (
         <Space>
-          <Button
-            style={{ color: "white", fontWeight: "200", background: "teal" }}
-            size="small"
-            onClick={() => props.onViewClick(record)}
-          >
-            {" "}
-            View{" "}
-          </Button>
-
-          <Button
-            size="small"
-            style={{ color: "white", fontWeight: "200", background: "teal" }}
-            onClick={() => props.onPrint(record)}
-          >
-            {" "}
-            Print{" "}
-          </Button>
+          <Dropdown
+                trigger={['click']}
+                placement="bottomCenter"
+                overlay={
+                  <Menu>
+                    <Menu.Item
+                      disabled={!Boolean(record.travelStatus === 2)}
+                      size="small"
+                      onClick={() => {}}
+                    >
+                      Arrived
+                    </Menu.Item>
+                    <Menu.Item className="menu-item"
+                      size="small"
+                      onClick={() => props.onViewClick(record)}
+                    >
+                      View
+                    </Menu.Item>
+                    <Menu.Item
+                      size="small"
+                      onClick={() => props.onPrint(record)}
+                    >
+                      Print
+                    </Menu.Item>
+                  </Menu>
+                }>
+                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                  Edit
+                </a>
+              </Dropdown>
         </Space>
       ),
     },
