@@ -10,8 +10,6 @@ import ReactToPrint from "react-to-print";
 import ManifestService from "../../service/Manifest";
 import {
   openNotificationWithIcon,
-  clearCredential,
-  getUser,
   alterPath,
   modifyName,
   UserProfile,
@@ -22,7 +20,6 @@ import {
   FilterOutlined,
   ArrowLeftOutlined,
   CloseCircleOutlined,
-  ArrowsAltOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -269,10 +266,10 @@ class ManifestDetails extends React.Component {
       endStationId: undefined,
     };
     this.printEl = React.createRef();
+    this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
-    this.userProfileObject = new UserProfile();
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,
@@ -288,7 +285,7 @@ class ManifestDetails extends React.Component {
         startStationName,
       } = this.props.location.state.selected;
   
-      const startStation = getUser().assignedStation._id;
+      const startStation = this.userProfileObject.getAssignedStationId();
       const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
       this.fetchManifest(
         date,
@@ -297,19 +294,11 @@ class ManifestDetails extends React.Component {
         `${startStationName} to ${endStationName}`
       );
     }
-
-    
-  }
-
-  componentDidUpdate(oldProps,oldState){
-    console.log("pass")
   }
 
   fetchManifest = (date, startStationId, endStationId, _routes) => {
     ManifestService.getManifestByDate(date, startStationId, endStationId).then(
       (e) => {
-        console.log("e", e);
-
         if (e.data.errorCode) {
           this.handleErrorNotification(e.data.errorCode);
           return;
@@ -451,7 +440,6 @@ class ManifestDetails extends React.Component {
   };
 
   handleErrorNotification = (code) => {
-    console.log("error", code);
     if (!code) {
       notification["error"]({
         message: "Server Error",
@@ -462,7 +450,7 @@ class ManifestDetails extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      clearCredential();
+      this.userProfileObject.clearData()
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -470,9 +458,7 @@ class ManifestDetails extends React.Component {
   };
 
   onCheckIn = (id) => {
-    console.log("checkin id", id);
     ManifestService.checkParcelById(id).then((e) => {
-      console.log("e checkParcelById", e);
       window.location.reload(true);
     });
   };

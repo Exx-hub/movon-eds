@@ -1,17 +1,26 @@
 export const config = {
     //BASE_URL:"http://localhost:9000",
-    BASE_URL:"https://cargomovon.com/server",
+    BASE_URL:"https://www.cargomovon.com/server",
     //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
-        1:'created', 
-        2:'intransit', 
-        3:'received', 
-        4:'claimed',  
+        1:'created',
+        2:'intransit',
+        3:'received',
+        4:'claimed',
         5:'delivered'
     },
     ticket:{
         totalCopy:6
-    }
+    },
+    header: {
+        deviceId: '1',
+        deviceType: '3'
+    },
+    version: {
+        build: '2.1.0.3'
+    },
+    changeLogs: `created about page and modified side nav`
+
 }
 
 export const ERROR_CODES = {
