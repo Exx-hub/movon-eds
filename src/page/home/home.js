@@ -355,7 +355,7 @@ function Home(props) {
         </Sider>
         <Layout>
           <Content className={"home-content"}>
-            <Switch>ps
+            <Switch>
               <Route path={alterPath("/about")}>
                 <About {...props} />
               </Route>
