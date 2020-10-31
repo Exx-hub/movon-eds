@@ -8,6 +8,7 @@ import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
+import About from '../about';
 
 import moment from "moment";
 
@@ -27,6 +28,7 @@ import {
   BarChartOutlined,
   SearchOutlined,
   InboxOutlined,
+  InfoCircleOutlined
 } from "@ant-design/icons";
 
 const { Header, Content, Sider } = Layout;
@@ -217,6 +219,11 @@ function Home(props) {
           icon: () => <PoweroffOutlined />,
           action: () => userProfileObject.logout(User),
         },
+        {
+          key: "about",
+          destination: alterPath("/about"),
+          action: () => {},
+        }
       ]);
     }
   }, [menuData, userProfileObject]);
@@ -301,9 +308,14 @@ function Home(props) {
               </Menu.Item>
             </SubMenu>
 
-            <Menu.Item key="manifest-report" icon={<FileSearchOutlined />}>
-              Manifest
-            </Menu.Item>
+            <SubMenu key="manifest" icon={<InboxOutlined />} title="Manifest">
+              <Menu.Item key="manifest-create" icon={<AppstoreAddOutlined />}>
+                Create
+              </Menu.Item>
+              <Menu.Item key="manifest-report" icon={<FileSearchOutlined />}>
+                View
+              </Menu.Item>
+            </SubMenu>
 
             <SubMenu
               key="sales-report"
@@ -334,11 +346,20 @@ function Home(props) {
                 </Menu.Item>
               )}
             </SubMenu>
+
+            <Menu.Item key="about" icon={<InfoCircleOutlined />}>
+              About
+            </Menu.Item>
+
           </Menu>
         </Sider>
         <Layout>
           <Content className={"home-content"}>
             <Switch>
+              <Route path={alterPath("/about")}>
+                <About {...props} />
+              </Route>
+
               <Route path={alterPath("/matrix/own")}>
                 <PriceMatrix {...props} />
               </Route>
