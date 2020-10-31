@@ -19,7 +19,6 @@ export const config = {
     version: {
         build: '2.201030.2'
     }
-
 }
 
 export const ERROR_CODES = {
