@@ -9,7 +9,7 @@ const MatrixService = {
     create: (data) => {
         return axios({
             method: 'post',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/upsert/tariff-matrix`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
@@ -18,14 +18,20 @@ const MatrixService = {
             data
         })
     },
+
     getMatrix: (params) => {
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix?busCompanyId=${params.busCompanyId}&origin=${params.origin}&destination=${params.destination}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/pull/tariff-matrix`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
+            },
+            params:{
+                busCompanyId:params.busCompanyId,
+                origin:params.origin,
+                destination:params.destination
             }
         })
     },
@@ -33,7 +39,7 @@ const MatrixService = {
     getMatrixComputation: (params) => {
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/matrix-computation`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/compute/tariff-matrix`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
@@ -52,7 +58,7 @@ const MatrixService = {
     onConnectingRoutesComputation: (busCompanyId, origin, destination, weight, declaredValue) => {
         return axios({
             method: 'post',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/matrix/connecting-routes/computation`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/associate/compute/tariff-matrix`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,

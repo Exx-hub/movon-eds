@@ -1302,28 +1302,21 @@ class CreateParcel extends React.Component {
     } = prevState.details;
     const oldConnectingRoutes = prevState.details.connectingRoutes.value;
     const oldConnectingCompany = prevState.details.connectingCompany.value;
+    const hasFreshData = currentDetails.destination.value !== destination.value ||
+    currentDetails.packageWeight.value !== packageWeight.value ||
+    currentDetails.declaredValue.value !== declaredValue.value ||
+    currentDetails.length.value !== length.value ||
+    oldConnectingRoutes !== currentDetails.connectingRoutes.value ||
+    oldConnectingCompany !== currentDetails.connectingCompany.value;
 
-    if (
-      currentDetails.destination.value !== destination.value ||
-      currentDetails.packageWeight.value !== packageWeight.value ||
-      currentDetails.declaredValue.value !== declaredValue.value ||
-      currentDetails.length.value !== length.value ||
-      oldConnectingRoutes !== currentDetails.connectingRoutes.value ||
-      oldConnectingCompany !== currentDetails.connectingCompany.value
-    ) {
-      if (
-        currentDetails.destination.value !== undefined &&
-        currentDetails.packageWeight.value !== undefined &&
-        currentDetails.declaredValue.value !== undefined
-      ) {
-        if (
-          currentDetails.type.value !== 3 &&
-          currentDetails.paxs.value === paxs.value
-        ) {
+    if (hasFreshData) {
+      if (currentDetails.destination.value !== undefined 
+        && currentDetails.packageWeight.value !== undefined 
+          && currentDetails.declaredValue.value !== undefined) {
+
+        if (currentDetails.type.value !== 3 && currentDetails.paxs.value === paxs.value) {
           return;
         }
-
-        //if(this.state.enalbeBicolIsarogWays){
 
         this.computePrice();
 
@@ -1333,34 +1326,32 @@ class CreateParcel extends React.Component {
         ) {
           const destination = currentDetails.connectingRoutes.value;
           const associateId = currentDetails.connectingCompany.value;
-          const origin = currentDetails.connectingRoutes.options.filter(
-            (e) => e.end
-          )[0].start;
           const weight = currentDetails.packageWeight.value;
           const declaredValue = currentDetails.declaredValue.value;
+          const origin = currentDetails.connectingRoutes.options.filter((e) => e.end)[0].start;
 
           if (destination && associateId && origin && weight && declaredValue) {
-            MatrixService.onConnectingRoutesComputation(
-              associateId,
-              origin,
-              destination,
-              weight,
-              declaredValue
-            ).then((e) => {
+            console.log("onConnectingRoutesComputation =======>>>")
+            console.log("onConnectingRoutesComputation =======>>>")
+            console.log("onConnectingRoutesComputation =======>>>")
+
+            MatrixService.onConnectingRoutesComputation(associateId,origin,destination,weight,declaredValue)
+            .then((e) => {
+              console.log("onConnectingRoutesComputation",e)
               const { data, success, errorCode } = e.data;
-              if (success) {
-                if (data) {
-                  this.setState({
-                    connectingCompanyComputation: data.total,
-                    tariffRate: e.tariffRate,
-                  });
-                }
-              } else {
-                this.setState({
-                  connectingCompanyComputation: 0,
-                  tariffRate: 0,
+              if(errorCode){
+                this.setState({connectingCompanyComputation: 0,tariffRate: 0},()=>{
+                  this.handleErrorNotification(errorCode);
                 });
-                this.handleErrorNotification(errorCode);
+              }else{
+                if (success) {
+                  if (data) {
+                    this.setState({
+                      connectingCompanyComputation: data.total,
+                      tariffRate: e.tariffRate,
+                    });
+                  }
+                }
               }
             });
           }
