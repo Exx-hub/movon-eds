@@ -205,14 +205,14 @@ function Home(props) {
           destination: alterPath("/report/sales/cargo"),
           action: () => {},
         },
-        {
-          key: "drop-down-user-profile",
-          name: "UserProfile",
-          type: "menu",
-          destination: alterPath("/user-profile"),
-          icon: () => <UserOutlined />,
-          action: () => {},
-        },
+        // {
+        //   key: "drop-down-user-profile",
+        //   name: "UserProfile",
+        //   type: "menu",
+        //   destination: alterPath("/user-profile"),
+        //   icon: () => <UserOutlined />,
+        //   action: () => {},
+        // },
         {
           key: "drop-down-setting",
           name: "Setting",
@@ -299,7 +299,7 @@ function Home(props) {
           <Menu
             style={{ marginTop: "1rem" }}
             theme="light"
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={["search-parcel"]}
             defaultOpenKeys={["parcel"]}
             mode="inline"
             onClick={(e) => {
@@ -319,9 +319,11 @@ function Home(props) {
             </SubMenu>
 
             <SubMenu key="manifest" icon={<InboxOutlined />} title="Manifest">
-              <Menu.Item key="manifest-create" icon={<AppstoreAddOutlined />}>
-                Create
-              </Menu.Item>
+             { 
+              // <Menu.Item key="manifest-create" icon={<AppstoreAddOutlined />}>
+              //   Create
+              // </Menu.Item>
+            }
               <Menu.Item key="manifest-report" icon={<FileSearchOutlined />}>
                 View
               </Menu.Item>

@@ -21,6 +21,7 @@ import {
   clearCredential,
   openNotificationWithIcon,
   alterPath,
+  UserProfile
 } from "../../utility";
 import "./changePassword.scss";
 import UserProfileHeader from './header'
@@ -42,13 +43,14 @@ export default class ViewUserProfileModule extends React.Component {
   componentWillUnmount() {}
 
   render() {
+    const{fullName,phone}=UserProfile.getPersonalInfo()
     return (
       <div className="user-profile-module">
         <UserProfileHeader />
 
       <div style={{ width: "60%", alignSelf: "center", marginTop: "2rem" }}>
-        <TextWrapper title="Full Name" value="Juan Dela Cruz"/>
-        <TextWrapper title="Phone Number" value="Juan Dela Cruz"/>
+        <TextWrapper title="Full Name" value={fullName}/>
+        <TextWrapper title="Phone Number" value={phone.number}/>
         <TextWrapper title="User Name" value="Juan Dela Cruz"/>
         <TextWrapper title="Password" value="********"/>
       </div>
