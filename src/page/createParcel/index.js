@@ -440,7 +440,7 @@ class CreateParcel extends React.Component {
     });
 
     let discount = {...details.discount};
-    discount.options = this.userProfileObject.getBusCompanyDiscount();
+    discount.options = [...this.userProfileObject.getBusCompanyDiscount(),...[{name:"None", rate:"None"}]];
     details.discount = discount;
 
     this.setState({
@@ -1086,11 +1086,12 @@ class CreateParcel extends React.Component {
 
     if (name === "discount") {
       const discount = { ...details.discount, ...{ value, accepted: true } };
+      
       const additionNote = {
         ...details.additionNote,
-        ...{ value, accepted: true },
+        ...{ value: value.toLowerCase() === 'none' ? undefined : value, accepted: true },
       };
-      details = { ...details, ...{ discount, additionNote } };
+      details = { ...details, ...{ discount, additionNote } }
       this.setState({ details }, () => this.updateTotalShippingCost());
     }
 
@@ -1468,11 +1469,15 @@ class CreateParcel extends React.Component {
     const currentDetails = { ...this.state.details };
     const quantity = Number(currentDetails.quantity.value || 0);
     let discountIndex = currentDetails.discount.options.findIndex((e) => e.name === currentDetails.discount.value);
-    const discount =
+    let discount = 0;
+
+    if(currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== 'none'){
+      discount =
       discountIndex > -1
         ? Number(currentDetails.discount.options[discountIndex].rate || 0)
         : 0;
-
+    }
+    
     let total =
       parseFloat(currentDetails.shippingCost.value || 0) +
       parseFloat(currentDetails.systemFee.value || 0) +
