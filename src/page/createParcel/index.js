@@ -486,7 +486,6 @@ class CreateParcel extends React.Component {
       }
     });
 
-    
   }
 
   handleErrorNotification = (code) => {

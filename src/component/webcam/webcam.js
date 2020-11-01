@@ -12,11 +12,14 @@ const videoConstraints = {
 
 function WebCam(props){
     const webcamRef = React.useRef(null);
-
+    const [isDisableCam,setDisableCam] = React.useState(false)
     const capture = React.useCallback(
       () => {
         const imageSrc = webcamRef.current.getScreenshot();
         props.onCapture(imageSrc)
+        return () => {
+          setDisableCam(true)
+       }
       },
       [webcamRef,props]
     );
@@ -29,14 +32,17 @@ function WebCam(props){
                     <img className='photo-img' src={props.image} alt="Package snapshot (reference for the package)" />
                 </div> :
                 <div className="photo-webcam-container">
-                    <Webcam
-                    audio={false}
-                    height={400}
-                    ref={webcamRef}
-                    screenshotFormat="image/jpeg"
-                    width={400}
-                    videoConstraints={videoConstraints}
-                    />
+                {
+                  !isDisableCam && <Webcam
+                  audio={false}
+                  height={400}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  width={400}
+                  videoConstraints={videoConstraints}
+                  />
+                }
+                    
                 </div>
 
         }  
