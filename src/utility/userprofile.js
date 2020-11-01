@@ -64,7 +64,6 @@ class UserProfileClass{
     return undefined;
   }
 
-
   getBusCompany(){
     if(this.user){
       return this.user.busCompanyId
@@ -85,6 +84,14 @@ class UserProfileClass{
       return tag ? tag.toLowerCase() : undefined
     }
     return undefined;
+  }
+
+  getBusCompanyDiscount(){
+    if(this.getBusCompany()){
+      let discount = this.getBusCompany().discount || [] 
+      return discount;
+    }
+    return [];
   }
 
   getPersonalInfo(){

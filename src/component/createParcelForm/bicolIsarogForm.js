@@ -242,8 +242,8 @@ function BicolIsarogForm(props) {
             <InputBox
               detail={associateORNumber}
               onChange={props.onChange}
-              placeholder={"Associate OR NO."}
-              title={"Associate OR NO"}
+              placeholder={"Associate Fix Price"}
+              title={"Associate Fix Price"}
             />
           </Col>
         </Row>

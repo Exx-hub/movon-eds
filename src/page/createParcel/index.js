@@ -385,7 +385,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          options: [{ name: "employee-discount", rate: 20 }],
+          options: [],
         },
       },
       enalbeBicolIsarogWays: false,
@@ -410,7 +410,6 @@ class CreateParcel extends React.Component {
   }
 
   componentWillUnmount() {
-    this.userProfileObject = null;
     window.removeEventListener("resize", this.updateValue);
   }
 
@@ -431,6 +430,10 @@ class CreateParcel extends React.Component {
         this.handleErrorNotification(errorCode);
       }
     });
+
+    let discount = {...details.discount};
+    discount.options = this.userProfileObject.getBusCompanyDiscount();
+    details.discount = discount;
 
     this.setState({
       enalbeBicolIsarogWays: this.userProfileObject.isIsarogLiners(),
@@ -474,6 +477,8 @@ class CreateParcel extends React.Component {
         this.handleErrorNotification(errorCode);
       }
     });
+
+    
   }
 
   handleErrorNotification = (code) => {

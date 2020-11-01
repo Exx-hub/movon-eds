@@ -1,15 +1,19 @@
 import axios from 'axios';
-import Config from '../util/Config';
+import {config} from '../config';
+import {UserProfile} from '../utility'
+
+const BASE_URL = config.BASE_URL;
+const userProfileObject = UserProfile;
 
 const Claim = {
     getTrips: () => {
         return axios({
             method: 'get',
-            url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/claim-trip-list`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/claim-trip-list`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
-                'x-auth-token' : Config.api_token
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -17,11 +21,11 @@ const Claim = {
     getPackages: (tripId) => {
         return axios({
             method: 'get',
-            url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/claim-parcel-list/${tripId}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/claim-parcel-list/${tripId}`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
-                'x-auth-token' : Config.api_token
+                'x-auth-token' : userProfileObject.getToken()
             },
             
         })
@@ -35,7 +39,7 @@ const Claim = {
 
         return axios({
             method: 'post',
-            url:`${Config.api_domain}/api/v1/account/delivery-person/parcel/{parcelId}/confirm-claim`,
+            url:`${BASE_URL}/api/v1/account/delivery-person/parcel/{parcelId}/confirm-claim`,
             data: bodyFormData,
             config: { headers : {'Content-Type': 'multipart/form-data'} }
         })
