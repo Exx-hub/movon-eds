@@ -67,6 +67,7 @@ function BicolIsarogForm(props) {
     conductorFullName,
     sticker_quantity,
     discount,
+    associateFixPrice
   } = props.details;
   const lengthRate = props.lengthRate
 
@@ -239,12 +240,34 @@ function BicolIsarogForm(props) {
           </Col>
 
           <Col span={8} className="gutter-row">
-            <InputBox
-              detail={associateORNumber}
-              onChange={props.onChange}
-              placeholder={"Associate Fix Price"}
-              title={"Associate Fix Price"}
-            />
+            <div className="select-destination-form-container">
+              <span className="input-placeholder-title select-placeholder">
+                Associate Fix Price
+              </span>
+              <Select
+                size="default"
+                onBlur={() => props.onBlur(associateFixPrice.name)}
+                className={`${
+                  !connectingRoutes.accepted
+                    ? "select-error-destination-form"
+                    : ""
+                }`}
+                onChange={(e) => props.onSelectChange(e, associateFixPrice.name)}
+                value={associateFixPrice.value}
+                style={{ width: "100%" }}
+              >
+                {associateFixPrice.options.map((e) => (
+                  <Option key={e.name} value={e.name}>
+                    {e.name}
+                  </Option>
+                ))}
+              </Select>
+              {!connectingRoutes.accepted && (
+                <span className="select-input-error">
+                  {connectingRoutes.errorMessage || "Bus Company is required"}
+                </span>
+              )}
+            </div>
           </Col>
         </Row>
       </div>
@@ -513,7 +536,7 @@ function BicolIsarogForm(props) {
 
           <Col span={8} className="gutter-row">
             <InputBox
-              type="number"
+              type="tel"
               onBlur={() => props.onBlur(senderMobile.name)}
               detail={senderMobile}
               onChange={props.onChange}
@@ -553,7 +576,7 @@ function BicolIsarogForm(props) {
 
           <Col span={8} className="gutter-row">
             <InputBox
-              type="number"
+              type="tel"
               onBlur={() => props.onBlur(recieverMobile.name)}
               detail={recieverMobile}
               onChange={props.onChange}
