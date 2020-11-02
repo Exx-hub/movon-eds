@@ -46,8 +46,8 @@ export default class EditUserProfileModule extends React.Component {
       <div className="user-profile-module">
         <UserProfileHeader />
 
-      <div style={{ width: "60%", alignSelf: "center", marginTop: "2rem" }}>
-      <div className="item-wrapper wrapper-margin-top">
+      <div className="main-creds">
+      <div className="item-wrapper">
         <span className="title item-wrapper-custom-text-title">
           Full Name
         </span>
@@ -56,38 +56,26 @@ export default class EditUserProfileModule extends React.Component {
         </span>
       </div>
 
-      <div className="item-wrapper wrapper-margin-top">
+      <div className="item-wrapper">
         <span className="title item-wrapper-custom-text-title">
           User Name
         </span>
         <Input />
       </div>
 
-      <div className="item-wrapper wrapper-margin-top">
+      <div className="item-wrapper">
         <span className="title item-wrapper-custom-text-title">Password</span>
         <Input type="password" placeholder="password" />
       </div>
 
-      <div className="item-wrapper wrapper-margin-top">
+      <div className="item-wrapper">
         <span className="title item-wrapper-custom-text-title">
           Confirm Password
         </span>
         <Input type="password" placeholder="confirm password" />
       </div>
-    </div>
-
-    <div
-      style={{
-        width: "60%",
-        alignSelf: "center",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: "2.5rem",
-      }}
-    >
-      <Button
-        style={{ width: "49%", background: "gray" }}
+      <div className="button-wrapper-edit">
+      <Button className="button-cancel"
         type="primary"
         shape="round"
         size="large"
@@ -95,8 +83,7 @@ export default class EditUserProfileModule extends React.Component {
       >
         Cancel
       </Button>
-      <Button
-        style={{ width: "49%", background: "#008080" }}
+      <Button className="button-update"
         type="primary"
         shape="round"
         size="large"
@@ -104,7 +91,7 @@ export default class EditUserProfileModule extends React.Component {
         Update
       </Button>
     </div>
-    
+    </div>
       </div>
     );
   }

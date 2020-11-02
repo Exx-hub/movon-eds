@@ -46,32 +46,25 @@ export default class ViewUserProfileModule extends React.Component {
       <div className="user-profile-module">
         <UserProfileHeader />
 
-      <div style={{ width: "60%", alignSelf: "center", marginTop: "2rem" }}>
-        <TextWrapper title="Full Name" value="Juan Dela Cruz"/>
-        <TextWrapper title="Phone Number" value="Juan Dela Cruz"/>
-        <TextWrapper title="User Name" value="Juan Dela Cruz"/>
-        <TextWrapper title="Password" value="********"/>
+      <div className="main-creds">
+        <div className="creds">
+          <TextWrapper title="Full Name" value="Juan Dela Cruz"/>
+          <TextWrapper title="Phone Number" value="Juan Dela Cruz"/>
+        </div>
+        <div className="creds">
+          <TextWrapper title="User Name" value="Juan Dela Cruz"/>
+          <TextWrapper title="Password" value="********"/>
+        </div>
+        <div className="button-wrapper-view">
+          <Button className="button-edit"
+            type="primary"
+            shape="round"
+            size="large"
+            onClick={()=>this.props.history.push(alterPath('/user-profile/edit'))}>
+            Edit
+          </Button>
+        </div>
       </div>
-
-      <div
-      style={{
-        width: "60%",
-        alignSelf: "center",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: "2.5rem",
-      }}
-    >
-      <Button
-        style={{ width: "100%", background: "#008080" }}
-        type="primary"
-        shape="round"
-        size="large"
-        onClick={()=>this.props.history.push(alterPath('/user-profile/edit'))}>
-        Edit
-      </Button>
-    </div>
 
     </div>
     );
