@@ -25,9 +25,7 @@ import {
 import "./changePassword.scss";
 
 function UserProfileHeader(props) {
-  console.log(UserProfile.getBusCompany())
-  const{name,logo}=UserProfile.getBusCompany()
-  const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name 
+ 
   return (
       <div
         style={{ display: "flex", flexDirection: "row", alignSelf: "center" }}
@@ -42,7 +40,7 @@ function UserProfileHeader(props) {
           <div className="avatar-container">
             <img
               alt="avatar-img"
-              src={logo}
+              src={props.logo}
             />
           </div>
         </div>
@@ -50,7 +48,7 @@ function UserProfileHeader(props) {
         <div style={{ width: "80%", alignSelf: "center" }}>
           <div className="item-wrapper">
             <span className="title remove-span-gap">Bus Company</span>
-            <span className="value">{name}</span>
+            <span className="value">{props.busCompanyName}</span>
           </div>
 
           {
@@ -62,7 +60,7 @@ function UserProfileHeader(props) {
 
           <div className="item-wrapper">
             <span className="title remove-span-gap">Assigned Station</span>
-            <span className="value">{assignStationName}</span>
+            <span className="value">{props.assignedStationName}</span>
           </div>
         </div>
       </div>

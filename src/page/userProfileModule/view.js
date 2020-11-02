@@ -44,14 +44,22 @@ export default class ViewUserProfileModule extends React.Component {
 
   render() {
     const{fullName,phone}=UserProfile.getPersonalInfo()
+    const{displayId}=UserProfile.getUser()
+    const{name,logo}=UserProfile.getBusCompany()
+    const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name 
+    
     return (
       <div className="user-profile-module">
-        <UserProfileHeader />
+        <UserProfileHeader 
+          assignedStationName={assignStationName}
+          busCompanyName={name}
+          logo={logo}
+        />
 
       <div style={{ width: "60%", alignSelf: "center", marginTop: "2rem" }}>
         <TextWrapper title="Full Name" value={fullName}/>
         <TextWrapper title="Phone Number" value={phone.number}/>
-        <TextWrapper title="User Name" value="Juan Dela Cruz"/>
+        <TextWrapper title="User Name" value={displayId}/>
         <TextWrapper title="Password" value="********"/>
       </div>
 

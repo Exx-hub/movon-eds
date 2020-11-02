@@ -205,14 +205,14 @@ function Home(props) {
           destination: alterPath("/report/sales/cargo"),
           action: () => {},
         },
-        // {
-        //   key: "drop-down-user-profile",
-        //   name: "UserProfile",
-        //   type: "menu",
-        //   destination: alterPath("/user-profile"),
-        //   icon: () => <UserOutlined />,
-        //   action: () => {},
-        // },
+        {
+          key: "drop-down-user-profile",
+          name: "UserProfile",
+          type: "menu",
+          destination: alterPath("/user-profile"),
+          icon: () => <UserOutlined />,
+          action: () => {},
+        },
         {
           key: "drop-down-setting",
           name: "Setting",
