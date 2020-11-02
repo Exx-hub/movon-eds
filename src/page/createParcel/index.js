@@ -779,7 +779,10 @@ class CreateParcel extends React.Component {
     }
 
     if(declaredValue !== undefined && this.userProfileObject.isIsarogLiners()){
-      ParcelService.getConvenienceFee(qty,declaredValue).then((res) => this.parseSystemFeeResponse(res));
+      ParcelService.getConvenienceFee(qty,declaredValue)
+      .then((res) => {
+        this.parseSystemFeeResponse(res)
+      });
       return;
     }
 
@@ -969,7 +972,7 @@ class CreateParcel extends React.Component {
     });
   }
 
-  onSelectChange = (value, name) => {
+  onSelectChange = async(value, name) => {
     let details = { ...this.state.details };
 
     if (name === "connectingCompany") {
@@ -1112,6 +1115,7 @@ class CreateParcel extends React.Component {
 
     if (name === "fixMatrix") {
       let details = { ...this.state.details };
+
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
         let price = Number(option.price).toFixed(2);
@@ -1124,11 +1128,13 @@ class CreateParcel extends React.Component {
           details.packageInsurance.disabled = true;
           details.declaredValue.value = 0;
           details.declaredValue.disabled = true;
+          this.getConvinienceFee(0,price);
         } else {
           details.packageInsurance.value = 0;
           details.packageInsurance.disabled = false;
           details.declaredValue.value = 0;
           details.declaredValue.disabled = false;
+          details.systemFee.value = 0;
         }
 
         details.description.value = option.name;
@@ -1139,9 +1145,10 @@ class CreateParcel extends React.Component {
         details.length.value = 0;
         details.quantity.disabled = false;
         details.quantity.value = 1;
-        
-        this.setState({ lengthRate: 0, details }, () =>
+
+        this.setState({ lengthRate: 0, details },() =>{
           this.updateTotalShippingCost()
+        }
         );
       } else {
         details.fixMatrix.value = "none";
