@@ -135,12 +135,12 @@ class SearchModule extends React.Component {
 
   doSearch = (el) => {
     const toSearch = el.toLowerCase();
-    this.setState({ searchValue: toSearch, fetching: true }, () =>
+    this.setState({ page:1, searchValue: toSearch, fetching: true }, () =>
       this.fetchParcelList()
     );
   };
 
-  fetchParcelList = () => {
+  fetchParcelList = (onSearch) => {
     const page = this.state.page - 1;
     Parcel.parcelPagination(page, this.state.limit, this.state.searchValue).then((e) => {
       const { data, errorCode } = e.data;
