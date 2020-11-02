@@ -80,7 +80,7 @@ const ManifestService = {
         })
     },
 
-    getManifestByDate: (date, startStation, endStation) => {
+    getManifestByDate: (tripId, date, startStation, endStation) => {
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/by-date?date=${date}&startStation=${startStation}&endStation=${endStation}`,
@@ -88,6 +88,9 @@ const ManifestService = {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
+            },
+            params:{
+                tripId
             }
         })
     },
@@ -106,10 +109,20 @@ const ManifestService = {
             }
         })
     },
+    arriveAllParcel: (tripId) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${tripId}/arrived`,
+            headers: {
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
+            }
+        })
+    },
 
     
 
-    
 }
 
 export default ManifestService;
