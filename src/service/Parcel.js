@@ -192,14 +192,18 @@ const ParcelService = {
         })
     },
 
-    getConvenienceFee: (quantity) => {
+    getConvenienceFee: (quantity,declaredValue) => {
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/parcel-convenience-fee/${quantity}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/parcel-convenience-fee`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
+            },
+            params:{
+                quantity,
+                declaredValue
             }
         })
     },

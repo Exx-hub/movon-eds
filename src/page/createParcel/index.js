@@ -385,8 +385,16 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          options: [{ name: "employee-discount", rate: 20 }],
+          options: [],
         },
+        associateFixPrice: {
+          name: "associateFixPrice",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          options: [],
+        },
+
       },
       enalbeBicolIsarogWays: false,
       declaredValueAdditionFee: 0.1,
@@ -410,7 +418,6 @@ class CreateParcel extends React.Component {
   }
 
   componentWillUnmount() {
-    this.userProfileObject = null;
     window.removeEventListener("resize", this.updateValue);
   }
 
@@ -421,7 +428,7 @@ class CreateParcel extends React.Component {
       if (success) {
         if (data) {
           const connectingCompany = { ...details.connectingCompany };
-          connectingCompany.options = data.connectingRoutes;
+          connectingCompany.options = [...data.connectingRoutes,...[{name:'None', _id:'none'}]];
           //connectingCompany.value = data.connectingRoutes[0]._id
           this.setState({
             details: { ...this.state.details, ...{ connectingCompany } },
@@ -431,6 +438,10 @@ class CreateParcel extends React.Component {
         this.handleErrorNotification(errorCode);
       }
     });
+
+    let discount = {...details.discount};
+    discount.options = [...this.userProfileObject.getBusCompanyDiscount(),...[{name:"None", rate:"None"}]];
+    details.discount = discount;
 
     this.setState({
       enalbeBicolIsarogWays: this.userProfileObject.isIsarogLiners(),
@@ -474,6 +485,7 @@ class CreateParcel extends React.Component {
         this.handleErrorNotification(errorCode);
       }
     });
+
   }
 
   handleErrorNotification = (code) => {
@@ -652,6 +664,15 @@ class CreateParcel extends React.Component {
         },
       };
     }
+
+    if(name === 'quantity'){
+      let value = (details[name].value && Math.floor(details[name].value)) || 0; 
+      return {
+        ...details[name],
+        ...{value},
+      };
+    }
+
     return null;
   };
 
@@ -751,42 +772,44 @@ class CreateParcel extends React.Component {
     return true;
   };
 
-  getConvinienceFee = (qty) => {
+  getConvinienceFee = (qty, declaredValue) => {
+
     if (this.userProfileObject.disableCargoSystemFee()) {
       return;
     }
 
-    const setSystemFee = (value) => {
-      let details = { ...this.state.details };
-      let systemFee = { ...this.state.details.systemFee };
-      systemFee = Object.assign({}, systemFee, { value });
-      this.setState({ details: Object.assign(details, { systemFee }) }, () =>
-        this.updateTotalShippingCost()
-      );
-    };
+    if(declaredValue !== undefined && this.userProfileObject.isIsarogLiners()){
+      ParcelService.getConvenienceFee(qty,declaredValue).then((res) => this.parseSystemFeeResponse(res));
+      return;
+    }
 
     if (!qty) {
-      setSystemFee(0);
+      let details = {...this.state.details};
+      let systemFee = {...details.systemFee}
+      systemFee.value=0;
+      details.systemFee = systemFee;
+      this.setState({ details }, () =>this.updateTotalShippingCost());
       return;
     }
-
-    const updateState = (res) => {
-      const { success, data, errorCode } = res.data;
-      if (!success) {
-        this.handleErrorNotification(errorCode);
-      }
-      setSystemFee((data && data.convenienceFee) || 0);
-    };
 
     if (this.userProfileObject.isFiveStar()) {
-      ParcelService.getFiveStarConvenienceFee(qty).then((res) =>
-        updateState(res)
-      );
+      ParcelService.getFiveStarConvenienceFee(qty,0).then((res) =>this.parseSystemFeeResponse(res));
       return;
     }
-
-    ParcelService.getConvenienceFee(qty).then((res) => updateState(res));
   };
+
+  parseSystemFeeResponse=(res)=>{
+    const { success, data, errorCode } = res.data;
+    if (!success) {
+      this.handleErrorNotification(errorCode);
+    }
+    let details = { ...this.state.details };
+    let systemFee = { ...this.state.details.systemFee };
+    systemFee = Object.assign({}, systemFee, { value:data.convenienceFee });
+    this.setState({ details: Object.assign(details, { systemFee }) }, () =>
+      this.updateTotalShippingCost()
+    );
+  }
 
   computePrice = () => {
     if (
@@ -923,13 +946,54 @@ class CreateParcel extends React.Component {
           this.getConvinienceFee(value);
         }
       }
-      if (name === "declaredValue") this.updateTotalShippingCost();
+      if (name === "declaredValue"){
+        this.updateTotalShippingCost();
+        this.getConvinienceFee(0,value);
+      } 
     });
   };
 
+  getMatrixValue = (busCompanyId,origin,destination) =>{
+    return MatrixService.getMatrix({
+      busCompanyId,
+      origin,
+      destination,
+    }).then(res=>{
+      const{data,errorCode}=res.data;
+      if(errorCode){
+        this.handleErrorNotification(errorCode);
+        return Promise.reject()
+      }
+      const stringValues = (data.stringValues && JSON.parse(data.stringValues)) || [];
+      return Promise.resolve(stringValues);
+    });
+  }
+
   onSelectChange = (value, name) => {
     let details = { ...this.state.details };
+
     if (name === "connectingCompany") {
+
+      if(value.toLowerCase() === 'none'){
+        const associateFixPrice = details.associateFixPrice;
+        associateFixPrice.value=undefined;
+        associateFixPrice.options=[]
+        
+        const connectingRoutes = details.connectingRoutes;
+        connectingRoutes.value=undefined;
+        connectingRoutes.options=[]
+        
+        const connectingCompany = details.connectingCompany;
+        connectingCompany.value = value
+
+        details.connectingRoutes = connectingRoutes;
+        details.associateFixPrice = associateFixPrice;
+        details.connectingCompany = connectingCompany;
+        
+        this.setState({details})
+        return;
+      }
+
       ParcelService.getConnectingRoutes(value).then((e) => {
         const { data, success, errorCode } = e.data;
         if (!success) this.handleErrorNotification(errorCode);
@@ -945,10 +1009,12 @@ class CreateParcel extends React.Component {
           });
         }
       });
+
       const connectingCompany = {
         ...details.connectingCompany,
         ...{ value, accepted: true },
       };
+
       details = { ...details, ...{ connectingCompany } };
       this.setState({ details });
     }
@@ -959,6 +1025,18 @@ class CreateParcel extends React.Component {
         ...{ value, accepted: true },
       };
       details = { ...details, ...{ connectingRoutes } };
+      this.getMatrixValue(
+        this.state.details.connectingCompany.value,
+        this.state.details.connectingRoutes.options.filter((e) => e.end)[0].start,
+        value
+      ).then(e=>{
+        let details = {...this.state.details};
+        let associateFixPrice = {...details.associateFixPrice};
+        associateFixPrice.options = [...e.fixMatrix, ...[{name:'None', price:undefined}]]
+        details.associateFixPrice = associateFixPrice;
+        this.setState({details})
+      })
+
       this.setState({ details });
     }
 
@@ -1017,13 +1095,22 @@ class CreateParcel extends React.Component {
 
     if (name === "discount") {
       const discount = { ...details.discount, ...{ value, accepted: true } };
+      
       const additionNote = {
         ...details.additionNote,
-        ...{ value, accepted: true },
+        ...{ value: value.toLowerCase() === 'none' ? undefined : value, accepted: true },
       };
-      details = { ...details, ...{ discount, additionNote } };
+      details = { ...details, ...{ discount, additionNote } }
       this.setState({ details }, () => this.updateTotalShippingCost());
     }
+
+    if (name === "associateFixPrice") {
+      const associateFixPrice = { ...details.associateFixPrice, ...{ value, accepted: true } };
+      details = { ...details, ...{ associateFixPrice } };
+      this.setState({ details });
+    }
+
+    
 
     if (name === "fixMatrix") {
       let details = { ...this.state.details };
@@ -1291,6 +1378,52 @@ class CreateParcel extends React.Component {
     return <div className="content-section">{view}</div>;
   };
 
+  computeForConnectinRoutes=()=>{
+    const currentDetails = {...this.state.details}
+    if (
+      currentDetails.connectingRoutes.value &&
+      currentDetails.connectingCompany.value
+    ) {
+      const destination = currentDetails.connectingRoutes.value;
+      const associateId = currentDetails.connectingCompany.value;
+      const weight = currentDetails.packageWeight.value;
+      const declaredValue = currentDetails.declaredValue.value;
+      const origin = currentDetails.connectingRoutes.options.filter((e) => e.end)[0].start;
+
+      if(currentDetails.associateFixPrice.value && currentDetails.associateFixPrice.value.toLowerCase() !== 'none'){
+        const{value,options} = currentDetails.associateFixPrice;
+        const option = options.find(e=>e.name === value) || undefined;
+        let price = option ? option.price : 0;
+        this.setState({
+          connectingCompanyComputation: Number(price),
+          tariffRate: 47.50,
+        });
+        return;
+      }
+
+      if (destination && associateId && origin && weight && declaredValue) {
+        MatrixService.onConnectingRoutesComputation(associateId,origin,destination,weight,declaredValue)
+        .then((e) => {
+          const { data, success, errorCode } = e.data;
+          if(errorCode){
+            this.setState({connectingCompanyComputation: 0,tariffRate: 0},()=>{
+              this.handleErrorNotification(errorCode);
+            });
+          }else{
+            if (success) {
+              if (data) {
+                this.setState({
+                  connectingCompanyComputation: data.total,
+                  tariffRate: e.tariffRate,
+                });
+              }
+            }
+          }
+        });
+      }
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const currentDetails = { ...this.state.details };
     const {
@@ -1310,61 +1443,19 @@ class CreateParcel extends React.Component {
     oldConnectingCompany !== currentDetails.connectingCompany.value;
 
     if (hasFreshData) {
-      if (currentDetails.destination.value !== undefined 
-        && currentDetails.packageWeight.value !== undefined 
-          && currentDetails.declaredValue.value !== undefined) {
 
-        if (currentDetails.type.value !== 3 && currentDetails.paxs.value === paxs.value) {
-          return;
-        }
+      if(currentDetails.packageWeight.value !== undefined 
+        && currentDetails.declaredValue.value !== undefined){
 
-        this.computePrice();
+          this.computeForConnectinRoutes();
 
-        if (
-          currentDetails.connectingRoutes.value &&
-          currentDetails.connectingCompany.value
-        ) {
-          const destination = currentDetails.connectingRoutes.value;
-          const associateId = currentDetails.connectingCompany.value;
-          const weight = currentDetails.packageWeight.value;
-          const declaredValue = currentDetails.declaredValue.value;
-          const origin = currentDetails.connectingRoutes.options.filter((e) => e.end)[0].start;
-
-          if (destination && associateId && origin && weight && declaredValue) {
-            console.log("onConnectingRoutesComputation =======>>>")
-            console.log("onConnectingRoutesComputation =======>>>")
-            console.log("onConnectingRoutesComputation =======>>>")
-
-            MatrixService.onConnectingRoutesComputation(associateId,origin,destination,weight,declaredValue)
-            .then((e) => {
-              console.log("onConnectingRoutesComputation",e)
-              const { data, success, errorCode } = e.data;
-              if(errorCode){
-                this.setState({connectingCompanyComputation: 0,tariffRate: 0},()=>{
-                  this.handleErrorNotification(errorCode);
-                });
-              }else{
-                if (success) {
-                  if (data) {
-                    this.setState({
-                      connectingCompanyComputation: data.total,
-                      tariffRate: e.tariffRate,
-                    });
-                  }
-                }
-              }
-            });
+          if (currentDetails.destination.value !== undefined) {
+            if (currentDetails.type.value !== 3 && currentDetails.paxs.value === paxs.value) {
+              return;
+            }
+            this.computePrice();
           }
         }
-        //}
-        //else{
-        // this.getMatrixFare({
-        //   declaredValue:currentDetails.declaredValue.value,
-        //   weight:currentDetails.packageWeight.value,
-        //   length:currentDetails.length.value || 0
-        // });
-        //}
-      }
     }
 
     const oldDetails = prevState.details;
@@ -1386,14 +1477,16 @@ class CreateParcel extends React.Component {
   updateTotalShippingCost = () => {
     const currentDetails = { ...this.state.details };
     const quantity = Number(currentDetails.quantity.value || 0);
-    let discountIndex = currentDetails.discount.options.findIndex(
-      (e) => e.name === currentDetails.discount.value
-    );
-    const discount =
+    let discountIndex = currentDetails.discount.options.findIndex((e) => e.name === currentDetails.discount.value);
+    let discount = 0;
+
+    if(currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== 'none'){
+      discount =
       discountIndex > -1
         ? Number(currentDetails.discount.options[discountIndex].rate || 0)
         : 0;
-
+    }
+    
     let total =
       parseFloat(currentDetails.shippingCost.value || 0) +
       parseFloat(currentDetails.systemFee.value || 0) +

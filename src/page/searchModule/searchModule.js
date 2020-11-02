@@ -98,7 +98,7 @@ class SearchModule extends React.Component {
           title: "Parcel Status",
           dataIndex: "travelStatus",
           key: "travelStatus",
-          sorter: (a, b) => a.name.travelStatus - b.name.travelStatus,
+          sorter: (a, b) => a.travelStatus - b.travelStatus,
           render: (text)=> (config.parcelStatus[text])
         },
         {

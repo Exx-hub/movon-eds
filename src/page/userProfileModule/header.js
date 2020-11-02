@@ -20,17 +20,19 @@ import {
   setCredential,
   clearCredential,
   openNotificationWithIcon,
+  UserProfile
 } from "../../utility";
 import "./changePassword.scss";
 
 function UserProfileHeader(props) {
+ 
   return (
       <div className="main-profile">
         <div className="profile">
           <div className="avatar-container">
             <img
               alt="avatar-img"
-              src="https://d2skuhm0vrry40.cloudfront.net/2020/articles/2020-01-13-11-45/pokemon-go-regional-header.jpg/EG11/thumbnail/750x422/format/jpg/quality/60"
+              src={props.logo}
             />
           </div>
         </div>
@@ -38,17 +40,19 @@ function UserProfileHeader(props) {
         <div className="bus-profile">
           <div className="item-wrapper">
             <span className="title remove-span-gap">Bus Company</span>
-            <span className="value">Bicol Isarog Transport System Inc.</span>
+            <span className="value">{props.busCompanyName}</span>
           </div>
 
-          <div className="item-wrapper">
-            <span className="title remove-span-gap">Address</span>
-            <span className="value"> Cubao Quezon City</span>
-          </div>
+          {
+          //   <div className="item-wrapper">
+          //   <span className="title remove-span-gap">Address</span>
+          //   <span className="value"> Cubao Quezon City</span>
+          // </div>
+          }
 
           <div className="item-wrapper">
             <span className="title remove-span-gap">Assigned Station</span>
-            <span className="value">Edsa, Cubao</span>
+            <span className="value">{props.assignedStationName}</span>
           </div>
         </div>
       </div>
