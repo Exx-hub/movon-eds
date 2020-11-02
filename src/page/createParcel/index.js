@@ -1110,8 +1110,6 @@ class CreateParcel extends React.Component {
       this.setState({ details });
     }
 
-    
-
     if (name === "fixMatrix") {
       let details = { ...this.state.details };
       if (value !== "none") {
@@ -1141,6 +1139,7 @@ class CreateParcel extends React.Component {
         details.length.value = 0;
         details.quantity.disabled = false;
         details.quantity.value = 1;
+        
         this.setState({ lengthRate: 0, details }, () =>
           this.updateTotalShippingCost()
         );
@@ -1489,7 +1488,6 @@ class CreateParcel extends React.Component {
     
     let total =
       parseFloat(currentDetails.shippingCost.value || 0) +
-      parseFloat(currentDetails.systemFee.value || 0) +
       parseFloat(currentDetails.packageInsurance.value || 0) +
       parseFloat(this.state.lengthRate) +
       parseFloat(this.state.connectingCompanyComputation || 0);
@@ -1503,6 +1501,8 @@ class CreateParcel extends React.Component {
     if (discount > 0) {
       total = total * ((100 - discount) / 100);
     }
+
+    total += parseFloat(currentDetails.systemFee.value || 0);
 
     const totalShippingCost = {
       ...currentDetails.totalShippingCost,
