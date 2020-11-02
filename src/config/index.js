@@ -17,9 +17,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '2.1.0.5'
+        build: '2.1.0.4'
     },
-    changeLogs: `user profile, change username and password`
+    changeLogs: `updated user profile page.`
 
 }
 

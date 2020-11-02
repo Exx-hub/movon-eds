@@ -27,16 +27,8 @@ import "./changePassword.scss";
 function UserProfileHeader(props) {
  
   return (
-      <div
-        style={{ display: "flex", flexDirection: "row", alignSelf: "center" }}
-      >
-        <div
-          style={{
-            alignSelf: "center",
-            paddingBottom: "1rem",
-            marginRight: "1rem",
-          }}
-        >
+      <div className="main-profile">
+        <div className="profile">
           <div className="avatar-container">
             <img
               alt="avatar-img"
@@ -45,7 +37,7 @@ function UserProfileHeader(props) {
           </div>
         </div>
 
-        <div style={{ width: "80%", alignSelf: "center" }}>
+        <div className="bus-profile">
           <div className="item-wrapper">
             <span className="title remove-span-gap">Bus Company</span>
             <span className="value">{props.busCompanyName}</span>
