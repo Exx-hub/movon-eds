@@ -950,8 +950,8 @@ class CreateParcel extends React.Component {
         }
       }
       if (name === "declaredValue"){
-        this.updateTotalShippingCost();
         this.getConvinienceFee(0,value);
+        this.updateTotalShippingCost();
       } 
     });
   };
