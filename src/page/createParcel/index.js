@@ -664,6 +664,15 @@ class CreateParcel extends React.Component {
         },
       };
     }
+
+    if(name === 'quantity'){
+      let value = (details[name].value && Math.floor(details[name].value)) || 0; 
+      return {
+        ...details[name],
+        ...{value},
+      };
+    }
+
     return null;
   };
 
