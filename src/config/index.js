@@ -17,9 +17,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '2.1.0.4'
+        build: '2.1.0.5'
     },
-    changeLogs: `updated user profile page.`
+    changeLogs: `created void modal feature.`
 
 }
 

@@ -3,7 +3,9 @@ import "./searchModule.scss";
 import moment from "moment";
 import { config } from "../../config";
 import ManifestService from "../../service/Manifest";
+import Transaction from "../../service/Transaction";
 import Parcel from "../../service/Parcel";
+import { PromptModal } from '../../component/modal';
 import {
   openNotificationWithIcon,
   debounce,
@@ -49,7 +51,9 @@ class SearchModule extends React.Component {
       page: 1,
       totalRecords: 0,
       columns: [],
-      limit: 10
+      limit: 10,
+      visibleEdit: false,
+      visibleVoid: false
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -111,10 +115,7 @@ class SearchModule extends React.Component {
                 placement="bottomCenter"
                 overlay={
                   <Menu>
-                    <Menu.Item disabled={!Boolean(record.travelStatus === 2)} size="small" onClick={() => {}}>
-                      Arrived
-                    </Menu.Item>
-                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {this.setState({selectedRecord: record, visibleVoid:true})}}>
                       Void
                     </Menu.Item>
                     <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
@@ -132,6 +133,25 @@ class SearchModule extends React.Component {
       ],
     });
   }
+
+  handleOk = () => {
+    let record = this.state.selectedRecord;
+    let parcelId = record._id;
+    let deliveryPersonId = this.userProfileObject.user._id;
+    let status = 6;
+    let type = 1;
+    Transaction.changeTransaction(status, parcelId, deliveryPersonId, type)
+    .then( () => {
+      this.setState({ visibleVoid:false })
+    })
+  };
+
+  handleCancel = () => {
+    this.setState({
+      selectedRecord: null,
+      visibleVoid:false
+    });
+  };
 
   doSearch = (el) => {
     const toSearch = el.toLowerCase();
@@ -233,6 +253,20 @@ class SearchModule extends React.Component {
             </>
           )}
         </Content>
+        <PromptModal
+          handleOk={this.handleOk}
+          handleCancel={this.handleCancel}
+          visible={this.state.visibleVoid}
+          title="Are you sure you want to void this transcation?"
+          message="Enter reason/s for voiding."
+          remarks={<input></input>} />
+
+        <PromptModal
+          handleOk={this.handleOk}
+          handleCancel={this.handleCancel}
+          visible={this.state.visibleEdit}
+          title="Are you sure you want to edit?"
+          message="Press OK to edit the transaction" />
       </Layout>
     );
   }
