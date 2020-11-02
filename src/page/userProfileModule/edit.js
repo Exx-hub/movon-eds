@@ -8,7 +8,8 @@ import User from "../../service/User";
 import {
   openNotificationWithIcon,
   alterPath,
-  UserProfile
+  UserProfile,
+  debounce
 } from "../../utility";
 import "./changePassword.scss";
 
@@ -34,7 +35,7 @@ export default class EditUserProfileModule extends React.Component {
       password:"",
       confirmPassword:""
      };
-  }
+    }
 
   componentDidMount() {
     const{displayId}=UserProfile.getUser()
@@ -67,6 +68,63 @@ export default class EditUserProfileModule extends React.Component {
     }
     openNotificationWithIcon("error", code);
   };
+
+  onValidation=(name)=>{
+    if(name === 'password' || name === 'confirmPassword'){
+      if(this.state[name].length < 5){
+        showNotification({
+          title: "Password Validation",
+          type: "error",
+          message: "Username and Password should contain atleast 6 characters",
+        });
+        return false;
+      }
+    }
+    return true;
+  }
+
+  onUpdateUserProfile = () =>{
+    if(this.state.username && this.state.password && this.state.confirmPassword){
+
+      if(!this.onValidation("password") || !this.onValidation('confirmPassword')){
+        return;
+      }
+
+      if(this.state.password === this.state.confirmPassword){
+        this.setState({fetching:true},()=>User.updateUserPassword(this.state.username, this.state.password)
+        .then(e=>{
+          const{erroCode}=e.data;
+          if(erroCode){
+            this.handleErrorNotification(erroCode)
+          }else{
+            notification.open({
+              title: "User Profile Updated!",
+              type: "success",
+              message: "You need to re-login your account and continue",
+              duration:0,
+              onClose:()=>{
+                UserProfile.clearData();
+                this.props.history.push(alterPath("/"))
+              } 
+            });
+          }
+        }));
+        
+      }else{
+        showNotification({
+          title: "Password MisMatch",
+          type: "error",
+          message: "Password MisMatch",
+        });
+      }
+    }else{
+      showNotification({
+        title: "Input Validation",
+        type: "error",
+        message: "Please fill up missing fields",
+      });
+    }
+  }
 
   render() {
 
@@ -108,7 +166,10 @@ export default class EditUserProfileModule extends React.Component {
         <span className="title item-wrapper-custom-text-title">
           Confirm Password
         </span>
-        <Input type="password" placeholder="confirm password" onChange={e=>this.setState({confirmPassword:e.target.value})} />
+        <Input 
+          type="password" 
+          placeholder="confirm password" 
+          onChange={e=>this.setState({confirmPassword:e.target.value})} />
       </div>
       <div className="button-wrapper-edit">
       <Button className="button-cancel"
@@ -120,34 +181,11 @@ export default class EditUserProfileModule extends React.Component {
         Cancel
       </Button>
       <Button className="button-update"
+        disabled={this.state.fetching}
         type="primary"
         shape="round"
         size="large"
-        onClick={()=>{
-          if(this.state.username && this.state.password && this.state.confirmPassword){
-
-            if(this.state.password === this.state.confirmPassword){
-              User.updateUserPassword(this.state.username, this.state.password)
-              .then(e=>{
-                const{data,erroCode}=e.data;
-                console.log('change password',e)
-                if(erroCode){
-                  this.handleErrorNotification(erroCode)
-                }else{
-                  UserProfile.clearData();
-                  this.props.history.push(alterPath("/"))
-                }
-              });
-            }else{
-              showNotification({
-                title: "Password MisMatch",
-                type: "error",
-                message: "Password MisMatch",
-              });
-            }
-          }
-          
-        }}>
+        onClick={()=>this.onUpdateUserProfile()}>
         Update
       </Button>
     </div>
