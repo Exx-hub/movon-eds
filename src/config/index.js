@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.0(2)'
+        build: '1.2.0(3)'
     },
-    changeLogs: `created void modal feature.`
+    changeLogs: `updated void modal textarea and updated transactions column and status.`
 
 }
 
