@@ -1,6 +1,7 @@
 import React from 'react'
 import {Modal, Button} from 'antd'
 import PropTypes from 'prop-types';
+import './modal.scss'
 
 export default class PromptModal extends React.Component{
 
@@ -29,7 +30,7 @@ export default class PromptModal extends React.Component{
           </Button>,
         ]}>
           <p>{this.props.message}</p>
-          <input onChange={this.props.onRemarksChange}/>
+          <textarea class="remarks" onChange={this.props.onRemarksChange}/>
         </Modal>
       )
     }

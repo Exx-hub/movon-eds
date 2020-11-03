@@ -12,7 +12,7 @@ export const config = {
         7:'modified'
     },
     voidType:{
-        1:"cancel",
+        1:"void",
         2:"modified"
     },
     voidStatus:{

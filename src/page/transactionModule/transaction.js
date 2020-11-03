@@ -26,7 +26,6 @@ const columns=[
     dataIndex: 'billOfLading',
     key: 'billOfLading',
   },
-  
   {
     title: 'Type',
     dataIndex: 'type',
@@ -34,20 +33,20 @@ const columns=[
     render: (text)=> (config.voidType[text].toUpperCase())
   },
   {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-    render: (text)=> (text)
+    title: 'Requested By',
+    dataIndex: 'deliveryPersonId',
+    key: 'deliveryPersonId',
   },
   {
-    title: 'Remarks',
+    title: 'Reason',
     dataIndex: 'remarks',
     key: 'remarks',
   },
   {
-    title: 'Request',
-    dataIndex: 'deliveryPersonId',
-    key: 'deliveryPersonId',
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+    render: (text)=> (config.voidStatus[text].toUpperCase())
   }
 ];
 
