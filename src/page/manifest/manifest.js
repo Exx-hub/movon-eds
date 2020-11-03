@@ -63,13 +63,22 @@ const TableRoutesView = (props) => {
                 placement="bottomCenter"
                 overlay={
                   <Menu>
-                    <Menu.Item
-                      disabled={!Boolean(record.status === 1)}
-                      size="small"
-                      onClick={() => props.onArrived(record)}
-                    >
-                      Check-In
-                    </Menu.Item>
+                    {
+                      (!Boolean(record.status ===1)) ?
+                      <Menu.Item
+                        size="small"
+                        onClick={() => {}}
+                      >
+                        Arrived
+                      </Menu.Item>
+                      :
+                      <Menu.Item className="menu-item"
+                        size="small"
+                        onClick={() => props.onArrived(record)}
+                      >
+                        Check In
+                      </Menu.Item>
+                    }
                     <Menu.Item className="menu-item"
                       size="small"
                       onClick={() => props.onViewClick(record)}
