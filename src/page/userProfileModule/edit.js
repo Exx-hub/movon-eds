@@ -70,16 +70,24 @@ export default class EditUserProfileModule extends React.Component {
 
   onValidation=(name)=>{
     if(name === 'password' || name === 'confirmPassword'){
-      if(this.state[name].length < 5){
+      if(this.state[name].match(/[ ]/)){
         showNotification({
-          title: "Password Validation",
+          title: "Input Fields Validation",
           type: "error",
-          message: "Username and Password should contain atleast 6 characters",
+          message: "No spaces allowed"
+        })
+        return false;
+      }
+      else if(this.state[name].length < 6){
+        showNotification({
+          title: "Input Fields Validation",
+          type: "error",
+          message: "Username and Password should contain at least 6 characters",
         });
         return false;
       }
-    }
     return true;
+    }
   }
 
   onUpdateUserProfile = () =>{
@@ -111,9 +119,9 @@ export default class EditUserProfileModule extends React.Component {
 
       }else{
         showNotification({
-          title: "Password MisMatch",
+          title: "Input Fields Validation",
           type: "error",
-          message: "Password MisMatch",
+          message: "Password Mismatch",
         });
       }
     }else{
@@ -129,7 +137,7 @@ export default class EditUserProfileModule extends React.Component {
 
     const{fullName}=UserProfile.getPersonalInfo()
     const{name,logo}=UserProfile.getBusCompany()
-    const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name 
+    const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name
 
     return (
       <div className="user-profile-module">
