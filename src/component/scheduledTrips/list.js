@@ -16,7 +16,6 @@ import ParcelService from '../../service/Parcel'
     componentDidMount(){
     ParcelService.getTrips("stationId")
     .then(e=>{
-        console.log('ParcelService e',e)
          const{data, success, errorCode}= e.data;
           if(success){
             if(data.trips){

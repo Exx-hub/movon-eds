@@ -11,12 +11,14 @@ import {
   notification,
   AutoComplete,
   Pagination,
+  Menu,
+  Dropdown
 } from "antd";
 import {
   openNotificationWithIcon,
   openNotificationWithDuration,
-  clearCredential,
   alterPath,
+  UserProfile,
 } from "../../utility";
 import ManifestService from "../../service/Manifest";
 import moment from "moment";
@@ -29,26 +31,21 @@ const dateFormat = "MMM DD, YYYY";
 
 const TableRoutesView = (props) => {
   const columns = [
-    // {
-    //   title: 'Origin',
-    //   dataIndex: 'origin',
-    //   defaultSortOrder: 'descend',
-    // },
-    // {
-    //   title: 'Destination',
-    //   dataIndex: 'destination',
-    //   defaultSortOrder: 'descend',
-    // },
     {
-      title: "Transaction Date",
+      title: "Trip Date",
       dataIndex: "date",
       defaultSortOrder: "descend",
       sorter: (a, b) => moment(a.date) - moment(b.date),
     },
     {
+      title: "Origin",
+      dataIndex: "startStationName",
+      defaultSortOrder: "startStationName",
+    },
+    {
       title: "Destination",
-      dataIndex: "name",
-      defaultSortOrder: "name",
+      dataIndex: "endStationName",
+      defaultSortOrder: "endStationName",
     },
     {
       title: "Parcel",
@@ -61,23 +58,45 @@ const TableRoutesView = (props) => {
       key: "action",
       render: (text, record) => (
         <Space>
-          <Button
-            style={{ color: "white", fontWeight: "200", background: "teal" }}
-            size="small"
-            onClick={() => props.onViewClick(record)}
-          >
-            {" "}
-            View{" "}
-          </Button>
-
-          <Button
-            size="small"
-            style={{ color: "white", fontWeight: "200", background: "teal" }}
-            onClick={() => props.onPrint(record)}
-          >
-            {" "}
-            Print{" "}
-          </Button>
+          <Dropdown
+                trigger={['click']}
+                placement="bottomCenter"
+                overlay={
+                  <Menu>
+                    {
+                      (!Boolean(record.status ===1)) ?
+                      <Menu.Item
+                        size="small"
+                        onClick={() => {}}
+                      >
+                        Arrived
+                      </Menu.Item>
+                      :
+                      <Menu.Item className="menu-item"
+                        size="small"
+                        onClick={() => props.onArrived(record)}
+                      >
+                        Check In
+                      </Menu.Item>
+                    }
+                    <Menu.Item className="menu-item"
+                      size="small"
+                      onClick={() => props.onViewClick(record)}
+                    >
+                      View
+                    </Menu.Item>
+                    <Menu.Item
+                      size="small"
+                      onClick={() => props.onPrint(record)}
+                    >
+                      Print
+                    </Menu.Item>
+                  </Menu>
+                }>
+                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                  Edit
+                </a>
+              </Dropdown>
         </Space>
       ),
     },
@@ -93,8 +112,9 @@ const TableRoutesView = (props) => {
 };
 
 class Manifest extends React.Component {
+
   state = {
-    endDay: moment().add(1,'d').format(dateFormat),
+    endDay: moment().format(dateFormat),
     startDay: moment().format(dateFormat),
     fetching: false,
     routes: undefined,
@@ -111,15 +131,20 @@ class Manifest extends React.Component {
     totalRecords: 50,
   };
 
+  constructor(props){
+    super(props);
+    this.userProfileObject = UserProfile
+  }
+  
   componentDidMount() {
     this.setState({ fetching: true });
     try {
       ManifestService.getRoutes().then((e) => {
-        console.log("getRoutes", e);
         const { errorCode, success, data } = e.data;
-        if (!Boolean(success) && errorCode) {
+        if (errorCode) {
           this.handleErrorNotification(errorCode);
         } else {
+
           this.setState({ fetching: false });
           if (!data || (data && data.length < 1)) {
             return;
@@ -143,7 +168,6 @@ class Manifest extends React.Component {
           const tempDestinationList = data
             .filter((e) => e !== null || e !== "null")
             .map((e) => e.endStationName);
-          console.log("tempDestinationList", tempDestinationList);
 
           this.setState({
             routes: data,
@@ -151,7 +175,8 @@ class Manifest extends React.Component {
             routesList,
             tempDestinationList,
           });
-          //this.getManifestByDestination(data[Number(routesIndex||0)].start, data[Number(routesIndex||0)].end)
+
+          this.getManifestByDestination(null,null)
         }
       });
     } catch (error) {
@@ -170,7 +195,7 @@ class Manifest extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      clearCredential();
+      this.userProfileObject.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -188,7 +213,7 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
-        console.log("getManifestDateRange", e);
+        console.log('manifest--->>',e)
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState({
@@ -209,15 +234,13 @@ class Manifest extends React.Component {
 
   onForceLogout = (errorCode) => {
     openNotificationWithDuration("error", errorCode);
-    clearCredential();
+    this.userProfileObject.clearData();
     this.props.history.push(alterPath("/login"));
   };
 
   onChangeTable = (pagination, filters, sorter, extra) => {};
 
   handleSelectChange = (value) => {
-    console.log("handleSelectChange value", value);
-
     const data = this.state.routes[value];
     this.setState(
       {
@@ -235,22 +258,26 @@ class Manifest extends React.Component {
   };
 
   dataSource = () => {
+
     if (!this.state.listOfTripDates) {
       return null;
     }
-    console.log("this.state.listOfTripDates", this.state.listOfTripDates);
 
     return this.state.listOfTripDates.map((e, i) => {
-      const data = this.state.routes[this.state.routesList.value];
+      let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
+      const endStationName = (name && name.endStationName) || ""
+      const startStationName = (name && name.startStationName) || "";
+
       return {
         key: i,
-        date: moment(e._id).format("MMMM DD, YYYY"),
+        tripId: e._id,
+        date: moment(e.date).subtract(8,'hours').format("MMMM DD, YYYY"),
         count: e.count,
-        origin: data.startStationName,
-        name: (this.state.selected && this.state.selected.endStationName) || "",
-        destination: data.endStationName,
-        startStationId: data.start,
-        endStationId: data.end,
+        startStationName,
+        endStationName,
+        startStationId: e.startStation,
+        endStationId: e.endStation,
+        status: e.status
       };
     });
   };
@@ -262,17 +289,15 @@ class Manifest extends React.Component {
     if (startDay && endDay) {
       this.setState({ startDay, endDay }, () => {
         const selectedRoute = this.state.selected;
-        if (selectedRoute) {
-          console.log("selectedRoute", selectedRoute);
-          this.getManifestByDestination(selectedRoute.start, selectedRoute.end);
-        }
+        const start = (selectedRoute && selectedRoute.start) || null;
+        const end = (selectedRoute && selectedRoute.end) || null;
+        this.getManifestByDestination(start,end);
       });
     }
   };
 
   doSearch = (el) => {
     const data = this.state.routesList.options;
-    console.log("data", data);
     const toSearch = el.toLowerCase();
     const tempDestinationList = data
       .filter((e) => {
@@ -308,7 +333,6 @@ class Manifest extends React.Component {
               dataSource={this.state.tempDestinationList}
               style={{ width: "100%" }}
               onSelect={(item) => {
-                console.log("item", item);
                 let selected = this.state.routes.find(
                   (e) => e.endStationName === item
                 );
@@ -316,7 +340,6 @@ class Manifest extends React.Component {
                   this.setState({ selected }, () =>
                     this.getManifestByDestination(selected.start, selected.end)
                   );
-                  console.log("selected", selected);
                 }
               }}
               onSearch={(e) => this.doSearch(e)}
@@ -342,16 +365,25 @@ class Manifest extends React.Component {
               pagination={false}
               dataSource={this.dataSource()}
               onChange={this.onChangeTable}
+              onArrived={(data)=> {
+                ManifestService.arriveAllParcel(data.tripId._id)
+                .then(e=>{
+                  const selectedRoute = this.state.selected;
+                  const start = (selectedRoute && selectedRoute.start) || null;
+                  const end = (selectedRoute && selectedRoute.end) || null;
+                  this.getManifestByDestination(start,end);
+                })
+              }}
               onPrint={(data) =>
                 this.props.history.push(alterPath("/manifest/print"), {
                   date: data.date,
-                  selected: this.state.selected,
+                  selected: data,
                 })
               }
               onViewClick={(data) =>
                 this.props.history.push(alterPath("/manifest/details"), {
                   date: data.date,
-                  selected: this.state.selected,
+                  selected: data,
                 })
               }
             />

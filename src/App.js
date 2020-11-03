@@ -4,15 +4,20 @@ import Login from './page/login'
 import CreateParcel from './page/createParcel'
 import ManifestDetails from './page/manifestDetails'
 import PrinManifestDetails from './page/prinManifestDetails'
-import {getCredential,alterPath} from './utility'
+import {alterPath,UserProfile} from './utility'
 import Home from './page/home'
 import 'antd/dist/antd.css';
 import './App.scss';
 
 function App() {
 
+  const [userProfileObject] = React.useState(UserProfile)
+  React.useEffect(() => {
+    
+  },[userProfileObject]);
+
   const ProtectedRoute = (params) => {
-    return getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
+    return UserProfile.getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
   } 
 
   return (

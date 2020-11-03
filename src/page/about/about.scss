@@ -1,0 +1,53 @@
+.about-main {
+  padding: 2rem;
+  display: flex;
+  flex-direction: row;
+  background-color:#fff;
+  height: 100%;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+
+    .about-img {
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 15rem;
+      width: 40rem;
+      align-self: center;
+
+      .img-movon-logo{
+        width: 50%;
+        height: 50%;
+      }
+    }
+    .version {
+      text-align: center;
+      font-size: 1.1rem;
+    }
+  }
+
+  .about-text {
+    padding-bottom: 1rem;
+    padding-top: 3rem;
+    display: flex;
+    flex-direction:column;
+    justify-content: flex-start;
+    align-self: flex-start;
+    width: 80%;
+
+    p {
+      font-weight: 200;
+      font-size: 1.1rem;
+    }
+
+    .title{
+      font-size: 3rem;
+      font-weight: 600;
+      color: teal;
+    }
+  }
+}

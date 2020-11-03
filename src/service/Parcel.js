@@ -1,9 +1,11 @@
 import axios from 'axios';
 import moment from 'moment';
-import {config} from '../config';
-import {getToken} from '../utility'
+import { config } from '../config';
+import {UserProfile} from '../utility'
+import { ConfigConsumer } from 'antd/lib/config-provider';
 
 const BASE_URL = config.BASE_URL;
+const userProfileObject = UserProfile;
 
 const ParcelService = {
     getTrips : (stationId) => {
@@ -16,9 +18,9 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/home/trips`,
             headers : {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             },
             data : {
                 //stationId: stationId,
@@ -35,14 +37,14 @@ const ParcelService = {
     create : (state) => {
 
         const{
-            details, 
-            checkIn, 
-            packageImagePreview, 
-            selectedTrip, 
+            details,
+            checkIn,
+            packageImagePreview,
+            selectedTrip,
             billOfLading,
             tariffRate,
         }=state;
-      
+
         const {
             senderName,
             senderMobile,
@@ -77,7 +79,7 @@ const ParcelService = {
         const associatedCompanyId = connectingCompany.value || undefined
         const associatedOrigin = (connectingRoutes.options.length>0 && connectingRoutes.options.filter(e=>e.end)[0].start) || undefined;
         const associatedAmount = connectingCompanyComputation;
-        
+
         const COUNTRY_CODE= "PH";
         const CARGO_PADALA= 3;
         const PACKAGE_INSURANCE = 0;
@@ -127,9 +129,9 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/create`,
             headers : {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             },
             data: bodyFormData,
             config: { headers : {'Content-Type': 'multipart/form-data'} }
@@ -154,9 +156,9 @@ const ParcelService = {
                 method: 'post',
                 url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/calculate`,
                 headers: {
-                    'x-auth-deviceid' : '1',
-                    'x-auth-devicetype' : '1',
-                    'x-auth-token' : getToken()
+                    'x-auth-deviceid' : config.header.deviceId,
+                    'x-auth-devicetype' : config.header.deviceType,
+                    'x-auth-token' : userProfileObject.getToken()
                 },
                 data: {
                     claimAmount,
@@ -177,27 +179,31 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/calculate-by-matrix/`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             },
             data: {
-                declaredValue, 
-                weight, 
-                origin, 
+                declaredValue,
+                weight,
+                origin,
                 destination
             }
         })
     },
 
-    getConvenienceFee: (quantity) => {
+    getConvenienceFee: (quantity,declaredValue) => {
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/parcel-convenience-fee/${quantity}`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/parcel-convenience-fee`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
+            },
+            params:{
+                quantity,
+                declaredValue
             }
         })
     },
@@ -207,9 +213,9 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/five-star/convenience-fee?quantity=${quantity}`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -219,9 +225,9 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/list/connecting-partners`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -232,22 +238,22 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
 
     getConnectingRoutes:(companyId)=>{
-       
+
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${companyId}/connecting-routes`,
             headers : {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -258,9 +264,9 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/summary`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             }
         })
     },
@@ -271,9 +277,9 @@ const ParcelService = {
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/export`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             },
             responseType: 'arraybuffer',
         }).then(response => {
@@ -289,16 +295,15 @@ const ParcelService = {
     },
 
     getAllParcel: (params,busCompanyId)=>{
-        console.log('params',params)
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             },
-            params:{              
+            params:{
                 "dateFrom": params.dateFrom,
                 "dateTo": params.dateTo,
                 "startStation": params.startStation,
@@ -317,12 +322,12 @@ const ParcelService = {
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list/export`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
             },
             responseType: 'arraybuffer',
-            params:{              
+            params:{
                 "title":params.title,
                 "dateFrom": params.dateFrom,
                 "dateTo": params.dateTo,
@@ -344,16 +349,16 @@ const ParcelService = {
             link.remove();
         })
     },
-    searchParcel: (searchItem)=>{
+    parcelPagination: (page, limit, search) => {
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/list/search-all`,
             headers: {
-                'x-auth-deviceid' : '1',
-                'x-auth-devicetype' : '1',
-                'x-auth-token' : getToken()
+                'x-auth-deviceid': '1',
+                'x-auth-devicetype': config.header.deviceType,
+                'x-auth-token': userProfileObject.getToken()
             },
-            params:{ searchItem }
+            params: {page, limit, search}
         })
     }
 

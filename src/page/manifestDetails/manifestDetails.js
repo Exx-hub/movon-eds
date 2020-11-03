@@ -10,8 +10,6 @@ import ReactToPrint from "react-to-print";
 import ManifestService from "../../service/Manifest";
 import {
   openNotificationWithIcon,
-  clearCredential,
-  getUser,
   alterPath,
   modifyName,
   UserProfile,
@@ -22,7 +20,6 @@ import {
   FilterOutlined,
   ArrowLeftOutlined,
   CloseCircleOutlined,
-  ArrowsAltOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -213,25 +210,6 @@ const ManifestDetailsTable = (props) => {
           >
             Preview
           </Button>
-          <Button
-            disabled={record.travelStatus.toLowerCase() !== "created"}
-            size="small"
-            style={{
-              fontSize: 10.5,
-              color: "white",
-              background: `${
-                record.travelStatus.toLowerCase() === "created"
-                  ? "teal"
-                  : "gray"
-              }`,
-            }}
-            onClick={() => props.onCheckIn(record._id)}
-          >
-            Check In
-          </Button>
-          <Button disabled size="small" style={{ fontSize: 10.5 }}>
-            Arrived
-          </Button>
         </div>
       ),
     },
@@ -269,10 +247,10 @@ class ManifestDetails extends React.Component {
       endStationId: undefined,
     };
     this.printEl = React.createRef();
+    this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
-    this.userProfileObject = new UserProfile();
     window.addEventListener("resize", (e) => {
       this.setState({
         height: e.currentTarget.innerHeight,
@@ -283,33 +261,27 @@ class ManifestDetails extends React.Component {
     if(this.props.location.state){
 
       const {
-        end,
+        startStationId,
+        endStationId,
         endStationName,
         startStationName,
+        tripId
       } = this.props.location.state.selected;
   
-      const startStation = getUser().assignedStation._id;
       const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
       this.fetchManifest(
+        tripId._id,
         date,
-        startStation,
-        end,
+        startStationId,
+        endStationId,
         `${startStationName} to ${endStationName}`
       );
     }
-
-    
   }
 
-  componentDidUpdate(oldProps,oldState){
-    console.log("pass")
-  }
-
-  fetchManifest = (date, startStationId, endStationId, _routes) => {
-    ManifestService.getManifestByDate(date, startStationId, endStationId).then(
+  fetchManifest = (tripId, date, startStationId, endStationId, _routes) => {
+    ManifestService.getManifestByDate(tripId, date, startStationId, endStationId).then(
       (e) => {
-        console.log("e", e);
-
         if (e.data.errorCode) {
           this.handleErrorNotification(e.data.errorCode);
           return;
@@ -451,7 +423,6 @@ class ManifestDetails extends React.Component {
   };
 
   handleErrorNotification = (code) => {
-    console.log("error", code);
     if (!code) {
       notification["error"]({
         message: "Server Error",
@@ -462,7 +433,7 @@ class ManifestDetails extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      clearCredential();
+      this.userProfileObject.clearData()
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -470,9 +441,7 @@ class ManifestDetails extends React.Component {
   };
 
   onCheckIn = (id) => {
-    console.log("checkin id", id);
     ManifestService.checkParcelById(id).then((e) => {
-      console.log("e checkParcelById", e);
       window.location.reload(true);
     });
   };
@@ -489,7 +458,7 @@ class ManifestDetails extends React.Component {
                   <Search
                     value={this.state.searchValue}
                     className="manifest-details-search-box"
-                    placeholder="Sender | Receiver | QR Code"
+                    placeholder="Sender | Receiver | QR Code | Bill of Lading"
                     onChange={(e) => this.doSearch(e.target.value)}
                   />
                 </div>
@@ -636,7 +605,7 @@ class ManifestDetails extends React.Component {
                 <Search
                   value={this.state.searchValue}
                   className="manifest-details-search-box"
-                  placeholder="Sender | Receiver | QR Code"
+                  placeholder="Sender | Receiver | QR Code | Bill of Lading"
                   onChange={(e) => this.doSearch(e.target.value)}
                 />
 

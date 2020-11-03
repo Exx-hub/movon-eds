@@ -1,17 +1,37 @@
 export const config = {
     //BASE_URL:"http://localhost:9000",
-    //BASE_URL:"https://cargomovon.com/server",
+    //BASE_URL:"https://www.cargomovon.com/server",
     BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
-        1:'created', 
-        2:'intransit', 
-        3:'received', 
-        4:'claimed',  
-        5:'delivered'
+        1:'created',
+        2:'intransit',
+        3:'received',
+        4:'claimed',
+        5:'delivered',
+        6:'void',
+        7:'modified'
+    },
+    voidType:{
+        1:"void",
+        2:"modified"
+    },
+    voidStatus:{
+        1:'approved',
+        2:"pending",
+        3:"dis-approved"
     },
     ticket:{
         totalCopy:6
-    }
+    },
+    header: {
+        deviceId: '1',
+        deviceType: '3'
+    },
+    version: {
+        build: '1.2.0(8)'
+    },
+    changeLogs: `made the arrived menu.item replace check in after the parcel is checked in.`
+
 }
 
 export const ERROR_CODES = {
