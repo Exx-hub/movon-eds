@@ -1330,11 +1330,10 @@ class CreateParcel extends React.Component {
               viewMode={false}
             />
             <div className="center-horizontal-space-between">
-              <div className="checkbox-container">
+              <div style={{display:'none'}} className="checkbox-container">
                 <Checkbox
                   checked={this.state.checkIn}
-                  onChange={(e) => this.setState({ checkIn: e.target.checked })}
-                >
+                  onChange={(e) => this.setState({ checkIn: e.target.checked })}>
                   Check In
                 </Checkbox>
               </div>
