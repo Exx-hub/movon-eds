@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.0(6)'
+        build: '1.2.0(7)'
     },
-    changeLogs: `updated searchbox placeholders and changed transactions button.`
+    changeLogs: `updated input validation at edit user profile.`
 
 }
 
