@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.0(3)'
+        build: '1.2.0(5)'
     },
-    changeLogs: `updated void modal textarea and updated transactions column and status.`
+    changeLogs: `updated manifest details searchbox and removed arrived and check-in action buttons.`
 
 }
 
