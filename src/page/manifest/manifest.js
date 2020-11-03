@@ -249,14 +249,16 @@ class Manifest extends React.Component {
   };
 
   dataSource = () => {
+
     if (!this.state.listOfTripDates) {
       return null;
     }
 
     return this.state.listOfTripDates.map((e, i) => {
       let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
-      const endStationName = name.endStationName
-      const startStationName = name.startStationName;
+      const endStationName = (name && name.endStationName) || ""
+      const startStationName = (name && name.startStationName) || "";
+
       return {
         key: i,
         tripId: e._id,
