@@ -1111,7 +1111,7 @@ class CreateParcel extends React.Component {
       const associateFixPrice = { ...details.associateFixPrice, ...{ value, accepted: true } };
       const price = (associateFixPrice.options.length> 0 && associateFixPrice.options.find(e=>e.name === value).price) || 0; 
       details = { ...details, ...{ associateFixPrice } };
-      this.setState({ connectingCompanyComputation:Number(price), details });
+      this.setState({ connectingCompanyComputation:Number(price), details },()=> this.updateTotalShippingCost());
     }
 
     if (name === "fixMatrix") {
