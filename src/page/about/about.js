@@ -1,9 +1,7 @@
 import React from 'react';
 import './about.scss';
-import { Typography } from 'antd';
 import logo from '../../assets/movon.png'
-
-const { Title } = Typography;
+import {config} from '../../config';
 
 function About() {
   return (
@@ -11,7 +9,7 @@ function About() {
       <div className="container">
         <div className="about-img">
           <img className="img-movon-logo" src={logo} alt="movon-logo"/>
-          <span className="version text">Version: 2.1.0.3</span>
+          <span className="version text">Version: {config.version.build}</span>
         </div>
       </div>
       <div className="about-text">
