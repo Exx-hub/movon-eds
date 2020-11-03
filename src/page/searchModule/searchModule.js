@@ -24,6 +24,7 @@ import {
   Dropdown
 } from "antd";
 import User from "../../service/User";
+import TransactionService from '../../service/VoidTransaction'
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -99,7 +100,7 @@ class SearchModule extends React.Component {
           dataIndex: "travelStatus",
           key: "travelStatus",
           sorter: (a, b) => a.travelStatus - b.travelStatus,
-          render: (text)=> (config.parcelStatus[text])
+          render: (text)=> (config.parcelStatus[text].toUpperCase())
         },
         {
           title: "Action",
@@ -111,10 +112,18 @@ class SearchModule extends React.Component {
                 placement="bottomCenter"
                 overlay={
                   <Menu>
-                    <Menu.Item disabled={!Boolean(record.travelStatus === 2)} size="small" onClick={() => {}}>
-                      Arrived
-                    </Menu.Item>
-                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
+                    {
+                    //   <Menu.Item disabled={!Boolean(record.travelStatus === 2)} size="small" onClick={() => {}}>
+                    //   Arrived
+                    // </Menu.Item>
+                  }
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {
+                      TransactionService.voidParcel(record._id, "Need to change...").then(e=>{
+                        console.log('voidParcel------>>')
+                        console.log('voidParcel------>>')
+                        console.log('voidParcel------>>')
+                      })
+                    }}>
                       Void
                     </Menu.Item>
                     <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
