@@ -7,8 +7,8 @@ const Scan = {
             method: 'post',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/scan`,
             headers: {
-                'x-auth-deviceid' : config.header.deviceId,
-                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-deviceid' : Config.header.deviceId,
+                'x-auth-devicetype' : Config.header.deviceType,
                 'x-auth-token' : Config.api_token
             },
             data: {
@@ -24,8 +24,8 @@ const Scan = {
             method: 'post',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/subParcelTagging`,
             headers: {
-                'x-auth-deviceid' : config.header.deviceId,
-                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-deviceid' : Config.header.deviceId,
+                'x-auth-devicetype' : Config.header.deviceType,
                 'x-auth-token' : Config.api_token
             },
             data: {
@@ -39,8 +39,8 @@ const Scan = {
             method: 'post',
             url: `${Config.api_domain}/api/v1/account/delivery-person/parcel/{parcelId}/verify-claim-otp`,
             headers: {
-                'x-auth-deviceid' : config.header.deviceId,
-                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-deviceid' : Config.header.deviceId,
+                'x-auth-devicetype' : Config.header.deviceType,
                 'x-auth-token' : Config.api_token
             },
             data: {

@@ -44,7 +44,7 @@ const ManifestService = {
     },
 
     getManifest: (startTripDate, startStation, endStation, page) => {
-    
+
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/manifest/${startTripDate}/${startStation}/${endStation}/${page}`,
@@ -67,7 +67,7 @@ const ManifestService = {
             }
         })
     },
-    
+
     checkInNewParcel: (tripId) => {
         return axios({
             method: 'get',
@@ -120,9 +120,6 @@ const ManifestService = {
             }
         })
     },
-
-    
-
 }
 
 export default ManifestService;
