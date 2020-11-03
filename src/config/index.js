@@ -28,7 +28,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.0(5)'
+        build: '1.2.0(6)'
     },
     changeLogs: `updated manifest details searchbox and removed arrived and check-in action buttons.`
 
