@@ -46,10 +46,10 @@ const columns=[
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: (text)=> (config.voidStatus[text].toUpperCase())
+    render: (text)=> ((config.voidStatus[text] && config.voidStatus[text].toUpperCase()) || text)
   }
 ];
-
+//(config.voidStatus[text].toUpperCase())
 class Transaction extends React.Component {
 
   state={

@@ -250,11 +250,6 @@ class Manifest extends React.Component {
 
   dataSource = () => {
 
-    console.log('dataSource',this.state.routes)
-    console.log('dataSource',this.state.routes)
-    console.log('dataSource',this.state.routes)
-    console.log('dataSource',this.state.routes)
-
     if (!this.state.listOfTripDates) {
       return null;
     }
