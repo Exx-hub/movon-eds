@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.0(4)'
+        build: '1.2.0(5)'
     },
-    changeLogs: `fixed disabled input issue for fixed price input.`
+    changeLogs: `updated manifest details searchbox and removed arrived and check-in action buttons.`
 
 }
 
