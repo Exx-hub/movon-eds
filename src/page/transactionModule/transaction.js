@@ -8,12 +8,18 @@ import {
 } from "antd";
 import {openNotificationWithIcon, alterPath, UserProfile} from "../../utility";
 import "./transaction.scss";
+import TransactionService from '../../service/VoidTransaction';
+import moment from 'moment'
+import { config } from "../../config";
+
+
 
 const columns=[
   {
     title: 'Transaction Date',
-    dataIndex: 'date',
-    key: 'date',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
+    render:(e)=> moment(e).format("MMMM DD, YYYY")
   },
   {
     title: 'Bill Of Lading',
@@ -23,35 +29,30 @@ const columns=[
   
   {
     title: 'Type',
-    dataIndex: 'billOfLading',
-    key: 'billOfLading',
+    dataIndex: 'type',
+    key: 'type',
+    render: (text)=> (config.voidType[text].toUpperCase())
   },
   {
     title: 'Status',
-    dataIndex: 'billOfLading',
-    key: 'billOfLading',
+    dataIndex: 'status',
+    key: 'status',
+    render: (text)=> (text)
   },
   {
     title: 'Remarks',
-    dataIndex: 'billOfLading',
-    key: 'billOfLading',
+    dataIndex: 'remarks',
+    key: 'remarks',
   },
   {
-    title: "Action",
-    key: "action",
-    render: (text, record) => (
-      <Space>
-        <Button
-          style={{ color: "white", fontWeight: "200", background: "teal" }}
-          size="small"
-          onClick={() => this.onViewClick(record)}
-        > View </Button>
-      </Space>
-    ),
-  },
+    title: 'Request',
+    dataIndex: 'deliveryPersonId',
+    key: 'deliveryPersonId',
+  }
 ];
 
 class Transaction extends React.Component {
+
   state={
     data:[]
   }
@@ -59,6 +60,19 @@ class Transaction extends React.Component {
   constructor(props){
     super(props);
     this.userProfileObject = UserProfile
+  }
+
+  componentDidMount(){
+    TransactionService.getAllTransaction().then(e=>{
+      console.log("eeeee",e)
+      const{data,errorCode}=e.data
+      if(errorCode){
+        this.handleErrorNotification(errorCode)
+      }else{
+        console.log(data.list)
+        this.setState({data:data.list})
+      }
+    })
   }
 
   handleErrorNotification = (code) => {

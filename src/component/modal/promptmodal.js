@@ -1,5 +1,5 @@
 import React from 'react'
-import {Modal, Button} from  'antd'
+import {Modal, Button} from 'antd'
 import PropTypes from 'prop-types';
 
 export default class PromptModal extends React.Component{
@@ -9,12 +9,27 @@ export default class PromptModal extends React.Component{
       return(
         <Modal
         closable = {false}
-        onOk={()=>this.props.handleOk()}
-        onCancel={()=>this.props.handleCancel()}
         title={this.props.title}
-        visible={this.props.visible}>
+        visible={this.props.visible}
+        footer={[
+          <Button
+            key="back"
+            onClick={()=>this.props.handleCancel()}
+          >
+            Cancel
+          </Button>,
+          <Button
+            id="voidSubmit"
+            key="submit"
+            type="danger"
+            onClick={()=>this.props.handleOk()}
+            disabled={this.props.disabled}
+          >
+            Void
+          </Button>,
+        ]}>
           <p>{this.props.message}</p>
-          <input></input>
+          <input onChange={this.props.onRemarksChange}/>
         </Modal>
       )
     }

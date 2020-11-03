@@ -30,7 +30,7 @@ export default class EditUserProfileModule extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       username:"",
       password:"",
       confirmPassword:""
@@ -49,7 +49,6 @@ export default class EditUserProfileModule extends React.Component {
 
   componentWillUnmount() {}
 
-  
   handleErrorNotification = (code) => {
     if (isNull(code)) {
       showNotification({
@@ -105,11 +104,11 @@ export default class EditUserProfileModule extends React.Component {
               onClose:()=>{
                 UserProfile.clearData();
                 this.props.history.push(alterPath("/"))
-              } 
+              }
             });
           }
         }));
-        
+
       }else{
         showNotification({
           title: "Password MisMatch",
@@ -134,7 +133,7 @@ export default class EditUserProfileModule extends React.Component {
 
     return (
       <div className="user-profile-module">
-      <UserProfileHeader 
+      <UserProfileHeader
       assignedStationName={assignStationName}
       busCompanyName={name}
       logo={logo}
@@ -166,9 +165,9 @@ export default class EditUserProfileModule extends React.Component {
         <span className="title item-wrapper-custom-text-title">
           Confirm Password
         </span>
-        <Input 
-          type="password" 
-          placeholder="confirm password" 
+        <Input
+          type="password"
+          placeholder="confirm password"
           onChange={e=>this.setState({confirmPassword:e.target.value})} />
       </div>
       <div className="button-wrapper-edit">

@@ -280,24 +280,26 @@ class ManifestDetails extends React.Component {
     if(this.props.location.state){
 
       const {
-        end,
+        startStationId,
+        endStationId,
         endStationName,
         startStationName,
+        tripId
       } = this.props.location.state.selected;
   
-      const startStation = this.userProfileObject.getAssignedStationId();
       const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
       this.fetchManifest(
+        tripId._id,
         date,
-        startStation,
-        end,
+        startStationId,
+        endStationId,
         `${startStationName} to ${endStationName}`
       );
     }
   }
 
-  fetchManifest = (date, startStationId, endStationId, _routes) => {
-    ManifestService.getManifestByDate(date, startStationId, endStationId).then(
+  fetchManifest = (tripId, date, startStationId, endStationId, _routes) => {
+    ManifestService.getManifestByDate(tripId, date, startStationId, endStationId).then(
       (e) => {
         if (e.data.errorCode) {
           this.handleErrorNotification(e.data.errorCode);

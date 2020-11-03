@@ -119,18 +119,20 @@ class PrintManifestDetails extends React.Component {
     this.companyTag = UserProfile.getBusCompanyTag();
 
     const {
-      end,
+      startStationId,
+      endStationId,
       endStationName,
       startStationName,
+      tripId
     } = this.props.location.state.selected;
 
     let totalSales = 0;
-    const startStation = UserProfile.getAssignedStationId();
 
     ManifestService.getManifestByDate(
+      tripId._id,
       moment(this.props.location.state.date).format("MMM DD, YYYY"),
-      startStation,
-      end
+      startStationId,
+      endStationId
     ).then((e) => {
       const data = e.data;
 

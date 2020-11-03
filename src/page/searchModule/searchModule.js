@@ -11,6 +11,7 @@ import {
   debounce,
   UserProfile,
   alterPath,
+  modifyName,
 } from "../../utility";
 import { notification, Table } from "antd";
 import {
@@ -26,6 +27,7 @@ import {
   Dropdown
 } from "antd";
 import User from "../../service/User";
+import TransactionService from '../../service/VoidTransaction'
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -53,7 +55,8 @@ class SearchModule extends React.Component {
       columns: [],
       limit: 10,
       visibleEdit: false,
-      visibleVoid: false
+      visibleVoid: false,
+      remarks: ""
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -103,7 +106,7 @@ class SearchModule extends React.Component {
           dataIndex: "travelStatus",
           key: "travelStatus",
           sorter: (a, b) => a.travelStatus - b.travelStatus,
-          render: (text)=> (config.parcelStatus[text])
+          render: (text)=> (config.parcelStatus[text].toUpperCase())
         },
         {
           title: "Action",
@@ -115,7 +118,9 @@ class SearchModule extends React.Component {
                 placement="bottomCenter"
                 overlay={
                   <Menu>
-                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {this.setState({selectedRecord: record, visibleVoid:true})}}>
+                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {
+                      this.setState({selectedRecord: record, visibleVoid:true})
+                    }}>
                       Void
                     </Menu.Item>
                     <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
@@ -134,16 +139,22 @@ class SearchModule extends React.Component {
     });
   }
 
-  handleOk = () => {
+  handleVoid = () => {
     let record = this.state.selectedRecord;
-    let parcelId = record._id;
-    let deliveryPersonId = this.userProfileObject.user._id;
-    let status = 6;
-    let type = 1;
-    Transaction.changeTransaction(status, parcelId, deliveryPersonId, type)
-    .then( () => {
-      this.setState({ visibleVoid:false })
-    })
+    let remarks = this.state.remarks;
+
+    if (remarks) {
+      TransactionService.voidParcel(record._id, remarks)
+      .then(e=>{
+        const {errorCode} = e.data;
+        if (errorCode) {
+          this.handleErrorNotification(errorCode);
+          return;
+        }
+        this.setState({selectedRecord: undefined, remarks: "", visibleVoid:false });
+        this.fetchParcelList();
+      })
+    }
   };
 
   handleCancel = () => {
@@ -176,8 +187,8 @@ class SearchModule extends React.Component {
           qrcode: e.scanCode,
           billOfLading: e.billOfLading,
           description: e.packageInfo.packageName,
-          sender: e.senderInfo.senderName,
-          receiver: e.recipientInfo.recipientName,
+          sender: modifyName(e.senderInfo.senderName),
+          receiver: modifyName(e.recipientInfo.recipientName),
           qty: e.packageInfo.quantity,
           travelStatus: e.status,
           packageImg: e.packageInfo.packageImages,
@@ -254,12 +265,13 @@ class SearchModule extends React.Component {
           )}
         </Content>
         <PromptModal
-          handleOk={this.handleOk}
-          handleCancel={this.handleCancel}
+          handleOk={() => this.handleVoid()}
+          handleCancel={() => this.handleCancel()}
           visible={this.state.visibleVoid}
           title="Are you sure you want to void this transcation?"
           message="Enter reason/s for voiding."
-          remarks={<input></input>} />
+          disabled={!this.state.remarks}
+          onRemarksChange={(e)=>this.setState({remarks:e.target.value})}/>
 
         <PromptModal
           handleOk={this.handleOk}

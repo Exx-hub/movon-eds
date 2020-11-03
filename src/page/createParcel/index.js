@@ -950,9 +950,9 @@ class CreateParcel extends React.Component {
         }
       }
       if (name === "declaredValue"){
-        this.updateTotalShippingCost();
         this.getConvinienceFee(0,value);
-      } 
+        this.updateTotalShippingCost();
+      }
     });
   };
 
@@ -1493,13 +1493,10 @@ class CreateParcel extends React.Component {
         : 0;
     }
     
-    let total =
+    let total = Number(
       parseFloat(currentDetails.shippingCost.value || 0) +
-      parseFloat(currentDetails.packageInsurance.value || 0) +
       parseFloat(this.state.lengthRate) +
-      parseFloat(this.state.connectingCompanyComputation || 0);
-
-    total = Number(total);
+      parseFloat(this.state.connectingCompanyComputation || 0));
 
     if (quantity > 0) {
       total = total * quantity;
@@ -1509,7 +1506,7 @@ class CreateParcel extends React.Component {
       total = total * ((100 - discount) / 100);
     }
 
-    total += parseFloat(currentDetails.systemFee.value || 0);
+    total += parseFloat(currentDetails.systemFee.value || 0) + parseFloat(currentDetails.packageInsurance.value || 0) ;
 
     const totalShippingCost = {
       ...currentDetails.totalShippingCost,
