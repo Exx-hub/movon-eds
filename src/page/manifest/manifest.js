@@ -68,7 +68,7 @@ const TableRoutesView = (props) => {
                       size="small"
                       onClick={() => props.onArrived(record)}
                     >
-                      Arrived
+                      Check-In
                     </Menu.Item>
                     <Menu.Item className="menu-item"
                       size="small"

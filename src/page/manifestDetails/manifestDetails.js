@@ -458,7 +458,7 @@ class ManifestDetails extends React.Component {
                   <Search
                     value={this.state.searchValue}
                     className="manifest-details-search-box"
-                    placeholder="Sender | Receiver | QR Code"
+                    placeholder="Sender | Receiver | QR Code | Bill of Lading"
                     onChange={(e) => this.doSearch(e.target.value)}
                   />
                 </div>

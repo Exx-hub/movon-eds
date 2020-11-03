@@ -25,6 +25,7 @@ import {
   UserOutlined,
   PoweroffOutlined,
   SettingOutlined,
+  SnippetsOutlined,
   FileSearchOutlined,
   AppstoreAddOutlined,
   BarChartOutlined,
@@ -313,13 +314,13 @@ function Home(props) {
               <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
                 Search
               </Menu.Item>
-              <Menu.Item key="transaction-parcel" icon={<SearchOutlined />}>
+              <Menu.Item key="transaction-parcel" icon={<SnippetsOutlined />}>
                 Transactions
               </Menu.Item>
             </SubMenu>
 
             <SubMenu key="manifest" icon={<InboxOutlined />} title="Manifest">
-             { 
+             {
               // <Menu.Item key="manifest-create" icon={<AppstoreAddOutlined />}>
               //   Create
               // </Menu.Item>
