@@ -1162,7 +1162,7 @@ class CreateParcel extends React.Component {
         details.declaredValue.value = 0;
         details.shippingCost.value = 0;
         details.packageWeight.value = 0;
-        details.length.disabled = true;
+        details.length.disabled = false;
         details.length.value = 0;
         details.quantity.disabled = true;
         details.quantity.value = 1;

@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.0(2)'
+        build: '1.2.0(4)'
     },
-    changeLogs: `created void modal feature.`
+    changeLogs: `fixed disabled input issue for fixed price input.`
 
 }
 
