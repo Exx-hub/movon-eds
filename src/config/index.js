@@ -7,7 +7,18 @@ export const config = {
         2:'intransit',
         3:'received',
         4:'claimed',
-        5:'delivered'
+        5:'delivered',
+        6:'void',
+        7:'modified'
+    },
+    voidType:{
+        1:"cancel",
+        2:"modified"
+    },
+    voidStatus:{
+        1:'approved',
+        2:"pending",
+        3:"dis-approved"
     },
     ticket:{
         totalCopy:6
