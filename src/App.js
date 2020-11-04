@@ -13,12 +13,12 @@ function App() {
 
   const [userProfileObject] = React.useState(UserProfile)
   React.useEffect(() => {
-    
+
   },[userProfileObject]);
 
   const ProtectedRoute = (params) => {
     return UserProfile.getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
-  } 
+  }
 
   return (
     <Router>

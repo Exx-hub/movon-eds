@@ -30,7 +30,7 @@ export const config = {
     version: {
         build: '1.2.4(7)'
     },
-    changeLogs: `created manifest modal`
+    changeLogs: `created logout modal`
 
 }
 

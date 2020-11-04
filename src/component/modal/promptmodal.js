@@ -6,7 +6,6 @@ import './modal.scss'
 export default class PromptModal extends React.Component{
 
     render(){
-
       return(
         <Modal
           closable = {false}
@@ -22,18 +21,15 @@ export default class PromptModal extends React.Component{
           <Button
             id="voidSubmit"
             key="submit"
-            type="danger"
+            type={this.props.buttonType}
             onClick={()=>this.props.handleOk()}
             disabled={this.props.disabled}
           >
-            Void
+            <p>{this.props.action}</p>
           </Button>,
         ]}>
         {
-          this.props.onEdit && <>
-            <p>{this.props.message}</p>
-            <textarea class="remarks" onChange={this.props.onRemarksChange}/>
-          </>
+          this.props.onEdit && <textarea class="remarks" onChange={this.props.onRemarksChange}/>
         }
         { this.props.message }
         </Modal>
@@ -46,5 +42,7 @@ PromptModal.propTypes = {
   handleCancel: PropTypes.func,
   title: PropTypes.string,
   message: PropTypes.string,
+  buttonType: PropTypes.string,
+  _action: PropTypes.string,
   visible: PropTypes.bool
 };
