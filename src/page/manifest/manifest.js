@@ -12,6 +12,8 @@ import {
   AutoComplete,
   Pagination,
   Menu,
+  Tag,
+  Divider,
   Dropdown
 } from "antd";
 import {
@@ -28,6 +30,7 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const dateFormat = "MMM DD, YYYY";
+
 
 const TableRoutesView = (props) => {
   const columns = [
@@ -57,47 +60,12 @@ const TableRoutesView = (props) => {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Space>
-          <Dropdown
-                trigger={['click']}
-                placement="bottomCenter"
-                overlay={
-                  <Menu>
-                    {
-                      (!Boolean(record.status ===1)) ?
-                      <Menu.Item
-                        size="small"
-                        onClick={() => {}}
-                      >
-                        Arrived
-                      </Menu.Item>
-                      :
-                      <Menu.Item className="menu-item"
-                        size="small"
-                        onClick={() => props.onArrived(record)}
-                      >
-                        Check In
-                      </Menu.Item>
-                    }
-                    <Menu.Item className="menu-item"
-                      size="small"
-                      onClick={() => props.onViewClick(record)}
-                    >
-                      View
-                    </Menu.Item>
-                    <Menu.Item
-                      size="small"
-                      onClick={() => props.onPrint(record)}
-                    >
-                      Print
-                    </Menu.Item>
-                  </Menu>
-                }>
-                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                  Edit
-                </a>
-              </Dropdown>
-        </Space>
+        <div>
+        <Button style={{fontSize:'10px'}} onClick={()=>props.onViewClick(record)}>View</Button>
+        <Button style={{fontSize:'10px'}} onClick={()=>props.onPrint(record)}>Print</Button>
+        {(record.status.filter(e => e === 1 )).length > 0 && <Button style={{fontSize:'10px'}} onClick={()=>props.onCheckIn(record)}>Check-In</Button>}
+        {!(record.status.filter(e => e === 1 )).length > 0 && <Button style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
+        </div>
       ),
     },
   ];
@@ -141,10 +109,10 @@ class Manifest extends React.Component {
     try {
       ManifestService.getRoutes().then((e) => {
         const { errorCode, success, data } = e.data;
+        console.log(e.data)
         if (errorCode) {
           this.handleErrorNotification(errorCode);
         } else {
-
           this.setState({ fetching: false });
           if (!data || (data && data.length < 1)) {
             return;
@@ -213,7 +181,6 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
-        console.log('manifest--->>',e)
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState({
