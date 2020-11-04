@@ -10,6 +10,8 @@ import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
 import About from '../about';
 import {EditUserProfileModule,ViewUserProfileModule} from '../userProfileModule'
+import { PromptModal } from '../../component/modal';
+
 
 
 import moment from "moment";
@@ -161,6 +163,7 @@ const tableSourceBitsi = [
 function Home(props) {
   //const [state, setState] = React.useState({});
   const [menuData, setMenuData] = React.useState([]);
+  const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
 
   React.useEffect(() => {
@@ -228,7 +231,8 @@ function Home(props) {
           type: "menu",
           destination: alterPath("/drop-down-logout"),
           icon: () => <PoweroffOutlined />,
-          action: () => userProfileObject.logout(User),
+          // action: () => userProfileObject.logout(User),
+          action: () => {setVisibleLogout(true)}
         },
         {
           key: "about",
@@ -419,9 +423,9 @@ function Home(props) {
               <Route exact={true} path={alterPath('/user-profile/edit')}>
                 <EditUserProfileModule {...props}/>
               </Route>
-              
+
               <Route path={alterPath('/report/sales/vli-bitsi')}>
-                <SalesReport 
+                <SalesReport
                   source={tableSourceVliBitsi}
                   isP2P={true}
                   {...props}
@@ -438,6 +442,17 @@ function Home(props) {
           </Content>
         </Layout>
       </Layout>
+      <PromptModal
+          visible={visibleLogout}
+          title="Are you sure you want to log out?"
+          message="Changes you made may not be saved."
+          buttonType="danger"
+          action="Logout"
+          handleCancel={()=>setVisibleLogout(false)}
+          handleOk={() => {
+            userProfileObject.logout(User)
+            props.history.push(alterPath("/"))
+          }} />
     </Layout>
   );
 }
