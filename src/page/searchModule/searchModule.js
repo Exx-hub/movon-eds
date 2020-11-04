@@ -270,6 +270,8 @@ class SearchModule extends React.Component {
           visible={this.state.visibleVoid}
           title="Are you sure you want to void this transcation?"
           message="Enter reason/s for voiding."
+          buttonType="danger"
+          action="Void"
           disabled={!this.state.remarks}
           onRemarksChange={(e)=>this.setState({remarks:e.target.value})}/>
 
