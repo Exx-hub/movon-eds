@@ -28,7 +28,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.3(2)'
+        build: '1.2.2(1)'
     },
     changeLogs: `removed System Fee filter and defaultMenuSelector`
 
