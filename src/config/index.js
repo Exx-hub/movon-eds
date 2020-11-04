@@ -28,7 +28,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.4(6)'
+        build: '1.2.4(7)'
     },
     changeLogs: `created manifest modal`
 
