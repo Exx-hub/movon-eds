@@ -774,11 +774,11 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty, declaredValue) => {
 
-    if (this.userProfileObject.disableCargoSystemFee()) {
-      return;
-    }
+    // if (this.userProfileObject.disableCargoSystemFee()) {
+    //   return;
+    // }
 
-    if(declaredValue !== undefined && this.userProfileObject.isIsarogLiners()){
+    if(this.userProfileObject.isIsarogLiners()){
       ParcelService.getConvenienceFee(qty,declaredValue)
       .then((res) => {
         this.parseSystemFeeResponse(res)
@@ -866,22 +866,35 @@ class CreateParcel extends React.Component {
         let details = { ...this.state.details };
         const { data, success, errorCode } = e.data;
         if (success) {
+
+          const lengthRate = parseFloat(data.lengthRate);
+          const declaredRate = parseFloat(data.declaredRate)
+          const totalCost = parseFloat(data.totalCost)
+
           const shippingCost = {
             ...details.shippingCost,
-            ...{ value: parseFloat(data.totalCost).toFixed(2) },
+            ...{ value: totalCost.toFixed(2) },
           };
           const packageInsurance = {
             ...details.packageInsurance,
-            ...{ value: parseFloat(data.declaredRate).toFixed(2) },
+            ...{ value: declaredRate.toFixed(2) },
           };
           details = { ...details, ...{ shippingCost } };
           details = { ...details, ...{ packageInsurance } };
+        
           this.setState(
             {
-              lengthRate: parseFloat(data.lengthRate).toFixed(2),
+              lengthRate: lengthRate.toFixed(2),
               details: { ...details, ...{ shippingCost } },
             },
-            () => this.updateTotalShippingCost()
+            () =>{
+              const shippingCost = parseFloat(this.state.details.shippingCost.value);
+              const packageInsurance = parseFloat(this.state.details.packageInsurance.value);
+              const lengthRate = parseFloat(this.state.lengthRate);
+              let total = shippingCost + packageInsurance + lengthRate
+              this.getConvinienceFee(0,total)
+              this.updateTotalShippingCost()
+            } 
           );
         } else {
           this.handleErrorNotification(errorCode);
@@ -950,7 +963,6 @@ class CreateParcel extends React.Component {
         }
       }
       if (name === "declaredValue"){
-        this.getConvinienceFee(0,value);
         this.updateTotalShippingCost();
       }
     });
