@@ -155,5 +155,4 @@ class UserProfileClass{
   }
 }
 
-const userPofile = new UserProfileClass()
-module.exports = userPofile;
+export default UserProfileClass;

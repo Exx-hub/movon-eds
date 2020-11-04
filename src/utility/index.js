@@ -1,6 +1,8 @@
 import {notification} from 'antd';
 import { ERROR_CODES} from '../config'
-import UserProfile from './userprofile'
+import UserProfileClass from './userprofile'
+
+const UserProfile = new UserProfileClass();
 
 const dataURLtoFile = (dataurl, filename) => {
   if(dataurl){
