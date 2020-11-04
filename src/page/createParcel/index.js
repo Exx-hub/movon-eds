@@ -1403,7 +1403,7 @@ class CreateParcel extends React.Component {
       const weight = currentDetails.packageWeight.value;
       const declaredValue = currentDetails.declaredValue.value;
       const origin = currentDetails.connectingRoutes.options.filter((e) => e.end)[0].start;
-      const associateFixPrice = currentDetails.associateFixPrice.value; 
+      const associateFixPrice = currentDetails.associateFixPrice.value || undefined;
 
       if(currentDetails.associateFixPrice.value && currentDetails.associateFixPrice.value.toLowerCase() !== 'none'){
         const{value,options} = currentDetails.associateFixPrice;
@@ -1415,8 +1415,10 @@ class CreateParcel extends React.Component {
         });
         return;
       }
-
-      if (destination && associateId && origin && weight && declaredValue && associateFixPrice.toLowerCase() === 'none') {
+      if (associateFixPrice && associateFixPrice.toLowerCase() === 'none') {
+        return
+      } 
+      if (destination && associateId && origin && weight && declaredValue) {
         MatrixService.onConnectingRoutesComputation(associateId,origin,destination,weight,declaredValue)
         .then((e) => {
           const { data, success, errorCode } = e.data;

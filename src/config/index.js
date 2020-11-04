@@ -28,7 +28,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.3(2)'
+        build: '1.2.4(3)'
     },
     changeLogs: `fixed username validation`
 
