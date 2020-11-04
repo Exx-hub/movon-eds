@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.2(1)'
+        build: '1.2.4(2)'
     },
-    changeLogs: `removed System Fee filter and defaultMenuSelector`
+    changeLogs: `fixed toLowercase() issue.`
 
 }
 
