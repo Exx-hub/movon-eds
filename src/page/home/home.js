@@ -300,7 +300,6 @@ function Home(props) {
           <Menu
             style={{ marginTop: "1rem" }}
             theme="light"
-            defaultSelectedKeys={["search-parcel"]}
             defaultOpenKeys={["parcel"]}
             mode="inline"
             onClick={(e) => {
