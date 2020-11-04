@@ -69,6 +69,14 @@ export default class EditUserProfileModule extends React.Component {
   };
 
   onValidation=(name)=>{
+    if ((this.state['username'].length < 6)) {
+      showNotification({
+        title: "Input Fields Validation",
+        type: "error",
+        message: "Username and Password should contain at least 6 characters",
+      });
+      return false;
+    }
     if(name === 'password' || name === 'confirmPassword'){
       if(this.state[name].match(/[ ]/)){
         showNotification({
