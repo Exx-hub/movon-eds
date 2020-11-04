@@ -28,7 +28,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.4(5)'
+        build: '1.2.4(6)'
     },
     changeLogs: `updated manifest modal functionality`
 
