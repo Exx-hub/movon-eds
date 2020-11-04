@@ -773,12 +773,9 @@ class CreateParcel extends React.Component {
   };
 
   getConvinienceFee = (qty, declaredValue) => {
-
-    if(this.userProfileObject.isIsarogLiners()){
+    if(declaredValue && Boolean(this.userProfileObject.isIsarogLiners())){
       ParcelService.getConvenienceFee(qty,declaredValue)
-      .then((res) => {
-        this.parseSystemFeeResponse(res)
-      });
+      .then((res) => { this.parseSystemFeeResponse(res)});
       return;
     }
 
@@ -787,7 +784,7 @@ class CreateParcel extends React.Component {
       let systemFee = {...details.systemFee}
       systemFee.value=0;
       details.systemFee = systemFee;
-      this.setState({ details }, () =>this.updateTotalShippingCost());
+      this.setState({ details });
       return;
     }
 
@@ -955,7 +952,7 @@ class CreateParcel extends React.Component {
       }
       if (name === "sticker_quantity") {
         if (Boolean(details.sticker_quantity.accepted)) {
-          this.getConvinienceFee(value);
+          this.getConvinienceFee(value,undefined);
         }
       }
       if (name === "declaredValue"){
