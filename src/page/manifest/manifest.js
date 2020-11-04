@@ -21,6 +21,7 @@ import {
   UserProfile,
 } from "../../utility";
 import ManifestService from "../../service/Manifest";
+import { PromptModal } from '../../component/modal';
 import moment from "moment";
 import "./manifest.scss";
 
@@ -67,7 +68,6 @@ const TableRoutesView = (props) => {
                       (!Boolean(record.status ===1)) ?
                       <Menu.Item
                         size="small"
-                        onClick={() => {}}
                       >
                         Arrived
                       </Menu.Item>
@@ -128,14 +128,14 @@ class Manifest extends React.Component {
     selected: undefined,
     page: 0,
     limit: 10,
-    totalRecords: 50,
+    totalRecords: 50
   };
 
   constructor(props){
     super(props);
     this.userProfileObject = UserProfile
   }
-  
+
   componentDidMount() {
     this.setState({ fetching: true });
     try {
@@ -406,6 +406,27 @@ class Manifest extends React.Component {
             total={this.state.totalRecords}
           />
         </div>)}
+        <PromptModal
+          handleArrive={this.handleArrive}
+          handleCancel={this.handleCancel}
+          visible={this.state.visibleArrive}
+          title="Are you sure the parcel ahs arrived?"
+          message="Press OK to change the status"
+          footer={[
+            <Button
+              key="back"
+              onClick={()=>this.props.handleCancel()}
+            >
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              onClick={()=>this.props.handleOk()}
+            >
+              Arrive
+            </Button>,
+          ]} />
       </div>
     );
   }

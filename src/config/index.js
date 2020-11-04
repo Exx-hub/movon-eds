@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.4(3)'
+        build: '1.2.4(4)'
     },
-    changeLogs: `fixed username validation`
+    changeLogs: `created manifest modal`
 
 }
 
