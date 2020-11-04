@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.0(8)'
+        build: '1.2.2(1)'
     },
-    changeLogs: `made the arrived menu.item replace check in after the parcel is checked in.`
+    changeLogs: `fixed username validation`
 
 }
 
