@@ -98,7 +98,7 @@ const ManifestService = {
     checkInAllParcel: (tripId) => {
         return axios({
             method: 'post',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${tripId}/arrived`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${tripId}/check-in-all`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,

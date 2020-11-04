@@ -378,8 +378,10 @@ class Manifest extends React.Component {
         <PromptModal
           visible={this.state.visibleArrive}
           title="Are you sure you want to arrived?"
-          message="Press OK to change the status"
+          message="Press OK to change the status to received"
           disabled={this.state.disabledArrive}
+          buttonType="primary"
+          action="Arrive"
           handleCancel={()=>this.setState({selectedRecord:undefined, visibleArrive:false})}
           handleOk={()=>{
             const tripId = this.state.selectedRecord.tripId._id
@@ -397,7 +399,9 @@ class Manifest extends React.Component {
           onEdit={false}
           visible={this.state.visibleCheckIn}
           title="Are you sure you want to check-in?"
-          message="Press OK to change the status"
+          message="Press OK to change the status to in-transit"
+          buttonType="primary"
+          action="Check In"
           handleCancel={()=>this.setState({selectedRecord:undefined, visibleCheckIn:false})}
           handleOk={()=>{
             console.log(this.state.selectedRecord)
@@ -411,7 +415,7 @@ class Manifest extends React.Component {
               this.setState({visibleCheckIn:false, disabledCheckIn:true, selectedRecord:undefined})
               this.getManifestByDestination(start,end)
             })
-          }} 
+          }}
           disabled={this.state.disabledCheckIn}
           />
       </div>
