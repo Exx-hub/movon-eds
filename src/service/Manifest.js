@@ -95,17 +95,14 @@ const ManifestService = {
         })
     },
 
-    checkParcelById: (parcelId) => {
+    checkInAllParcel: (tripId) => {
         return axios({
             method: 'post',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/update-status`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${tripId}/arrived`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
-            },
-            data:{
-                parcelId
             }
         })
     },

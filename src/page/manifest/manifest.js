@@ -271,7 +271,7 @@ class Manifest extends React.Component {
       return {
         key: i,
         tripId: e._id,
-        date: moment(e.date).subtract(8,'hours').format("MMMM DD, YYYY"),
+        date: moment(e.date).subtract(8,"hours").format("MMMM DD, YYYY"),
         count: e.count,
         startStationName,
         endStationName,
