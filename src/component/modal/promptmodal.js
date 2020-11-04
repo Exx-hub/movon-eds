@@ -9,10 +9,10 @@ export default class PromptModal extends React.Component{
 
       return(
         <Modal
-        closable = {false}
-        title={this.props.title}
-        visible={this.props.visible}
-        footer={[
+          closable = {false}
+          title={this.props.title}
+          visible={this.props.visible}
+          footer={[
           <Button
             key="back"
             onClick={()=>this.props.handleCancel()}
@@ -29,8 +29,13 @@ export default class PromptModal extends React.Component{
             Void
           </Button>,
         ]}>
-          <p>{this.props.message}</p>
-          <textarea class="remarks" onChange={this.props.onRemarksChange}/>
+        {
+          this.props.onEdit && <>
+            <p>{this.props.message}</p>
+            <textarea class="remarks" onChange={this.props.onRemarksChange}/>
+          </>
+        }
+        { this.props.message }
         </Modal>
       )
     }

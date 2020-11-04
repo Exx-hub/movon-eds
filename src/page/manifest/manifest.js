@@ -23,6 +23,7 @@ import {
   UserProfile,
 } from "../../utility";
 import ManifestService from "../../service/Manifest";
+import { PromptModal } from '../../component/modal';
 import moment from "moment";
 import "./manifest.scss";
 
@@ -61,10 +62,14 @@ const TableRoutesView = (props) => {
       key: "action",
       render: (text, record) => (
         <div>
-        <Button style={{fontSize:'10px'}} onClick={()=>props.onViewClick(record)}>View</Button>
-        <Button style={{fontSize:'10px'}} onClick={()=>props.onPrint(record)}>Print</Button>
-        {(record.status.filter(e => e === 1 )).length > 0 && <Button style={{fontSize:'10px'}} onClick={()=>props.onCheckIn(record)}>Check-In</Button>}
-        {!(record.status.filter(e => e === 1 )).length > 0 && <Button style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
+        {
+          record.status && <>
+          <Button style={{fontSize:'10px'}} onClick={()=>props.onViewClick(record)}>View</Button>
+          <Button style={{fontSize:'10px'}} onClick={()=>props.onPrint(record)}>Print</Button>
+          {(record && (record.status.filter(e => e === 1 )).length > 0) && <Button style={{fontSize:'10px'}} onClick={()=>props.onCheckIn(record)}>Check-In</Button>}
+          {!(record.status.filter(e => e === 1 )).length > 0 && <Button style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
+          </>
+        }
         </div>
       ),
     },
@@ -97,13 +102,17 @@ class Manifest extends React.Component {
     page: 0,
     limit: 10,
     totalRecords: 50,
+    visibleCheckIn:false,
+    visibleArrive:false,
+    disabledArrive:false,
+    disabledCheckIn:false
   };
 
   constructor(props){
     super(props);
     this.userProfileObject = UserProfile
   }
-  
+
   componentDidMount() {
     this.setState({ fetching: true });
     try {
@@ -332,15 +341,8 @@ class Manifest extends React.Component {
               pagination={false}
               dataSource={this.dataSource()}
               onChange={this.onChangeTable}
-              onArrived={(data)=> {
-                ManifestService.arriveAllParcel(data.tripId._id)
-                .then(e=>{
-                  const selectedRoute = this.state.selected;
-                  const start = (selectedRoute && selectedRoute.start) || null;
-                  const end = (selectedRoute && selectedRoute.end) || null;
-                  this.getManifestByDestination(start,end);
-                })
-              }}
+              onCheckIn={(data)=>{this.setState({visibleCheckIn:true, selectedRecord:data})}}
+              onArrived={(data)=> {this.setState({visibleArrive:true, selectedRecord:data})}}
               onPrint={(data) =>
                 this.props.history.push(alterPath("/manifest/print"), {
                   date: data.date,
@@ -373,6 +375,45 @@ class Manifest extends React.Component {
             total={this.state.totalRecords}
           />
         </div>)}
+        <PromptModal
+          visible={this.state.visibleArrive}
+          title="Are you sure you want to arrived?"
+          message="Press OK to change the status"
+          disabled={this.state.disabledArrive}
+          handleCancel={()=>this.setState({selectedRecord:undefined, visibleArrive:false})}
+          handleOk={()=>{
+            const tripId = this.state.selectedRecord.tripId._id
+            const selectedRoute = this.state.SelectedRecord;
+            const start = (selectedRoute && selectedRoute.start) || null;
+            const end = (selectedRoute && selectedRoute.end) || null;
+            ManifestService.arriveAllParcel(tripId)
+            .then(e=>{
+              this.setState({visibleArrive:false, disabledArrive:true, selectedRecord:undefined})
+              this.getManifestByDestination(start,end)
+            })
+          }} />
+
+          <PromptModal
+          onEdit={false}
+          visible={this.state.visibleCheckIn}
+          title="Are you sure you want to check-in?"
+          message="Press OK to change the status"
+          handleCancel={()=>this.setState({selectedRecord:undefined, visibleCheckIn:false})}
+          handleOk={()=>{
+            console.log(this.state.selectedRecord)
+            const tripId = this.state.selectedRecord.tripId._id
+            const selectedRoute = this.state.SelectedRecord;
+            const start = (selectedRoute && selectedRoute.start) || null;
+            const end = (selectedRoute && selectedRoute.end) || null;
+
+            ManifestService.checkInAllParcel(tripId)
+            .then(e=>{
+              this.setState({visibleCheckIn:false, disabledCheckIn:true, selectedRecord:undefined})
+              this.getManifestByDestination(start,end)
+            })
+          }} 
+          disabled={this.state.disabledCheckIn}
+          />
       </div>
     );
   }
