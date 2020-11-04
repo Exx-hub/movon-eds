@@ -998,7 +998,7 @@ class CreateParcel extends React.Component {
         details.associateFixPrice = associateFixPrice;
         details.connectingCompany = connectingCompany;
         
-        this.setState({details})
+        this.setState({details, connectingCompanyComputation:0},()=>this.updateTotalShippingCost())
         return;
       }
 
