@@ -774,10 +774,6 @@ class CreateParcel extends React.Component {
 
   getConvinienceFee = (qty, declaredValue) => {
 
-    if (this.userProfileObject.disableCargoSystemFee()) {
-      return;
-    }
-
     if(declaredValue !== undefined && this.userProfileObject.isIsarogLiners()){
       ParcelService.getConvenienceFee(qty,declaredValue)
       .then((res) => {
