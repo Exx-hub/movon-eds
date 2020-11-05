@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.4(9)'
+        build: '1.2.4(10)'
     },
-    changeLogs: `added a new ERROR_CODE and fixed username validation`
+    changeLogs: `Changed Bill of Lading sticker UI`
 
 }
 

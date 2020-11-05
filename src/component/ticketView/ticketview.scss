@@ -20,7 +20,7 @@
         font-size: 1.3em;
         font-weight: 600;
     }
-    
+
     .package-indicator-sp{
         margin-top: 1rem;
         font-size: 3em;
@@ -50,7 +50,7 @@
         margin-top: .5rem;
         margin-left: .5rem;
         margin-bottom: 1rem;
-        
+
         .movon-logo{
             height: 60%;
             width: 90px;
@@ -85,7 +85,13 @@
 }
 
 .bottom-blNo-text{
-    font-size: 2em;
+    font-size: 1.5rem;
+    padding-bottom: 1rem;
+    color: black;
+}
+
+.bottom-blNo-num{
+    font-size: 2rem;
     padding-bottom: 1rem;
     font-weight: bold;
     color: black;
