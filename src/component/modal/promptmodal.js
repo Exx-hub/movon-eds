@@ -12,26 +12,26 @@ export default class PromptModal extends React.Component{
           title={this.props.title}
           visible={this.props.visible}
           footer={[
-          <Button
-            key="back"
-            onClick={()=>this.props.handleCancel()}
-          >
-            Cancel
-          </Button>,
-          <Button
-            id="voidSubmit"
-            key="submit"
-            type={this.props.buttonType}
-            onClick={()=>this.props.handleOk()}
-            disabled={this.props.disabled}
-          >
+            <Button
+              key="back"
+              onClick={()=>this.props.handleCancel()}
+            >
+              Cancel
+            </Button>,
+            <Button
+              id="voidSubmit"
+              key="submit"
+              type={this.props.buttonType}
+              onClick={()=>this.props.handleOk()}
+              disabled={this.props.disabled}
+            >
             <p>{this.props.action}</p>
-          </Button>,
-        ]}>
-        {
-          this.props.onEdit && <textarea class="remarks" onChange={this.props.onRemarksChange}/>
-        }
-        { this.props.message }
+            </Button>
+          ]}
+        >
+        <p class="message">{this.props.message}</p>
+        <p class="reason-text"> {this.props.reason} </p>
+        { (this.props.action === "Send Request") ? <textarea class="remarks" onChange={this.props.onRemarksChange}/> : ''}
         </Modal>
       )
     }

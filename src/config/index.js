@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.4(7)'
+        build: '1.2.4(8)'
     },
-    changeLogs: `created logout modal`
+    changeLogs: `fixed textarea issue in void modal`
 
 }
 
