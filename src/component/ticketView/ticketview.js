@@ -74,7 +74,7 @@ const TicketDetails = (props) => {
           <div style={{width:'100%', textAlign:'center'}}>
             <span className="bottom-destination-text">{endStationName}</span>
           </div>  
-          <div style={{width:'100%', textAlign:'center'}}><span className="bottom-blNo-text">Bill Of Lading - {billOfLading}</span>
+          <div style={{width:'100%', textAlign:'center'}}><span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
           </div>
       </Row>
     </div>
