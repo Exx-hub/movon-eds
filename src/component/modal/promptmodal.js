@@ -3,6 +3,11 @@ import {Modal, Button} from 'antd'
 import PropTypes from 'prop-types';
 import './modal.scss'
 
+let x = document.getElementsByClassName("ant-modal-header");
+  if (x.length > 0) {
+  x[0].style.backgroundColor = "red";
+  }
+
 export default class PromptModal extends React.Component{
 
     render(){
@@ -29,8 +34,9 @@ export default class PromptModal extends React.Component{
             </Button>
           ]}
         >
-        <p>{this.props.message}</p>
-        { (this.props.action === "Void") ? <textarea class="remarks" onChange={this.props.onRemarksChange}/> : ''}
+        <p class="message">{this.props.message}</p>
+        <p class="reason-text"> {this.props.reason} </p>
+        { (this.props.action === "Send Request") ? <textarea class="remarks" onChange={this.props.onRemarksChange}/> : ''}
         </Modal>
       )
     }
