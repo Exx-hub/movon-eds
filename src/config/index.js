@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.4(10)'
+        build: '1.2.4(11)'
     },
-    changeLogs: `Changed Bill of Lading sticker UI`
+    changeLogs: `Removed pagination size changer`
 
 }
 

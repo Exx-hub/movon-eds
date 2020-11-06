@@ -373,6 +373,7 @@ class Manifest extends React.Component {
             }}
             defaultCurrent={this.state.page}
             total={this.state.totalRecords}
+            showSizeChanger={false}
           />
         </div>)}
         <PromptModal
