@@ -268,10 +268,11 @@ class SearchModule extends React.Component {
           handleOk={() => this.handleVoid()}
           handleCancel={() => this.handleCancel()}
           visible={this.state.visibleVoid}
-          title="Are you sure you want to void this transcation?"
-          message="Enter reason/s for voiding."
+          title={<span class="title"> Are you sure you want to void this transcation? </span>}
+          message="Transaction will NOT be voided immediately. Request will be sent to the bus administrator for approval."
+          reason="Enter reason/s:"
           buttonType="danger"
-          action="Void"
+          action="Send Request"
           disabled={!this.state.remarks}
           onRemarksChange={(e)=>this.setState({remarks:e.target.value})}/>
 

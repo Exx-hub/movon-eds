@@ -50,6 +50,13 @@ class UserProfileClass{
     return this.user
   }
 
+  getUserId = ()=>{
+    if(this.user()){
+        return this.user().displayId || undefined;
+    }
+    return undefined;
+  }
+
   getAssignedStation(){
     if(this.user){
       return this.user.assignedStation || undefined
