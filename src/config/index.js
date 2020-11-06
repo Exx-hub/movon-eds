@@ -1,6 +1,7 @@
 export const config = {
-    //BASE_URL: process.env.REACT_APP_BASE_URL,
+    //BASE_URL:"http://localhost:9000",
     BASE_URL:"https://www.cargomovon.com/server",
+    //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created',
         2:'intransit',
@@ -27,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.5(12)'
+        build: '1.2.4(13)'
     },
-    changeLogs: `Start Station cannot be chosen as End Station`
+    changeLogs: `Reverted to Void Button`
 
 }
 

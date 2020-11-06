@@ -54,7 +54,6 @@ class SearchModule extends React.Component {
       totalRecords: 0,
       columns: [],
       limit: 10,
-      visibleEdit: false,
       visibleVoid: false,
       remarks: ""
     };
@@ -113,25 +112,11 @@ class SearchModule extends React.Component {
           key: "action",
           render: (text, record) => (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <Dropdown
-                trigger={['click']}
-                placement="bottomCenter"
-                overlay={
-                  <Menu>
-                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {
-                      this.setState({selectedRecord: record, visibleVoid:true})
-                    }}>
-                      Void
-                    </Menu.Item>
-                    <Menu.Item disabled={!Boolean(record.travelStatus === 1)} size="small" onClick={() => {}}>
-                      Edit
-                    </Menu.Item>
-                  </Menu>
-                }>
-                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                  Edit
-                </a>
-              </Dropdown>
+              <Button disabled={!Boolean(record.travelStatus === 1)} type="danger" size="small" style={{fontSize: '0.65rem'}} onClick={() => {
+                  this.setState({selectedRecord: record, visibleVoid:true})
+                }}>
+                  Void
+              </Button>
             </div>
           ),
         },
@@ -276,13 +261,6 @@ class SearchModule extends React.Component {
           action="Send Request"
           disabled={!this.state.remarks}
           onRemarksChange={(e)=>this.setState({remarks:e.target.value})}/>
-
-        <PromptModal
-          handleOk={this.handleOk}
-          handleCancel={this.handleCancel}
-          visible={this.state.visibleEdit}
-          title="Are you sure you want to edit?"
-          message="Press OK to edit the transaction" />
       </Layout>
     );
   }
