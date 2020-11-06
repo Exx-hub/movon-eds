@@ -107,6 +107,7 @@ class Transaction extends React.Component {
         onChange={page => this.setState({ page: page -1 })}
         defaultCurrent={this.state.page}
         total={this.state.totalRecords}
+        showSizeChanger={false}
       />
     </div>
       </>

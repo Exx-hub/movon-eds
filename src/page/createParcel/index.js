@@ -458,13 +458,15 @@ class CreateParcel extends React.Component {
           let _myOption = [];
 
           data.forEach((e) => {
-            _myOption.push({
-              name: e.endStationName,
-              value: e.end,
-              startStationId: e.start,
-              startStationName: e.startStationName,
-              endStation: e.end,
-            });
+            if (this.userProfileObject.getAssignedStationId() !== e.end) {
+              _myOption.push({
+                name: e.endStationName,
+                value: e.end,
+                startStationId: e.start,
+                startStationName: e.startStationName,
+                endStation: e.end,
+              })
+            };
           });
 
           let clean = [];
