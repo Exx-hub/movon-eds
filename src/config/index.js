@@ -1,7 +1,5 @@
 export const config = {
-    //BASE_URL:"http://localhost:9000",
-    BASE_URL:"https://www.cargomovon.com/server",
-    //BASE_URL:'https://movon.com.ph/server',
+    BASE_URL: process.env.REACT_APP_BASE_URL,
     parcelStatus:{
         1:'created',
         2:'intransit',
@@ -30,7 +28,7 @@ export const config = {
     version: {
         build: '1.2.4(11)'
     },
-    changeLogs: `Removed pagination size changer`
+    changeLogs: `Start Station cannot be chosen as End Station`
 
 }
 
