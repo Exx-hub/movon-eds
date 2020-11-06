@@ -1,4 +1,23 @@
-textarea {
+.remarks {
   width: 100%;
   height: 5rem;
+  margin-top: 0.1rem;
+  padding: 0.5rem;
+}
+
+.message{
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.reason-text{
+  color: gray;
+  font-size: 0.8rem;
+  font-weight: 300;
+  margin: 0;
 }

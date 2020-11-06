@@ -6,8 +6,11 @@
         .ant-table table{
             font-size: 11px !important;
         }
+        th {
+            background-color: rgba(46,49,49,0.15);
+        }
     }
-   
+
 }
 
 .SearchModule{
@@ -19,7 +22,7 @@
         padding: 0px;
         max-height: 10vh;
     }
-    
+
     .manifest-details-page-body{
         height: 90vh;
         background-color: #fff;

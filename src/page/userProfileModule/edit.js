@@ -65,6 +65,13 @@ export default class EditUserProfileModule extends React.Component {
       this.props.history.push(alterPath("/"));
       return;
     }
+
+    if (code === 2604) {
+      openNotificationWithIcon("error", code);
+      this.props.history.push(alterPath("/user-profile"));
+      return
+    }
+
     openNotificationWithIcon("error", code);
   };
 
@@ -108,9 +115,9 @@ export default class EditUserProfileModule extends React.Component {
       if(this.state.password === this.state.confirmPassword){
         this.setState({fetching:true},()=>User.updateUserPassword(this.state.username, this.state.password)
         .then(e=>{
-          const{erroCode}=e.data;
-          if(erroCode){
-            this.handleErrorNotification(erroCode)
+          const{errorCode}=e.data;
+          if(errorCode){
+            this.handleErrorNotification(errorCode)
           }else{
             notification.open({
               title: "User Profile Updated!",

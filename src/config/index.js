@@ -28,9 +28,13 @@ export const config = {
         deviceType: '3'
     },
     version: {
+<<<<<<< HEAD
         build: '1.2.8(16)'
+=======
+        build: '1.2.4(13)'
+>>>>>>> 4a57729ea0828f7773ba14b6ed3353d57074b507
     },
-    changeLogs: `created logout modal`
+    changeLogs: `Reverted to Void Button`
 
 }
 
@@ -71,4 +75,10 @@ export const ERROR_CODES = {
         message: "BL Number Exist",
         description: "Please replace your bill of lading number and continue."
     },
+    2604:{
+        module:'EDIT',
+        code: 'USER_NAME_EXIST',
+        message: "Username has already been taken",
+        description: "Please choose another username."
+    }
 }
