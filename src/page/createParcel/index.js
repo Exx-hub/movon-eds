@@ -451,6 +451,7 @@ class CreateParcel extends React.Component {
 
     ManifestService.getRoutes().then((e) => {
       const { data, success, errorCode } = e.data;
+      console.log(e.data)
       if (success) {
         if (data) {
           const details = { ...this.state.details };
@@ -1138,21 +1139,19 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "discount") {
-      const discount = { ...details.discount, ...{ value, accepted: true } };
       
       const additionNote = {
         ...details.additionNote,
         ...{ value: value.toLowerCase() === 'none' ? undefined : value, accepted: true },
       };
+      const discount = { ...details.discount, ...{ value, accepted: true } };
+      console.log('====>>discount',value)
       details = { ...details, ...{ discount, additionNote } }
       this.setState({ details }, () => this.updateTotalShippingCost());
     }
 
     if (name === "associateFixPrice") {
       console.log('associateFixPrice value',value)
-
-      
-
       const associateFixPrice = { ...details.associateFixPrice, ...{ value, accepted: true } };
       const price = (associateFixPrice.options.length> 0 && associateFixPrice.options.find(e=>e.name === value).price) || 0; 
       details = { ...details, ...{ associateFixPrice } };
@@ -1544,30 +1543,40 @@ class CreateParcel extends React.Component {
   updateTotalShippingCost = () => {
     const currentDetails = { ...this.state.details };
     const quantity = Number(currentDetails.quantity.value || 0);
-    let discountIndex = currentDetails.discount.options.findIndex((e) => e.name === currentDetails.discount.value);
-    let discount = 0;
-
-    if(currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== 'none'){
-      discount =
-      discountIndex > -1
-        ? Number(currentDetails.discount.options[discountIndex].rate || 0)
-        : 0;
-    }
     
+
     let total = Number(
       parseFloat(currentDetails.shippingCost.value || 0) +
       parseFloat(this.state.lengthRate) +
-      parseFloat(this.state.connectingCompanyComputation || 0));
+      parseFloat(currentDetails.packageInsurance.value || 0));
+
+
+      let discountIndex = currentDetails.discount.options.findIndex((e) => e.name === currentDetails.discount.value);
+        let discount = 0;
+    
+        if(currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== 'none'){
+          discount = discountIndex > -1
+            ? Number(currentDetails.discount.options[discountIndex].rate || 0)
+            : 0;
+        }
+        if (discount > 0) {
+          total = (total * ((100 - discount) / 100));
+        }
+        
+      // if(this.userProfileObject.isIsarogLiners()){
+        
+      // }
+
+    // let total = Number(
+    //   parseFloat(currentDetails.shippingCost.value || 0) +
+    //   parseFloat(this.state.lengthRate) +
+    //   parseFloat(this.state.connectingCompanyComputation || 0));
 
     if (quantity > 0) {
       total = total * quantity;
     }
 
-    if (discount > 0) {
-      total = total * ((100 - discount) / 100);
-    }
-
-    total += parseFloat(currentDetails.systemFee.value || 0) + parseFloat(currentDetails.packageInsurance.value || 0) ;
+    total += parseFloat(this.state.connectingCompanyComputation || 0) + parseFloat(currentDetails.systemFee.value || 0) ;
 
     const totalShippingCost = {
       ...currentDetails.totalShippingCost,
