@@ -4,7 +4,8 @@ import {
   Button,
   Space,
   notification,
-  Pagination
+  Pagination,
+  Tag
 } from "antd";
 import {openNotificationWithIcon, alterPath, UserProfile} from "../../utility";
 import "./transaction.scss";
@@ -12,7 +13,34 @@ import TransactionService from '../../service/VoidTransaction';
 import moment from 'moment'
 import { config } from "../../config";
 
+const getTag = (props) => {
+  console.log('config: ', config.voidStatus);
+  console.log('props: ', props);
+  console.log('props: ', props);
+  let color = "";
+  let caption = ""
 
+  switch(props) {
+    case 1:
+      color = "green"
+      caption=config.voidStatus[1]
+      break;
+    case 2:
+      caption=config.voidStatus[2]
+      color = "blue"
+      break;
+    case 3:
+      color = "red";
+      caption=config.voidStatus[3]
+      break;
+    default:
+        color = ""
+        caption= "unknown status"
+        break
+  }
+
+  return <Tag color={color}>{caption}</Tag>
+}
 
 const columns=[
   {
@@ -46,7 +74,7 @@ const columns=[
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: (text)=> ((config.voidStatus[text] && config.voidStatus[text].toUpperCase()) || text)
+    render: (text)=> getTag(text)
   }
 ];
 //(config.voidStatus[text].toUpperCase())

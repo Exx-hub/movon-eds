@@ -18,7 +18,7 @@ export const config = {
     voidStatus:{
         1:'approved',
         2:"pending",
-        3:"dis-approved"
+        3:"rejected"
     },
     ticket:{
         totalCopy:6
@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.4(13)'
+        build: '1.2.4(14)'
     },
-    changeLogs: `Reverted to Void Button`
+    changeLogs: `Added status tag`
 
 }
 
