@@ -97,7 +97,7 @@ const PCopy = (props) => {
     const parcelInfo = [
       { title: "Sender", value: modifyName(senderName) },
       { title: "Mobile No.", value: senderPhone },
-      { title: "Reciever", value: modifyName(recipientName) },
+      { title: "Receiver", value: modifyName(recipientName) },
       { title: "Mobile No.", value: recipientPhone },
       { title: "Origin", value: startStationName },
       { title: "Price", value: totalPrice },
@@ -136,7 +136,7 @@ const SpCopy = (props) => {
       const parcelInfo = [
         { title: "Sender", value: modifyName(senderName) },
         { title: "Mobile No.", value: senderPhone },
-        { title: "Reciever", value: modifyName(recipientName) },
+        { title: "Receiver", value: modifyName(recipientName) },
         { title: "Mobile No.", value: recipientPhone },
         { title: "Origin", value: startStationName },
       ];

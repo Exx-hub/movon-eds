@@ -41,9 +41,9 @@ function BicolIsarogForm(props) {
     senderName,
     senderMobile,
     senderEmail,
-    recieverName,
-    recieverMobile,
-    recieverEmail,
+    receiverName,
+    receiverMobile,
+    receiverEmail,
     destination,
     description,
     declaredValue,
@@ -448,39 +448,39 @@ function BicolIsarogForm(props) {
           <Col span={8} className="gutter-row">
             <InputBox
               type="text"
-              onBlur={() => props.onBlur(recieverName.name)}
-              detail={recieverName}
+              onBlur={() => props.onBlur(receiverName.name)}
+              detail={receiverName}
               onChange={props.onChange}
-              title="Reciever Full Name"
+              title="Receiver Full Name"
               errorMessage={
-                recieverName.errorMessage || "Reciever Name is required"
+                receiverName.errorMessage || "Receiver Name is required"
               }
-              placeholder="Reciever Full Name"
+              placeholder="Receiver Full Name"
             />
           </Col>
 
           <Col span={8} className="gutter-row">
             <InputBox
               type="number"
-              onBlur={() => props.onBlur(recieverMobile.name)}
-              detail={recieverMobile}
+              onBlur={() => props.onBlur(receiverMobile.name)}
+              detail={receiverMobile}
               onChange={props.onChange}
-              title="Reciever Mobile"
+              title="Receiver Mobile"
               prefix="+63"
-              errorMessage={recieverMobile.errorMessage}
+              errorMessage={receiverMobile.errorMessage}
               placeholder=""
             />
           </Col>
 
           <Col span={8} className="gutter-row">
             <InputBox
-              onBlur={() => props.onBlur(recieverEmail.name)}
-              detail={recieverEmail}
+              onBlur={() => props.onBlur(receiverEmail.name)}
+              detail={receiverEmail}
               onChange={props.onChange}
-              title="Reciever Email"
-              showError={recieverEmail.hasError || false}
+              title="Receiver Email"
+              showError={receiverEmail.hasError || false}
               errorMessage="Invalid email"
-              placeholder="Reciever Email"
+              placeholder="Receiver Email"
             />
           </Col>
         </Row>

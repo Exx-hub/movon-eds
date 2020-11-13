@@ -99,9 +99,9 @@ const getReviewDetails = (state) => {
     packageWeight: state.details.packageWeight.value,
     packageQty: state.details.quantity.value,
     packageImages: [state.packageImagePreview],
-    recipientName: state.details.recieverName.value,
-    recipientEmail: state.details.recieverEmail.value,
-    recipientPhone: state.details.recieverMobile.value,
+    recipientName: state.details.receiverName.value,
+    recipientEmail: state.details.receiverEmail.value,
+    recipientPhone: state.details.receiverMobile.value,
     senderName: state.details.senderName.value,
     senderEmail: state.details.senderEmail.value,
     senderPhone: state.details.senderMobile.value,
@@ -202,20 +202,20 @@ class CreateParcel extends React.Component {
           accepted: true,
           hasError: false,
         },
-        recieverName: {
-          name: "recieverName",
+        receiverName: {
+          name: "receiverName",
           value: undefined,
           isRequired: true,
           accepted: true,
         },
-        recieverMobile: {
-          name: "recieverMobile",
+        receiverMobile: {
+          name: "receiverMobile",
           value: undefined,
           isRequired: true,
           accepted: true,
         },
-        recieverEmail: {
-          name: "recieverEmail",
+        receiverEmail: {
+          name: "receiverEmail",
           value: undefined,
           isRequired: false,
           accepted: true,
@@ -589,7 +589,7 @@ class CreateParcel extends React.Component {
 
     if (
       !isNull(details[name].value) &&
-      (name === "senderEmail" || name === "recieverEmail")
+      (name === "senderEmail" || name === "receiverEmail")
     ) {
       // eslint-disable-next-line
       const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
@@ -607,7 +607,7 @@ class CreateParcel extends React.Component {
 
     if (
       !isNull(details[name].value) &&
-      (name === "senderMobile" || name === "recieverMobile")
+      (name === "senderMobile" || name === "receiverMobile")
     ) {
       const validNumber = /^\d+$/.test(details[name].value);
       const isValid = validNumber && details[name].value.length === 10;
@@ -622,7 +622,7 @@ class CreateParcel extends React.Component {
 
     if (
       name === "senderName" ||
-      name === "recieverName" ||
+      name === "receiverName" ||
       name === "driverFullName" ||
       name === "conductorFullName"
     ) {
