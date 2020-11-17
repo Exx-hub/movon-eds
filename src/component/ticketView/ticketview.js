@@ -30,6 +30,7 @@ const TicketDetails = (props) => {
 
   const code = props.code;
   const parcelInfo = props.parcelInfo || [];
+  const copy = props.copy;
 
   return (
     <div className="ticket-details">
@@ -46,7 +47,7 @@ const TicketDetails = (props) => {
           </Row>
           <Row justify="center" className="scan-code-text">{code}</Row>
           <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
-          
+
           <Row justify="center">
             {Boolean(props.spCopy) ? (
               <span className="package-indicator-sp">{props.parcelCount}</span>
@@ -55,7 +56,8 @@ const TicketDetails = (props) => {
                 <span className="package-indicator">
                   {packageQty} <span className="pkg-text">pkg.</span>
                 </span>
-              <span className="customer-copy-text">{`Customer's Copy`}</span>
+                <span className="customer-copy-text">{copy}</span>
+
               </div>
             )}
           </Row>
@@ -107,6 +109,46 @@ const PCopy = (props) => {
     for (let i = 0; i < noOfSticker; i++) {
       _view.push(
         <TicketDetails
+          copy="Customer's Copy"
+          parcelInfo={parcelInfo}
+          key={"p-"+i}
+          {...props}
+          code={scanCode}
+        />
+      );
+    }
+    return _view;
+  }
+  return null;
+}
+;
+const MCopy = (props) => {
+  if (props) {
+    const {
+      recipientName,
+      recipientPhone,
+      senderName,
+      senderPhone,
+      startStationName,
+      totalPrice,
+      noOfSticker,
+      scanCode
+    } = props.value;
+
+    const parcelInfo = [
+      { title: "Sender", value: modifyName(senderName) },
+      { title: "Mobile No.", value: senderPhone },
+      { title: "Receiver", value: modifyName(recipientName) },
+      { title: "Mobile No.", value: recipientPhone },
+      { title: "Origin", value: startStationName },
+      { title: "Price", value: totalPrice },
+    ];
+
+    let _view = [];
+    for (let i = 0; i < noOfSticker; i++) {
+      _view.push(
+        <TicketDetails
+          copy="Merchant's Copy"
           parcelInfo={parcelInfo}
           key={"p-"+i}
           {...props}
@@ -160,6 +202,7 @@ export const TicketView = (props) => {
   return (
     <div className="component-ticketview-container">
       {props.value && <PCopy {...props} />}
+      {props.value && <MCopy {...props} />}
       {props.value && <SpCopy {...props} />}
     </div>
   );
