@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.5(15)'
+        build: '1.2.5(17)'
     },
-    changeLogs: `fix error on associated routes to lower case`
+    changeLogs: `added merchant's copy to ticket`
 
 }
 

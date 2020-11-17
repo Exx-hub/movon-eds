@@ -49,9 +49,9 @@ const ParcelService = {
             senderName,
             senderMobile,
             senderEmail,
-            recieverName,
-            recieverMobile,
-            recieverEmail,
+            receiverName,
+            receiverMobile,
+            receiverEmail,
             description,
             declaredValue,
             quantity,
@@ -89,10 +89,10 @@ const ParcelService = {
         bodyFormData.set('senderEmail', senderEmail.value || "")
         bodyFormData.set('senderPhoneCountryCode', COUNTRY_CODE)
         bodyFormData.set('senderPhoneNumber', senderMobile.value)
-        bodyFormData.set('recipientName', recieverName.value)
-        bodyFormData.set('recipientEmail', recieverEmail.value || "")
+        bodyFormData.set('recipientName', receiverName.value)
+        bodyFormData.set('recipientEmail', receiverEmail.value || "")
         bodyFormData.set('recipientPhoneCountryCode', COUNTRY_CODE)
-        bodyFormData.set('recipientPhoneNumber',recieverMobile.value)
+        bodyFormData.set('recipientPhoneNumber',receiverMobile.value)
         bodyFormData.set('packageName', description.value)
         bodyFormData.set('packageWeight',packageWeight.value)
         bodyFormData.set('estimatedValue', declaredValue.value)
