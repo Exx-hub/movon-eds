@@ -67,7 +67,7 @@ const TableRoutesView = (props) => {
           <Button style={{fontSize:'10px'}} onClick={()=>props.onViewClick(record)}>View</Button>
           <Button style={{fontSize:'10px'}} onClick={()=>props.onPrint(record)}>Print</Button>
           {(record && (record.status.filter(e => e === 1 )).length > 0) && <Button style={{fontSize:'10px'}} onClick={()=>props.onCheckIn(record)}>Check-In</Button>}
-          {!(record.status.filter(e => e === 1 )).length > 0 && <Button style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
+          {(record.status.filter(e => e === 2 && e !== 1).length > 0) && <Button style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
           </>
         }
         </div>
