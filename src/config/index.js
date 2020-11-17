@@ -28,7 +28,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.5(16)'
+        build: '1.2.5(17)'
     },
     changeLogs: `added merchant's copy to ticket`
 
