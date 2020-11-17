@@ -456,7 +456,6 @@ class CreateParcel extends React.Component {
 
     ManifestService.getRoutes().then((e) => {
       const { data, success, errorCode } = e.data;
-      console.log(e.data);
       if (success) {
         if (data) {
           const details = { ...this.state.details };
@@ -625,8 +624,8 @@ class CreateParcel extends React.Component {
     }
 
     if (
-      name === "senderName" ||
-      name === "receiverName" ||
+      //name === "senderName" ||
+      //name === "receiverName" ||
       name === "driverFullName" ||
       name === "conductorFullName"
     ) {
@@ -1016,7 +1015,6 @@ class CreateParcel extends React.Component {
       weight,
       declaredValue
     ).then((e) => {
-      console.log("onConnectingRoutesComputation", e);
       const { data, success, errorCode } = e.data;
       if (errorCode) {
         this.setState(
@@ -1118,7 +1116,6 @@ class CreateParcel extends React.Component {
         details.fixMatrix.value &&
         details.fixMatrix.value.toLowerCase() !== "none"
       ) {
-        console.log("9999999999");
         this.computeWithoutDeclareValue(value);
       }
 
@@ -1187,13 +1184,11 @@ class CreateParcel extends React.Component {
         },
       };
       const discount = { ...details.discount, ...{ value, accepted: true } };
-      console.log("====>>discount", value);
       details = { ...details, ...{ discount, additionNote } };
       this.setState({ details }, () => this.updateTotalShippingCost());
     }
 
     if (name === "associateFixPrice") {
-      console.log("associateFixPrice value", value);
       const associateFixPrice = {
         ...details.associateFixPrice,
         ...{ value, accepted: true },
@@ -1520,7 +1515,6 @@ class CreateParcel extends React.Component {
           weight,
           declaredValue
         ).then((e) => {
-          console.log("onConnectingRoutesComputation", e);
           const { data, success, errorCode } = e.data;
           if (errorCode) {
             this.setState(
