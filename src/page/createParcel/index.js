@@ -404,8 +404,8 @@ class CreateParcel extends React.Component {
     };
     this.userProfileObject = UserProfile;
     //this.getConvinienceFee = debounce(this.getConvinienceFee, 1000);
-    this.computePrice = debounce(this.computePrice, 1000);
-    this.getMatrixFare = debounce(this.getMatrixFare, 1000);
+    //this.computePrice = debounce(this.computePrice, 1000);
+    //this.getMatrixFare = debounce(this.getMatrixFare, 1000);
     this.printEl = React.createRef();
 
     window.addEventListener("resize", (e) => {
@@ -1091,11 +1091,19 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "connectingRoutes") {
+
+      const associateFixPrice = {...details.associateFixPrice};
+      associateFixPrice.value = undefined;
+      associateFixPrice.options = [];
+      //details.associateFixPrice = associateFixPrice;
+
       const connectingRoutes = {
         ...details.connectingRoutes,
         ...{ value, accepted: true },
       };
-      details = { ...details, ...{ connectingRoutes } };
+
+      details = { ...details, ...{ connectingRoutes, associateFixPrice } };
+      
       this.getMatrixValue(
         this.state.details.connectingCompany.value,
         this.state.details.connectingRoutes.options.filter((e) => e.end)[0]
@@ -1126,14 +1134,25 @@ class CreateParcel extends React.Component {
       const selectedDestination = details.destination.options.filter(
         (e) => e.value === value
       )[0];
-      const destination = {
+
+      let destination = {
         ...details.destination,
         ...{ value, accepted: true },
       };
 
+      let fixMatrix = {...details.fixMatrix}
+      fixMatrix.value = undefined;
+      fixMatrix.options = []
+      details.fixMatrix = fixMatrix
+
+      let description = {...details.description}
+      description.value=undefined;
+      details.description = description;
+
       details = { ...details, ...{ destination } };
       this.setState({ details, selectedDestination });
 
+    
       MatrixService.getMatrix({
         busCompanyId: this.userProfileObject.getBusCompanyId(),
         origin: this.userProfileObject.getAssignedStationId(),
@@ -1144,7 +1163,7 @@ class CreateParcel extends React.Component {
           let result = (data &&
             data.stringValues &&
             JSON.parse(data.stringValues)) || { matrix: [], fixMatrix: [] };
-          let details = { ...this.state.details };
+            let details = { ...this.state.details };
 
           if (Array.isArray(result)) {
             details.fixMatrix = {
