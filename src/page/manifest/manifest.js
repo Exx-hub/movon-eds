@@ -7,14 +7,9 @@ import {
   Col,
   Select,
   Skeleton,
-  Space,
   notification,
   AutoComplete,
-  Pagination,
-  Menu,
-  Tag,
-  Divider,
-  Dropdown
+  Pagination
 } from "antd";
 import {
   openNotificationWithIcon,
@@ -118,7 +113,6 @@ class Manifest extends React.Component {
     try {
       ManifestService.getRoutes().then((e) => {
         const { errorCode, success, data } = e.data;
-        console.log(e.data)
         if (errorCode) {
           this.handleErrorNotification(errorCode);
         } else {
@@ -366,9 +360,9 @@ class Manifest extends React.Component {
             onChange={(page) =>{
               this.setState({ page: page -1 }, ()=>{
                 const selectedRoute = this.state.selected;
-                if (selectedRoute) {
-                  this.getManifestByDestination(selectedRoute.start, selectedRoute.end);
-                }
+                const start = (selectedRoute && selectedRoute.start) ||  null
+                const end = (selectedRoute && selectedRoute.end) ||  null
+                this.getManifestByDestination(start, end);
               })
             }}
             defaultCurrent={this.state.page}
@@ -405,7 +399,6 @@ class Manifest extends React.Component {
           action="Check In"
           handleCancel={()=>this.setState({selectedRecord:undefined, visibleCheckIn:false})}
           handleOk={()=>{
-            console.log(this.state.selectedRecord)
             const tripId = this.state.selectedRecord.tripId._id
             const selectedRoute = this.state.SelectedRecord;
             const start = (selectedRoute && selectedRoute.start) || null;
