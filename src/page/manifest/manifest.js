@@ -61,8 +61,8 @@ const TableRoutesView = (props) => {
           record.status && <>
           <Button style={{fontSize:'10px'}} onClick={()=>props.onViewClick(record)}>View</Button>
           <Button style={{fontSize:'10px'}} onClick={()=>props.onPrint(record)}>Print</Button>
-          {(record && (record.status.filter(e => e === 1 )).length > 0) && <Button style={{fontSize:'10px'}} onClick={()=>props.onCheckIn(record)}>Check-In</Button>}
-          {(record.status.filter(e => e === 2 && e !== 1).length > 0) && <Button style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
+          {(record && (record.status.filter(e => e === 1 )).length > 0) && <Button disabled={record.disabled} style={{fontSize:'10px'}} onClick={()=>props.onCheckIn(record)}>Check-In</Button>}
+          {(record.status.filter(e => e === 2 && e !== 1).length > 0) && <Button disabled={record.disabled} style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
           </>
         }
         </div>
@@ -100,7 +100,8 @@ class Manifest extends React.Component {
     visibleCheckIn:false,
     visibleArrive:false,
     disabledArrive:false,
-    disabledCheckIn:false
+    disabledCheckIn:false,
+    selectedRecord:undefined
   };
 
   constructor(props){
@@ -142,7 +143,7 @@ class Manifest extends React.Component {
 
           this.setState({
             routes: data,
-            selectedRoute: data[Number(routesIndex || 0)],
+            selectedRoute: undefined,
             routesList,
             tempDestinationList,
           });
@@ -184,12 +185,39 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
+        console.log("getManifestDateRange",e)
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState({
             listOfTripDates: data[0].data || [],
             fetching: false,
             totalRecords: (data && Array.isArray(data[0].pageInfo) && data[0].pageInfo.length > 0 && data[0].pageInfo[0].count) || 0
+          },()=>{
+            if (!this.state.listOfTripDates) {
+              return null;
+            }
+        
+              let _data = this.state.listOfTripDates.map((e, i) => {
+              let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
+              const endStationName = (name && name.endStationName) || ""
+              const startStationName = (name && name.startStationName) || "";
+        
+              return {
+                key: i,
+                tripId: e._id,
+                date: moment(e.date).subtract(8,"hours").format("MMMM DD, YYYY"),
+                count: e.count,
+                startStationName,
+                endStationName,
+                startStationId: e.startStation,
+                endStationId: e.endStation,
+                status: e.status,
+                showModalCheckIn:false,
+                showModalArrived:false,
+                disabled:false
+              };
+            });
+            this.setState({dataSource:_data})
           });
           return;
         }
@@ -233,7 +261,7 @@ class Manifest extends React.Component {
       return null;
     }
 
-    return this.state.listOfTripDates.map((e, i) => {
+    let _data = this.state.listOfTripDates.map((e, i) => {
       let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
       const endStationName = (name && name.endStationName) || ""
       const startStationName = (name && name.startStationName) || "";
@@ -247,9 +275,11 @@ class Manifest extends React.Component {
         endStationName,
         startStationId: e.startStation,
         endStationId: e.endStation,
-        status: e.status
+        status: e.status,
+        showModal:false
       };
     });
+    return _data;
   };
 
   onChangeDatePicker = (date) => {
@@ -257,7 +287,7 @@ class Manifest extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay }, () => {
+      this.setState({ startDay, endDay, page:1 }, () => {
         const selectedRoute = this.state.selected;
         const start = (selectedRoute && selectedRoute.start) || null;
         const end = (selectedRoute && selectedRoute.end) || null;
@@ -333,10 +363,20 @@ class Manifest extends React.Component {
             <TableRoutesView
               routes={routes}
               pagination={false}
-              dataSource={this.dataSource()}
+              dataSource={this.state.dataSource}
               onChange={this.onChangeTable}
-              onCheckIn={(data)=>{this.setState({visibleCheckIn:true, selectedRecord:data})}}
-              onArrived={(data)=> {this.setState({visibleArrive:true, selectedRecord:data})}}
+              onCheckIn={(data)=>{
+                const selectedRecord={...data};
+                selectedRecord.showModalCheckIn = true;
+                selectedRecord.disabled = false;
+                this.setState({selectedRecord})
+              }}
+              onArrived={(data)=> {
+                const selectedRecord={...data};
+                selectedRecord.showModalArrived = true;
+                selectedRecord.disabled = false;
+                this.setState({selectedRecord})
+              }}
               onPrint={(data) =>
                 this.props.history.push(alterPath("/manifest/print"), {
                   date: data.date,
@@ -371,46 +411,66 @@ class Manifest extends React.Component {
           />
         </div>)}
         <PromptModal
-          visible={this.state.visibleArrive}
+          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalArrived) || false}
           title="Are you sure you want to arrived?"
           message="Press OK to change the status to received"
-          disabled={this.state.disabledArrive}
+          disabled={Boolean((this.state.selectedRecord && this.state.selectedRecord.disabled) || false)}
           buttonType="primary"
           action="Arrive"
           handleCancel={()=>this.setState({selectedRecord:undefined, visibleArrive:false})}
           handleOk={()=>{
-            const tripId = this.state.selectedRecord.tripId._id
-            const selectedRoute = this.state.SelectedRecord;
-            const start = (selectedRoute && selectedRoute.start) || null;
-            const end = (selectedRoute && selectedRoute.end) || null;
+            let selectedRecord = {...this.state.selectedRecord}
+            let dataSource = [...this.state.dataSource]
+
+            const index = dataSource.findIndex(e=>e.key === selectedRecord.key)
+            selectedRecord.showModalArrived=false;
+            selectedRecord.disabled=true;
+            dataSource[index] = selectedRecord;
+
+            const tripId = selectedRecord.tripId._id
+            this.setState({selectedRecord,dataSource})
+
             ManifestService.arriveAllParcel(tripId)
             .then(e=>{
               this.setState({visibleArrive:false, disabledArrive:true, selectedRecord:undefined})
+              const selectedRoute = this.state.selectedRoute;
+              const start = (selectedRoute && selectedRoute.start) || null;
+              const end = (selectedRoute && selectedRoute.end) || null;
               this.getManifestByDestination(start,end)
             })
           }} />
 
           <PromptModal
           onEdit={false}
-          visible={this.state.visibleCheckIn}
+          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalCheckIn) || false}
           title="Are you sure you want to check-in?"
           message="Press OK to change the status to in-transit"
           buttonType="primary"
           action="Check In"
           handleCancel={()=>this.setState({selectedRecord:undefined, visibleCheckIn:false})}
           handleOk={()=>{
-            const tripId = this.state.selectedRecord.tripId._id
-            const selectedRoute = this.state.SelectedRecord;
-            const start = (selectedRoute && selectedRoute.start) || null;
-            const end = (selectedRoute && selectedRoute.end) || null;
+            let selectedRecord = {...this.state.selectedRecord}
+            let dataSource = [...this.state.dataSource]
+
+            const index = dataSource.findIndex(e=>e.key === selectedRecord.key)
+            selectedRecord.showModalCheckIn=false;
+            selectedRecord.disabled=true;
+            dataSource[index] = selectedRecord;
+
+            const tripId = selectedRecord.tripId._id
+            this.setState({selectedRecord,dataSource})
 
             ManifestService.checkInAllParcel(tripId)
             .then(e=>{
-              this.setState({visibleCheckIn:false, disabledCheckIn:true, selectedRecord:undefined})
+              this.setState({visibleCheckIn:false, disabledCheckIn:false, selectedRecord:undefined})
+              const selectedRoute = this.state.selectedRoute;
+              const start = (selectedRoute && selectedRoute.start) || null;
+              const end = (selectedRoute && selectedRoute.end) || null;
+
               this.getManifestByDestination(start,end)
             })
           }}
-          disabled={this.state.disabledCheckIn}
+          disabled={Boolean((this.state.selectedRecord && this.state.selectedRecord.disabled) || false)}
           />
       </div>
     );
