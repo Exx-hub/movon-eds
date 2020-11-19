@@ -41,7 +41,16 @@
     .delivery-express-section{
       display: flex;
       margin-bottom: 2rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
   
+      .version{
+        font-size: 13px;
+        font-weight: bold;
+        color: white;
+      }
+
       .txt-delivery-express{
         margin: 0 auto;
         font-size: 20px;

@@ -7,6 +7,7 @@ import User from '../../service/User';
 import { openNotificationWithIcon, alterPath } from '../../utility'
 import './login.scss'
 import {UserProfile} from '../../utility'
+import {config} from '../../config';
 
 function Login(props) {
   const [state, setState] = React.useState({
@@ -81,6 +82,7 @@ function Login(props) {
           </div>
           <div className="delivery-express-section">
             <span className="txt-delivery-express">Express Delivery | Web Portal</span>
+            <span className="version">version {config.version.build}</span>
           </div>
 
           <Space direction="vertical" style={{ width: '100%' }}>
