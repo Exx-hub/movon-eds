@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.6(22)'
+        build: '1.2.7(23)'
     },
-    changeLogs: `added merchant's copy to ticket`
+    changeLogs: `fixed manifest search issue`
 
 }
 

@@ -196,12 +196,12 @@ class Manifest extends React.Component {
             if (!this.state.listOfTripDates) {
               return null;
             }
-        
+
               let _data = this.state.listOfTripDates.map((e, i) => {
               let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
               const endStationName = (name && name.endStationName) || ""
               const startStationName = (name && name.startStationName) || "";
-        
+
               return {
                 key: i,
                 tripId: e._id,
@@ -300,10 +300,10 @@ class Manifest extends React.Component {
     const data = this.state.routesList.options;
     const toSearch = el.toLowerCase();
     const tempDestinationList = data
-      .filter((e) => {
-        return e.name.toLowerCase().includes(toSearch);
-      })
-      .map((e) => e.name);
+    .filter((e) => {
+      return e.name.toLowerCase().includes(toSearch);
+    })
+    .map((e) => e.name);
     this.setState({ tempDestinationList });
   };
 
@@ -332,14 +332,16 @@ class Manifest extends React.Component {
             <AutoComplete
               dataSource={this.state.tempDestinationList}
               style={{ width: "100%" }}
-              onSelect={(item) => {
+              onChange={(item) => {
                 let selected = this.state.routes.find(
                   (e) => e.endStationName === item
                 );
                 if (selected) {
                   this.setState({ selected }, () =>
-                    this.getManifestByDestination(selected.start, selected.end)
+                    this.getManifestByDestination(selected.start, selected.end),
                   );
+                } else {
+                  this.getManifestByDestination(null, null);
                 }
               }}
               onSearch={(e) => this.doSearch(e)}
