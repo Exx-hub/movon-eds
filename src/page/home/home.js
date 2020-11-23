@@ -8,11 +8,12 @@ import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
-import About from '../about';
-import {EditUserProfileModule,ViewUserProfileModule} from '../userProfileModule'
-import { PromptModal } from '../../component/modal';
-
-
+import About from "../about";
+import {
+  EditUserProfileModule,
+  ViewUserProfileModule,
+} from "../userProfileModule";
+import { PromptModal } from "../../component/modal";
 
 import moment from "moment";
 
@@ -33,7 +34,7 @@ import {
   BarChartOutlined,
   SearchOutlined,
   InboxOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 
 const { Header, Content, Sider } = Layout;
@@ -232,13 +233,15 @@ function Home(props) {
           destination: alterPath("/drop-down-logout"),
           icon: () => <PoweroffOutlined />,
           // action: () => userProfileObject.logout(User),
-          action: () => {setVisibleLogout(true)}
+          action: () => {
+            setVisibleLogout(true);
+          },
         },
         {
           key: "about",
           destination: alterPath("/about"),
           action: () => {},
-        }
+        },
       ]);
     }
   }, [menuData, userProfileObject]);
@@ -317,21 +320,15 @@ function Home(props) {
               <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
                 Search
               </Menu.Item>
-              <Menu.Item key="transaction-parcel" icon={<SnippetsOutlined />}>
-                Transactions
-              </Menu.Item>
             </SubMenu>
 
-            <SubMenu key="manifest" icon={<InboxOutlined />} title="Manifest">
-             {
-              // <Menu.Item key="manifest-create" icon={<AppstoreAddOutlined />}>
-              //   Create
-              // </Menu.Item>
-            }
-              <Menu.Item key="manifest-report" icon={<FileSearchOutlined />}>
-                View
-              </Menu.Item>
-            </SubMenu>
+            <Menu.Item key="manifest-report" icon={<InboxOutlined />}>
+              Manifest
+            </Menu.Item>
+
+            <Menu.Item key="transaction-parcel" icon={<SnippetsOutlined />}>
+              Void Transactions
+            </Menu.Item>
 
             <SubMenu
               key="sales-report"
@@ -366,7 +363,6 @@ function Home(props) {
             <Menu.Item key="about" icon={<InfoCircleOutlined />}>
               About
             </Menu.Item>
-
           </Menu>
         </Sider>
         <Layout>
@@ -416,15 +412,15 @@ function Home(props) {
                 />
               </Route>
 
-              <Route exact={true} path={alterPath('/user-profile')}>
-                <ViewUserProfileModule {...props}/>
+              <Route exact={true} path={alterPath("/user-profile")}>
+                <ViewUserProfileModule {...props} />
               </Route>
 
-              <Route exact={true} path={alterPath('/user-profile/edit')}>
-                <EditUserProfileModule {...props}/>
+              <Route exact={true} path={alterPath("/user-profile/edit")}>
+                <EditUserProfileModule {...props} />
               </Route>
 
-              <Route path={alterPath('/report/sales/vli-bitsi')}>
+              <Route path={alterPath("/report/sales/vli-bitsi")}>
                 <SalesReport
                   source={tableSourceVliBitsi}
                   isP2P={true}
@@ -443,16 +439,17 @@ function Home(props) {
         </Layout>
       </Layout>
       <PromptModal
-          visible={visibleLogout}
-          title="Are you sure you want to log out?"
-          message="Changes you made may not be saved."
-          buttonType="danger"
-          action="Logout"
-          handleCancel={()=>setVisibleLogout(false)}
-          handleOk={() => {
-            userProfileObject.logout(User)
-            props.history.push(alterPath("/"))
-          }} />
+        visible={visibleLogout}
+        title="Are you sure you want to log out?"
+        message="Changes you made may not be saved."
+        buttonType="danger"
+        action="Logout"
+        handleCancel={() => setVisibleLogout(false)}
+        handleOk={() => {
+          userProfileObject.logout(User);
+          props.history.push(alterPath("/"));
+        }}
+      />
     </Layout>
   );
 }

@@ -129,6 +129,7 @@ class SalesReport extends React.Component {
   };
 
   parseParcel = (dataResult) => {
+    console.log('getParcel',dataResult)
     try {
       const { parcels, errorCode, success } = dataResult.data;
       if (success && success === false) {
