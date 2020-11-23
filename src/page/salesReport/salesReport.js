@@ -68,6 +68,9 @@ class SalesReport extends React.Component {
     this.printEl = React.createRef();
     Promise.all([ManifestService.getRoutes(), this.getParcel()]).then(
       (resonses) => {
+
+        console.log('responses',resonses)
+
         if (resonses[0]) {
           const { data, errorCode } = resonses[0].data;
 
@@ -129,6 +132,7 @@ class SalesReport extends React.Component {
   };
 
   parseParcel = (dataResult) => {
+    console.log('getParcel',dataResult)
     try {
       const { parcels, errorCode, success } = dataResult.data;
       if (success && success === false) {

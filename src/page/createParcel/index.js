@@ -815,6 +815,9 @@ class CreateParcel extends React.Component {
   };
 
   computePrice = () => {
+    console.log('passss===>>computePrice')
+    console.log('passss===>>computePrice')
+    console.log('passss===>>computePrice')
     if (
       this.state.details.fixMatrix.value &&
       this.state.details.fixMatrix.value !== "none"
@@ -881,25 +884,7 @@ class CreateParcel extends React.Component {
           details = { ...details, ...{ shippingCost } };
           details = { ...details, ...{ packageInsurance } };
 
-          this.setState(
-            {
-              lengthRate: lengthRate.toFixed(2),
-              details,
-              //details: { ...details, ...{ shippingCost } },
-            },
-            () => {
-              // const shippingCost = parseFloat(
-              //   this.state.details.shippingCost.value
-              // );
-              // const packageInsurance = parseFloat(
-              //   this.state.details.packageInsurance.value
-              // );
-              // const lengthRate = parseFloat(this.state.lengthRate);
-              // let total = shippingCost + packageInsurance + lengthRate;
-              // this.getConvinienceFee(0, total);
-              // this.updateTotalShippingCost();
-            }
-          );
+          this.setState({lengthRate: lengthRate.toFixed(2),details,},() => this.updateTotalShippingCost());
         } else {
           this.handleErrorNotification(errorCode);
         }
