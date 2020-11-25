@@ -307,20 +307,19 @@ function Home(props) {
           <Menu
             style={{ marginTop: "1rem" }}
             theme="light"
-            defaultOpenKeys={["parcel"]}
+            defaultOpenKeys={[]}
             mode="inline"
             onClick={(e) => {
               onNavigationMenuChange(e);
             }}
           >
-            <SubMenu key="parcel" icon={<InboxOutlined />} title="Parcel">
-              <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
-                Create
-              </Menu.Item>
-              <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
-                Search
-              </Menu.Item>
-            </SubMenu>
+            <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
+              Search
+            </Menu.Item>
+
+            <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
+            Create Parcel
+            </Menu.Item>
 
             <Menu.Item key="manifest-report" icon={<InboxOutlined />}>
               Manifest
