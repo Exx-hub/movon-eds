@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.7(23)'
+        build: '1.2.7(24)'
     },
-    changeLogs: `fixed manifest search issue`
+    changeLogs: `hid matrix submenu and disabled matrix action buttons`
 
 }
 
