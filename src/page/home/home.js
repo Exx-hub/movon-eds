@@ -345,7 +345,8 @@ function Home(props) {
               )}
             </SubMenu>
 
-            <SubMenu
+            {/* Temporary Hide Matrix */}
+            {/* <SubMenu
               key="matrix"
               icon={<FileMarkdownOutlined />}
               title="Matrix"
@@ -358,7 +359,7 @@ function Home(props) {
                   Victory Liners
                 </Menu.Item>
               )}
-            </SubMenu>
+            </SubMenu> */}
 
             <Menu.Item key="about" icon={<InfoCircleOutlined />}>
               About
