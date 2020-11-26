@@ -16,24 +16,7 @@ function About(props) {
   return (
     <Layout className="about-main">
       <Header className="home-header-view">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          <div>
-            <Button
-              type="link"
-              onClick={() => {
-                props.history.push(alterPath("/"));
-              }}
-            >
-              <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
-              <span style={{ fontSize: "20px", color: "#fff" }}>Home</span>
-            </Button>
-          </div>
-        </div>
+        <Button className="back-button-header" type="link" onClick={() => props.history.push(alterPath("/"))}> <ArrowLeftOutlined /> Home </Button>
       </Header>
       
       <Layout>
@@ -41,6 +24,9 @@ function About(props) {
         <div>
           <div className="about-img">
             <img className="img-movon-logo" src={logo} alt="movon-logo" />
+            <div className="versionContainer">
+              <span className="version text">{process.env.NODE_ENV === "development" ? process.env.NODE_ENV : "" } build: {config.version.build}</span>
+            </div>
           </div>
           <div className="about-text">
             <p className="title">About Us</p>
@@ -66,9 +52,7 @@ function About(props) {
       </Layout>
     
       <Footer className="footer">
-        <div className="versionContainer">
-          <span className="version text">{process.env.NODE_ENV === "development" ? process.env.NODE_ENV : "" } build: {config.version.build}</span>
-        </div>
+        
       </Footer>
     </Layout>
   );

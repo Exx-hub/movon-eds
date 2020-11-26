@@ -167,7 +167,7 @@ function Home(props) {
   const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
 
-  console.info("UserProfile",UserProfile.getRole())
+  console.info("UserProfile", UserProfile.getRole());
 
   React.useEffect(() => {
     if (menuData.length < 1) {
@@ -304,6 +304,7 @@ function Home(props) {
       </Header>
       <Layout style={{ background: "yellow" }}>
         <Sider width={250} className="home-sider">
+          <div className="slider-container">
           <Menu
             style={{ marginTop: "1rem" }}
             theme="light"
@@ -361,35 +362,12 @@ function Home(props) {
               </SubMenu>
             )}
           </Menu>
+          <div className="version"><p>{process.env.NODE_ENV === "development" ? process.env.NODE_ENV : ""} {config.version.build}</p></div>
+          </div>
         </Sider>
         <Layout>
           <Content className={"home-content"}>
             <Switch>
-              {
-                // <Route path={alterPath("/about")}>
-                // <About {...props} />
-                // </Route>
-              }
-
-              {Number(UserProfile.getRole()) ===
-                Number(config.role["staff-admin"]) && (
-                <>
-                  <Route path={alterPath("/matrix/own")}>
-                    <PriceMatrix {...props} />
-                  </Route>
-                  <Route path={alterPath("/matrix/victory-liners")}>
-                    <VictoryLinerMatrix {...props} />
-                  </Route>
-                  <Route path={alterPath("/report/sales/vli-bitsi")}>
-                  <SalesReport
-                    source={tableSourceVliBitsi}
-                    isP2P={true}
-                    {...props}
-                    title="SUMMARY OF VLI-BITSI SALES"
-                  />
-              </Route>
-                </>
-              )}
 
               <Route path={alterPath("/transaction-parcel")}>
                 <Transaction {...props} />
@@ -435,7 +413,12 @@ function Home(props) {
                 <SearchModule {...props} />
               </Route>
 
+              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/own")}><PriceMatrix {...props} /></Route>) }
+              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/victory-liners")}><VictoryLinerMatrix {...props} /></Route>) }
+              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/report/sales/vli-bitsi")}><SalesReport source={tableSourceVliBitsi} isP2P={true} {...props} title="SUMMARY OF VLI-BITSI SALES" /></Route>) }
+          
               <Redirect from="/" to={alterPath("/search-parcel")} />
+
             </Switch>
           </Content>
         </Layout>
@@ -456,4 +439,3 @@ function Home(props) {
   );
 }
 export default Home;
- 

@@ -3,30 +3,47 @@
   display: flex;
   overflow: scroll;
 
-  .home-header-view{
-    display: flex;
-    align-items: center;
+  .back-button-header{
+    font-size: 20px;
+    color: white;
   }
 
+
+  
   .container {
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 80vh;
     justify-content: space-between;
     align-items: center;
     background-color: white;
 
     .about-img {
+      margin-top: 5rem;
       display:flex;
+      flex-direction: column;
       width: 100%;
       margin-bottom: 1.5rem;
-      margin-top: 1rem;
       justify-content: center;
+      align-items: center;
 
       .img-movon-logo{
         width: 20rem;
         height: 100%;
+      }
+
+      .versionContainer{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-self: center;
+
+        .version {
+          text-align: center;
+          font-size: 1.4rem;
+          font-weight: 200;
+          color: rgba($color: gray, $alpha: .8);
+        }
       }
     }
 
@@ -37,12 +54,12 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      padding-left: 15rem;
-      padding-right: 15rem;
+      padding-left: 5rem;
+      padding-right: 5rem;
   
       p {
         font-weight: 200;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         text-align: center;;
       }
   
@@ -50,19 +67,6 @@
         font-size: 3rem;
         font-weight: 200;
       }
-    }
-  }
-
-  .versionContainer{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-self: center;
-    .version {
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 200;
-      color: rgba($color: gray, $alpha: .5);
     }
   }
 
