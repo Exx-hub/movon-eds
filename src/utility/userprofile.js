@@ -1,3 +1,5 @@
+import { config } from "../config";
+
 class UserProfileClass{
 
   user = undefined
@@ -159,6 +161,13 @@ class UserProfileClass{
       return count;
     }
     return 1;
+  }
+
+  getRole(){
+    if(this.user){
+      return this.user.role || config.role.staff;
+    }
+    return config.role.staff;
   }
 }
 

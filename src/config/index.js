@@ -20,6 +20,10 @@ export const config = {
         2:"pending",
         3:"rejected"
     },
+    role:{
+        "staff": 1,
+        "staff-admin": 2
+    },
     ticket:{
         totalCopy:6
     },

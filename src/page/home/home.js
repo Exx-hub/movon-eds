@@ -8,7 +8,6 @@ import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
-import About from "../about";
 import {
   EditUserProfileModule,
   ViewUserProfileModule,
@@ -36,6 +35,7 @@ import {
   InboxOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
+import { config } from "../../config";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -167,6 +167,8 @@ function Home(props) {
   const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
 
+  console.info("UserProfile",UserProfile.getRole())
+
   React.useEffect(() => {
     if (menuData.length < 1) {
       setMenuData([
@@ -280,23 +282,25 @@ function Home(props) {
   return (
     <Layout className="home-page-container">
       <Header className="home-header-view">
-      <div><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></div>
-      <div>
-      {userProfileObject.getUser() && (
-        <div className={"header-nav"}>
-        <Dropdown overlay={menu} trigger={["click"]}>
-          <Button
-            className={"home-nav-link"}
-            type="link"
-            onClick={(e) => e.preventDefault()}
-          >
-            Hi {userProfileObject.getUser().personalInfo.firstName}!
-            <UserOutlined style={{ fontSize: "24px" }} />
-          </Button>
-        </Dropdown>
-      </div>
-      )}
-      </div>
+        <div>
+          <img src={movonLogo} style={{ height: "50px" }} alt="logo" />
+        </div>
+        <div>
+          {userProfileObject.getUser() && (
+            <div className={"header-nav"}>
+              <Dropdown overlay={menu} trigger={["click"]}>
+                <Button
+                  className={"home-nav-link"}
+                  type="link"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Hi {userProfileObject.getUser().personalInfo.firstName}!
+                  <UserOutlined style={{ fontSize: "24px" }} />
+                </Button>
+              </Dropdown>
+            </div>
+          )}
+        </div>
       </Header>
       <Layout style={{ background: "yellow" }}>
         <Sider width={250} className="home-sider">
@@ -314,7 +318,7 @@ function Home(props) {
             </Menu.Item>
 
             <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
-            Create Parcel
+              Create Parcel
             </Menu.Item>
 
             <Menu.Item key="manifest-report" icon={<InboxOutlined />}>
@@ -333,51 +337,62 @@ function Home(props) {
               <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>
                 Daily Sales
               </Menu.Item>
-              {Boolean( false && userProfileObject.isIsarogLiners()) && (
+              {Boolean(false && userProfileObject.isIsarogLiners()) && (
                 <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>
                   VLI - BITSI Sales
                 </Menu.Item>
               )}
             </SubMenu>
 
-            {/* Temporary Hide Matrix */}
-            {/* <SubMenu
-              key="matrix"
-              icon={<FileMarkdownOutlined />}
-              title="Matrix"
-            >
-              <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
-                {userProfileObject.getBusCompany().name}
-              </Menu.Item>
-              {Boolean(userProfileObject.isIsarogLiners()) && (
-                <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
-                  Victory Liners
+            {Number(UserProfile.getRole()) === 2 && (
+              <SubMenu
+                key="matrix"
+                icon={<FileMarkdownOutlined />}
+                title="Matrix"
+              >
+                <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
+                  {userProfileObject.getBusCompany().name}
                 </Menu.Item>
-              )}
-            </SubMenu> */}
-
+                {Boolean(userProfileObject.isIsarogLiners()) && (
+                  <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
+                    Victory Liners
+                  </Menu.Item>
+                )}
+              </SubMenu>
+            )}
           </Menu>
         </Sider>
         <Layout>
           <Content className={"home-content"}>
             <Switch>
-
               {
                 // <Route path={alterPath("/about")}>
                 // <About {...props} />
                 // </Route>
               }
 
-              <Route path={alterPath("/matrix/own")}>
-                <PriceMatrix {...props} />
+              {Number(UserProfile.getRole()) ===
+                Number(config.role["staff-admin"]) && (
+                <>
+                  <Route path={alterPath("/matrix/own")}>
+                    <PriceMatrix {...props} />
+                  </Route>
+                  <Route path={alterPath("/matrix/victory-liners")}>
+                    <VictoryLinerMatrix {...props} />
+                  </Route>
+                  <Route path={alterPath("/report/sales/vli-bitsi")}>
+                  <SalesReport
+                    source={tableSourceVliBitsi}
+                    isP2P={true}
+                    {...props}
+                    title="SUMMARY OF VLI-BITSI SALES"
+                  />
               </Route>
+                </>
+              )}
 
               <Route path={alterPath("/transaction-parcel")}>
                 <Transaction {...props} />
-              </Route>
-
-              <Route path={alterPath("/matrix/victory-liners")}>
-                <VictoryLinerMatrix {...props} />
               </Route>
 
               <Route path={alterPath("/manifest/list")}>
@@ -414,15 +429,6 @@ function Home(props) {
 
               <Route exact={true} path={alterPath("/user-profile/edit")}>
                 <EditUserProfileModule {...props} />
-              </Route>
-
-              <Route path={alterPath("/report/sales/vli-bitsi")}>
-                <SalesReport
-                  source={tableSourceVliBitsi}
-                  isP2P={true}
-                  {...props}
-                  title="SUMMARY OF VLI-BITSI SALES"
-                />
               </Route>
 
               <Route path={alterPath("/search-parcel")}>
