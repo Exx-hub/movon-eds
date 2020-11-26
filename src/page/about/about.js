@@ -67,7 +67,7 @@ function About(props) {
     
       <Footer className="footer">
         <div className="versionContainer">
-          <span className="version text">Version: {config.version.build}</span>
+          <span className="version text">{process.env.NODE_ENV === "development" ? process.env.NODE_ENV : "" } build: {config.version.build}</span>
         </div>
       </Footer>
     </Layout>
