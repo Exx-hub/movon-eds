@@ -365,9 +365,12 @@ function Home(props) {
         <Layout>
           <Content className={"home-content"}>
             <Switch>
-              <Route path={alterPath("/about")}>
-                <About {...props} />
-              </Route>
+
+              {
+                // <Route path={alterPath("/about")}>
+                // <About {...props} />
+                // </Route>
+              }
 
               <Route path={alterPath("/matrix/own")}>
                 <PriceMatrix {...props} />
