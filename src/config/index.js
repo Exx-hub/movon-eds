@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.7(27)'
+        build: '1.2.7(28)'
     },
-    changeLogs: `removed merchant's copy to fivestar stickers`
+    changeLogs: `removed merchant's copy of fivestar stickers`
 
 }
 
