@@ -12,6 +12,8 @@ import './App.scss';
 
 function App() {
 
+  console.log(process.env)
+
   const [userProfileObject] = React.useState(UserProfile)
   React.useEffect(() => {
 

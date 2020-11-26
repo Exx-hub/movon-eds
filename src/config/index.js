@@ -28,7 +28,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.7(25)'
+        build: '1.2.7(26)'
     },
     changeLogs: `transferred about menu item to the profile dropdown`
 

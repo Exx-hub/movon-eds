@@ -280,27 +280,23 @@ function Home(props) {
   return (
     <Layout className="home-page-container">
       <Header className="home-header-view">
-        <Row>
-          <Col span={12} style={{ position: "relative" }}>
-            <img src={movonLogo} style={{ height: "50px" }} alt="logo" />
-          </Col>
-          {userProfileObject.getUser() && (
-            <Col span={12}>
-              <div className={"header-nav"}>
-                <Dropdown overlay={menu} trigger={["click"]}>
-                  <Button
-                    className={"home-nav-link"}
-                    type="link"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    Hi {userProfileObject.getUser().personalInfo.firstName}!
-                    <UserOutlined style={{ fontSize: "24px" }} />
-                  </Button>
-                </Dropdown>
-              </div>
-            </Col>
-          )}
-        </Row>
+      <div><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></div>
+      <div>
+      {userProfileObject.getUser() && (
+        <div className={"header-nav"}>
+        <Dropdown overlay={menu} trigger={["click"]}>
+          <Button
+            className={"home-nav-link"}
+            type="link"
+            onClick={(e) => e.preventDefault()}
+          >
+            Hi {userProfileObject.getUser().personalInfo.firstName}!
+            <UserOutlined style={{ fontSize: "24px" }} />
+          </Button>
+        </Dropdown>
+      </div>
+      )}
+      </div>
       </Header>
       <Layout style={{ background: "yellow" }}>
         <Sider width={250} className="home-sider">
