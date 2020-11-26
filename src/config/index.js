@@ -28,9 +28,9 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.7(24)'
+        build: '1.2.7(25)'
     },
-    changeLogs: `hid matrix submenu and disabled matrix action buttons`
+    changeLogs: `transferred about menu item to the profile dropdown`
 
 }
 

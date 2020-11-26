@@ -218,14 +218,14 @@ function Home(props) {
           icon: () => <UserOutlined />,
           action: () => {},
         },
-        // {
-        //   key: "drop-down-setting",
-        //   name: "Setting",
-        //   type: "menu",
-        //   destination: alterPath("/drop-down-setting"),
-        //   icon: () => <SettingOutlined />,
-        //   action: () => {},
-        // },
+        {
+          key: "drop-down-setting",
+          name: "About",
+          type: "menu",
+          destination: alterPath("/about"),
+          icon: () => <InfoCircleOutlined />,
+          action: () => {},
+        },
         {
           key: "drop-down-logout",
           name: "Logout",
@@ -361,9 +361,6 @@ function Home(props) {
               )}
             </SubMenu> */}
 
-            <Menu.Item key="about" icon={<InfoCircleOutlined />}>
-              About
-            </Menu.Item>
           </Menu>
         </Sider>
         <Layout>
