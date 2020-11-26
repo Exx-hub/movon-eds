@@ -235,7 +235,7 @@ class SearchModule extends React.Component {
                 />
               </div>
               {this.state.parcelList.length > 0 && (
-                <div style={{ display: "flex", justifyContent: "center" }}>
+                <div style={{ padding:'.5rem', paddingBottom:'1.5rem', display: "flex", justifyContent: "center" }}>
                   <Pagination
                     onChange={(page) => {
                       this.setState({page});
