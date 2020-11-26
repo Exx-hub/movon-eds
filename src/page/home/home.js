@@ -280,47 +280,42 @@ function Home(props) {
   return (
     <Layout className="home-page-container">
       <Header className="home-header-view">
-        <Row>
-          <Col span={12} style={{ position: "relative" }}>
-            <img src={movonLogo} style={{ height: "50px" }} alt="logo" />
-          </Col>
-          {userProfileObject.getUser() && (
-            <Col span={12}>
-              <div className={"header-nav"}>
-                <Dropdown overlay={menu} trigger={["click"]}>
-                  <Button
-                    className={"home-nav-link"}
-                    type="link"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    Hi {userProfileObject.getUser().personalInfo.firstName}!
-                    <UserOutlined style={{ fontSize: "24px" }} />
-                  </Button>
-                </Dropdown>
-              </div>
-            </Col>
-          )}
-        </Row>
+      <div><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></div>
+      <div>
+      {userProfileObject.getUser() && (
+        <div className={"header-nav"}>
+        <Dropdown overlay={menu} trigger={["click"]}>
+          <Button
+            className={"home-nav-link"}
+            type="link"
+            onClick={(e) => e.preventDefault()}
+          >
+            Hi {userProfileObject.getUser().personalInfo.firstName}!
+            <UserOutlined style={{ fontSize: "24px" }} />
+          </Button>
+        </Dropdown>
+      </div>
+      )}
+      </div>
       </Header>
       <Layout style={{ background: "yellow" }}>
         <Sider width={250} className="home-sider">
           <Menu
             style={{ marginTop: "1rem" }}
             theme="light"
-            defaultOpenKeys={["parcel"]}
+            defaultOpenKeys={[]}
             mode="inline"
             onClick={(e) => {
               onNavigationMenuChange(e);
             }}
           >
-            <SubMenu key="parcel" icon={<InboxOutlined />} title="Parcel">
-              <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
-                Create
-              </Menu.Item>
-              <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
-                Search
-              </Menu.Item>
-            </SubMenu>
+            <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
+              Search
+            </Menu.Item>
+
+            <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
+            Create Parcel
+            </Menu.Item>
 
             <Menu.Item key="manifest-report" icon={<InboxOutlined />}>
               Manifest
@@ -336,9 +331,9 @@ function Home(props) {
               title="Reports"
             >
               <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>
-                Cargo Sales
+                Daily Sales
               </Menu.Item>
-              {Boolean(userProfileObject.isIsarogLiners()) && (
+              {Boolean( false && userProfileObject.isIsarogLiners()) && (
                 <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>
                   VLI - BITSI Sales
                 </Menu.Item>
@@ -366,9 +361,12 @@ function Home(props) {
         <Layout>
           <Content className={"home-content"}>
             <Switch>
-              <Route path={alterPath("/about")}>
-                <About {...props} />
-              </Route>
+
+              {
+                // <Route path={alterPath("/about")}>
+                // <About {...props} />
+                // </Route>
+              }
 
               <Route path={alterPath("/matrix/own")}>
                 <PriceMatrix {...props} />
@@ -452,3 +450,4 @@ function Home(props) {
   );
 }
 export default Home;
+ 
