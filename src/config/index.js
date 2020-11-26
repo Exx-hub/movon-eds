@@ -32,10 +32,10 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        environment:"development",
-        build: '1.2.7(28)'
+        environment:"",
+        build: '1.2.7(29)'
     },
-    changeLogs: `removed merchant's copy of fivestar stickers`
+    changeLogs: `removed merchant's copy of fivestar stickers, improve ui, add version, per accounts, add super user filtering`
 
 }
 
