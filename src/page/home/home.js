@@ -335,9 +335,9 @@ function Home(props) {
               title="Reports"
             >
               <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>
-                Cargo Sales
+                Daily Sales
               </Menu.Item>
-              {Boolean(userProfileObject.isIsarogLiners()) && (
+              {Boolean( false && userProfileObject.isIsarogLiners()) && (
                 <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>
                   VLI - BITSI Sales
                 </Menu.Item>
@@ -454,3 +454,4 @@ function Home(props) {
   );
 }
 export default Home;
+ 
