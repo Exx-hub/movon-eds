@@ -1,12 +1,13 @@
 .home-page-container{
 
-    .home-content{
-        min-height: 90vh !important;
-    }
+    height: 100vh;
     
     .ant-layout-footer{
-        min-height: 15vh !important;
         background: rgba(0, 0, 0, 0.09) !important;
+    }
+
+    .home-body{
+        background-color: red !important;
     }
     
     .header-nav{

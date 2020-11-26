@@ -302,7 +302,7 @@ function Home(props) {
           )}
         </div>
       </Header>
-      <Layout style={{ background: "yellow" }}>
+      <Layout className="home-body">
         <Sider width={250} className="home-sider">
           <div className="slider-container">
           <Menu
