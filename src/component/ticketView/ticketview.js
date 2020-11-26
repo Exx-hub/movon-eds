@@ -120,10 +120,10 @@ const PCopy = (props) => {
     return _view;
   }
   return null;
-}
-;
+};
+
 const MCopy = (props) => {
-  if (props) {
+  if (props.value.busCompanyName === 'Bicol Isarog Trasport System Inc.') {
     const {
       recipientName,
       recipientPhone,

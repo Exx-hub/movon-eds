@@ -34,7 +34,7 @@ export const config = {
     version: {
         build: '1.2.7(26)'
     },
-    changeLogs: `transferred about menu item to the profile dropdown`
+    changeLogs: `removed merchant's copy to fivestar stickers`
 
 }
 
