@@ -362,7 +362,7 @@ function Home(props) {
               </SubMenu>
             )}
           </Menu>
-          <div className="version"><p>{process.env.NODE_ENV === "development" ? process.env.NODE_ENV : ""} {config.version.build}</p></div>
+          <div className="version"><p>{config.version.environment} {config.version.build}</p></div>
           </div>
         </Sider>
         <Layout>

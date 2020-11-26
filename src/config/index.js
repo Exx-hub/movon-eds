@@ -32,7 +32,8 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.7(26)'
+        environment:"development",
+        build: '1.2.7(27)'
     },
     changeLogs: `removed merchant's copy to fivestar stickers`
 

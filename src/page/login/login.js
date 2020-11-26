@@ -82,7 +82,7 @@ function Login(props) {
           </div>
           <div className="delivery-express-section">
             <span className="txt-delivery-express">Express Delivery | Web Portal</span>
-            <span className="version">{process.env.NODE_ENV === "development" ? process.env.NODE_ENV : "" } build {config.version.build}</span>
+            <span className="version">{config.version.environment} {config.version.build}</span>
           </div>
 
           <Space direction="vertical" style={{ width: '100%' }}>
