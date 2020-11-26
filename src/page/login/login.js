@@ -82,7 +82,6 @@ function Login(props) {
           </div>
           <div className="delivery-express-section">
             <span className="txt-delivery-express">Express Delivery | Web Portal</span>
-            <span className="version">version {config.version.build}</span>
           </div>
 
           <Space direction="vertical" style={{ width: '100%' }}>
@@ -118,6 +117,11 @@ function Login(props) {
             </div>
           </Space>
         </Form>
+
+        <div className="version-column">
+          <span className="version">{config.version.environment} build {config.version.build}</span>
+        </div>
+
       </div>
     </div>
   );

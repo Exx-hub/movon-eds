@@ -1,17 +1,13 @@
 .home-page-container{
 
-    .home-header-view{
-        padding-left: 1.5rem !important;
-        padding-Right:1.5rem !important;
-    }
-
-    .home-content{
-        min-height: 90vh !important;
-    }
+    height: 100vh;
     
     .ant-layout-footer{
-        min-height: 15vh !important;
         background: rgba(0, 0, 0, 0.09) !important;
+    }
+
+    .home-body{
+        background-color: red !important;
     }
     
     .header-nav{
@@ -29,5 +25,18 @@
     .home-nav-link{
         color: white !important;
         font-weight: bold !important;
+    }
+
+    .slider-container{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+
+        .version{
+            color: rgba($color: gray, $alpha: .4);
+            text-align: center;
+            font-size: 13px;
+        }
     }
 }

@@ -20,6 +20,10 @@ export const config = {
         2:"pending",
         3:"rejected"
     },
+    role:{
+        "staff": 1,
+        "staff-admin": 2
+    },
     ticket:{
         totalCopy:6
     },
@@ -28,9 +32,10 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        build: '1.2.7(23)'
+        environment:"development",
+        build: '1.2.7(28)'
     },
-    changeLogs: `fixed manifest search issue`
+    changeLogs: `removed merchant's copy of fivestar stickers`
 
 }
 

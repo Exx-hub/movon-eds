@@ -1,53 +1,76 @@
-.about-main {
-  padding: 2rem;
-  display: flex;
-  flex-direction: row;
-  background-color:#fff;
-  height: 100%;
 
+.about-main {
+  display: flex;
+  overflow: scroll;
+
+  .back-button-header{
+    font-size: 20px;
+    color: white;
+  }
+
+
+  
   .container {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
 
     .about-img {
+      margin-top: 5rem;
       display:flex;
       flex-direction: column;
+      width: 100%;
+      margin-bottom: 1.5rem;
       justify-content: center;
       align-items: center;
-      height: 15rem;
-      width: 40rem;
-      align-self: center;
 
       .img-movon-logo{
-        width: 50%;
-        height: 50%;
+        width: 20rem;
+        height: 100%;
+      }
+
+      .versionContainer{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-self: center;
+
+        .version {
+          text-align: center;
+          font-size: 1.4rem;
+          font-weight: 200;
+          color: rgba($color: gray, $alpha: .8);
+        }
       }
     }
-    .version {
-      text-align: center;
-      font-size: 1.1rem;
+
+    .about-text {
+      padding-top: 5rem;
+      display: flex;
+      flex-direction:column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding-left: 5rem;
+      padding-right: 5rem;
+  
+      p {
+        font-weight: 200;
+        font-size: 1.3rem;
+        text-align: center;;
+      }
+  
+      .title{
+        font-size: 3rem;
+        font-weight: 200;
+      }
     }
   }
 
-  .about-text {
-    padding-bottom: 1rem;
-    padding-top: 3rem;
-    display: flex;
-    flex-direction:column;
-    justify-content: flex-start;
-    align-self: flex-start;
-    width: 80%;
-
-    p {
-      font-weight: 200;
-      font-size: 1.1rem;
-    }
-
-    .title{
-      font-size: 3rem;
-      font-weight: 600;
-      color: teal;
-    }
+  .footer{
+    background-color: white;
   }
 }

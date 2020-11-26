@@ -8,7 +8,6 @@ import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
-import About from "../about";
 import {
   EditUserProfileModule,
   ViewUserProfileModule,
@@ -36,6 +35,7 @@ import {
   InboxOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
+import { config } from "../../config";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -167,6 +167,8 @@ function Home(props) {
   const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
 
+  console.info("UserProfile", UserProfile.getRole());
+
   React.useEffect(() => {
     if (menuData.length < 1) {
       setMenuData([
@@ -218,14 +220,14 @@ function Home(props) {
           icon: () => <UserOutlined />,
           action: () => {},
         },
-        // {
-        //   key: "drop-down-setting",
-        //   name: "Setting",
-        //   type: "menu",
-        //   destination: alterPath("/drop-down-setting"),
-        //   icon: () => <SettingOutlined />,
-        //   action: () => {},
-        // },
+        {
+          key: "drop-down-setting",
+          name: "About",
+          type: "menu",
+          destination: alterPath("/about"),
+          icon: () => <InfoCircleOutlined />,
+          action: () => {},
+        },
         {
           key: "drop-down-logout",
           name: "Logout",
@@ -280,47 +282,45 @@ function Home(props) {
   return (
     <Layout className="home-page-container">
       <Header className="home-header-view">
-        <Row>
-          <Col span={12} style={{ position: "relative" }}>
-            <img src={movonLogo} style={{ height: "50px" }} alt="logo" />
-          </Col>
+        <div>
+          <img src={movonLogo} style={{ height: "50px" }} alt="logo" />
+        </div>
+        <div>
           {userProfileObject.getUser() && (
-            <Col span={12}>
-              <div className={"header-nav"}>
-                <Dropdown overlay={menu} trigger={["click"]}>
-                  <Button
-                    className={"home-nav-link"}
-                    type="link"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    Hi {userProfileObject.getUser().personalInfo.firstName}!
-                    <UserOutlined style={{ fontSize: "24px" }} />
-                  </Button>
-                </Dropdown>
-              </div>
-            </Col>
+            <div className={"header-nav"}>
+              <Dropdown overlay={menu} trigger={["click"]}>
+                <Button
+                  className={"home-nav-link"}
+                  type="link"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Hi {userProfileObject.getUser().personalInfo.firstName}!
+                  <UserOutlined style={{ fontSize: "24px" }} />
+                </Button>
+              </Dropdown>
+            </div>
           )}
-        </Row>
+        </div>
       </Header>
-      <Layout style={{ background: "yellow" }}>
+      <Layout className="home-body">
         <Sider width={250} className="home-sider">
+          <div className="slider-container">
           <Menu
             style={{ marginTop: "1rem" }}
             theme="light"
-            defaultOpenKeys={["parcel"]}
+            defaultOpenKeys={[]}
             mode="inline"
             onClick={(e) => {
               onNavigationMenuChange(e);
             }}
           >
-            <SubMenu key="parcel" icon={<InboxOutlined />} title="Parcel">
-              <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
-                Create
-              </Menu.Item>
-              <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
-                Search
-              </Menu.Item>
-            </SubMenu>
+            <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
+              Search
+            </Menu.Item>
+
+            <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
+              Create Parcel
+            </Menu.Item>
 
             <Menu.Item key="manifest-report" icon={<InboxOutlined />}>
               Manifest
@@ -336,52 +336,41 @@ function Home(props) {
               title="Reports"
             >
               <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>
-                Cargo Sales
+                Daily Sales
               </Menu.Item>
-              {Boolean(userProfileObject.isIsarogLiners()) && (
+              {Boolean(false && userProfileObject.isIsarogLiners()) && (
                 <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>
                   VLI - BITSI Sales
                 </Menu.Item>
               )}
             </SubMenu>
 
-            <SubMenu
-              key="matrix"
-              icon={<FileMarkdownOutlined />}
-              title="Matrix"
-            >
-              <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
-                {userProfileObject.getBusCompany().name}
-              </Menu.Item>
-              {Boolean(userProfileObject.isIsarogLiners()) && (
-                <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
-                  Victory Liners
+            {Number(UserProfile.getRole()) === 2 && (
+              <SubMenu
+                key="matrix"
+                icon={<FileMarkdownOutlined />}
+                title="Matrix"
+              >
+                <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
+                  {userProfileObject.getBusCompany().name}
                 </Menu.Item>
-              )}
-            </SubMenu>
-
-            <Menu.Item key="about" icon={<InfoCircleOutlined />}>
-              About
-            </Menu.Item>
+                {Boolean(userProfileObject.isIsarogLiners()) && (
+                  <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
+                    Victory Liners
+                  </Menu.Item>
+                )}
+              </SubMenu>
+            )}
           </Menu>
+          <div className="version"><p>{config.version.environment} build {config.version.build}</p></div>
+          </div>
         </Sider>
         <Layout>
           <Content className={"home-content"}>
             <Switch>
-              <Route path={alterPath("/about")}>
-                <About {...props} />
-              </Route>
-
-              <Route path={alterPath("/matrix/own")}>
-                <PriceMatrix {...props} />
-              </Route>
 
               <Route path={alterPath("/transaction-parcel")}>
                 <Transaction {...props} />
-              </Route>
-
-              <Route path={alterPath("/matrix/victory-liners")}>
-                <VictoryLinerMatrix {...props} />
               </Route>
 
               <Route path={alterPath("/manifest/list")}>
@@ -420,20 +409,16 @@ function Home(props) {
                 <EditUserProfileModule {...props} />
               </Route>
 
-              <Route path={alterPath("/report/sales/vli-bitsi")}>
-                <SalesReport
-                  source={tableSourceVliBitsi}
-                  isP2P={true}
-                  {...props}
-                  title="SUMMARY OF VLI-BITSI SALES"
-                />
-              </Route>
-
               <Route path={alterPath("/search-parcel")}>
                 <SearchModule {...props} />
               </Route>
 
+              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/own")}><PriceMatrix {...props} /></Route>) }
+              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/victory-liners")}><VictoryLinerMatrix {...props} /></Route>) }
+              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/report/sales/vli-bitsi")}><SalesReport source={tableSourceVliBitsi} isP2P={true} {...props} title="SUMMARY OF VLI-BITSI SALES" /></Route>) }
+          
               <Redirect from="/" to={alterPath("/search-parcel")} />
+
             </Switch>
           </Content>
         </Layout>

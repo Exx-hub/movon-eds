@@ -544,6 +544,7 @@ export default class VictoryLinerMatrix extends React.Component {
                       type="danger"
                       block
                       icon={<SaveOutlined />}
+                      disabled={true}
                     >
                       Save
                     </Button>

@@ -4,7 +4,7 @@ import { QRCode } from "react-qr-svg";
 import { Row, Col } from "antd";
 import movon from "../../assets/movon3.png";
 import moment from "moment";
-import { modifyName } from "../../utility";
+import { modifyName, UserProfile } from "../../utility";
 
 function TextItem(props) {
   return (
@@ -120,10 +120,10 @@ const PCopy = (props) => {
     return _view;
   }
   return null;
-}
-;
+};
+
 const MCopy = (props) => {
-  if (props) {
+  if (props && UserProfile.isIsarogLiners()) {
     const {
       recipientName,
       recipientPhone,
