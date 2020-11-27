@@ -97,8 +97,11 @@ class Manifest extends React.Component {
           this.handleErrorNotification(errorCode);
           return;
         }
+        let state = { allRoutes: data };
         let clean = [];
-        const _startStationRoutes = data
+
+        if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+          const _startStationRoutes = data
           .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
           .filter((e) => {
             if (!clean.includes(e.stationName)) {
@@ -107,8 +110,18 @@ class Manifest extends React.Component {
             }
             return false;
           });
-        const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
-        this.setState({ startStationRoutesTemp:startStationRoutes, allRoutes: data, startStationRoutes },()=> this.getManifestByDestination(null, null));
+          const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
+          state.startStationRoutes = startStationRoutes;
+          state.startStationRoutesTemp = startStationRoutes;
+          this.setState(state,()=> this.getManifestByDestination(null, null));
+        }else{
+          state.originId =  UserProfile.getAssignedStationId()
+          const endStationRoutes = this.getEndDestination(data, state.originId);
+          state.endStationRoutesTemp = endStationRoutes
+          state.endStationRoutes = endStationRoutes
+        }
+        this.setState(state,()=>this.getManifestByDestination(null, null));
+
       });
     } catch (error) {
       this.handleErrorNotification();
@@ -149,7 +162,6 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
-        console.log("getManifestDateRange", e);
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState(
@@ -234,10 +246,12 @@ class Manifest extends React.Component {
     }
   };
 
-  getEndDestination = (stationId) => {
+  getEndDestination = (data,stationId) => {
+    if(!stationId)
+    return;
 
     let clean = [];
-    const destinations = this.state.allRoutes
+    const destinations = data
       .filter((e) => e.start === stationId)
       .filter((e) => {
         if (!clean.includes(e.endStationName)) {
@@ -257,7 +271,7 @@ class Manifest extends React.Component {
         selected = this.state.startStationRoutes
         .find((e) => e.stationName === value) || null;
         if(selected){
-          const endStationRoutes = this.getEndDestination(selected.stationId);
+          const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
           this.setState({ originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },
             ()=>this.getManifestByDestination('', null));
         }
@@ -327,22 +341,27 @@ class Manifest extends React.Component {
   }
 
   render() {
+    const isAdmin = (Number(UserProfile.getRole()) === Number(config.role["staff-admin"]))
     return (
       <div className="manifest-page">
         <Row style={{ marginTop: "2rem", marginBottom: "1rem" }}>
-          <Col span={6}>
-            <AutoComplete
-              size="large"
-              style={{ width: "100%" }}
-              onSelect={(item) => this.onSelectAutoComplete("origin", item)}
-              onSearch={(e) => this.doSearch('origin',e)}
-              placeholder="Origin Stations"
-            >
-              {this.state.startStationRoutesTemp.map((e, i) => (
-                <Option value={e.stationName}>{e.stationName}</Option>
-              ))}
-            </AutoComplete>
-          </Col>
+          
+          {
+            isAdmin && <Col span={6}>
+              <AutoComplete
+                size="large"
+                style={{ width: "100%" }}
+                onSelect={(item) => this.onSelectAutoComplete("origin", item)}
+                onSearch={(e) => this.doSearch('origin',e)}
+                placeholder="Origin Stations"
+              >
+                {this.state.startStationRoutesTemp.map((e, i) => (
+                  <Option value={e.stationName}>{e.stationName}</Option>
+                ))}
+              </AutoComplete>
+            </Col>
+          }
+
           <Col span={6}>
             <AutoComplete
               size="large"
@@ -355,7 +374,8 @@ class Manifest extends React.Component {
               ))}
             </AutoComplete>
           </Col>
-          <Col span={12}>
+
+          <Col offset={isAdmin ? 0 : 6} span={12}>
             <RangePicker
               size="large"
               style={{ float: "right" }}
