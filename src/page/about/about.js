@@ -25,7 +25,7 @@ function About(props) {
           <div className="about-img">
             <img className="img-movon-logo" src={logo} alt="movon-logo" />
             <div className="versionContainer">
-              <span className="version text">{config.version.environment} {config.version.build}</span>
+              <span className="version text">{config.version.environment} build {config.version.build}</span>
             </div>
           </div>
           <div className="about-text">

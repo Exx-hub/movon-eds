@@ -8,12 +8,11 @@
   .login-form{
     margin: 0 auto;
     margin-top: 5%;
-    max-width: 400px;
+    max-width: 450px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 2rem;
-    padding-bottom: 4rem;
     background: teal;
     border-radius: 5px;
     box-shadow: 5px 10px 10px grey;
@@ -53,11 +52,19 @@
 
       .txt-delivery-express{
         margin: 0 auto;
-        font-size: 20px;
-        font-weight: 200;
+        font-size: 1.7rem;
+        font-weight: 100;
         color: white;
       }
     }
 
   }
+}
+
+.version-column{
+  margin-top: 2rem;
+  color: #fff;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 200;
 }
