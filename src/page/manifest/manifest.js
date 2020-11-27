@@ -1,23 +1,8 @@
 import React from "react";
-import {
-  Table,
-  DatePicker,
-  Button,
-  Row,
-  Col,
-  Select,
-  Skeleton,
-  notification,
-  AutoComplete,
-  Pagination
-} from "antd";
-import {
-  openNotificationWithIcon,
-  openNotificationWithDuration,
-  alterPath,
-  UserProfile,
-} from "../../utility";
+import {Table,DatePicker,Button,Row,Col,Select,Skeleton,notification,AutoComplete,Pagination} from "antd";
+import {openNotificationWithIcon,openNotificationWithDuration,alterPath,UserProfile} from "../../utility";
 import ManifestService from "../../service/Manifest";
+import RoutesService from "../../service/Routes";
 import { PromptModal } from '../../component/modal';
 import moment from "moment";
 import "./manifest.scss";
@@ -25,9 +10,7 @@ import { config } from "../../config";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-
 const dateFormat = "MMM DD, YYYY";
-
 
 const TableRoutesView = (props) => {
   const columns = [
@@ -81,78 +64,51 @@ const TableRoutesView = (props) => {
 };
 
 class Manifest extends React.Component {
-
   state = {
     endDay: moment().format(dateFormat),
     startDay: moment().format(dateFormat),
     fetching: false,
-    routes: undefined,
-    routesList: {
-      value: undefined,
-      options: [],
-    },
     listOfTripDates: undefined,
-    selectedRoute: undefined,
     tempDestinationList: [],
     selected: undefined,
     page: 0,
     limit: 10,
     totalRecords: 50,
-    visibleCheckIn:false,
-    visibleArrive:false,
-    disabledArrive:false,
-    disabledCheckIn:false,
-    selectedRecord:undefined,
-    originId: null
+    visibleCheckIn: false,
+    visibleArrive: false,
+    disabledArrive: false,
+    disabledCheckIn: false,
+    selectedRecord: undefined,
+    originId: null,
+    destinationId: null,
+    startStationRoutes: [],
+    endStationRoutes: [],
+    startStationRoutesTemp:[],
+    endStationRoutesTemp:[],
+    dataSource:[]
   };
-
-  constructor(props){
-    super(props);
-    this.userProfileObject = UserProfile
-  }
 
   componentDidMount() {
     this.setState({ fetching: true });
     try {
-      ManifestService.getRoutes().then((e) => {
-        const { errorCode, success, data } = e.data;
-
+      RoutesService.getAllRoutes().then((e) => {
+        const { data, errorCode } = e.data;
         if (errorCode) {
           this.handleErrorNotification(errorCode);
-        } else {
-          this.setState({ fetching: false });
-          if (!data || (data && data.length < 1)) {
-            return;
-          }
-
-          const options = data.map((e, i) => {
-            return {
-              data: e,
-              value: i,
-              name: e.endStationName,
-            };
-          });
-
-          const params = new URLSearchParams(this.props.location.search);
-          const routesIndex = params.get("route-id"); // bar
-
-          const routesList = {
-            ...this.state.routesList,
-            ...{ options, value: Number(routesIndex) },
-          };
-          const tempDestinationList = data
-            .filter((e) => e !== null || e !== "null")
-            .map((e) => e.endStationName);
-
-          this.setState({
-            routes: data,
-            selectedRoute: undefined,
-            routesList,
-            tempDestinationList,
-          });
-
-          this.getManifestByDestination(null,null)
+          return;
         }
+        let clean = [];
+        const _startStationRoutes = data
+          .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
+          .filter((e) => {
+            if (!clean.includes(e.stationName)) {
+              clean.push(e.stationName);
+              return true;
+            }
+            return false;
+          });
+        const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
+        this.setState({ startStationRoutesTemp:startStationRoutes, allRoutes: data, startStationRoutes },()=> this.getManifestByDestination(null, null));
       });
     } catch (error) {
       this.handleErrorNotification();
@@ -170,7 +126,7 @@ class Manifest extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      this.userProfileObject.clearData();
+      UserProfile.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -178,9 +134,8 @@ class Manifest extends React.Component {
   };
 
   getManifestByDestination = (_startStationId, endStationId) => {
-    let startStationId  = UserProfile.getAssignedStationId();
-    console.log('Number(UserProfile.getRole()) === Number(config.role["staff-admin"])',Number(UserProfile.getRole()) === Number(config.role["staff-admin"]))
-    if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+    let startStationId = UserProfile.getAssignedStationId();
+    if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
       startStationId = this.state.originId;
     }
 
@@ -194,40 +149,46 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
-        console.log("getManifestDateRange",e)
+        console.log("getManifestDateRange", e);
         const { data, success, errorCode } = e.data;
         if (success) {
-          this.setState({
-            listOfTripDates: data[0].data || [],
-            fetching: false,
-            totalRecords: (data && Array.isArray(data[0].pageInfo) && data[0].pageInfo.length > 0 && data[0].pageInfo[0].count) || 0
-          },()=>{
-            if (!this.state.listOfTripDates) {
-              return null;
-            }
+          this.setState(
+            {
+              listOfTripDates: data[0].data || [],
+              fetching: false,
+              totalRecords:
+                (data &&
+                  Array.isArray(data[0].pageInfo) &&
+                  data[0].pageInfo.length > 0 &&
+                  data[0].pageInfo[0].count) ||
+                0,
+            },
+            () => {
+              if (!this.state.listOfTripDates) {
+                return null;
+              }
 
               let _data = this.state.listOfTripDates.map((e, i) => {
-              let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
-              const endStationName = (name && name.endStationName) || ""
-              const startStationName = (name && name.startStationName) || "";
-
-              return {
-                key: i,
-                tripId: e._id,
-                date: moment(e.date).subtract(8,"hours").format("MMMM DD, YYYY"),
-                count: e.count,
-                startStationName:e.startStationName,
-                endStationName:e.endStationName,
-                startStationId: e.startStation,
-                endStationId: e.endStation,
-                status: e.status,
-                showModalCheckIn:false,
-                showModalArrived:false,
-                disabled:false
-              };
-            });
-            this.setState({dataSource:_data})
-          });
+                return {
+                  key: i,
+                  tripId: e._id,
+                  date: moment(e.date)
+                    .subtract(8, "hours")
+                    .format("MMMM DD, YYYY"),
+                  count: e.count,
+                  startStationName: e.startStationName,
+                  endStationName: e.endStationName,
+                  startStationId: e.startStation,
+                  endStationId: e.endStation,
+                  status: e.status,
+                  showModalCheckIn: false,
+                  showModalArrived: false,
+                  disabled: false,
+                };
+              });
+              this.setState({ dataSource: _data });
+            }
+          );
           return;
         }
         this.handleErrorNotification(errorCode);
@@ -241,123 +202,160 @@ class Manifest extends React.Component {
 
   onForceLogout = (errorCode) => {
     openNotificationWithDuration("error", errorCode);
-    this.userProfileObject.clearData();
+    UserProfile.clearData();
     this.props.history.push(alterPath("/login"));
   };
 
   onChangeTable = (pagination, filters, sorter, extra) => {};
-
-  handleSelectChange = (value) => {
-    const data = this.state.routes[value];
-    this.setState(
-      {
-        selectedRoute: data,
-        routesList: { ...this.state.routesList, ...{ value } },
-      },
-      () => {
-        this.getManifestByDestination(data.start, data.end);
-        this.props.history.push({
-          pathname: alterPath("/manifest/list"),
-          search: `?route-id=${value}`,
-        });
-      }
-    );
-  };
-
-  dataSource = () => {
-
-    if (!this.state.listOfTripDates) {
-      return null;
-    }
-
-    let _data = this.state.listOfTripDates.map((e, i) => {
-      let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
-      const endStationName = (name && name.endStationName) || ""
-      const startStationName = (name && name.startStationName) || "";
-
-      return {
-        key: i,
-        tripId: e._id,
-        date: moment(e.date).subtract(8,"hours").format("MMMM DD, YYYY"),
-        count: e.count,
-        startStationName,
-        endStationName,
-        startStationId: e.startStation,
-        endStationId: e.endStation,
-        status: e.status,
-        showModal:false
-      };
-    });
-    return _data;
-  };
 
   onChangeDatePicker = (date) => {
     const startDay = date[0];
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay, page:1 }, () => {
-        const selectedRoute = this.state.selected;
-        const start = (selectedRoute && selectedRoute.start) || null;
-        const end = (selectedRoute && selectedRoute.end) || null;
-        this.getManifestByDestination(start,end);
-      });
+      this.setState({ startDay, endDay, page: 1 }, () => this.getManifestByDestination(null, this.state.destinationId));
     }
   };
 
-  doSearch = (el) => {
-    const data = this.state.routesList.options;
+  doSearch = (name,el) => {
     const toSearch = el.toLowerCase();
-    const tempDestinationList = data
-    .filter((e) => {
-      return e.name.toLowerCase().includes(toSearch);
-    })
-    .map((e) => e.name);
-    this.setState({ tempDestinationList });
+    switch(name){
+      case 'origin': 
+        let startStationRoutesTemp = this.state.startStationRoutes.map(e=>({stationName:e.stationName}))
+        .filter((e) => e.stationName.toLowerCase().includes(toSearch))
+        this.setState({ startStationRoutesTemp });
+        break;
+      case 'destination':
+        let endStationRoutesTemp = this.state.endStationRoutes.map(e=>({endStationName:e.endStationName}))
+        .filter((e) => e.endStationName.toLowerCase().includes(toSearch))
+        this.setState({ endStationRoutesTemp });
+      break;
+      default: break;
+    }
   };
 
+  getEndDestination = (stationId) => {
+
+    let clean = [];
+    const destinations = this.state.allRoutes
+      .filter((e) => e.start === stationId)
+      .filter((e) => {
+        if (!clean.includes(e.endStationName)) {
+          clean.push(e.endStationName);
+          return true;
+        }
+        return false;
+      }).map(e=>({endStationName:e.endStationName, end:e.end}));
+      return [...[{end:'null', endStationName:"-- All --"}], ...destinations]
+  };
+
+  onSelectAutoComplete = (name, value) => {
+    let selected = [];
+
+    switch (name) {
+      case "origin":
+        selected = this.state.startStationRoutes
+        .find((e) => e.stationName === value) || null;
+        if(selected){
+          const endStationRoutes = this.getEndDestination(selected.stationId);
+          this.setState({ originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },
+            ()=>this.getManifestByDestination('', null));
+        }
+        break;
+      case "destination":
+        selected = this.state.endStationRoutes
+        .find((e) => e.endStationName === value) || null;
+        if(selected){
+          this.setState({destinationId:selected.end},()=>this.getManifestByDestination('', selected.end))
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  onCheckIn = (data) =>{
+    const selectedRecord = { ...data };
+    selectedRecord.showModalCheckIn = true;
+    selectedRecord.disabled = false;
+    this.setState({ selectedRecord });
+  }
+
+  onArrived = (data) => {
+    const selectedRecord = { ...data };
+    selectedRecord.showModalArrived = true;
+    selectedRecord.disabled = false;
+    this.setState({ selectedRecord });
+  }
+
+  onPrint = (data)=>{
+    this.props.history.push(alterPath("/manifest/print"), {
+      date: data.date,
+      selected: data,
+    })
+  }
+
+  onViewClick = (data) =>{
+    this.props.history.push(alterPath("/manifest/details"), {
+      date: data.date,
+      selected: data,
+    })
+  }
+
+  onModalArriveOkCLick = () =>{
+    let selectedRecord = { ...this.state.selectedRecord };
+    let dataSource = [...this.state.dataSource];
+
+    const index = dataSource.findIndex(
+      (e) => e.key === selectedRecord.key
+    );
+    selectedRecord.showModalArrived = false;
+    selectedRecord.disabled = true;
+    dataSource[index] = selectedRecord;
+
+    this.setState({ selectedRecord, dataSource },()=>{
+      const tripId = selectedRecord.tripId._id;
+      ManifestService.arriveAllParcel(tripId)
+      .then((e) => {
+        this.setState({
+          visibleArrive: false,
+          disabledArrive: true,
+          selectedRecord: undefined,
+        },()=>this.getManifestByDestination(null, this.state.destinationId));
+      })
+    });
+  }
+
   render() {
-    const { routes, routesList, fetching } = this.state;
     return (
       <div className="manifest-page">
         <Row style={{ marginTop: "2rem", marginBottom: "1rem" }}>
-          <Col span={8}>
-            <div style={{ display: "none" }}>
-              {routesList && (
-                <Select
-                  size="large"
-                  value={routesList.value}
-                  style={{ width: "90%" }}
-                  onChange={this.handleSelectChange}
-                >
-                  {routesList.options.map((e) => (
-                    <Option key={e.value} value={e.value}>
-                      {e.name}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            </div>
+          <Col span={6}>
             <AutoComplete
-              dataSource={this.state.tempDestinationList}
+              size="large"
               style={{ width: "100%" }}
-              onChange={(item) => {
-                let selected = this.state.routes.find(
-                  (e) => e.endStationName === item
-                );
-                if (selected) {
-                  this.setState({ selected }, () =>
-                    this.getManifestByDestination(selected.start, selected.end),
-                  );
-                } else {
-                  this.getManifestByDestination(null, null);
-                }
-              }}
-              onSearch={(e) => this.doSearch(e)}
-              placeholder="Destination"
-            />
+              onSelect={(item) => this.onSelectAutoComplete("origin", item)}
+              onSearch={(e) => this.doSearch('origin',e)}
+              placeholder="Origin Stations"
+            >
+              {this.state.startStationRoutesTemp.map((e, i) => (
+                <Option value={e.stationName}>{e.stationName}</Option>
+              ))}
+            </AutoComplete>
           </Col>
-          <Col offset={4} span={12}>
+          <Col span={6}>
+            <AutoComplete
+              size="large"
+              style={{ width: "100%", marginLeft: "0.5rem" }}
+              onChange={(item) => this.onSelectAutoComplete("destination", item)}
+              onSearch={(e) => this.doSearch('destination',e)}
+              placeholder="Destination">
+              {this.state.endStationRoutesTemp.map((e, i) => (
+                <Option value={e.endStationName}>{e.endStationName}</Option>
+              ))}
+            </AutoComplete>
+          </Col>
+          <Col span={12}>
             <RangePicker
               size="large"
               style={{ float: "right" }}
@@ -369,120 +367,81 @@ class Manifest extends React.Component {
             />
           </Col>
         </Row>
-        {!fetching ? (
-          <>
-            <TableRoutesView
-              routes={routes}
+        {
+          !this.state.fetching ? <TableRoutesView
               pagination={false}
               dataSource={this.state.dataSource}
               onChange={this.onChangeTable}
-              onCheckIn={(data)=>{
-                const selectedRecord={...data};
-                selectedRecord.showModalCheckIn = true;
-                selectedRecord.disabled = false;
-                this.setState({selectedRecord})
-              }}
-              onArrived={(data)=> {
-                const selectedRecord={...data};
-                selectedRecord.showModalArrived = true;
-                selectedRecord.disabled = false;
-                this.setState({selectedRecord})
-              }}
-              onPrint={(data) =>
-                this.props.history.push(alterPath("/manifest/print"), {
-                  date: data.date,
-                  selected: data,
-                })
-              }
-              onViewClick={(data) =>
-                this.props.history.push(alterPath("/manifest/details"), {
-                  date: data.date,
-                  selected: data,
-                })
-              }
+              onCheckIn={(data) => this.onCheckIn(data)}
+              onArrived={(data)=>this.onArrived(data)}
+              onPrint={(data) => this.onPrint(data)}
+              onViewClick={(data) => this.onViewClick(data)}
+            /> 
+            : 
+            (<Skeleton active />)
+        }
+        {this.state.dataSource && this.state.dataSource.length > 0 && (
+          <div className="pagination-container">
+            <Pagination
+              onChange={(page) => this.setState({ page: page - 1 }, () => this.getManifestByDestination(null, this.state.destinationId))}
+              defaultCurrent={this.state.page}
+              total={this.state.totalRecords}
+              showSizeChanger={false}
             />
-          </>
-        ) : (
-          <Skeleton active />
+          </div>
         )}
-        {this.dataSource() && this.dataSource().length > 0 && (
-          <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1rem'}}>
-          <Pagination
-            onChange={(page) =>{
-              this.setState({ page: page -1 }, ()=>{
-                const selectedRoute = this.state.selected;
-                const start = (selectedRoute && selectedRoute.start) ||  null
-                const end = (selectedRoute && selectedRoute.end) ||  null
-                this.getManifestByDestination(start, end);
-              })
-            }}
-            defaultCurrent={this.state.page}
-            total={this.state.totalRecords}
-            showSizeChanger={false}
-          />
-        </div>)}
         <PromptModal
-          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalArrived) || false}
           title="Are you sure you want to arrived?"
           message="Press OK to change the status to received"
           disabled={Boolean((this.state.selectedRecord && this.state.selectedRecord.disabled) || false)}
           buttonType="primary"
           action="Arrive"
-          handleCancel={()=>this.setState({selectedRecord:undefined, visibleArrive:false})}
-          handleOk={()=>{
-            let selectedRecord = {...this.state.selectedRecord}
-            let dataSource = [...this.state.dataSource]
+          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalArrived) || false }
+          handleCancel={() =>this.setState({ selectedRecord: undefined, visibleArrive: false })}
+          handleOk={() => this.onModalArriveOkCLick()}
+        />
 
-            const index = dataSource.findIndex(e=>e.key === selectedRecord.key)
-            selectedRecord.showModalArrived=false;
-            selectedRecord.disabled=true;
-            dataSource[index] = selectedRecord;
-
-            const tripId = selectedRecord.tripId._id
-            this.setState({selectedRecord,dataSource})
-
-            ManifestService.arriveAllParcel(tripId)
-            .then(e=>{
-              this.setState({visibleArrive:false, disabledArrive:true, selectedRecord:undefined})
-              const selectedRoute = this.state.selectedRoute;
-              const start = (selectedRoute && selectedRoute.start) || null;
-              const end = (selectedRoute && selectedRoute.end) || null;
-              this.getManifestByDestination(start,end)
-            })
-          }} />
-
-          <PromptModal
+        <PromptModal
           onEdit={false}
-          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalCheckIn) || false}
+          visible={
+            (this.state.selectedRecord &&
+              this.state.selectedRecord.showModalCheckIn) ||
+            false
+          }
           title="Are you sure you want to check-in?"
           message="Press OK to change the status to in-transit"
           buttonType="primary"
           action="Check In"
-          handleCancel={()=>this.setState({selectedRecord:undefined, visibleCheckIn:false})}
-          handleOk={()=>{
-            let selectedRecord = {...this.state.selectedRecord}
-            let dataSource = [...this.state.dataSource]
+          handleCancel={() =>
+            this.setState({ selectedRecord: undefined, visibleCheckIn: false })
+          }
+          handleOk={() => {
+            let selectedRecord = { ...this.state.selectedRecord };
+            let dataSource = [...this.state.dataSource];
 
-            const index = dataSource.findIndex(e=>e.key === selectedRecord.key)
-            selectedRecord.showModalCheckIn=false;
-            selectedRecord.disabled=true;
+            const index = dataSource.findIndex(
+              (e) => e.key === selectedRecord.key
+            );
+            selectedRecord.showModalCheckIn = false;
+            selectedRecord.disabled = true;
             dataSource[index] = selectedRecord;
 
-            const tripId = selectedRecord.tripId._id
-            this.setState({selectedRecord,dataSource})
+            const tripId = selectedRecord.tripId._id;
+            this.setState({ selectedRecord, dataSource });
 
-            ManifestService.checkInAllParcel(tripId)
-            .then(e=>{
-              this.setState({visibleCheckIn:false, disabledCheckIn:false, selectedRecord:undefined})
-              const selectedRoute = this.state.selectedRoute;
-              const start = (selectedRoute && selectedRoute.start) || null;
-              const end = (selectedRoute && selectedRoute.end) || null;
-
-              this.getManifestByDestination(start,end)
-            })
+            ManifestService.checkInAllParcel(tripId).then((e) => {
+              this.setState({
+                visibleCheckIn: false,
+                disabledCheckIn: false,
+                selectedRecord: undefined,
+              },()=>this.getManifestByDestination(null, this.state.destinationId));
+            });
           }}
-          disabled={Boolean((this.state.selectedRecord && this.state.selectedRecord.disabled) || false)}
-          />
+          disabled={Boolean(
+            (this.state.selectedRecord && this.state.selectedRecord.disabled) ||
+              false
+          )}
+        />
       </div>
     );
   }

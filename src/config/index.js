@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.7(30)'
+        build: '1.2.8(31)'
     },
-    changeLogs: `removed disabled status of matrix action buttons`
+    changeLogs: `implement get all manifest routes and filter for admin staff`
 
 }
 
