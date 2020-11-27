@@ -167,8 +167,6 @@ function Home(props) {
   const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
 
-  console.info("UserProfile", UserProfile.getRole());
-
   React.useEffect(() => {
     if (menuData.length < 1) {
       setMenuData([

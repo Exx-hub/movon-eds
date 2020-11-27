@@ -114,6 +114,7 @@ class Manifest extends React.Component {
     try {
       ManifestService.getRoutes().then((e) => {
         const { errorCode, success, data } = e.data;
+
         if (errorCode) {
           this.handleErrorNotification(errorCode);
         } else {
@@ -202,13 +203,16 @@ class Manifest extends React.Component {
               const endStationName = (name && name.endStationName) || ""
               const startStationName = (name && name.startStationName) || "";
 
+              console.log("routes",this.state.routes)   
+
+
               return {
                 key: i,
                 tripId: e._id,
                 date: moment(e.date).subtract(8,"hours").format("MMMM DD, YYYY"),
                 count: e.count,
-                startStationName,
-                endStationName,
+                startStationName:e.startStationName,
+                endStationName:e.endStationName,
                 startStationId: e.startStation,
                 endStationId: e.endStation,
                 status: e.status,
