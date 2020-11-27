@@ -21,6 +21,7 @@ import ManifestService from "../../service/Manifest";
 import { PromptModal } from '../../component/modal';
 import moment from "moment";
 import "./manifest.scss";
+import { config } from "../../config";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -101,7 +102,8 @@ class Manifest extends React.Component {
     visibleArrive:false,
     disabledArrive:false,
     disabledCheckIn:false,
-    selectedRecord:undefined
+    selectedRecord:undefined,
+    originId: null
   };
 
   constructor(props){
@@ -175,7 +177,13 @@ class Manifest extends React.Component {
     openNotificationWithIcon("error", code);
   };
 
-  getManifestByDestination = (startStationId, endStationId) => {
+  getManifestByDestination = (_startStationId, endStationId) => {
+    let startStationId  = UserProfile.getAssignedStationId();
+    console.log('Number(UserProfile.getRole()) === Number(config.role["staff-admin"])',Number(UserProfile.getRole()) === Number(config.role["staff-admin"]))
+    if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+      startStationId = this.state.originId;
+    }
+
     this.setState({ fetching: true });
     try {
       ManifestService.getManifestDateRange(
@@ -202,9 +210,6 @@ class Manifest extends React.Component {
               let name = this.state.routes.find(item=>item.start === e.startStation && item.end === e.endStation)
               const endStationName = (name && name.endStationName) || ""
               const startStationName = (name && name.startStationName) || "";
-
-              console.log("routes",this.state.routes)   
-
 
               return {
                 key: i,

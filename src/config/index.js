@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.7(29)'
+        build: '1.2.7(30)'
     },
     changeLogs: `removed disabled status of matrix action buttons`
 
