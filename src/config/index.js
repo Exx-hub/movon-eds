@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.7(30)'
+        build: '1.2.7(29)'
     },
-    changeLogs: `removed merchant's copy of fivestar stickers, improve ui, add version, per accounts, add super user filtering`
+    changeLogs: `removed disabled status of matrix action buttons`
 
 }
 
