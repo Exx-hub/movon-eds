@@ -100,6 +100,8 @@ class Manifest extends React.Component {
         let state = { allRoutes: data };
         let clean = [];
 
+        console.log('data',data)
+
         if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
           const _startStationRoutes = data
           .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
@@ -113,7 +115,7 @@ class Manifest extends React.Component {
           const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
           state.startStationRoutes = startStationRoutes;
           state.startStationRoutesTemp = startStationRoutes;
-          this.setState(state,()=> this.getManifestByDestination(null, null));
+          console.log('_startStationRoutes',_startStationRoutes)
         }else{
           state.originId =  UserProfile.getAssignedStationId()
           const endStationRoutes = this.getEndDestination(data, state.originId);
