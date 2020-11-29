@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.2.7(30)'
+        build: '1.2.7(31)'
     },
     changeLogs: `removed merchant's copy of fivestar stickers, improve ui, add version, per accounts, add super user filtering`
 
