@@ -226,8 +226,13 @@ class SalesReport extends React.Component {
         selected = this.state.startStationRoutes.find((e) => e.stationName === value) || null;
         console.log(name, 'selected --->> ',selected)
         if(selected){
-          const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
-          this.setState({ originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },()=>this.getParcel());
+          const isAllIn = selected.stationId === "null"; //all
+          let state = {}
+          state.originId= isAllIn ? null : selected.stationId
+          state.endStationRoutes = isAllIn ? [] : this.getEndDestination(this.state.allRoutes, selected.stationId)
+          state.endStationRoutesTemp = isAllIn ? [] : state.endStationRoutes
+          state.tags = isAllIn ? [] : [...this.state.tags];
+          this.setState(state,()=>this.getParcel());
         }
         break;
       case "destination":
