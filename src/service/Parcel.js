@@ -295,6 +295,11 @@ const ParcelService = {
     },
 
     getAllParcel: (params,busCompanyId)=>{
+        console.log('getAllParcel params',params)
+        let endStation = null;
+        if(params.endStation && params.endStation.length > 0){
+            endStation = params.endStation
+        }
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
@@ -306,12 +311,8 @@ const ParcelService = {
             params:{
                 "dateFrom": params.dateFrom,
                 "dateTo": params.dateTo,
-                "startStation": params.startStation,
-                "endStation": params.endStation,
-                //     "isP2p": String,
-                //     "billOfLading": String,
-                //     "senderName": String,
-                //     "receiverName": String
+                "startStation": params.startStationId,
+                "endStation": endStation
              }
         })
     },

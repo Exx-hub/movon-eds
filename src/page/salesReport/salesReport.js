@@ -12,7 +12,7 @@ import {
   Layout,
   Tag,
   AutoComplete,
-  Pagination,
+  Pagination
 } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 
@@ -24,10 +24,13 @@ import {
 
 import ParcelService from "../../service/Parcel";
 import ManifestService from "../../service/Manifest";
+import RoutesService from "../../service/Routes";
+
 
 import moment from "moment";
 import "./salesReport.scss";
 import ReactToPrint from "react-to-print";
+import { config } from "../../config";
 
 const dateFormat = "MMM DD, YYYY";
 
@@ -60,73 +63,230 @@ class SalesReport extends React.Component {
       templistValue: undefined,
       page: 0,
       totalRecords: 0,
-      originId: UserProfile.getAssignedStationId()
+      originId: UserProfile.getAssignedStationId(),
+      destinationId: null,
+      startStationRoutes: [],
+      endStationRoutes: [],
+      startStationRoutesTemp:[],
+      endStationRoutesTemp:[],
     };
     this.userProfileObject = UserProfile;
   }
 
   componentDidMount() {
     this.printEl = React.createRef();
-    Promise.all([ManifestService.getRoutes(), this.getParcel()]).then(
-      (resonses) => {
+    // Promise.all([ManifestService.getRoutes(), this.getParcel()]).then(
+    //   (resonses) => {
 
-        console.log('responses',resonses)
+    //     console.log('responses',resonses)
 
-        if (resonses[0]) {
-          const { data, errorCode } = resonses[0].data;
+    //     if (resonses[0]) {
+    //       const { data, errorCode } = resonses[0].data;
 
-          if (errorCode) {
-            this.handleErrorNotification(errorCode);
-            return;
-          }
+    //       if (errorCode) {
+    //         this.handleErrorNotification(errorCode);
+    //         return;
+    //       }
 
-          if (data) {
-            const options = data.map((e, i) => {
-              return {
-                key: i,
-                data: e,
-                value: i,
-                name: e.endStationName,
-              };
-            });
-            let destination = { ...this.state.destination };
-            destination.options = options;
-            destination.value = 0;
-            destination.data = options[0].data;
-            this.setState({
-              destination,
-              templist: options.map((e) => e.name),
-            });
-          }
-        }
-        if (resonses[1]) {
-          const { data, success, errorCode } = resonses[1].data;
-          if (errorCode) {
-            this.handleErrorNotification(errorCode);
-            return;
-          }
-          this.parseParcel(data);
-        }
+    //       if (data) {
+    //         const options = data.map((e, i) => {
+    //           return {
+    //             key: i,
+    //             data: e,
+    //             value: i,
+    //             name: e.endStationName,
+    //           };
+    //         });
+    //         let destination = { ...this.state.destination };
+    //         destination.options = options;
+    //         destination.value = 0;
+    //         destination.data = options[0].data;
+    //         this.setState({
+    //           destination,
+    //           templist: options.map((e) => e.name),
+    //         });
+    //       }
+    //     }
+    //     if (resonses[1]) {
+    //       const { data, success, errorCode } = resonses[1].data;
+    //       if (errorCode) {
+    //         this.handleErrorNotification(errorCode);
+    //         return;
+    //       }
+    //       this.parseParcel(data);
+    //     }
+    //   }
+    // );
+    
+    RoutesService.getAllRoutes().then((e) => {
+      const { data, errorCode } = e.data;
+      if (errorCode) {
+        this.handleErrorNotification(errorCode);
+        return;
       }
-    );
+      let state = { allRoutes: data };
+      let clean = [];
+
+      if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+        const _startStationRoutes = data
+        .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
+        .filter((e) => {
+          if (!clean.includes(e.stationName)) {
+            clean.push(e.stationName);
+            return true;
+          }
+          return false;
+        });
+        const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
+        state.startStationRoutes = startStationRoutes;
+        state.startStationRoutesTemp = startStationRoutes;
+        console.info('_startStationRoutes',_startStationRoutes)
+      }else{
+        state.originId =  UserProfile.getAssignedStationId()
+        const endStationRoutes = this.getEndDestination(data, state.originId);
+        state.endStationRoutesTemp = endStationRoutes
+        state.endStationRoutes = endStationRoutes
+      }
+      this.setState(state,()=>this.getParcel())
+    });
+
   }
 
+  getManifestByDestination = (_startStationId, endStationId) => {
+    let startStationId = UserProfile.getAssignedStationId();
+    if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
+      startStationId = this.state.originId;
+    }
+
+    this.setState({ fetching: true });
+    try {
+      ManifestService.getManifestDateRange(
+        this.state.startDay,
+        this.state.endDay,
+        startStationId,
+        endStationId,
+        this.state.page,
+        this.state.limit
+      ).then((e) => {
+        const { data, success, errorCode } = e.data;
+        if (success) {
+          this.setState(
+            {
+              listOfTripDates: data[0].data || [],
+              fetching: false,
+              totalRecords:
+                (data &&
+                  Array.isArray(data[0].pageInfo) &&
+                  data[0].pageInfo.length > 0 &&
+                  data[0].pageInfo[0].count) ||
+                0,
+            },
+            () => {
+              if (!this.state.listOfTripDates) {
+                return null;
+              }
+
+              let _data = this.state.listOfTripDates.map((e, i) => {
+                return {
+                  key: i,
+                  tripId: e._id,
+                  date: moment(e.date)
+                    .subtract(8, "hours")
+                    .format("MMMM DD, YYYY"),
+                  count: e.count,
+                  startStationName: e.startStationName,
+                  endStationName: e.endStationName,
+                  startStationId: e.startStation,
+                  endStationId: e.endStation,
+                  status: e.status,
+                  showModalCheckIn: false,
+                  showModalArrived: false,
+                  disabled: false,
+                };
+              });
+              this.setState({ dataSource: _data });
+            }
+          );
+          return;
+        }
+        this.handleErrorNotification(errorCode);
+      });
+    } catch (error) {
+      this.setState({ fetching: false }, () => {
+        this.handleErrorNotification();
+      });
+    }
+  };
+
+  onSelectAutoComplete = (name, value) => {
+    let selected = [];
+
+    switch (name) {
+      case "origin":
+        selected = this.state.startStationRoutes.find((e) => e.stationName === value) || null;
+        console.log(name, 'selected --->> ',selected)
+        if(selected){
+          const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
+          this.setState({ originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },()=>this.getParcel());
+        }
+        break;
+      case "destination":
+        selected = this.state.endStationRoutes.find((e) => e.endStationName === value) || null;
+        if(selected){
+          let tags = [];
+          if(selected.end !== "null"){
+            tags = [...this.state.tags];
+            let exist = tags.find(e=>e.end === selected.end);
+            if(!exist){
+              tags.push({end:selected.end, name:selected.endStationName})
+            }
+          }
+          this.setState({destinationId:tags.map(e=>(e.end)), tags},()=>this.getParcel())
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  getEndDestination = (data,stationId) => {
+    if(!stationId)
+    return;
+
+    let clean = [];
+    const destinations = data
+      .filter((e) => e.start === stationId)
+      .filter((e) => {
+        if (!clean.includes(e.endStationName)) {
+          clean.push(e.endStationName);
+          return true;
+        }
+        return false;
+      }).map(e=>({endStationName:e.endStationName, end:e.end}));
+      return [...[{end:'null', endStationName:"-- All --"}], ...destinations]
+  };
+
   getParcel = () => {
+
+    let startStationId = UserProfile.getAssignedStationId();
+    if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
+      startStationId = this.state.originId;
+    }
+
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
-    const endStation = this.state.destination.options
-      .filter((e) => this.state.tags.includes(e.name))
-      .map((e) => e.data.end);
+    const  endStation = this.state.destinationId;
+    console.info('getParcel endStation',endStation)
 
-    return ParcelService.getAllParcel(
+    ParcelService.getAllParcel(
       {
-        startStation: this.state.originId,
+        startStationId,
         dateFrom,
         dateTo,
         endStation,
       },
       this.userProfileObject.getBusCompanyId()
-    );
+    ).then(e=>this.parseParcel(e))
   };
 
   parseParcel = (dataResult) => {
@@ -195,11 +355,7 @@ class SalesReport extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ fetching: true, startDay, endDay }, () => {
-        this.getParcel().then((e) => {
-          this.parseParcel(e);
-        });
-      });
+      this.setState({ fetching: true, startDay, endDay }, () => this.getParcel());
     }
   };
 
@@ -263,19 +419,26 @@ class SalesReport extends React.Component {
     ).then();
   };
 
-  doSearch = (el) => {
-    let data = this.state.destination.options.map((e) => e.name);
-    if (this.state.tags.length > 0) {
-      data = data.filter((e, i) => !this.state.tags.includes(e));
-    }
+  doSearch = (name,el) => {
     const toSearch = el.toLowerCase();
-    const templist = data
-      .filter((e) => e.toLowerCase().includes(toSearch))
-      .map((e) => e);
-    this.setState({ templist, templistValue: el });
+    switch(name){
+      case 'origin': 
+        let startStationRoutesTemp = this.state.startStationRoutes.map(e=>({stationName:e.stationName}))
+        .filter((e) => e.stationName.toLowerCase().includes(toSearch))
+        this.setState({ startStationRoutesTemp });
+        break;
+      case 'destination':
+        let endStationRoutesTemp = this.state.endStationRoutes.map(e=>({endStationName:e.endStationName}))
+        .filter((e) => e.endStationName.toLowerCase().includes(toSearch))
+        this.setState({ endStationRoutesTemp });
+      break;
+      default: break;
+    }
   };
 
   render() {
+    const isAdmin = (Number(UserProfile.getRole()) === Number(config.role["staff-admin"]))
+
     return (
       <Layout>
         <Content style={{ padding: "1rem" }}>
@@ -285,8 +448,9 @@ class SalesReport extends React.Component {
                 <div>
                   {this.state.tags.map((e, i) => (
                     <Tag
-                      key={e}
+                      key={e.end}
                       closable
+                      color="cyan"
                       onClose={(val) => {
                         let tags = [...this.state.tags];
                         const _tags = tags.filter((e) => tags[i] !== e);
@@ -294,7 +458,7 @@ class SalesReport extends React.Component {
                       }}
                     >
                       {" "}
-                      {e}
+                      {e.name}
                     </Tag>
                   ))}
                 </div>
@@ -322,38 +486,69 @@ class SalesReport extends React.Component {
 
           <div>
             <Row>
-              <Col span={12}>
+            {
+            //   <Col span={12}>
+            //   <AutoComplete
+            //     style={{ width: "50%" }}
+            //     onSelect={(item) => {
+            //       let templist = [...this.state.templist];
+            //       let destination = { ...this.state.destination };
+            //       let tags = [...this.state.tags];
+            //       let selected = destination.options.findIndex(
+            //         (e) => e.name === item
+            //       );
+            //       templist = templist.filter((e, i) => item !== e);
+            //       // if (selected) {
+            //       tags.push(destination.options[selected].name);
+            //       this.setState({ tags, templist }, () => {
+            //         this.getParcel().then((e) => {
+            //           this.parseParcel(e);
+            //         });
+            //       });
+            //       //   console.log("selected", selected);
+            //       // }
+            //     }}
+            //     onSearch={(e) => this.doSearch(e)}
+            //     value={this.state.templistValue}
+            //     placeholder="Destination"
+            //   >
+            //     {this.state.templist.map((e) => (
+            //       <Option key={e}>{e}</Option>
+            //     ))}
+            //   </AutoComplete>
+            // </Col>
+            }
+
+            {
+              isAdmin && <Col span={6}>
                 <AutoComplete
-                  style={{ width: "50%" }}
-                  onSelect={(item) => {
-                    let templist = [...this.state.templist];
-                    let destination = { ...this.state.destination };
-                    let tags = [...this.state.tags];
-                    let selected = destination.options.findIndex(
-                      (e) => e.name === item
-                    );
-                    templist = templist.filter((e, i) => item !== e);
-                    // if (selected) {
-                    tags.push(destination.options[selected].name);
-                    this.setState({ tags, templist }, () => {
-                      this.getParcel().then((e) => {
-                        this.parseParcel(e);
-                      });
-                    });
-                    //   console.log("selected", selected);
-                    // }
-                  }}
-                  onSearch={(e) => this.doSearch(e)}
-                  value={this.state.templistValue}
-                  placeholder="Destination"
+                  size="large"
+                  style={{ width: "100%" }}
+                  onSelect={(item) => this.onSelectAutoComplete("origin", item)}
+                  onSearch={(e) => this.doSearch('origin',e)}
+                  placeholder="Origin Stations"
                 >
-                  {this.state.templist.map((e) => (
-                    <Option key={e}>{e}</Option>
+                  {this.state.startStationRoutesTemp.map((e, i) => (
+                    <Option value={e.stationName}>{e.stationName}</Option>
                   ))}
                 </AutoComplete>
               </Col>
-              <Col span={12}>
-                <RangePicker
+            }
+  
+            <Col span={6}>
+              <AutoComplete
+                size="large"
+                style={{ width: "100%", marginLeft: "0.5rem" }}
+                onChange={(item) => this.onSelectAutoComplete("destination", item)}
+                onSearch={(e) => this.doSearch('destination',e)}
+                placeholder="Destination">
+                {this.state.endStationRoutesTemp.map((e, i) => (
+                  <Option value={e.endStationName}>{e.endStationName}</Option>
+                ))}
+              </AutoComplete>
+            </Col>
+              
+            <Col offset={isAdmin ? 0 : 6} span={12}>                <RangePicker
                   size="large"
                   style={{ float: "right" }}
                   defaultValue={[
@@ -469,6 +664,7 @@ class SalesReport extends React.Component {
       </Layout>
     );
   }
+
 }
 
 function Header(props) {

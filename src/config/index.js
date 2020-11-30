@@ -1,6 +1,6 @@
 export const config = {
-    BASE_URL:"http://localhost:9000",
-    //BASE_URL:"https://www.cargomovon.com/server",
+    //BASE_URL:"http://localhost:9000",
+    BASE_URL:"https://www.cargomovon.com/server",
     //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created',
@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.8(33)'
+        build: '1.2.8(34)'
     },
     changeLogs: `implement get all manifest routes and filter for admin staff, fix issue on switching of admin and staff`
 
