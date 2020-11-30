@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.8(34)'
+        build: '1.2.8(35)'
     },
-    changeLogs: `implement get all manifest routes and filter for admin staff, fix issue on switching of admin and staff`
+    changeLogs: `show all transaction at first load`
 
 }
 

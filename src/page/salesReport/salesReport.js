@@ -63,7 +63,7 @@ class SalesReport extends React.Component {
       templistValue: undefined,
       page: 0,
       totalRecords: 0,
-      originId: UserProfile.getAssignedStationId(),
+      originId: null,
       destinationId: null,
       startStationRoutes: [],
       endStationRoutes: [],
