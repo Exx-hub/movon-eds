@@ -130,6 +130,11 @@ const tableSourceBitsi = [
     key: "recipientPhoneNo,",
   },
   {
+    title: "ORIGIN",
+    dataIndex: "origin",
+    key: "origin,",
+  },
+  {
     title: "DESTINATION",
     dataIndex: "destination",
     key: "destination,",

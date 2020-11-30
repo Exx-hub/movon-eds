@@ -60,6 +60,7 @@ class SalesReport extends React.Component {
       templistValue: undefined,
       page: 0,
       totalRecords: 0,
+      originId: UserProfile.getAssignedStationId()
     };
     this.userProfileObject = UserProfile;
   }
@@ -111,23 +112,20 @@ class SalesReport extends React.Component {
   }
 
   getParcel = () => {
-    const startStation = this.user;
     const dateFrom = new Date(this.state.startDay);
     const dateTo = new Date(this.state.endDay);
     const endStation = this.state.destination.options
       .filter((e) => this.state.tags.includes(e.name))
       .map((e) => e.data.end);
 
-    const busCompanyId = this.userProfileObject.getBusCompanyId();
-
     return ParcelService.getAllParcel(
       {
-        startStation,
+        startStation: this.state.originId,
         dateFrom,
         dateTo,
         endStation,
       },
-      busCompanyId
+      this.userProfileObject.getBusCompanyId()
     );
   };
 
