@@ -267,10 +267,12 @@ class ManifestDetails extends React.Component {
         startStationName,
         tripId
       } = this.props.location.state.selected;
+
+      console.info('this.props.location.state.selected',this.props.location.state.selected)
   
       const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
       this.fetchManifest(
-        tripId._id,
+        tripId,
         date,
         startStationId,
         endStationId,

@@ -129,7 +129,7 @@ class PrintManifestDetails extends React.Component {
     let totalSales = 0;
 
     ManifestService.getManifestByDate(
-      tripId._id,
+      tripId,
       moment(this.props.location.state.date).format("MMM DD, YYYY"),
       startStationId,
       endStationId
@@ -172,9 +172,7 @@ class PrintManifestDetails extends React.Component {
         });
 
         this.setState({
-          transactionDate: moment(this.props.location.state.date).format(
-            "MMM DD, YYYY"
-          ),
+          transactionDate: moment(this.props.location.state.date).format("MMM DD, YYYY"),
           totalSales,
           data,
           deliveryPerson,

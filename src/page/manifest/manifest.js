@@ -10,13 +10,19 @@ import { config } from "../../config";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-const dateFormat = "MMM DD, YYYY";
+const dateFormat = "MM DD, YYYY";
 
 const TableRoutesView = (props) => {
   const columns = [
     {
-      title: "Trip Date",
+      title: "Start Trip Date",
       dataIndex: "date",
+      defaultSortOrder: 'ascend', //"descend",
+      sorter: (a, b) => moment(a.date) - moment(b.date),
+    },
+    {
+      title: "End Trip Date",
+      dataIndex: "date2",
       defaultSortOrder: 'ascend', //"descend",
       sorter: (a, b) => moment(a.date) - moment(b.date),
     },
@@ -161,6 +167,7 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
+        console.info('getManifestDateRange',e)
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState(
@@ -183,7 +190,8 @@ class Manifest extends React.Component {
                 return {
                   key: i,
                   tripId: e._id,
-                  date: moment(e.date).format("MMMM DD, YYYY"),
+                  date: moment(e.tripStartDateTime).format("MMM DD, YYYY"),
+                  date2: moment(e.tripEndDateTime).format("MMM DD, YYYY"),
                   count: e.count,
                   startStationName: e.startStationName,
                   endStationName: e.endStationName,
@@ -325,7 +333,8 @@ class Manifest extends React.Component {
     dataSource[index] = selectedRecord;
 
     this.setState({ selectedRecord, dataSource },()=>{
-      const tripId = selectedRecord.tripId._id;
+      console.info('selectedRecord',selectedRecord)
+      const tripId = selectedRecord.tripId;
       ManifestService.arriveAllParcel(tripId)
       .then((e) => {
         this.setState({
@@ -334,6 +343,26 @@ class Manifest extends React.Component {
           selectedRecord: undefined,
         },()=>this.getManifestByDestination(null, this.state.destinationId));
       })
+    });
+  }
+
+  onModalCheckinClick = () =>{
+    let selectedRecord = { ...this.state.selectedRecord };
+    let dataSource = [...this.state.dataSource];
+
+    const index = dataSource.findIndex((e) => e.key === selectedRecord.key);
+    selectedRecord.showModalCheckIn = false;
+    selectedRecord.disabled = true;
+    dataSource[index] = selectedRecord;
+    
+    const tripId = selectedRecord.tripId;
+    this.setState({ selectedRecord, dataSource });
+    ManifestService.checkInAllParcel(tripId).then((e) => {
+      this.setState({
+        visibleCheckIn: false,
+        disabledCheckIn: false,
+        selectedRecord: undefined,
+      },()=>this.getManifestByDestination(null, this.state.destinationId));
     });
   }
 
@@ -432,28 +461,7 @@ class Manifest extends React.Component {
           handleCancel={() =>
             this.setState({ selectedRecord: undefined, visibleCheckIn: false })
           }
-          handleOk={() => {
-            let selectedRecord = { ...this.state.selectedRecord };
-            let dataSource = [...this.state.dataSource];
-
-            const index = dataSource.findIndex(
-              (e) => e.key === selectedRecord.key
-            );
-            selectedRecord.showModalCheckIn = false;
-            selectedRecord.disabled = true;
-            dataSource[index] = selectedRecord;
-
-            const tripId = selectedRecord.tripId._id;
-            this.setState({ selectedRecord, dataSource });
-
-            ManifestService.checkInAllParcel(tripId).then((e) => {
-              this.setState({
-                visibleCheckIn: false,
-                disabledCheckIn: false,
-                selectedRecord: undefined,
-              },()=>this.getManifestByDestination(null, this.state.destinationId));
-            });
-          }}
+          handleOk={() => this.onModalCheckinClick()}
           disabled={Boolean(
             (this.state.selectedRecord && this.state.selectedRecord.disabled) ||
               false
