@@ -311,15 +311,15 @@ export default class PriceMatrix extends React.Component {
                 <>
                   <span>Destination</span>
                   <AutoComplete
-              size="large"
-              style={{ width: "100%", marginLeft: "0.5rem" }}
-              onChange={(item) => this.onSelectAutoComplete("destination", item)}
-              onSearch={(e) => this.doSearch('destination',e)}
-              placeholder="Destination">
-              {this.state.endStationRoutesTemp.map((e, i) => (
-                <Option value={e.endStationName}>{e.endStationName}</Option>
-              ))}
-            </AutoComplete>
+                    size="large"
+                    style={{ width: "100%", marginLeft: "0.5rem" }}
+                    onChange={(item) => this.onSelectAutoComplete("destination", item)}
+                    onSearch={(e) => this.doSearch('destination',e)}
+                    placeholder="Destination">
+                    {this.state.endStationRoutesTemp.map((e, i) => (
+                      <Option value={e.endStationName}>{e.endStationName}</Option>
+                    ))}
+                  </AutoComplete>
                   
                 </>
               )}

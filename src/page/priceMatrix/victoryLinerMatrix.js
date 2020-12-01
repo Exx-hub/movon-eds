@@ -9,6 +9,7 @@ import {
   Input,
   Skeleton,
   Divider,
+  AutoComplete,
 } from "antd";
 
 import { PlusOutlined, SaveOutlined, DeleteFilled } from "@ant-design/icons";
@@ -19,9 +20,11 @@ import {
   UserProfile,
   alterPath,
 } from "../../utility";
-import FixPriceMatrix from './fixMatrix'
+import FixPriceMatrix from "./fixMatrix";
 
 import "./priceMatrix.css";
+import RoutesService from "../../service/Routes";
+import { config } from "../../config";
 
 const { Option } = Select;
 
@@ -51,76 +54,109 @@ const initConnectingMatrix = {
 };
 
 export default class VictoryLinerMatrix extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      matrix: [{ ...initMatrix }],
-      connectingMatrix: [{ ...initConnectingMatrix }],
-      routes: undefined,
-      selectedRoute: undefined,
-      routesList: [],
-      startStation: undefined,
-      connectingRoutes: {
-        name: "connectingRoutes",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-        options: [],
-      },
-      connectingRoutesOrigin: {
-        name: "connectingRoutesOrigin",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-        options: [],
-      },
-      connectingCompany: {
-        name: "connectingCompany",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-        options: [],
-      },
-      matrix:[],
-      fixMatrix: [{}],
-    };
-    this.userProfileObject = UserProfile;
-  }
+  state = {
+    matrix: [{ ...initMatrix }],
+    connectingMatrix: [{ ...initConnectingMatrix }],
+    routes: undefined,
+    selectedRoute: undefined,
+    routesList: [],
+    startStation: undefined,
+    connectingRoutes: {
+      name: "connectingRoutes",
+      value: undefined,
+      isRequired: true,
+      accepted: true,
+      options: [],
+    },
+    connectingRoutesOrigin: {
+      name: "connectingRoutesOrigin",
+      value: undefined,
+      isRequired: true,
+      accepted: true,
+      options: [],
+    },
+    connectingCompany: {
+      name: "connectingCompany",
+      value: undefined,
+      isRequired: true,
+      accepted: true,
+      options: [],
+    },
+    matrix: [],
+    fixMatrix: [{}],
+    originId: null,
+    destinationId: null,
+    startStationRoutes: [],
+    endStationRoutes: [],
+    startStationRoutesTemp: [],
+    endStationRoutesTemp: [],
+  };
 
   componentDidMount() {
-    
-    ParcelService.getTrips(this.userProfileObject.getAssignedStationId()).then((e) => {
-      const { data, success, errorCode } = e.data;
-      if (success) {
-        if (data.trips) {
-          let options = [];
-          data.trips.data.forEach((e) => {
-            options.push({
-              name: e.endStation.name,
-              value: e.endStation._id,
-            });
-          });
+    // ParcelService.getTrips(UserProfile.getAssignedStationId()).then((e) => {
+    //   const { data, success, errorCode } = e.data;
+    //   if (success) {
+    //     if (data.trips) {
+    //       let options = [];
+    //       data.trips.data.forEach((e) => {
+    //         options.push({
+    //           name: e.endStation.name,
+    //           value: e.endStation._id,
+    //         });
+    //       });
 
-          let clean = [];
-          options = options.filter((e) => {
-            if (!clean.includes(e.value)) {
-              clean.push(e.value);
+    //       let clean = [];
+    //       options = options.filter((e) => {
+    //         if (!clean.includes(e.value)) {
+    //           clean.push(e.value);
+    //           return true;
+    //         }
+    //         return false;
+    //       });
+    //       this.setState({
+    //         routes: data,
+    //         selectedRoute: data[0],
+    //         routesList: { ...this.state.routesList, ...{ options } },
+    //         startStation: UserProfile.getAssignedStation(),
+    //       });
+    //     }
+    //   } else {
+    //     this.handleErrorNotification(errorCode);
+    //   }
+    // });
+
+    RoutesService.getAllRoutes().then((e) => {
+      const { data, errorCode } = e.data;
+      if (errorCode) {
+        this.handleErrorNotification(errorCode);
+        return;
+      }
+      let clean = [];
+      if (
+        Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
+      ) {
+        const _startStationRoutes = data
+          .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
+          .filter((e) => {
+            if (!clean.includes(e.stationName)) {
+              clean.push(e.stationName);
               return true;
             }
             return false;
           });
-          this.setState({
-            routes: data,
-            selectedRoute: data[0],
-            routesList: { ...this.state.routesList, ...{ options } },
-            startStation: this.userProfileObject.getAssignedStation(),
-          });
-        }
-      } else {
-        this.handleErrorNotification(errorCode);
+        const startStationRoutes = [
+          ...[{ stationId: "null", stationName: "-- All --" }],
+          ..._startStationRoutes,
+        ];
+        this.setState({
+          allRoutes: data,
+          startStationRoutes,
+          startStationRoutesTemp: startStationRoutes,
+        });
       }
     });
     ParcelService.getConnectingBusPartners().then((e) => {
+      console.log('getConnectingBusPartners',e)
       const { success, data, errorCode } = e.data;
       if (success) {
         if (data.connectingRoutes.length > 0) {
@@ -146,7 +182,7 @@ export default class VictoryLinerMatrix extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      this.userProfileObject.clearData();
+      UserProfile.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -163,7 +199,7 @@ export default class VictoryLinerMatrix extends React.Component {
     const connectingCompany = this.state.connectingCompany;
     const origin = this.state.connectingRoutesOrigin.value;
     const destination = this.state.connectingRoutes.value;
-    const{matrix,fixMatrix}=this.state;
+    const { matrix, fixMatrix } = this.state;
 
     if (!origin || !destination) {
       notification["error"]({
@@ -183,9 +219,8 @@ export default class VictoryLinerMatrix extends React.Component {
       busCompanyId,
       origin,
       destination,
-      stringValues: JSON.stringify({matrix,fixMatrix}),
-    })
-    .then((e) => {
+      stringValues: JSON.stringify({ matrix, fixMatrix }),
+    }).then((e) => {
       const { success, errorCode } = e.data;
       if (success)
         notification["success"]({
@@ -194,12 +229,11 @@ export default class VictoryLinerMatrix extends React.Component {
         });
       else this.handleErrorNotification(errorCode);
     });
-
   };
 
   fetchConnectingMatrix = () => {
-    const origin = this.state.connectingRoutesOrigin.value;
-    const destination = this.state.connectingRoutes.value;
+    const origin = this.state.originId;
+    const destination = this.state.destinationId;
     const connectingCompany = this.state.connectingCompany;
     const busCompanyId =
       connectingCompany.value ||
@@ -210,6 +244,7 @@ export default class VictoryLinerMatrix extends React.Component {
     if (busCompanyId && origin && destination) {
       MatrixService.getMatrix({ busCompanyId, origin, destination }).then(
         (e) => {
+          console.log('e',e)
           const { data, success, errorCode } = e.data;
           if (success) {
             let connectingMatrix = [{ ...initConnectingMatrix }];
@@ -218,17 +253,21 @@ export default class VictoryLinerMatrix extends React.Component {
 
             if (data && data.stringValues) {
               connectingMatrix = JSON.parse(data.stringValues);
-              if(connectingMatrix){
-                if(Array.isArray(connectingMatrix)){
+              if (connectingMatrix) {
+                if (Array.isArray(connectingMatrix)) {
                   matrix = [...connectingMatrix];
-                  fixMatrix = [{name:"", price:0, declaredValue:0}]
-                }else{
-                  if(typeof connectingMatrix === 'object' && (connectingMatrix !== null || connectingMatrix !== undefined)){
+                  fixMatrix = [{ name: "", price: 0, declaredValue: 0 }];
+                } else {
+                  if (
+                    typeof connectingMatrix === "object" &&
+                    (connectingMatrix !== null ||
+                      connectingMatrix !== undefined)
+                  ) {
                     matrix = [...connectingMatrix.matrix];
                     fixMatrix = [...connectingMatrix.fixMatrix];
                   }
                 }
-                this.setState({matrix,fixMatrix});
+                this.setState({ matrix, fixMatrix });
               }
             }
             this.setState({ connectingMatrix });
@@ -275,6 +314,91 @@ export default class VictoryLinerMatrix extends React.Component {
     this.setState({ fixMatrix });
   };
 
+  onAssociateChange = (value) => {
+    const connectingCompany = { ...this.state.connectingCompany };
+    this.setState(
+      {
+        connectingCompany: {
+          ...{ connectingCompany },
+          ...{ value },
+        },
+      },
+      () => this.getConnectingRoutes(value)
+    );
+  };
+
+  doSearch = (name, el) => {
+    const toSearch = el.toLowerCase();
+    switch (name) {
+      case "origin":
+        let startStationRoutesTemp = this.state.startStationRoutes
+          .map((e) => ({ stationName: e.stationName }))
+          .filter((e) => e.stationName.toLowerCase().includes(toSearch));
+        this.setState({ startStationRoutesTemp });
+        break;
+      case "destination":
+        let endStationRoutesTemp = this.state.endStationRoutes
+          .map((e) => ({ endStationName: e.endStationName }))
+          .filter((e) => e.endStationName.toLowerCase().includes(toSearch));
+        this.setState({ endStationRoutesTemp });
+        break;
+      default:
+        break;
+    }
+  };
+
+  getEndDestination = (data, stationId) => {
+    if (!stationId) return;
+
+    let clean = [];
+    const destinations = data
+      .filter((e) => e.start === stationId)
+      .filter((e) => {
+        if (!clean.includes(e.endStationName)) {
+          clean.push(e.endStationName);
+          return true;
+        }
+        return false;
+      })
+      .map((e) => ({ endStationName: e.endStationName, end: e.end }));
+    return [...[{ end: "null", endStationName: "-- All --" }], ...destinations];
+  };
+
+  onSelectAutoComplete = (name, value) => {
+    let selected = [];
+
+    switch (name) {
+      case "origin":
+        selected =
+          this.state.startStationRoutes.find((e) => e.stationName === value) ||
+          null;
+        if (selected) {
+          const endStationRoutes = this.getEndDestination(
+            this.state.allRoutes,
+            selected.stationId
+          );
+          this.setState({
+            originId: selected.stationId,
+            endStationRoutes,
+            endStationRoutesTemp: endStationRoutes,
+          });
+        }
+        break;
+      case "destination":
+        selected =
+          this.state.endStationRoutes.find((e) => e.endStationName === value) ||
+          null;
+        if (selected) {
+          this.setState({ destinationId: selected.end }, () =>
+            this.fetchConnectingMatrix()
+          );
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
   render() {
     const connectingRoutesOrigin = { ...this.state.connectingRoutesOrigin };
     const connectingRoutes = { ...this.state.connectingRoutes };
@@ -306,17 +430,7 @@ export default class VictoryLinerMatrix extends React.Component {
                           defaultValue={
                             options && options.length > 0 && options[0]._id
                           }
-                          onChange={(e) =>
-                            this.setState(
-                              {
-                                connectingCompany: {
-                                  ...{ connectingCompany },
-                                  ...{ value: e },
-                                },
-                              },
-                              () => this.getConnectingRoutes(e)
-                            )
-                          }
+                          onChange={(e) => this.onAssociateChange(e)}
                         >
                           {options.map((e, i) => (
                             <Option key={i} value={e._id}>
@@ -331,28 +445,21 @@ export default class VictoryLinerMatrix extends React.Component {
                     {connectingRoutesOrigin.options.length > 0 && (
                       <div className="select-padding">
                         <span>Origin</span>
-                        <Select
+                        <AutoComplete
+                          size="large"
                           style={{ width: "100%" }}
-                          placeholder="Destination"
-                          value={connectingRoutesOrigin.value}
-                          onChange={(e) =>
-                            this.setState(
-                              {
-                                connectingRoutesOrigin: {
-                                  ...connectingRoutesOrigin,
-                                  ...{ value: e },
-                                },
-                              },
-                              () => this.fetchConnectingMatrix()
-                            )
+                          onSelect={(item) =>
+                            this.onSelectAutoComplete("origin", item)
                           }
+                          onSearch={(e) => this.doSearch("origin", e)}
+                          placeholder="Origin Stations"
                         >
-                          {connectingRoutesOrigin.options.map((e, i) => (
-                            <Option key={i} value={e.start}>
-                              {e.startStationName}
+                          {this.state.startStationRoutesTemp.map((e, i) => (
+                            <Option value={e.stationName}>
+                              {e.stationName}
                             </Option>
                           ))}
-                        </Select>
+                        </AutoComplete>
                       </div>
                     )}
                   </Col>
@@ -360,26 +467,21 @@ export default class VictoryLinerMatrix extends React.Component {
                     {connectingRoutes.options && (
                       <div className="select-padding">
                         <span>Destination</span>
-                        <Select
-                          style={{ width: "100%" }}
-                          placeholder="Destination"
-                          value={connectingRoutes.value}
-                          onChange={(e) =>
-                            this.setState(
-                              {
-                                connectingRoutes: {
-                                  ...connectingRoutes,
-                                  ...{ value: e },
-                                },
-                              },
-                              () => this.fetchConnectingMatrix()
-                            )
+                        <AutoComplete
+                          size="large"
+                          style={{ width: "100%", marginLeft: "0.5rem" }}
+                          onChange={(item) =>
+                            this.onSelectAutoComplete("destination", item)
                           }
+                          onSearch={(e) => this.doSearch("destination", e)}
+                          placeholder="Destination"
                         >
-                          {connectingRoutes.options.map((e, i) => (
-                            <Option value={e.end}>{e.endStationName}</Option>
+                          {this.state.endStationRoutesTemp.map((e, i) => (
+                            <Option value={e.endStationName}>
+                              {e.endStationName}
+                            </Option>
                           ))}
-                        </Select>
+                        </AutoComplete>
                       </div>
                     )}
                   </Col>
@@ -549,15 +651,19 @@ export default class VictoryLinerMatrix extends React.Component {
                     </Button>
                   </Col>
                 </Row>
-                <Row><Col>
-                <FixPriceMatrix 
-                  onFixMatrixChange={this.onFixMatrixChange}
-                  fixMatrix={this.state.fixMatrix}
-                  onAddMoreItem={(fixMatrix)=>this.setState({fixMatrix})}
-                  onDeleteItem={(fixMatrix)=>this.setState({fixMatrix})}
-                  />
-                </Col></Row>        
-                </div>
+                <Row>
+                  <Col>
+                    <FixPriceMatrix
+                      onFixMatrixChange={this.onFixMatrixChange}
+                      fixMatrix={this.state.fixMatrix}
+                      onAddMoreItem={(fixMatrix) =>
+                        this.setState({ fixMatrix })
+                      }
+                      onDeleteItem={(fixMatrix) => this.setState({ fixMatrix })}
+                    />
+                  </Col>
+                </Row>
+              </div>
             </Row>
           )}
         </div>
