@@ -35,8 +35,7 @@ export const config = {
         environment:"development",
         build: '1.2.8(36)'
     },
-    changeLogs: `show all transaction at first load`
-
+    changeLogs: `fix issue on manifest set page`
 }
 
 export const ERROR_CODES = {

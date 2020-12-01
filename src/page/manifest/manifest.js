@@ -161,7 +161,6 @@ class Manifest extends React.Component {
         this.state.page,
         this.state.limit
       ).then((e) => {
-        console.info('e.data',e.data)
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState(
