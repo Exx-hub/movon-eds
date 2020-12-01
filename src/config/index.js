@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.8(37)'
+        build: '1.2.8(38)'
     },
-    changeLogs: `fix issue on manifest set page, remove end trip date`
+    changeLogs: `fix UI issue manifest details page`
 }
 
 export const ERROR_CODES = {

@@ -461,15 +461,15 @@ class ManifestDetails extends React.Component {
       case 1:
         View = (
           <div className="right-content-section">
-            <Row style={{ display: "none" }}>
+            <Row>
               <Col span={24}>
                 <div className="search-container">
-                  <Search
-                    value={this.state.searchValue}
-                    className="manifest-details-search-box"
-                    placeholder="Sender | Receiver | QR Code | Bill of Lading"
-                    onChange={(e) => this.doSearch(e.target.value)}
-                  />
+                <Search
+                  value={this.state.searchValue}
+                  className="manifest-details-search-box"
+                  placeholder="Sender | Receiver | QR Code | Bill of Lading"
+                  onChange={(e) => this.doSearch(e.target.value)}
+                />
                 </div>
               </Col>
             </Row>
@@ -612,12 +612,6 @@ class ManifestDetails extends React.Component {
         </Header>
 
         <Layout className="manifest-details-page-body">
-          <Search
-            value={this.state.searchValue}
-            className="manifest-details-search-box"
-            placeholder="Sender | Receiver | QR Code | Bill of Lading"
-            onChange={(e) => this.doSearch(e.target.value)}
-          />
           {this.SwitchView()}
         </Layout>
       </Layout>
