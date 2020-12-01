@@ -17,7 +17,7 @@ const TableRoutesView = (props) => {
     {
       title: "Trip Date",
       dataIndex: "date",
-      defaultSortOrder: "descend",
+      defaultSortOrder: 'ascend', //"descend",
       sorter: (a, b) => moment(a.date) - moment(b.date),
     },
     {
@@ -100,8 +100,6 @@ class Manifest extends React.Component {
         let state = { allRoutes: data };
         let clean = [];
 
-        console.log('data',data)
-
         if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
           const _startStationRoutes = data
           .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
@@ -115,7 +113,6 @@ class Manifest extends React.Component {
           const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
           state.startStationRoutes = startStationRoutes;
           state.startStationRoutesTemp = startStationRoutes;
-          console.log('_startStationRoutes',_startStationRoutes)
         }else{
           state.originId =  UserProfile.getAssignedStationId()
           const endStationRoutes = this.getEndDestination(data, state.originId);
@@ -157,13 +154,14 @@ class Manifest extends React.Component {
     this.setState({ fetching: true });
     try {
       ManifestService.getManifestDateRange(
-        this.state.startDay,
-        this.state.endDay,
+        moment(this.state.startDay).format("YYYY-MM-DD"),
+        moment(this.state.endDay).format("YYYY-MM-DD"),
         startStationId,
         endStationId,
         this.state.page,
         this.state.limit
       ).then((e) => {
+        console.info('e.data',e.data)
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState(
@@ -186,9 +184,7 @@ class Manifest extends React.Component {
                 return {
                   key: i,
                   tripId: e._id,
-                  date: moment(e.date)
-                    .subtract(8, "hours")
-                    .format("MMMM DD, YYYY"),
+                  date: moment(e.date).format("MMMM DD, YYYY"),
                   count: e.count,
                   startStationName: e.startStationName,
                   endStationName: e.endStationName,
@@ -227,7 +223,7 @@ class Manifest extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay, page: 1 }, () => this.getManifestByDestination(null, this.state.destinationId));
+      this.setState({ startDay, endDay, page: 0 }, () => this.getManifestByDestination(null, this.state.destinationId));
     }
   };
 
@@ -405,7 +401,7 @@ class Manifest extends React.Component {
         {this.state.dataSource && this.state.dataSource.length > 0 && (
           <div className="pagination-container">
             <Pagination
-              onChange={(page) => this.setState({ page: page - 1 }, () => this.getManifestByDestination(null, this.state.destinationId))}
+              onChange={(page) => this.setState({ page }, () => this.getManifestByDestination(null, this.state.destinationId))}
               defaultCurrent={this.state.page}
               total={this.state.totalRecords}
               showSizeChanger={false}

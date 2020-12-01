@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.8(35)'
+        build: '1.2.8(36)'
     },
     changeLogs: `show all transaction at first load`
 
