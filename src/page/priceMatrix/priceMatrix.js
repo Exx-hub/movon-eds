@@ -18,6 +18,8 @@ import ParcelService from "../../service/Parcel";
 import {openNotificationWithIcon, UserProfile, alterPath} from "../../utility";
 import FixPriceMatrix from './fixMatrix'
 import "./priceMatrix.css";
+import RoutesService from "../../service/Routes";
+import { config } from "../../config";
 
 const { Option } = Select;
 
@@ -38,56 +40,46 @@ const initMatrix = {
 
 export default class PriceMatrix extends React.Component {
 
-  constructor(){
-    super();
-    this.state = {
-      matrix: [{ ...initMatrix }],
-      routes: undefined,
-      selectedRoute: undefined,
-      routesList: [],
-      startStation: undefined,
-      fixMatrix: [{}],
-    };
-    this.userProfileObject = UserProfile;
-  }
+  state = {
+    matrix: [{ ...initMatrix }],
+    routes: undefined,
+    selectedRoute: undefined,
+    routesList: [],
+    startStation: undefined,
+    fixMatrix: [{}],
+    originId: null,
+    destinationId: null,
+    startStationRoutes: [],
+    endStationRoutes: [],
+    startStationRoutesTemp:[],
+    endStationRoutesTemp:[],
+  };
 
   componentDidMount() {
-    this.busCompanyId = this.userProfileObject.getBusCompanyId();
-    const stationId = this.userProfileObject.getAssignedStationId();
+    this.busCompanyId = UserProfile.getBusCompanyId();
 
-    ParcelService.getTrips(stationId).then((e) => {
-      const { data, success, errorCode } = e.data;
-      if (success) {
-        if (data.trips) {
-          let options = [];
-          data.trips.data.forEach((e) => {
-            options.push({
-              name: e.endStation.name,
-              value: e.endStation._id,
-            });
-          });
-
-          let clean = [];
-          options = options.filter((e) => {
-            if (!clean.includes(e.value)) {
-              clean.push(e.value);
-              return true;
-            }
-            return false;
-          });
-          
-          this.setState({
-            routes: data,
-            selectedRoute: data[0],
-            routesList: { ...this.state.routesList, ...{ options } },
-            startStation: this.userProfileObject.getAssignedStation(),
-            tempDestinationList: options.map(e=>(e.name))
-          });
-        }
-      } else {
+    RoutesService.getAllRoutes().then((e) => {
+      const { data, errorCode } = e.data;
+      if (errorCode) {
         this.handleErrorNotification(errorCode);
+        return;
+      }
+      let clean = [];
+      if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+        const _startStationRoutes = data
+        .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
+        .filter((e) => {
+          if (!clean.includes(e.stationName)) {
+            clean.push(e.stationName);
+            return true;
+          }
+          return false;
+        });
+        const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
+        this.setState({allRoutes:data, startStationRoutes, startStationRoutesTemp:startStationRoutes});
       }
     });
+
   }
 
   handleErrorNotification = (code) => {
@@ -101,7 +93,7 @@ export default class PriceMatrix extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      this.userProfileObject.clearData();
+      UserProfile.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -177,54 +169,52 @@ export default class PriceMatrix extends React.Component {
   };
 
   onDestinationSelect = (e) => {
-
     let index = this.state.routesList.options.find(i=>String(i.name) === String(e));
     const destination = (index && index.value) || undefined;
-    this.setState({ selectedRoute: destination }, () => {
-      MatrixService.getMatrix({
-        busCompanyId: this.busCompanyId,
-        origin:this.state.startStation._id,
-        destination,
-      }).then((e) => {
-        const { data, success, errorCode } = e.data;
-
-        if (Boolean(success)) {
-          let result = (data &&
-            data.stringValues &&
-            JSON.parse(data.stringValues)) || {
-            matrix: [initMatrix],
-            fixMatrix: [],
-          };
-
-          if(Array.isArray(result)){
-            this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}]});
-          }else{
-            let { matrix, fixMatrix } = result;
-            if(fixMatrix.length === 0){
-              fixMatrix = [...[{name:"", price:0, declaredValue:0}]]
-            }
-            
-            let _matrix = [...matrix];
-            if(_matrix.length > 0 && _matrix[0].maxAllowedLength && _matrix[0].maxAllowedLengthRate){
-              _matrix[0].maxAllowedLength1 = _matrix[0].maxAllowedLength[0]
-              _matrix[0].maxAllowedLength2 = _matrix[0].maxAllowedLength[1]
-              _matrix[0].maxAllowedLengthRate1 = _matrix[0].maxAllowedLengthRate[0]
-              _matrix[0].maxAllowedLengthRate2 = _matrix[0].maxAllowedLengthRate[1]
-            
-              delete _matrix[0].maxAllowedLength;
-              delete _matrix[0].maxAllowedLengthRate;
-            }
-            
-
-            this.setState({ matrix:_matrix, fixMatrix });
-          }
-         
-        } else {
-          this.handleErrorNotification(errorCode);
-        }
-      });
-    });
+    this.setState({ selectedRoute: destination })
   };
+
+  onFetchMatrix = () =>{
+    MatrixService.getMatrix({
+      busCompanyId: this.busCompanyId,
+      origin:this.state.originId,
+      destination: this.state.destinationId,
+    }).then((e) => {
+      const { data, success, errorCode } = e.data;
+
+      if (Boolean(success)) {
+        let result = (data &&
+          data.stringValues &&
+          JSON.parse(data.stringValues)) || {
+          matrix: [initMatrix],
+          fixMatrix: [],
+        };
+
+        if(Array.isArray(result)){
+          this.setState({ matrix:result, fixMatrix:[{name:"", price:0, declaredValue:0}]});
+        }else{
+          let { matrix, fixMatrix } = result;
+          if(fixMatrix.length === 0){
+            fixMatrix = [...[{name:"", price:0, declaredValue:0}]]
+          }
+          
+          let _matrix = [...matrix];
+          if(_matrix.length > 0 && _matrix[0].maxAllowedLength && _matrix[0].maxAllowedLengthRate){
+            _matrix[0].maxAllowedLength1 = _matrix[0].maxAllowedLength[0]
+            _matrix[0].maxAllowedLength2 = _matrix[0].maxAllowedLength[1]
+            _matrix[0].maxAllowedLengthRate1 = _matrix[0].maxAllowedLengthRate[0]
+            _matrix[0].maxAllowedLengthRate2 = _matrix[0].maxAllowedLengthRate[1]
+          
+            delete _matrix[0].maxAllowedLength;
+            delete _matrix[0].maxAllowedLengthRate;
+          }
+          this.setState({ matrix:_matrix, fixMatrix });
+        }
+      } else {
+        this.handleErrorNotification(errorCode);
+      }
+    });
+  }
 
   onFixMatrixChange = (index, name, value) => {
     let fixMatrix = [...this.state.fixMatrix];
@@ -232,10 +222,62 @@ export default class PriceMatrix extends React.Component {
     this.setState({ fixMatrix });
   };
 
-  doSearch = (el) => {
+  doSearch = (name,el) => {
     const toSearch = el.toLowerCase();
-    const tempDestinationList = this.state.routesList.options.filter((e) => e.name.toLowerCase().includes(toSearch)).map((e) => e.name);
-    this.setState({ tempDestinationList });
+    switch(name){
+      case 'origin': 
+        let startStationRoutesTemp = this.state.startStationRoutes.map(e=>({stationName:e.stationName}))
+        .filter((e) => e.stationName.toLowerCase().includes(toSearch))
+        this.setState({ startStationRoutesTemp });
+        break;
+      case 'destination':
+        let endStationRoutesTemp = this.state.endStationRoutes.map(e=>({endStationName:e.endStationName}))
+        .filter((e) => e.endStationName.toLowerCase().includes(toSearch))
+        this.setState({ endStationRoutesTemp });
+      break;
+      default: break;
+    }
+  };
+
+  getEndDestination = (data,stationId) => {
+    if(!stationId)
+    return;
+
+    let clean = [];
+    const destinations = data
+      .filter((e) => e.start === stationId)
+      .filter((e) => {
+        if (!clean.includes(e.endStationName)) {
+          clean.push(e.endStationName);
+          return true;
+        }
+        return false;
+      }).map(e=>({endStationName:e.endStationName, end:e.end}));
+      return [...[{end:'null', endStationName:"-- All --"}], ...destinations]
+  };
+
+  onSelectAutoComplete = (name, value) => {
+    let selected = [];
+
+    switch (name) {
+      case "origin":
+        selected = this.state.startStationRoutes
+        .find((e) => e.stationName === value) || null;
+        if(selected){
+          const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
+          this.setState({ originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes });
+        }
+        break;
+      case "destination":
+        selected = this.state.endStationRoutes
+        .find((e) => e.endStationName === value) || null;
+        if(selected){
+          this.setState({destinationId:selected.end},()=>this.onFetchMatrix())
+        }
+        break;
+      default:
+        break;
+    }
   };
 
   render() {
@@ -243,37 +285,41 @@ export default class PriceMatrix extends React.Component {
       <Layout>
         <div className="price-matrix-module">
           <h1 className="bus-company-name">
-            {this.userProfileObject.getBusCompanyName()}
+            {UserProfile.getBusCompanyName()}
           </h1>
           <Row justify="left" className="select-group-origin-destination">
             <Col span={8} style={{ paddingRight: ".5rem" }}>
-              {this.state.startStation && (
+              {this.state.startStationRoutesTemp && (
                 <>
                   <span>Origin</span>
-                  <Select
+                  <AutoComplete
+                    size="large"
                     style={{ width: "100%" }}
-                    defaultValue={this.state.startStation.name}
-                    placeholder="Start Station"
+                    onSelect={(item) => this.onSelectAutoComplete("origin", item)}
+                    onSearch={(e) => this.doSearch('origin',e)}
+                    placeholder="Origin Stations"
                   >
-                    <Option value={this.state.startStation.name}>
-                      {this.state.startStation.name}
-                    </Option>
-                  </Select>
+                    {this.state.startStationRoutesTemp.map((e, i) => (
+                      <Option value={e.stationName}>{e.stationName}</Option>
+                    ))}
+                  </AutoComplete>
                 </>
               )}
             </Col>
             <Col span={8} style={{ paddingLeft: "1rem" }}>
-              {this.state.routesList.options && (
+              {this.state.endStationRoutesTemp && (
                 <>
                   <span>Destination</span>
                   <AutoComplete
-                    style={{ width: "100%" }}
-                    onSelect={(e) => this.onDestinationSelect(e)}
-                    onSearch={(e) => this.doSearch(e)}
-                    placeholder="Destination"
-                  >
-                  {this.state.tempDestinationList.map((e, i) => (<Option value={e}>{e}</Option>))}
-                  </AutoComplete>
+              size="large"
+              style={{ width: "100%", marginLeft: "0.5rem" }}
+              onChange={(item) => this.onSelectAutoComplete("destination", item)}
+              onSearch={(e) => this.doSearch('destination',e)}
+              placeholder="Destination">
+              {this.state.endStationRoutesTemp.map((e, i) => (
+                <Option value={e.endStationName}>{e.endStationName}</Option>
+              ))}
+            </AutoComplete>
                   
                 </>
               )}
