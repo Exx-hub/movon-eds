@@ -15,14 +15,8 @@ const dateFormat = "MM DD, YYYY";
 const TableRoutesView = (props) => {
   const columns = [
     {
-      title: "Start Trip Date",
+      title: "Trip Date",
       dataIndex: "date",
-      defaultSortOrder: 'ascend', //"descend",
-      sorter: (a, b) => moment(a.date) - moment(b.date),
-    },
-    {
-      title: "End Trip Date",
-      dataIndex: "date2",
       defaultSortOrder: 'ascend', //"descend",
       sorter: (a, b) => moment(a.date) - moment(b.date),
     },
@@ -35,6 +29,11 @@ const TableRoutesView = (props) => {
       title: "Destination",
       dataIndex: "endStationName",
       defaultSortOrder: "endStationName",
+    },
+    {
+      title: "Cluster",
+      dataIndex: "cluster",
+      defaultSortOrder: "cluster",
     },
     {
       title: "Parcel",
@@ -194,6 +193,7 @@ class Manifest extends React.Component {
                   date2: moment(e.tripEndDateTime).format("MMM DD, YYYY"),
                   count: e.count,
                   startStationName: e.startStationName,
+                  cluster: e.cluster,
                   endStationName: e.endStationName,
                   startStationId: e.startStation,
                   endStationId: e.endStation,

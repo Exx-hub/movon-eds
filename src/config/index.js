@@ -1,6 +1,6 @@
 export const config = {
-    //BASE_URL:"http://localhost:9000",
-    BASE_URL:"https://www.cargomovon.com/server",
+    BASE_URL:"http://localhost:9000",
+    //BASE_URL:"https://www.cargomovon.com/server",
     //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created',
@@ -35,7 +35,7 @@ export const config = {
         environment:"development",
         build: '1.2.8(37)'
     },
-    changeLogs: `fix issue on manifest set page`
+    changeLogs: `fix issue on manifest set page, remove end trip date`
 }
 
 export const ERROR_CODES = {
