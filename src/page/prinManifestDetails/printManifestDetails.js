@@ -198,46 +198,36 @@ class PrintManifestDetails extends React.Component {
     return (
       <Layout className="print-manifest-details-page">
         <Header className="home-header-view">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <Button
-                type="link"
-                onClick={() => this.props.history.push(alterPath("/"))}
-              >
-                <ArrowLeftOutlined
+        <Button
+        type="link"
+        onClick={() => this.props.history.push(alterPath("/"))}
+      >
+        <ArrowLeftOutlined
+          style={{ fontSize: "16px", color: "#fff" }}
+        />
+        <span style={{ fontSize: "20px", color: "#fff" }}>
+          Print Manifest
+        </span>
+      </Button>
+    <div>
+      <ReactToPrint
+        content={() => this.printEl.current}
+        trigger={() => {
+          return (
+            <Tooltip title="Print Document">
+              <Button type="link">
+                <PrinterOutlined
                   style={{ fontSize: "16px", color: "#fff" }}
                 />
-                <span style={{ fontSize: "20px", color: "#fff" }}>
-                  Print Manifest
+                <span style={{ fontSize: "16px", color: "#fff" }}>
+                  Print
                 </span>
               </Button>
-            </div>
-            <div>
-              <ReactToPrint
-                content={() => this.printEl.current}
-                trigger={() => {
-                  return (
-                    <Tooltip title="Print Document">
-                      <Button type="link">
-                        <PrinterOutlined
-                          style={{ fontSize: "16px", color: "#fff" }}
-                        />
-                        <span style={{ fontSize: "16px", color: "#fff" }}>
-                          Print
-                        </span>
-                      </Button>
-                    </Tooltip>
-                  );
-                }}
-              />
-            </div>
-          </div>
+            </Tooltip>
+          );
+        }}
+      />
+    </div>
         </Header>
         <Layout className="print-body">
           <div ref={this.printEl}>

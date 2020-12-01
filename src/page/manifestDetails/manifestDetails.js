@@ -258,19 +258,23 @@ class ManifestDetails extends React.Component {
       });
     });
 
-    if(this.props.location.state){
-
+    if (this.props.location.state) {
       const {
         startStationId,
         endStationId,
         endStationName,
         startStationName,
-        tripId
+        tripId,
       } = this.props.location.state.selected;
 
-      console.info('this.props.location.state.selected',this.props.location.state.selected)
-  
-      const date = moment(new Date(this.props.location.state.date)).format( "YYYY-MM-DD");
+      console.info(
+        "this.props.location.state.selected",
+        this.props.location.state.selected
+      );
+
+      const date = moment(new Date(this.props.location.state.date)).format(
+        "YYYY-MM-DD"
+      );
       this.fetchManifest(
         tripId,
         date,
@@ -282,42 +286,45 @@ class ManifestDetails extends React.Component {
   }
 
   fetchManifest = (tripId, date, startStationId, endStationId, _routes) => {
-    ManifestService.getManifestByDate(tripId, date, startStationId, endStationId).then(
-      (e) => {
-        if (e.data.errorCode) {
-          this.handleErrorNotification(e.data.errorCode);
-          return;
-        }
-
-        if (e.data && e.data.length > 0) {
-          let data = e.data;
-          const departureTime = date; //moment(date).format("MMM-DD-YYYY");
-          const arrivalTime = date; //moment(date).format("MMM-DD-YYYY");
-          const movonBillOfLading = data[0].displayId;
-          const coyBillOfLading = data[0].billOfLading;
-          const routes1 = data[0].trips.startStationName;
-          const routes2 = data[0].trips.endStationName;
-
-          this.setState({
-            date,
-            startStationId,
-            endStationId,
-            tempParcelData: data,
-            parcelData: data,
-            departureTime,
-            arrivalTime,
-            movonBillOfLading,
-            coyBillOfLading,
-            routes: _routes,
-            fetching: false,
-          });
-        } else {
-          this.setState({
-            fetching: false,
-          });
-        }
+    ManifestService.getManifestByDate(
+      tripId,
+      date,
+      startStationId,
+      endStationId
+    ).then((e) => {
+      if (e.data.errorCode) {
+        this.handleErrorNotification(e.data.errorCode);
+        return;
       }
-    );
+
+      if (e.data && e.data.length > 0) {
+        let data = e.data;
+        const departureTime = date; //moment(date).format("MMM-DD-YYYY");
+        const arrivalTime = date; //moment(date).format("MMM-DD-YYYY");
+        const movonBillOfLading = data[0].displayId;
+        const coyBillOfLading = data[0].billOfLading;
+        const routes1 = data[0].trips.startStationName;
+        const routes2 = data[0].trips.endStationName;
+
+        this.setState({
+          date,
+          startStationId,
+          endStationId,
+          tempParcelData: data,
+          parcelData: data,
+          departureTime,
+          arrivalTime,
+          movonBillOfLading,
+          coyBillOfLading,
+          routes: _routes,
+          fetching: false,
+        });
+      } else {
+        this.setState({
+          fetching: false,
+        });
+      }
+    });
   };
 
   onSiderChange = (name, value) => {
@@ -375,7 +382,7 @@ class ManifestDetails extends React.Component {
 
   getReviewDetails = (data) => {
     return {
-      noOfSticker:this.userProfileObject.getStickerCount(),
+      noOfSticker: this.userProfileObject.getStickerCount(),
       packageName: data.packageInfo.packageName,
       packageWeight: data.packageInfo.packageWeight,
       packageQty: data.packageInfo.quantity,
@@ -435,7 +442,7 @@ class ManifestDetails extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      this.userProfileObject.clearData()
+      this.userProfileObject.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -574,43 +581,24 @@ class ManifestDetails extends React.Component {
   doSorting = () => {};
 
   render() {
-    const { width, currentView } = this.state;
     return (
       <Layout className="manifest-details-page">
         <Header className="home-header-view">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
+          <Button
+            type="link"
+            onClick={() => {
+              this.props.history.push(alterPath("/manifest/list"));
             }}
           >
-            <div>
-              <Button
-                type="link"
-                onClick={() => {
-                  this.props.history.push(alterPath("/manifest/list"));
-                }}
-              >
-                <ArrowLeftOutlined
-                  style={{ fontSize: "20px", color: "#fff" }}
-                />
-                <span style={{ fontSize: "20px", color: "#fff" }}>
-                  Manifest Details
-                </span>
-              </Button>
-            </div>
+            <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
+            <span style={{ fontSize: "20px", color: "#fff" }}>
+              Manifest Details
+            </span>
+          </Button>
 
-            {this.state.currentView !== TICKET && this.state.currentView !== PREVIEW &&(
+          {this.state.currentView !== TICKET &&
+            this.state.currentView !== PREVIEW && (
               <>
-                <Search
-                  value={this.state.searchValue}
-                  className="manifest-details-search-box"
-                  placeholder="Sender | Receiver | QR Code | Bill of Lading"
-                  onChange={(e) => this.doSearch(e.target.value)}
-                />
-
                 <div>
                   <Switch
                     checkedChildren="Card View"
@@ -621,10 +609,15 @@ class ManifestDetails extends React.Component {
                 </div>
               </>
             )}
-          </div>
         </Header>
 
         <Layout className="manifest-details-page-body">
+          <Search
+            value={this.state.searchValue}
+            className="manifest-details-search-box"
+            placeholder="Sender | Receiver | QR Code | Bill of Lading"
+            onChange={(e) => this.doSearch(e.target.value)}
+          />
           {this.SwitchView()}
         </Layout>
       </Layout>
