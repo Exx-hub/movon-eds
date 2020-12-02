@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.8(39)'
+        build: '1.2.8(40)'
     },
-    changeLogs: `price matrix add origin station, victory liner matrix add origin station`
+    changeLogs: ``
 }
 
 export const ERROR_CODES = {
