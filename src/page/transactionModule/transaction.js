@@ -5,13 +5,16 @@ import {
   Space,
   notification,
   Pagination,
-  Tag
+  Tag,
+  Input
 } from "antd";
-import {openNotificationWithIcon, alterPath, UserProfile} from "../../utility";
+import {openNotificationWithIcon, alterPath, UserProfile, debounce} from "../../utility";
 import "./transaction.scss";
 import TransactionService from '../../service/VoidTransaction';
 import moment from 'moment'
 import { config } from "../../config";
+
+const { Search } = Input;
 
 const getTag = (props) => {
   console.log('config: ', config.voidStatus);
@@ -50,15 +53,9 @@ const columns=[
     render:(e)=> moment(e).format("MMMM DD, YYYY")
   },
   {
-    title: 'Bill Of Lading',
+    title: 'Bl No.',
     dataIndex: 'billOfLading',
     key: 'billOfLading',
-  },
-  {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-    render: (text)=> (config.voidType[text].toUpperCase())
   },
   {
     title: 'Requested By',
@@ -66,7 +63,7 @@ const columns=[
     key: 'deliveryPersonId',
   },
   {
-    title: 'Reason',
+    title: 'Remarks',
     dataIndex: 'remarks',
     key: 'remarks',
   },
@@ -80,24 +77,40 @@ const columns=[
 //(config.voidStatus[text].toUpperCase())
 class Transaction extends React.Component {
 
-  state={
-    data:[]
-  }
+ 
 
   constructor(props){
     super(props);
+    this.state={
+      data:[],
+      search:null,
+      page:0,
+      limit:15,
+      totalRecords:0
+    }
     this.userProfileObject = UserProfile
+    this.getVoidReport = debounce(this.getVoidReport, 1000);
   }
 
   componentDidMount(){
-    TransactionService.getAllTransaction().then(e=>{
+    this.getVoidReport();
+  }
+
+  getVoidReport = () =>{
+    const{limit,page,search}=this.state;
+    TransactionService.getAllTransaction(search,page,limit)
+    .then(e=>{
       console.log("eeeee",e)
       const{data,errorCode}=e.data
+
+      const{list,pagination}=data
+      const{ totalRecords }=pagination;
+
       if(errorCode){
         this.handleErrorNotification(errorCode)
       }else{
         console.log(data.list)
-        this.setState({data:data.list})
+        this.setState({data:list, totalRecords})
       }
     })
   }
@@ -120,10 +133,24 @@ class Transaction extends React.Component {
     openNotificationWithIcon("error", code);
   };
 
+  doSearch = (val) =>{
+    this.setState({search:val, page:0},()=>{
+      this.getVoidReport()
+    })
+  }
+
   render() {
     return (
       <div className="trasaction-page">
       <>
+      <div className="search-container">
+        <Search
+          value={this.state.searchValue}
+          className="manifest-details-search-box"
+          placeholder="Bill of Lading, Staff Name"
+          onChange={(e) => this.doSearch(e.target.value)}
+        />
+      </div>
       <Table
         rowKey={(e) => e.key}
         pagination={false}
@@ -132,7 +159,7 @@ class Transaction extends React.Component {
       />
       <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1rem'}}>
       <Pagination
-        onChange={page => this.setState({ page: page -1 })}
+        onChange={page => {this.setState({ page: page-1 },()=>this.getVoidReport())} }
         defaultCurrent={this.state.page}
         total={this.state.totalRecords}
         showSizeChanger={false}

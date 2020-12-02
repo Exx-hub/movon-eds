@@ -4,4 +4,30 @@
     .ant-table table{
         font-size: 14px !important;
     }
+
+    .search-container{
+        padding: 1rem;
+        padding-top: 1rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .manifest-details-search-box{
+        border-radius: 10px;
+        font-size: 25px;
+        width: 450px;
+
+        &:hover{
+            border-color: teal !important;
+            box-shadow: 0 0 3px teal;
+        }
+        &:focus-within{
+            border-color: teal !important;
+            box-shadow: 0 0 5px teal !important;
+        }
+    }
+
+
+
 }

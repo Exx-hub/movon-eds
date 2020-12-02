@@ -6,15 +6,19 @@ const BASE_URL = config.BASE_URL;
 const userProfileObject = UserProfile
 
 const TransactionService = {
-    getAllTransaction: () => {
+    getAllTransaction: (search,page,limit) => {
         return axios({
             method: 'get',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/cargo-transaction/pull/list
-            `,
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/cargo-transaction/pull/list`,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
                 'x-auth-devicetype' : config.header.deviceType,
                 'x-auth-token' : userProfileObject.getToken()
+            },
+            params:{
+                search,
+                page,
+                limit
             }
         })
     },

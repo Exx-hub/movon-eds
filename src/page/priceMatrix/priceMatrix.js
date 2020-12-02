@@ -123,7 +123,7 @@ export default class PriceMatrix extends React.Component {
       return item === 0 || item === undefined || item === null || item === ""
     }
 
-    hasError = isNull(matrix[0].tariffRate) || 
+    const hasMatrixError = isNull(matrix[0].tariffRate) || 
     isNull(matrix[0].exceededPerKilo) || 
     isNull(matrix[0].price) || 
     isNull(matrix[0].declaredValueRate) || 
@@ -133,7 +133,7 @@ export default class PriceMatrix extends React.Component {
     isNull(matrix[0].maxAllowedLength2) || 
     isNull(matrix[0].maxAllowedWeight);
 
-    if(hasError){
+    if(hasError || hasMatrixError){
       notification["error"]({
         message: "Input Fields Validation",
         description: "Please fill up missing fields",

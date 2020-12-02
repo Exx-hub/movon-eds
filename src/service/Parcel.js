@@ -43,6 +43,7 @@ const ParcelService = {
             selectedTrip,
             billOfLading,
             tariffRate,
+            
         }=state;
 
         const {
