@@ -75,49 +75,6 @@ class SalesReport extends React.Component {
 
   componentDidMount() {
     this.printEl = React.createRef();
-    // Promise.all([ManifestService.getRoutes(), this.getParcel()]).then(
-    //   (resonses) => {
-
-    //     console.log('responses',resonses)
-
-    //     if (resonses[0]) {
-    //       const { data, errorCode } = resonses[0].data;
-
-    //       if (errorCode) {
-    //         this.handleErrorNotification(errorCode);
-    //         return;
-    //       }
-
-    //       if (data) {
-    //         const options = data.map((e, i) => {
-    //           return {
-    //             key: i,
-    //             data: e,
-    //             value: i,
-    //             name: e.endStationName,
-    //           };
-    //         });
-    //         let destination = { ...this.state.destination };
-    //         destination.options = options;
-    //         destination.value = 0;
-    //         destination.data = options[0].data;
-    //         this.setState({
-    //           destination,
-    //           templist: options.map((e) => e.name),
-    //         });
-    //       }
-    //     }
-    //     if (resonses[1]) {
-    //       const { data, success, errorCode } = resonses[1].data;
-    //       if (errorCode) {
-    //         this.handleErrorNotification(errorCode);
-    //         return;
-    //       }
-    //       this.parseParcel(data);
-    //     }
-    //   }
-    // );
-    
     RoutesService.getAllRoutes().then((e) => {
       const { data, errorCode } = e.data;
       if (errorCode) {
@@ -373,7 +330,10 @@ class SalesReport extends React.Component {
   };
 
   getDestination = () => {
-    return (this.state.tags.length > 0 && this.state.tags.join()) || "All";
+    const tags = [...this.state.tags]
+    console.log('tags',tags)
+    const _tags = tags.map(e=>(e.name));
+    return (_tags.length > 0 && _tags.join(", ")) || "All";
   };
 
   getDate = () => {
