@@ -43,7 +43,7 @@ const ParcelService = {
             selectedTrip,
             billOfLading,
             tariffRate,
-            
+            lengthRate
         }=state;
 
         const {
@@ -119,6 +119,7 @@ const ParcelService = {
         bodyFormData.set('associatedDestination', associatedDestination)
         bodyFormData.set('associatedAmount', associatedAmount)
         bodyFormData.set('parcel_length', (length && length.value) || 0)
+        bodyFormData.set('lengthRate', lengthRate || 0)
         bodyFormData.set('totalShippingCost',totalShippingCost.value || 0)
         bodyFormData.set('busNumber',busNumber.value)
         bodyFormData.set('tripCode',tripCode.value)
@@ -324,7 +325,8 @@ const ParcelService = {
         destination,
         isP2P,
         busCompanyId,
-        fileName)=>{
+        fileName
+        )=>{
 
         return axios({
             method: 'get',
@@ -345,13 +347,15 @@ const ParcelService = {
                 totalAmount,
                 fullName,
                 date: moment(dateFrom).format("MMM DD, YYYY") + " - " + moment(dateTo).format("MMM DD, YYYY"),
-                isP2P: isP2P ? 1 : 0
+                isP2P: isP2P ? 1 : 0,
+                fileName
              }
         }).then(response=>{
+            console.log('response', response);
             const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', fileName);
+            link.setAttribute('download', 'fileName');
             document.body.appendChild(link);
             link.click();
             link.remove();

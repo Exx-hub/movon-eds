@@ -366,11 +366,17 @@ class SalesReport extends React.Component {
       .filter((e) => this.state.tags.includes(e.name))
       .map((e) => e.data.end);
 
+    let originId = this.state.originId
+    const isAdmin = (Number(UserProfile.getRole()) === Number(config.role["staff-admin"]))
+    if(!isAdmin){
+      originId = this.userProfileObject.getAssignedStationId()
+    }
+
     return ParcelService.exportCargoParcel(
       this.props.title || "SUMMARY OF CARGO SALES",
-      this.state.startDay,
-      this.state.endDay,
-      this.userProfileObject.getAssignedStationId(),
+      moment(this.state.startDay).format('YYYY-MM-DD'),
+      moment(this.state.endDay).format('YYYY-MM-DD'),
+      originId,
       endStation,
       this.userProfileObject.getPersonFullName(),
       this.state.totalAmount,
