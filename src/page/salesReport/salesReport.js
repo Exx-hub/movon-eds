@@ -361,7 +361,6 @@ class SalesReport extends React.Component {
 
   downloadXls = () => {
     const isP2P = this.props.isP2P || false
-    const filename = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX"
     const endStation = this.state.destination.options
       .filter((e) => this.state.tags.includes(e.name))
       .map((e) => e.data.end);
@@ -382,8 +381,7 @@ class SalesReport extends React.Component {
       this.state.totalAmount,
       this.getDestination(),
       isP2P,
-      this.userProfileObject.getBusCompanyId(),
-      filename
+      this.userProfileObject.getBusCompanyId()
     );
   };
 
