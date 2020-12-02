@@ -55,26 +55,18 @@ const initConnectingMatrix = {
 
 export default class VictoryLinerMatrix extends React.Component {
   state = {
-    matrix: [{ ...initMatrix }],
+    //matrix: [{ ...initMatrix }],
     connectingMatrix: [{ ...initConnectingMatrix }],
-    routes: undefined,
     selectedRoute: undefined,
     routesList: [],
     startStation: undefined,
-    connectingRoutes: {
-      name: "connectingRoutes",
-      value: undefined,
-      isRequired: true,
-      accepted: true,
-      options: [],
-    },
-    connectingRoutesOrigin: {
-      name: "connectingRoutesOrigin",
-      value: undefined,
-      isRequired: true,
-      accepted: true,
-      options: [],
-    },
+    // destinationRoutes: {
+    //   name: "destinationRoutes",
+    //   value: undefined,
+    //   isRequired: true,
+    //   accepted: true,
+    //   options: [],
+    // },
     connectingCompany: {
       name: "connectingCompany",
       value: undefined,
@@ -90,75 +82,16 @@ export default class VictoryLinerMatrix extends React.Component {
     endStationRoutes: [],
     startStationRoutesTemp: [],
     endStationRoutesTemp: [],
+    routes:undefined,
+    originRoutes: [],
+    destinationRoutes:[]
   };
 
   componentDidMount() {
-    // ParcelService.getTrips(UserProfile.getAssignedStationId()).then((e) => {
-    //   const { data, success, errorCode } = e.data;
-    //   if (success) {
-    //     if (data.trips) {
-    //       let options = [];
-    //       data.trips.data.forEach((e) => {
-    //         options.push({
-    //           name: e.endStation.name,
-    //           value: e.endStation._id,
-    //         });
-    //       });
-
-    //       let clean = [];
-    //       options = options.filter((e) => {
-    //         if (!clean.includes(e.value)) {
-    //           clean.push(e.value);
-    //           return true;
-    //         }
-    //         return false;
-    //       });
-    //       this.setState({
-    //         routes: data,
-    //         selectedRoute: data[0],
-    //         routesList: { ...this.state.routesList, ...{ options } },
-    //         startStation: UserProfile.getAssignedStation(),
-    //       });
-    //     }
-    //   } else {
-    //     this.handleErrorNotification(errorCode);
-    //   }
-    // });
-
-    RoutesService.getAllRoutes().then((e) => {
-      const { data, errorCode } = e.data;
-      if (errorCode) {
-        this.handleErrorNotification(errorCode);
-        return;
-      }
-      let clean = [];
-      if (
-        Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
-      ) {
-        const _startStationRoutes = data
-          .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
-          .filter((e) => {
-            if (!clean.includes(e.stationName)) {
-              clean.push(e.stationName);
-              return true;
-            }
-            return false;
-          });
-        const startStationRoutes = [
-          ...[{ stationId: "null", stationName: "-- All --" }],
-          ..._startStationRoutes,
-        ];
-        this.setState({
-          allRoutes: data,
-          startStationRoutes,
-          startStationRoutesTemp: startStationRoutes,
-        });
-      }
-    });
     ParcelService.getConnectingBusPartners().then((e) => {
       console.log('getConnectingBusPartners',e)
-      const { success, data, errorCode } = e.data;
-      if (success) {
+      const { data, errorCode } = e.data;
+      if (!errorCode) {
         if (data.connectingRoutes.length > 0) {
           const connectingCompany = { ...this.state.connectingCompany };
           connectingCompany.options = data.connectingRoutes;
@@ -197,8 +130,8 @@ export default class VictoryLinerMatrix extends React.Component {
 
   saveConnectingMatrix = () => {
     const connectingCompany = this.state.connectingCompany;
-    const origin = this.state.connectingRoutesOrigin.value;
-    const destination = this.state.connectingRoutes.value;
+    const origin = this.state.originRoutes.value;
+    const destination = this.state.destinationRoutes.value;
     const { matrix, fixMatrix } = this.state;
 
     if (!origin || !destination) {
@@ -244,7 +177,6 @@ export default class VictoryLinerMatrix extends React.Component {
     if (busCompanyId && origin && destination) {
       MatrixService.getMatrix({ busCompanyId, origin, destination }).then(
         (e) => {
-          console.log('e',e)
           const { data, success, errorCode } = e.data;
           if (success) {
             let connectingMatrix = [{ ...initConnectingMatrix }];
@@ -279,32 +211,34 @@ export default class VictoryLinerMatrix extends React.Component {
     }
   };
 
-  getConnectingRoutes = (e) => {
-    ParcelService.getConnectingRoutes(e).then((e) => {
-      const { data, success, errorCode } = e.data;
-      if (!success) this.handleErrorNotification(errorCode);
-      else {
-        const connectingRoutesOrigin = { ...this.state.connectingRoutesOrigin };
-        const connectingRoutes = { ...this.state.connectingRoutes };
-        connectingRoutes.options = data.map((e) => ({
-          start: e.start,
-          end: e.end,
-          startStationName: e.startStationName,
-          endStationName: e.endStationName,
-        }));
-        let clean = [];
-        connectingRoutesOrigin.options = connectingRoutes.options.filter(
-          (e) => {
-            if (!clean.includes(e.start)) {
-              clean.push(e.start);
-              return true;
-            }
-            return false;
-          }
-        );
+  getOriginList = (routes) =>{
+    let clean = [];
+    const originRoutes = routes.filter((e) => {
+        if (!clean.includes(e.start)) {
+          clean.push(e.start);
+          return true;
+        }
+        return false;
+      }).map(e=>(e.startStationName));
+      return originRoutes;
+  }
 
-        this.setState({ connectingRoutes, connectingRoutesOrigin });
-      }
+  getConnectingRoutes = (busCompanyId) => {
+    ParcelService.getConnectingRoutes(busCompanyId).then((e) => {
+      const { data, errorCode } = e.data;
+      if (errorCode){
+        this.handleErrorNotification(errorCode);
+        return;
+      } 
+      const routes = data.map((e) => ({
+        start: e.start,
+        end: e.end,
+        startStationName: e.startStationName,
+        endStationName: e.endStationName,
+      }));
+
+      const originRoutes = this.getOriginList(routes)
+      this.setState({routes, originRoutes },()=>console.log('state',this.state));
     });
   };
 
@@ -331,16 +265,13 @@ export default class VictoryLinerMatrix extends React.Component {
     const toSearch = el.toLowerCase();
     switch (name) {
       case "origin":
-        let startStationRoutesTemp = this.state.startStationRoutes
-          .map((e) => ({ stationName: e.stationName }))
-          .filter((e) => e.stationName.toLowerCase().includes(toSearch));
-        this.setState({ startStationRoutesTemp });
+        const originRoutesTemp = [...this.getOriginList(this.state.routes)]
+        let startStationRoutesTemp = originRoutesTemp.filter((e) => e.toLowerCase().includes(toSearch));
+        this.setState({ originRoutes:startStationRoutesTemp });
         break;
       case "destination":
-        let endStationRoutesTemp = this.state.endStationRoutes
-          .map((e) => ({ endStationName: e.endStationName }))
-          .filter((e) => e.endStationName.toLowerCase().includes(toSearch));
-        this.setState({ endStationRoutesTemp });
+        let destinationRoutes = this.state.routes.map(e=>e.endStationName).filter((e) => e.toLowerCase().includes(toSearch));
+        this.setState({ destinationRoutes });
         break;
       default:
         break;
@@ -365,29 +296,17 @@ export default class VictoryLinerMatrix extends React.Component {
   };
 
   onSelectAutoComplete = (name, value) => {
-    let selected = [];
-
+    let selected = null
     switch (name) {
       case "origin":
-        selected =
-          this.state.startStationRoutes.find((e) => e.stationName === value) ||
-          null;
+        selected = this.state.routes.find((e) => e.startStationName === value) || null;
         if (selected) {
-          const endStationRoutes = this.getEndDestination(
-            this.state.allRoutes,
-            selected.stationId
-          );
-          this.setState({
-            originId: selected.stationId,
-            endStationRoutes,
-            endStationRoutesTemp: endStationRoutes,
-          });
+          const destinationRoutes = this.state.routes.map(e=>(e.endStationName))
+          this.setState({destinationRoutes, originId: selected.start},()=>console.log('state',this.state));
         }
         break;
       case "destination":
-        selected =
-          this.state.endStationRoutes.find((e) => e.endStationName === value) ||
-          null;
+        selected = this.state.routes.find((e) => e.endStationName === value) || null;
         if (selected) {
           this.setState({ destinationId: selected.end }, () =>
             this.fetchConnectingMatrix()
@@ -400,8 +319,8 @@ export default class VictoryLinerMatrix extends React.Component {
   };
 
   render() {
-    const connectingRoutesOrigin = { ...this.state.connectingRoutesOrigin };
-    const connectingRoutes = { ...this.state.connectingRoutes };
+    const originRoutes = [...this.state.originRoutes]
+    const destinationRoutes = [...this.state.destinationRoutes];
     const connectingCompany = { ...this.state.connectingCompany };
     const options = connectingCompany.options;
 
@@ -424,6 +343,7 @@ export default class VictoryLinerMatrix extends React.Component {
                       <>
                         <span>Associate</span>
                         <Select
+                          size="large"
                           placeholder="Associate"
                           style={{ width: "100%" }}
                           value={connectingCompany.value}
@@ -442,7 +362,7 @@ export default class VictoryLinerMatrix extends React.Component {
                     )}
                   </Col>
                   <Col span={8}>
-                    {connectingRoutesOrigin.options.length > 0 && (
+                    {originRoutes && (
                       <div className="select-padding">
                         <span>Origin</span>
                         <AutoComplete
@@ -452,35 +372,23 @@ export default class VictoryLinerMatrix extends React.Component {
                             this.onSelectAutoComplete("origin", item)
                           }
                           onSearch={(e) => this.doSearch("origin", e)}
-                          placeholder="Origin Stations"
-                        >
-                          {this.state.startStationRoutesTemp.map((e, i) => (
-                            <Option value={e.stationName}>
-                              {e.stationName}
-                            </Option>
-                          ))}
+                          placeholder="Origin Stations" >
+                          {originRoutes.map((e, i) => (<Option value={e}>{e}</Option>))}
                         </AutoComplete>
                       </div>
                     )}
                   </Col>
                   <Col span={8}>
-                    {connectingRoutes.options && (
+                    {destinationRoutes && (
                       <div className="select-padding">
-                        <span>Destination</span>
+                        <span>&nbsp;&nbsp;Destination</span>
                         <AutoComplete
                           size="large"
                           style={{ width: "100%", marginLeft: "0.5rem" }}
-                          onChange={(item) =>
-                            this.onSelectAutoComplete("destination", item)
-                          }
+                          onChange={(item) =>this.onSelectAutoComplete("destination", item)}
                           onSearch={(e) => this.doSearch("destination", e)}
-                          placeholder="Destination"
-                        >
-                          {this.state.endStationRoutesTemp.map((e, i) => (
-                            <Option value={e.endStationName}>
-                              {e.endStationName}
-                            </Option>
-                          ))}
+                          placeholder="Destination">
+                          {destinationRoutes.map((e, i) => ( <Option value={e}>{e}</Option>))}
                         </AutoComplete>
                       </div>
                     )}
