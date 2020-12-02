@@ -360,35 +360,25 @@ class SalesReport extends React.Component {
   };
 
   downloadXls = () => {
-    const startStation = this.userProfileObject.getAssignedStationId();
-    const dateFrom = new Date(this.state.startDay);
-    const dateTo = new Date(this.state.endDay);
+    const isP2P = this.props.isP2P || false
+    const filename = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX"
     const endStation = this.state.destination.options
       .filter((e) => this.state.tags.includes(e.name))
       .map((e) => e.data.end);
-    const busCompanyId = this.userProfileObject.getBusCompanyId();
-    const fullName = this.userProfileObject.getPersonFullName();
-    const totalAmount = this.state.totalAmount;
-    const destination = this.getDestination();
-    const isP2P = this.props.isP2P || false;
-    const title = this.props.title || "SUMMARY OF CARGO SALES";
-    const fileName = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX";
 
     return ParcelService.exportCargoParcel(
-      {
-        title,
-        dateFrom,
-        dateTo,
-        startStation,
-        endStation,
-        fullName,
-        totalAmount,
-        destination,
-        isP2P,
-      },
-      busCompanyId,
-      fileName
-    ).then();
+      this.props.title || "SUMMARY OF CARGO SALES",
+      this.state.startDay,
+      this.state.endDay,
+      this.userProfileObject.getAssignedStationId(),
+      endStation,
+      this.userProfileObject.getPersonFullName(),
+      this.state.totalAmount,
+      this.getDestination(),
+      isP2P,
+      this.userProfileObject.getBusCompanyId(),
+      filename
+    );
   };
 
   doSearch = (name, el) => {

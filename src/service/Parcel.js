@@ -313,8 +313,18 @@ const ParcelService = {
              }
         })
     },
-    exportCargoParcel: (params,busCompanyId,fileName)=>{
-        const dateFormat = "MMM DD, YYYY";
+    exportCargoParcel: (
+        title,
+        dateFrom,
+        dateTo,
+        startStation,
+        endStation,
+        fullName,
+        totalAmount,
+        destination,
+        isP2P,
+        busCompanyId,
+        fileName)=>{
 
         return axios({
             method: 'get',
@@ -326,16 +336,16 @@ const ParcelService = {
             },
             responseType: 'arraybuffer',
             params:{
-                "title":params.title,
-                "dateFrom": params.dateFrom,
-                "dateTo": params.dateTo,
-                "startStation": params.startStation,
-                "endStation": params.endStation,
-                destination: params.destination,
-                totalAmount: params.totalAmount,
-                "fullName": params.fullName,
-                date: moment(params.dateFrom).format(dateFormat) + " - " + moment(params.dateTo).format(dateFormat),
-                isP2P: params.isP2P ? 1 : 0
+                title,
+                dateFrom,
+                dateTo,
+                startStation,
+                endStation,
+                destination,
+                totalAmount,
+                fullName,
+                date: moment(dateFrom).format("MMM DD, YYYY") + " - " + moment(dateTo).format("MMM DD, YYYY"),
+                isP2P: isP2P ? 1 : 0
              }
         }).then(response=>{
             const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
