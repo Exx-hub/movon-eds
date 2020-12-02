@@ -1,21 +1,23 @@
-.reports-page {
-  border: 1px solid #e7e7e7;
-  background-color: #ffffff;
-  margin-top: 1rem;
-  width: 95%;
-  padding: 1rem;
-  align-self: center;
+.salesReportPage{
+  .reports-page {
+    border: 1px solid #e7e7e7;
+    background-color: #ffffff;
+    margin-top: 1rem;
+    width: 95%;
+  }
+  
+  .reports-page .title {
+    font-size: 1.5rem;
+  }
+  
+  .reports-page .summary-info {
+    padding: 1rem;
+  }
+  
+  .reports-page .ant-divider {
+    font-size: 14px !important;
+    color: rgba(0, 0, 0, 0.65) !important;
+  }
+  
 }
 
-.reports-page .title {
-  font-size: 1.5rem;
-}
-
-.reports-page .summary-info {
-  padding: 1rem;
-}
-
-.reports-page .ant-divider {
-  font-size: 14px !important;
-  color: rgba(0, 0, 0, 0.65) !important;
-}

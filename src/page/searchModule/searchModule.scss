@@ -16,7 +16,7 @@
 
 .SearchModule{
     display: flex;
-    overflow: hidden;
+    //overflow: hidden;
 
     .home-header-view{
         padding: 0px;
@@ -179,4 +179,12 @@
     }
 
    
+}
+
+.pagination{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }

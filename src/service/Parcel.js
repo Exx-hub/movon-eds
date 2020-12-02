@@ -294,13 +294,7 @@ const ParcelService = {
             link.remove();
          });
     },
-
-    getAllParcel: (params,busCompanyId)=>{
-        console.log('getAllParcel params',params)
-        let endStation = null;
-        if(params.endStation && params.endStation.length > 0){
-            endStation = params.endStation
-        }
+    getAllParcel: (startStation,dateFrom,dateTo,endStation,busCompanyId,page,limit)=>{
         return axios({
             method: 'get',
             url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
@@ -310,10 +304,12 @@ const ParcelService = {
                 'x-auth-token' : userProfileObject.getToken()
             },
             params:{
-                "dateFrom": params.dateFrom,
-                "dateTo": params.dateTo,
-                "startStation": params.startStationId,
-                "endStation": endStation
+                dateFrom,
+                dateTo,
+                startStation,
+                endStation,
+                page,
+                limit
              }
         })
     },

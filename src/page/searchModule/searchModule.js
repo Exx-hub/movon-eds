@@ -216,7 +216,7 @@ class SearchModule extends React.Component {
             />
           </div>
         </Row>
-        <Content style={{ overflow: "scroll" }}>
+        <Content>
           {this.state.fetching ? (
             <Skeleton active />
           ) : (
@@ -225,7 +225,6 @@ class SearchModule extends React.Component {
                 className="SearchModule-table"
               >
                 <Table
-                  style={{ overflow: "scroll" }}
                   pagination={false}
                   className="table"
                   columns={this.state.columns}
@@ -234,7 +233,7 @@ class SearchModule extends React.Component {
                 />
               </div>
               {this.state.parcelList.length > 0 && (
-                <div>
+                <div className="pagination">
                   <Pagination
                     onChange={(page) => {
                       this.setState({page});
