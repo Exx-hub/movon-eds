@@ -1,7 +1,7 @@
 export const config = {
-    BASE_URL:"http://localhost:9000",
+    //BASE_URL:"http://localhost:9000",
     //BASE_URL:"https://www.cargomovon.com/server",
-    //BASE_URL:'https://movon.com.ph/server',
+    BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created',
         2:'intransit',
@@ -32,7 +32,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        environment:"development",
+        environment:"",
         build: '1.2.8(41)'
     },
     changeLogs: ``
