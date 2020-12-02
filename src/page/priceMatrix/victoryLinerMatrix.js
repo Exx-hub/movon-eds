@@ -56,7 +56,7 @@ const initConnectingMatrix = {
 export default class VictoryLinerMatrix extends React.Component {
   state = {
     //matrix: [{ ...initMatrix }],
-    connectingMatrix: [{ ...initConnectingMatrix }],
+    connectingMatrix: {fixMatrix:[], matrix:[...[{...initConnectingMatrix}]]},
     selectedRoute: undefined,
     routesList: [],
     startStation: undefined,
@@ -89,7 +89,6 @@ export default class VictoryLinerMatrix extends React.Component {
 
   componentDidMount() {
     ParcelService.getConnectingBusPartners().then((e) => {
-      console.log('getConnectingBusPartners',e)
       const { data, errorCode } = e.data;
       if (!errorCode) {
         if (data.connectingRoutes.length > 0) {
@@ -130,9 +129,8 @@ export default class VictoryLinerMatrix extends React.Component {
 
   saveConnectingMatrix = () => {
     const connectingCompany = this.state.connectingCompany;
-    const origin = this.state.originRoutes.value;
-    const destination = this.state.destinationRoutes.value;
-    const { matrix, fixMatrix } = this.state;
+    const origin = this.state.originId
+    const destination = this.state.destinationId
 
     if (!origin || !destination) {
       notification["error"]({
@@ -152,7 +150,7 @@ export default class VictoryLinerMatrix extends React.Component {
       busCompanyId,
       origin,
       destination,
-      stringValues: JSON.stringify({ matrix, fixMatrix }),
+      stringValues: JSON.stringify(this.state.connectingMatrix),
     }).then((e) => {
       const { success, errorCode } = e.data;
       if (success)
@@ -179,7 +177,7 @@ export default class VictoryLinerMatrix extends React.Component {
         (e) => {
           const { data, success, errorCode } = e.data;
           if (success) {
-            let connectingMatrix = [{ ...initConnectingMatrix }];
+            let connectingMatrix = {...this.state.connectingMatrix};
             let matrix = [];
             let fixMatrix = [];
 
@@ -238,14 +236,14 @@ export default class VictoryLinerMatrix extends React.Component {
       }));
 
       const originRoutes = this.getOriginList(routes)
-      this.setState({routes, originRoutes },()=>console.log('state',this.state));
+      this.setState({routes, originRoutes });
     });
   };
 
   onFixMatrixChange = (index, name, value) => {
-    let fixMatrix = [...this.state.fixMatrix];
-    fixMatrix[index][name] = value;
-    this.setState({ fixMatrix });
+    let connectingMatrix = {...this.state.connectingMatrix};
+    connectingMatrix.fixMatrix[index][name] = value
+    this.setState({ connectingMatrix });
   };
 
   onAssociateChange = (value) => {
@@ -278,23 +276,6 @@ export default class VictoryLinerMatrix extends React.Component {
     }
   };
 
-  getEndDestination = (data, stationId) => {
-    if (!stationId) return;
-
-    let clean = [];
-    const destinations = data
-      .filter((e) => e.start === stationId)
-      .filter((e) => {
-        if (!clean.includes(e.endStationName)) {
-          clean.push(e.endStationName);
-          return true;
-        }
-        return false;
-      })
-      .map((e) => ({ endStationName: e.endStationName, end: e.end }));
-    return [...[{ end: "null", endStationName: "-- All --" }], ...destinations];
-  };
-
   onSelectAutoComplete = (name, value) => {
     let selected = null
     switch (name) {
@@ -302,7 +283,7 @@ export default class VictoryLinerMatrix extends React.Component {
         selected = this.state.routes.find((e) => e.startStationName === value) || null;
         if (selected) {
           const destinationRoutes = this.state.routes.map(e=>(e.endStationName))
-          this.setState({destinationRoutes, originId: selected.start},()=>console.log('state',this.state));
+          this.setState({destinationRoutes, originId: selected.start});
         }
         break;
       case "destination":
@@ -317,6 +298,30 @@ export default class VictoryLinerMatrix extends React.Component {
         break;
     }
   };
+
+  onAddRow = () =>{
+    console.log('this.state.connectingMatrix',this.state.connectingMatrix)
+    const connectingMatrix = {...this.state.connectingMatrix};
+    if(connectingMatrix.matrix.length > 0){
+      connectingMatrix.matrix.push({...initConnectingMatrix})
+      this.setState({connectingMatrix})
+    }
+  }
+
+  onAddOrDelete = (name,val)=>{
+    console.log('val',val)
+    const connectingMatrix = {...this.state.connectingMatrix}
+    connectingMatrix.fixMatrix = val;
+    switch(name){
+      case "delete": 
+        if(val.length === 1){
+          connectingMatrix.fixMatrix = [{declaredValue: 0, name: "",price: 0}]
+        }
+        break;
+        default: break;
+    }
+    this.setState({connectingMatrix})
+  }
 
   render() {
     const originRoutes = [...this.state.originRoutes]
@@ -373,7 +378,7 @@ export default class VictoryLinerMatrix extends React.Component {
                           }
                           onSearch={(e) => this.doSearch("origin", e)}
                           placeholder="Origin Stations" >
-                          {originRoutes.map((e, i) => (<Option value={e}>{e}</Option>))}
+                          {originRoutes.map((e, i) => (<Option key={i} value={e}>{e}</Option>))}
                         </AutoComplete>
                       </div>
                     )}
@@ -388,7 +393,7 @@ export default class VictoryLinerMatrix extends React.Component {
                           onChange={(item) =>this.onSelectAutoComplete("destination", item)}
                           onSearch={(e) => this.doSearch("destination", e)}
                           placeholder="Destination">
-                          {destinationRoutes.map((e, i) => ( <Option value={e}>{e}</Option>))}
+                          {destinationRoutes.map((e, i) => ( <Option key={i} value={e}>{e}</Option>))}
                         </AutoComplete>
                       </div>
                     )}
@@ -418,7 +423,7 @@ export default class VictoryLinerMatrix extends React.Component {
                   </Col>
                 </Row>
 
-                {this.state.matrix.map((e, i) => (
+                {this.state.connectingMatrix.matrix.map((e, i) => (
                   <Row key={i}>
                     <Col span={4}>
                       <div className="matrix-item">
@@ -531,19 +536,7 @@ export default class VictoryLinerMatrix extends React.Component {
 
                 <Row style={{ marginTop: "1rem" }}>
                   <Col span={12} style={{ paddingRight: ".5rem" }}>
-                    <Button
-                      className="btn-add-row"
-                      block
-                      icon={<PlusOutlined />}
-                      onClick={() =>
-                        this.setState({
-                          connectingMatrix: [
-                            ...this.state.connectingMatrix,
-                            ...[{ ...initConnectingMatrix }],
-                          ],
-                        })
-                      }
-                    >
+                    <Button className="btn-add-row" block  icon={<PlusOutlined />} onClick={() =>this.onAddRow()}>
                       Add Row
                     </Button>
                   </Col>
@@ -563,11 +556,9 @@ export default class VictoryLinerMatrix extends React.Component {
                   <Col>
                     <FixPriceMatrix
                       onFixMatrixChange={this.onFixMatrixChange}
-                      fixMatrix={this.state.fixMatrix}
-                      onAddMoreItem={(fixMatrix) =>
-                        this.setState({ fixMatrix })
-                      }
-                      onDeleteItem={(fixMatrix) => this.setState({ fixMatrix })}
+                      fixMatrix={this.state.connectingMatrix.fixMatrix}
+                      onAddMoreItem={(val) => this.onAddOrDelete("add",val)}
+                      onDeleteItem={(val) => this.onAddOrDelete("delete",val)}
                     />
                   </Col>
                 </Row>
