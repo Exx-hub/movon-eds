@@ -206,8 +206,8 @@ class SearchModule extends React.Component {
   render() {
     return (
       <Layout className="SearchModule">
-        <Row justify="center" style={{ margin: "1rem" }}>
-          <div className="search-container">
+        <Row justify="center">
+          <div style={{marginTop:'1rem', marginBottom:"1rem"}}>
             <Search
               value={this.state.searchValue}
               className="manifest-details-search-box"
@@ -223,7 +223,6 @@ class SearchModule extends React.Component {
             <>
               <div
                 className="SearchModule-table"
-                style={{ padding: "1rem", overflow: "scroll" }}
               >
                 <Table
                   style={{ overflow: "scroll" }}
@@ -235,7 +234,7 @@ class SearchModule extends React.Component {
                 />
               </div>
               {this.state.parcelList.length > 0 && (
-                <div style={{ padding:'.5rem', paddingBottom:'1.5rem', display: "flex", justifyContent: "center" }}>
+                <div>
                   <Pagination
                     onChange={(page) => {
                       this.setState({page});

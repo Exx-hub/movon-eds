@@ -1,4 +1,6 @@
 .SearchModule-table{
+    margin-left: 1rem;
+    margin-right: 1rem;
     .table{
         .ant-table table{
             font-size: 10px !important;
@@ -24,8 +26,8 @@
     .manifest-details-page-body{
         height: 90vh;
         background-color: #fff;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
+        // padding-left: 1.5rem;
+        // padding-right: 1.5rem;
 
         .manifest-details-sider{
             border-right: 1px solid #d9d9d9;
