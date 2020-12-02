@@ -154,8 +154,8 @@ export default class PriceMatrix extends React.Component {
 
     MatrixService.create({
       busCompanyId: this.busCompanyId,
-      origin: this.state.startStation._id,
-      destination: this.state.selectedRoute,
+      origin: this.state.originId,
+      destination: this.state.destinationId,
       stringValues: JSON.stringify({ matrix: data, fixMatrix }),
     }).then((e) => {
       const { success, errorCode } = e.data;

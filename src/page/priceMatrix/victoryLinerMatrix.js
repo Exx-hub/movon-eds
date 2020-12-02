@@ -369,7 +369,7 @@ export default class VictoryLinerMatrix extends React.Component {
                   <Col span={8}>
                     {originRoutes && (
                       <div className="select-padding">
-                        <span>Origin</span>
+                        <span>Origin Station</span>
                         <AutoComplete
                           size="large"
                           style={{ width: "100%" }}
@@ -386,7 +386,7 @@ export default class VictoryLinerMatrix extends React.Component {
                   <Col span={8}>
                     {destinationRoutes && (
                       <div className="select-padding">
-                        <span>&nbsp;&nbsp;Destination</span>
+                        <span>&nbsp;&nbsp;End Destination</span>
                         <AutoComplete
                           size="large"
                           style={{ width: "100%", marginLeft: "0.5rem" }}
