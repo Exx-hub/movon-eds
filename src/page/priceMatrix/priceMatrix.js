@@ -75,7 +75,7 @@ export default class PriceMatrix extends React.Component {
           }
           return false;
         });
-        const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
+        const startStationRoutes = [..._startStationRoutes]
         this.setState({allRoutes:data, startStationRoutes, startStationRoutesTemp:startStationRoutes});
       }
     });
@@ -253,7 +253,7 @@ export default class PriceMatrix extends React.Component {
         }
         return false;
       }).map(e=>({endStationName:e.endStationName, end:e.end}));
-      return [...[{end:'null', endStationName:"-- All --"}], ...destinations]
+      return [...destinations]
   };
 
   onSelectAutoComplete = (name, value) => {
