@@ -421,6 +421,13 @@ class SalesReport extends React.Component {
     }
   };
 
+  onRemoveTag = (e,val) =>{
+    e.preventDefault();
+    let tags = [...this.state.tags];
+    const _tags = tags.filter((e) => e.end !== val.end);
+    this.setState({ tags: _tags, destinationId: _tags.map((e) => e.end) },()=>this.getParcel());
+  }
+
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
@@ -437,12 +444,7 @@ class SalesReport extends React.Component {
                       key={e.end}
                       closable
                       color="cyan"
-                      onClose={(val) => {
-                        let tags = [...this.state.tags];
-                        const _tags = tags.filter((e) => tags[i] !== e);
-                        this.setState({ tags: _tags });
-                      }}
-                    >
+                      onClose={(c) => this.onRemoveTag(c, e)}>
                       {" "}
                       {e.name}
                     </Tag>

@@ -146,7 +146,6 @@ class SearchModule extends React.Component {
 
   fetchParcelList = () => {
     Parcel.parcelPagination(this.state.page, this.state.limit, this.state.searchValue).then((e) => {
-      console.info('fetchParcelList',e)
       const { data, errorCode } = e.data;
       if (errorCode) {
         this.setState({fetching:false})

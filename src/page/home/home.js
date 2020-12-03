@@ -1,6 +1,5 @@
 import React from "react";
 import Manifest from "../manifest";
-import Reports from "../reports";
 import User from "../../service/User";
 import movonLogo from "../../assets/movoncargo.png";
 import { UserProfile, alterPath } from "../../utility";
@@ -378,10 +377,6 @@ function Home(props) {
 
               <Route path={alterPath("/manifest/list")}>
                 <Manifest {...props} />
-              </Route>
-
-              <Route path={alterPath('/reports"')}>
-                <Reports {...props} />
               </Route>
 
               <Route path={alterPath("/search-parcel")}>
