@@ -31,7 +31,7 @@ class SearchModule extends React.Component {
       showDetails: false,
       selectedItem: null,
       parcelData: null,
-      fetching: false,
+      fetching: true,
       searchValue: "",
       status: 0,
       date: undefined,
@@ -101,7 +101,7 @@ class SearchModule extends React.Component {
           render: (text, record) => (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <Button disabled={!Boolean(record.travelStatus === 1)} type="danger" size="small" style={{fontSize: '0.65rem'}} onClick={() => {
-                  this.setState({selectedRecord: record, visibleVoid:true})
+                  this.setState({remarks:"", selectedRecord: record, visibleVoid:true})
                 }}>
                   Void
               </Button>
@@ -119,13 +119,15 @@ class SearchModule extends React.Component {
     if (remarks) {
       TransactionService.voidParcel(record._id, remarks)
       .then(e=>{
+        console.log("handleVoid e",e)
         const {errorCode} = e.data;
         if (errorCode) {
           this.handleErrorNotification(errorCode);
           return;
         }
-        this.setState({page:1, selectedRecord: undefined, remarks: "", visibleVoid:false });
-        this.fetchParcelList();
+        this.setState({fetching:true, page:1, selectedRecord: undefined, remarks: "", visibleVoid:false },
+          ()=>this.fetchParcelList());
+        ;
       })
     }
   };
@@ -133,7 +135,8 @@ class SearchModule extends React.Component {
   handleCancel = () => {
     this.setState({
       selectedRecord: null,
-      visibleVoid:false
+      visibleVoid:false,
+      remarks:""
     });
   };
 
@@ -253,6 +256,7 @@ class SearchModule extends React.Component {
           reason="Enter reason/s:"
           buttonType="danger"
           action="Send Request"
+          remarks={this.state.remarks}
           disabled={!this.state.remarks}
           onRemarksChange={(e)=>this.setState({remarks:e.target.value})}/>
       </Layout>

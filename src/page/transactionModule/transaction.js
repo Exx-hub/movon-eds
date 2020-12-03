@@ -75,8 +75,6 @@ const columns=[
 //(config.voidStatus[text].toUpperCase())
 class Transaction extends React.Component {
 
- 
-
   constructor(props){
     super(props);
     this.state={

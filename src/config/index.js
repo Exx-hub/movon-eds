@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.8(45)'
+        build: '1.2.8(46)'
     },
     changeLogs: `fix issue on pagination and date mis-match`
 }
