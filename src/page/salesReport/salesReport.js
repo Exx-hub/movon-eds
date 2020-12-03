@@ -203,6 +203,7 @@ class SalesReport extends React.Component {
     }
 
     const records = data.map((e, i) => {
+      let _sentDate = e.sentDate.split('T')[0];
       return {
         key: i,
         associatedAmount: e.associatedAmount,
@@ -221,7 +222,7 @@ class SalesReport extends React.Component {
         recipient: e.recipient,
         scanCode: e.scanCode,
         sender: e.sender,
-        sentDate:  moment(e.sentDate).tz('Asia/Manila').format('MMMM DD, YYYY'),
+        sentDate:  moment(_sentDate).tz("Asia/Manila").format('MMM DD, YYYY'),
         status: e.status,
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,
