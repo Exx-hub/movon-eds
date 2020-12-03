@@ -227,6 +227,7 @@ class SearchModule extends React.Component {
                 className="SearchModule-table"
               >
                 <Table
+                  scroll={{x:true}}
                   pagination={false}
                   className="table"
                   columns={this.state.columns}
