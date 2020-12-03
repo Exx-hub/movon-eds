@@ -23,10 +23,9 @@ import {
 } from "../../utility";
 
 import ParcelService from "../../service/Parcel";
-import ManifestService from "../../service/Manifest";
 import RoutesService from "../../service/Routes";
 
-import moment from "moment";
+import moment from "moment-timezone";
 import "./salesReport.scss";
 import ReactToPrint from "react-to-print";
 import { config } from "../../config";
@@ -60,7 +59,7 @@ class SalesReport extends React.Component {
       tags: [],
       templist: [],
       templistValue: undefined,
-      page: 0,
+      page: 1,
       limit: 10,
       totalRecords: 0,
       originId: null,
@@ -111,73 +110,6 @@ class SalesReport extends React.Component {
       this.setState(state, () => this.getParcel());
     });
   }
-
-  getManifestByDestination = (_startStationId, endStationId) => {
-    let startStationId = UserProfile.getAssignedStationId();
-    if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
-      startStationId = this.state.originId;
-    }
-
-    this.setState({ fetching: true });
-    try {
-      ManifestService.getManifestDateRange(
-        this.state.startDay,
-        this.state.endDay,
-        startStationId,
-        endStationId,
-        this.state.page,
-        this.state.limit
-      )
-      .then((e) => {
-        const { data, success, errorCode } = e.data;
-        if (success) {
-          this.setState(
-            {
-              listOfTripDates: data[0].data || [],
-              fetching: false,
-              totalRecords:
-                (data &&
-                  Array.isArray(data[0].pageInfo) &&
-                  data[0].pageInfo.length > 0 &&
-                  data[0].pageInfo[0].count) ||
-                0,
-            },
-            () => {
-              if (!this.state.listOfTripDates) {
-                return null;
-              }
-
-              let _data = this.state.listOfTripDates.map((e, i) => {
-                return {
-                  key: i,
-                  tripId: e._id,
-                  date: moment(e.date)
-                    .subtract(8, "hours")
-                    .format("MMMM DD, YYYY"),
-                  count: e.count,
-                  startStationName: e.startStationName,
-                  endStationName: e.endStationName,
-                  startStationId: e.startStation,
-                  endStationId: e.endStation,
-                  status: e.status,
-                  showModalCheckIn: false,
-                  showModalArrived: false,
-                  disabled: false,
-                };
-              });
-              this.setState({ dataSource: _data });
-            }
-          );
-          return;
-        }
-        this.handleErrorNotification(errorCode);
-      });
-    } catch (error) {
-      this.setState({ fetching: false }, () => {
-        this.handleErrorNotification();
-      });
-    }
-  };
 
   onSelectAutoComplete = (name, value) => {
     let selected = [];
@@ -240,64 +172,69 @@ class SalesReport extends React.Component {
   };
 
   getParcel = () => {
-    let startStationId = (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) 
-      ? this.state.originId : UserProfile.getAssignedStationId();
-  
+    let startStationId =
+      Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
+        ? this.state.originId
+        : UserProfile.getAssignedStationId();
+
     ParcelService.getAllParcel(
       startStationId,
       moment(this.state.startDay).format("YYYY-MM-DD"),
       moment(this.state.endDay).format("YYYY-MM-DD"),
       this.state.destinationId,
       this.userProfileObject.getBusCompanyId(),
-      this.state.page,
+      this.state.page -1,
       this.state.limit
-    ).then((e) => this.parseParcel(e));
+    )
+    .then((e) => this.parseParcel(e))
+    .catch(e=>{
+      console.log('[sales report module] error: ',e);
+      this.setState({fetching:false})
+    })
   };
 
   parseParcel = (dataResult) => {
-    try {
-      const { data, pagination, totalPrice, errorCode } = dataResult.data;
-      if (errorCode) {
-        this.handleErrorNotification(errorCode);
-        return;
-      }
+    const { data, pagination, totalPrice, errorCode } = dataResult.data;
+    if (errorCode) {
+      this.setState({ fetching: false });
+      this.handleErrorNotification(errorCode);
+      return;
+    }
 
-      const records = data.map((e, i) => {
-        return {
-          key: i,
-          associatedAmount: e.associatedAmount,
-          associatedCompanyId: e.associatedCompanyId,
-          associatedDestination: e.associatedDestination,
-          associatedOrigin: e.associatedOrigin,
-          associatedTariffRate: e.associatedTariffRate,
-          billOfLading: e.billOfLading,
-          declaredValue: e.declaredValue,
-          destination: e.destination,
-          origin: e.origin,
-          packageName: e.packageName,
-          packageWeight: e.packageWeight,
-          price: e.price,
-          quantity: e.quantity,
-          recipient: e.recipient,
-          scanCode: e.scanCode,
-          sender: e.sender,
-          sentDate: e.sentDate,
-          status: e.status,
-          recipientPhoneNo: e.recipientPhoneNo,
-          senderPhoneNo: e.senderPhoneNo,
-          remarks: e.remarks === "undefined" ? "" : e.remarks,
-        };
-      });
-      const { page, limit, totalRecords } = pagination;
-      this.setState({
-        page,
-        limit,
-        totalRecords,
-        fetching: false,
-        data: records,
-        totalAmount: totalPrice.toFixed(2),
-      });
-    } catch (error) {}
+    const records = data.map((e, i) => {
+      let _sentDate = e.sentDate.split('T')[0];
+      return {
+        key: i,
+        associatedAmount: e.associatedAmount,
+        associatedCompanyId: e.associatedCompanyId,
+        associatedDestination: e.associatedDestination,
+        associatedOrigin: e.associatedOrigin,
+        associatedTariffRate: e.associatedTariffRate,
+        billOfLading: e.billOfLading,
+        declaredValue: e.declaredValue,
+        destination: e.destination,
+        origin: e.origin,
+        packageName: e.packageName,
+        packageWeight: e.packageWeight,
+        price: e.price,
+        quantity: e.quantity,
+        recipient: e.recipient,
+        scanCode: e.scanCode,
+        sender: e.sender,
+        sentDate:  moment(_sentDate).tz("Asia/Manila").format('MMM DD, YYYY'),
+        status: e.status,
+        recipientPhoneNo: e.recipientPhoneNo,
+        senderPhoneNo: e.senderPhoneNo,
+        remarks: e.remarks === "undefined" ? "" : e.remarks,
+      };
+    });
+    const { totalRecords } = pagination;
+    this.setState({
+      totalRecords,
+      fetching: false,
+      data: records,
+      totalAmount: totalPrice.toFixed(2),
+    });
   };
 
   handleErrorNotification = (code) => {
@@ -323,7 +260,7 @@ class SalesReport extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ fetching: true, startDay, endDay }, () =>
+      this.setState({ page:1, fetching: true, startDay, endDay }, () =>
         this.getParcel()
       );
     }
@@ -360,24 +297,29 @@ class SalesReport extends React.Component {
   };
 
   downloadXls = () => {
-    const isP2P = this.props.isP2P || false
-    const filename = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX"
+    const isP2P = this.props.isP2P || false;
     const endStation = this.state.destination.options
       .filter((e) => this.state.tags.includes(e.name))
       .map((e) => e.data.end);
 
+    let originId = this.state.originId;
+    const isAdmin =
+      Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
+    if (!isAdmin) {
+      originId = this.userProfileObject.getAssignedStationId();
+    }
+
     return ParcelService.exportCargoParcel(
       this.props.title || "SUMMARY OF CARGO SALES",
-      this.state.startDay,
-      this.state.endDay,
-      this.userProfileObject.getAssignedStationId(),
+      moment(this.state.startDay).format("YYYY-MM-DD"),
+      moment(this.state.endDay).format("YYYY-MM-DD"),
+      originId,
       endStation,
       this.userProfileObject.getPersonFullName(),
       this.state.totalAmount,
       this.getDestination(),
       isP2P,
-      this.userProfileObject.getBusCompanyId(),
-      filename
+      this.userProfileObject.getBusCompanyId()
     );
   };
 
@@ -401,6 +343,20 @@ class SalesReport extends React.Component {
     }
   };
 
+  onPageChange = (page) => {
+    if(page !== this.state.page)
+      this.setState({ page, fetching: true }, () =>
+        this.getParcel()
+    );
+  };
+
+  onRemoveTag = (e,val) =>{
+    e.preventDefault();
+    let tags = [...this.state.tags];
+    const _tags = tags.filter((e) => e.end !== val.end);
+    this.setState({ page:1, tags: _tags, destinationId: _tags.map((e) => e.end) },()=>this.getParcel());
+  }
+
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
@@ -417,11 +373,7 @@ class SalesReport extends React.Component {
                       key={e.end}
                       closable
                       color="cyan"
-                      onClose={(val) => {
-                        let tags = [...this.state.tags];
-                        const _tags = tags.filter((e) => tags[i] !== e);
-                        this.setState({ tags: _tags });
-                      }}>
+                      onClose={(c) => this.onRemoveTag(c, e)}>
                       {" "}
                       {e.name}
                     </Tag>
@@ -571,6 +523,7 @@ class SalesReport extends React.Component {
               <>
                 <div>
                   <Table
+                    scroll={{ x: true }}
                     rowKey={(e) => e.key}
                     pagination={false}
                     columns={this.props.source}
@@ -586,11 +539,7 @@ class SalesReport extends React.Component {
                     }}
                   >
                     <Pagination
-                      onChange={(page) => {
-                        this.setState({ page: page - 1, fetching: true }, () =>
-                          this.getParcel()
-                        );
-                      }}
+                      onChange={(page) => this.onPageChange(page)}
                       defaultCurrent={this.state.page}
                       total={this.state.totalRecords}
                       showSizeChanger={false}

@@ -31,7 +31,7 @@ export default class PromptModal extends React.Component{
         >
         <p class="message">{this.props.message}</p>
         <p class="reason-text"> {this.props.reason} </p>
-        { (this.props.action === "Send Request") ? <textarea class="remarks" onChange={this.props.onRemarksChange}/> : ''}
+        { (this.props.action === "Send Request") ? <textarea value={this.props.remarks || ""} class="remarks" onChange={this.props.onRemarksChange}/> : ''}
         </Modal>
       )
     }

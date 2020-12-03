@@ -2,8 +2,6 @@ import React from "react";
 import "./searchModule.scss";
 import moment from "moment";
 import { config } from "../../config";
-import ManifestService from "../../service/Manifest";
-import Transaction from "../../service/Transaction";
 import Parcel from "../../service/Parcel";
 import { PromptModal } from '../../component/modal';
 import {
@@ -14,19 +12,9 @@ import {
   modifyName,
 } from "../../utility";
 import { notification, Table } from "antd";
-import {
-  Layout,
-  Button,
-  Col,
-  Row,
-  Input,
-  Skeleton,
-  Pagination,
-  Space,
-  Menu,
-  Dropdown
+import {Layout,Button,Row,Input,Skeleton,
+  Pagination
 } from "antd";
-import User from "../../service/User";
 import TransactionService from '../../service/VoidTransaction'
 
 const { Search } = Input;
@@ -43,19 +31,19 @@ class SearchModule extends React.Component {
       showDetails: false,
       selectedItem: null,
       parcelData: null,
-      fetching: false,
+      fetching: true,
       searchValue: "",
       status: 0,
       date: undefined,
       startStationId: undefined,
       endStationId: undefined,
       parcelList: [],
+      columns: [],
+      visibleVoid: false,
+      remarks: "",
       page: 1,
       totalRecords: 0,
-      columns: [],
       limit: 10,
-      visibleVoid: false,
-      remarks: ""
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -113,7 +101,7 @@ class SearchModule extends React.Component {
           render: (text, record) => (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <Button disabled={!Boolean(record.travelStatus === 1)} type="danger" size="small" style={{fontSize: '0.65rem'}} onClick={() => {
-                  this.setState({selectedRecord: record, visibleVoid:true})
+                  this.setState({remarks:"", selectedRecord: record, visibleVoid:true})
                 }}>
                   Void
               </Button>
@@ -131,13 +119,15 @@ class SearchModule extends React.Component {
     if (remarks) {
       TransactionService.voidParcel(record._id, remarks)
       .then(e=>{
+        console.log("handleVoid e",e)
         const {errorCode} = e.data;
         if (errorCode) {
           this.handleErrorNotification(errorCode);
           return;
         }
-        this.setState({selectedRecord: undefined, remarks: "", visibleVoid:false });
-        this.fetchParcelList();
+        this.setState({fetching:true, page:1, selectedRecord: undefined, remarks: "", visibleVoid:false },
+          ()=>this.fetchParcelList());
+        ;
       })
     }
   };
@@ -145,7 +135,8 @@ class SearchModule extends React.Component {
   handleCancel = () => {
     this.setState({
       selectedRecord: null,
-      visibleVoid:false
+      visibleVoid:false,
+      remarks:""
     });
   };
 
@@ -156,11 +147,11 @@ class SearchModule extends React.Component {
     );
   };
 
-  fetchParcelList = (onSearch) => {
-    const page = this.state.page - 1;
-    Parcel.parcelPagination(page, this.state.limit, this.state.searchValue).then((e) => {
+  fetchParcelList = () => {
+    Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue).then((e) => {
       const { data, errorCode } = e.data;
       if (errorCode) {
+        this.setState({fetching:false})
         this.handleErrorNotification(errorCode);
         return;
       }
@@ -181,8 +172,12 @@ class SearchModule extends React.Component {
           _id: e._id
         };
       });
-      this.setState({ parcelList, fetching: false, totalRecords: data.pagination.totalRecords });
-    });
+      this.setState({ fetching:false, parcelList, totalRecords: data.pagination.totalRecords });
+    })
+    .catch(e=>{
+      console.log('[search module] error: ',e);
+      this.setState({fetching:false})
+    })
   };
 
   handleErrorNotification = (code) => {
@@ -202,6 +197,12 @@ class SearchModule extends React.Component {
     }
     openNotificationWithIcon("error", code);
   };
+
+  onPageChange = (page) =>{
+    if(page !== this.state.page)
+      this.setState({page, fetching:true},
+        ()=>this.fetchParcelList());
+  }
 
   render() {
     return (
@@ -225,6 +226,7 @@ class SearchModule extends React.Component {
                 className="SearchModule-table"
               >
                 <Table
+                  scroll={{x:true}}
                   pagination={false}
                   className="table"
                   columns={this.state.columns}
@@ -235,11 +237,8 @@ class SearchModule extends React.Component {
               {this.state.parcelList.length > 0 && (
                 <div className="pagination">
                   <Pagination
-                    onChange={(page) => {
-                      this.setState({page});
-                      this.fetchParcelList();
-                    }}
                     defaultCurrent={this.state.page}
+                    onChange={(page) => this.onPageChange(page)}
                     total={this.state.totalRecords}
                     showSizeChanger={false}
                   />
@@ -257,6 +256,7 @@ class SearchModule extends React.Component {
           reason="Enter reason/s:"
           buttonType="danger"
           action="Send Request"
+          remarks={this.state.remarks}
           disabled={!this.state.remarks}
           onRemarksChange={(e)=>this.setState({remarks:e.target.value})}/>
       </Layout>

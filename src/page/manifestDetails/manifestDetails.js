@@ -134,25 +134,6 @@ function CardView(props) {
 
 const ManifestDetailsTable = (props) => {
   const columns = [
-    // {
-    //   title: "",
-    //   dataIndex: "",
-    //   key: "action",
-    //   render: (text, record) => (
-    //     <div className="table-view-expand">
-    //       <Tooltip title="Show full details">
-    //         <Button className="btn-expand-icon">
-    //           <ArrowsAltOutlined
-    //             className="table-view-expand-icon"
-    //             onClick={() => {
-    //               props.onSelect(record);
-    //             }}
-    //           />
-    //         </Button>
-    //       </Tooltip>
-    //     </div>
-    //   ),
-    // },
     {
       title: "Transaction Date",
       dataIndex: "sentDate",
@@ -216,6 +197,7 @@ const ManifestDetailsTable = (props) => {
   ];
   return (
     <TableView
+      scroll={{x:true}}
       columns={columns}
       dataSource={props.dataSource}
       onSelect={(record) => props.onSelect(record)}
@@ -266,11 +248,6 @@ class ManifestDetails extends React.Component {
         startStationName,
         tripId,
       } = this.props.location.state.selected;
-
-      console.info(
-        "this.props.location.state.selected",
-        this.props.location.state.selected
-      );
 
       const date = moment(new Date(this.props.location.state.date)).format(
         "YYYY-MM-DD"
