@@ -300,7 +300,6 @@ export default class VictoryLinerMatrix extends React.Component {
   };
 
   onAddRow = () =>{
-    console.log('this.state.connectingMatrix',this.state.connectingMatrix)
     const connectingMatrix = {...this.state.connectingMatrix};
     if(connectingMatrix.matrix.length > 0){
       connectingMatrix.matrix.push({...initConnectingMatrix})
@@ -309,7 +308,6 @@ export default class VictoryLinerMatrix extends React.Component {
   }
 
   onAddOrDelete = (name,val)=>{
-    console.log('val',val)
     const connectingMatrix = {...this.state.connectingMatrix}
     connectingMatrix.fixMatrix = val;
     switch(name){

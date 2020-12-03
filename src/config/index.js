@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"development",
-        build: '1.2.8(43)'
+        build: '1.2.8(44)'
     },
-    changeLogs: ``
+    changeLogs: `pagination issue on all tables`
 }
 
 export const ERROR_CODES = {

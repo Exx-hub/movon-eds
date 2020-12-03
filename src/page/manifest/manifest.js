@@ -125,7 +125,7 @@ class Manifest extends React.Component {
           state.endStationRoutesTemp = endStationRoutes
           state.endStationRoutes = endStationRoutes
         }
-        this.setState(state,()=>this.getManifestByDestination(null, null));
+        this.setState(state,()=>this.getManifestByDestination(null));
 
       });
     } catch (error) {
@@ -151,14 +151,13 @@ class Manifest extends React.Component {
     openNotificationWithIcon("error", code);
   };
 
-  getManifestByDestination = (_startStationId, endStationId) => {
+  getManifestByDestination = (endStationId) => {
     let startStationId = UserProfile.getAssignedStationId();
     if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
       startStationId = this.state.originId;
     }
 
     this.setState({ fetching: true });
-    try {
       ManifestService.getManifestDateRange(
         moment(this.state.startDay).format("YYYY-MM-DD"),
         moment(this.state.endDay).format("YYYY-MM-DD"),
@@ -166,57 +165,52 @@ class Manifest extends React.Component {
         endStationId,
         this.state.page,
         this.state.limit
-      ).then((e) => {
-        console.info('getManifestDateRange',e)
-        const { data, success, errorCode } = e.data;
-        if (success) {
-          this.setState(
-            {
-              listOfTripDates: data[0].data || [],
-              fetching: false,
-              totalRecords:
-                (data &&
-                  Array.isArray(data[0].pageInfo) &&
-                  data[0].pageInfo.length > 0 &&
-                  data[0].pageInfo[0].count) ||
-                0,
-            },
-            () => {
-              if (!this.state.listOfTripDates) {
-                return null;
-              }
-
-              let _data = this.state.listOfTripDates.map((e, i) => {
-                return {
-                  key: i,
-                  tripId: e._id,
-                  date: moment(e.tripStartDateTime).format("MMM DD, YYYY"),
-                  date2: moment(e.tripEndDateTime).format("MMM DD, YYYY"),
-                  count: e.count,
-                  startStationName: e.startStationName,
-                  cluster: e.cluster,
-                  endStationName: e.endStationName,
-                  startStationId: e.startStation,
-                  endStationId: e.endStation,
-                  status: e.status,
-                  showModalCheckIn: false,
-                  showModalArrived: false,
-                  disabled: false,
-                };
-              });
-              this.setState({ dataSource: _data });
-            }
-          );
-          return;
-        }
-        this.handleErrorNotification(errorCode);
-      });
-    } catch (error) {
-      this.setState({ fetching: false }, () => {
-        this.handleErrorNotification();
-      });
-    }
+      ).then((e) => this.parceData(e))
+      .catch(e=>{
+        console.log('[manifest module] error: ',e);
+        this.setState({fetching:false})
+      })
+        
   };
+
+  parceData = (response) =>{
+    const { data, errorCode } = response.data;
+
+    if(errorCode){
+      this.setState({fetching:false})
+      this.handleErrorNotification(errorCode)
+      return;
+    }
+
+    const hasData = data && Array.isArray(data) &&  data.length > 0;
+    let listOfTripDates = (hasData && data[0].data)  || []
+    let totalRecords = (hasData && data[0].pageInfo && data[0].pageInfo.length > 0 && data[0].pageInfo[0].count ) || 0
+
+    this.setState({listOfTripDates, totalRecords, fetching:false},
+      ()=>this.setDataSource())
+  };
+
+  setDataSource = () =>{
+    let dataSource = this.state.listOfTripDates.map((e, i) => {
+      return {
+        key: i,
+        tripId: e._id,
+        date: moment(e.tripStartDateTime).format("MMM DD, YYYY"),
+        date2: moment(e.tripEndDateTime).format("MMM DD, YYYY"),
+        count: e.count,
+        startStationName: e.startStationName,
+        cluster: e.cluster,
+        endStationName: e.endStationName,
+        startStationId: e.startStation,
+        endStationId: e.endStation,
+        status: e.status,
+        showModalCheckIn: false,
+        showModalArrived: false,
+        disabled: false,
+      };
+    });
+    this.setState({dataSource});
+  }
 
   onForceLogout = (errorCode) => {
     openNotificationWithDuration("error", errorCode);
@@ -231,7 +225,7 @@ class Manifest extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay, page: 0 }, () => this.getManifestByDestination(null, this.state.destinationId));
+      this.setState({ startDay, endDay, page: 0 }, () => this.getManifestByDestination(this.state.destinationId));
     }
   };
 
@@ -279,14 +273,14 @@ class Manifest extends React.Component {
         if(selected){
           const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
           this.setState({ originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },
-            ()=>this.getManifestByDestination('', null));
+            ()=>this.getManifestByDestination(null));
         }
         break;
       case "destination":
         selected = this.state.endStationRoutes
         .find((e) => e.endStationName === value) || null;
         if(selected){
-          this.setState({destinationId:selected.end},()=>this.getManifestByDestination('', selected.end))
+          this.setState({destinationId:selected.end},()=>this.getManifestByDestination(selected.end))
         }
         break;
       default:
@@ -334,7 +328,6 @@ class Manifest extends React.Component {
     dataSource[index] = selectedRecord;
 
     this.setState({ selectedRecord, dataSource },()=>{
-      console.info('selectedRecord',selectedRecord)
       const tripId = selectedRecord.tripId;
       ManifestService.arriveAllParcel(tripId)
       .then((e) => {
@@ -342,7 +335,7 @@ class Manifest extends React.Component {
           visibleArrive: false,
           disabledArrive: true,
           selectedRecord: undefined,
-        },()=>this.getManifestByDestination(null, this.state.destinationId));
+        },()=>this.getManifestByDestination(this.state.destinationId));
       })
     });
   }
@@ -363,8 +356,17 @@ class Manifest extends React.Component {
         visibleCheckIn: false,
         disabledCheckIn: false,
         selectedRecord: undefined,
-      },()=>this.getManifestByDestination(null, this.state.destinationId));
+      },()=>this.getManifestByDestination(this.state.destinationId));
     });
+  }
+
+  onPageChange = (page) =>{
+    if(page >= 0){
+      const tempPage = page -1;
+      if(tempPage !== this.state.page)
+        this.setState({ page: tempPage, fetching:true }, 
+          () => this.getManifestByDestination(this.state.destinationId))
+    }
   }
 
   render() {
@@ -430,7 +432,7 @@ class Manifest extends React.Component {
         {this.state.dataSource && this.state.dataSource.length > 0 && (
           <div className="pagination-container">
             <Pagination
-              onChange={(page) => this.setState({ page }, () => this.getManifestByDestination(null, this.state.destinationId))}
+              onChange={(page) => this.onPageChange(page)}
               defaultCurrent={this.state.page}
               total={this.state.totalRecords}
               showSizeChanger={false}

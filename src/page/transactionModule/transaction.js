@@ -6,7 +6,8 @@ import {
   notification,
   Pagination,
   Tag,
-  Input
+  Input,
+  Skeleton
 } from "antd";
 import {openNotificationWithIcon, alterPath, UserProfile, debounce} from "../../utility";
 import "./transaction.scss";
@@ -17,9 +18,6 @@ import { config } from "../../config";
 const { Search } = Input;
 
 const getTag = (props) => {
-  console.log('config: ', config.voidStatus);
-  console.log('props: ', props);
-  console.log('props: ', props);
   let color = "";
   let caption = ""
 
@@ -86,32 +84,33 @@ class Transaction extends React.Component {
       search:null,
       page:0,
       limit:15,
-      totalRecords:0
+      totalRecords:0,
+      fetching:false
     }
     this.userProfileObject = UserProfile
     this.getVoidReport = debounce(this.getVoidReport, 1000);
   }
 
   componentDidMount(){
-    this.getVoidReport();
+    this.setState({fetching:true},()=>this.getVoidReport());
   }
 
   getVoidReport = () =>{
     const{limit,page,search}=this.state;
-    TransactionService.getAllTransaction(search,page,limit)
-    .then(e=>{
-      console.log("eeeee",e)
+    TransactionService.getAllTransaction(search,page,limit).then(e=>{
       const{data,errorCode}=e.data
-
-      const{list,pagination}=data
-      const{ totalRecords }=pagination;
-
+    
       if(errorCode){
         this.handleErrorNotification(errorCode)
       }else{
-        console.log(data.list)
-        this.setState({data:list, totalRecords})
+        const{list,pagination}=data
+        const{ totalRecords }=pagination;
+        this.setState({data:list, totalRecords, fetching:false})
       }
+    }) 
+    .catch(e=>{
+      console.log('[transaction module] error: ',e);
+      this.setState({fetching:false})
     })
   }
 
@@ -139,28 +138,43 @@ class Transaction extends React.Component {
     })
   }
 
+  onPageChange = (page) =>{
+    let tempPage = page -1;
+    if(tempPage >= 0){
+      if(tempPage !== this.state.page)
+      this.setState({ page: tempPage, fetching:true },
+        ()=>this.getVoidReport())
+    }
+  }
+
   render() {
+    const{fetching}=this.state;
     return (
       <div className="trasaction-page">
       <>
       <div className="search-container">
         <Search
           value={this.state.searchValue}
+          onChange={(e) => this.doSearch(e.target.value)}
           className="manifest-details-search-box"
           placeholder="Bill of Lading, Staff Name"
-          onChange={(e) => this.doSearch(e.target.value)}
         />
       </div>
-      <Table
-        scroll={{ x: true }}
-        rowKey={(e) => e.key}
-        pagination={false}
-        columns={columns}
-        dataSource={this.state.data}
-      />
+      {
+        fetching && <Skeleton active/>
+      }
+      { 
+        !fetching && <Table
+          scroll={{ x: true }}
+          rowKey={(e) => e.key}
+          pagination={false}
+          columns={columns}
+          dataSource={this.state.data}
+        />
+      }
       <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1rem'}}>
       <Pagination
-        onChange={page => {this.setState({ page: page-1 },()=>this.getVoidReport())} }
+        onChange={page => this.onPageChange(page)}
         defaultCurrent={this.state.page}
         total={this.state.totalRecords}
         showSizeChanger={false}

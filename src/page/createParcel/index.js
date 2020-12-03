@@ -815,9 +815,6 @@ class CreateParcel extends React.Component {
   };
 
   computePrice = () => {
-    console.log('passss===>>computePrice')
-    console.log('passss===>>computePrice')
-    console.log('passss===>>computePrice')
     if (
       this.state.details.fixMatrix.value &&
       this.state.details.fixMatrix.value !== "none"

@@ -267,11 +267,6 @@ class ManifestDetails extends React.Component {
         tripId,
       } = this.props.location.state.selected;
 
-      console.info(
-        "this.props.location.state.selected",
-        this.props.location.state.selected
-      );
-
       const date = moment(new Date(this.props.location.state.date)).format(
         "YYYY-MM-DD"
       );

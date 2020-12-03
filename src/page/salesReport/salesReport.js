@@ -127,8 +127,7 @@ class SalesReport extends React.Component {
         endStationId,
         this.state.page,
         this.state.limit
-      )
-      .then((e) => {
+      ).then((e) => {
         const { data, success, errorCode } = e.data;
         if (success) {
           this.setState(
@@ -240,9 +239,11 @@ class SalesReport extends React.Component {
   };
 
   getParcel = () => {
-    let startStationId = (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) 
-      ? this.state.originId : UserProfile.getAssignedStationId();
-  
+    let startStationId =
+      Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
+        ? this.state.originId
+        : UserProfile.getAssignedStationId();
+
     ParcelService.getAllParcel(
       startStationId,
       moment(this.state.startDay).format("YYYY-MM-DD"),
@@ -251,54 +252,57 @@ class SalesReport extends React.Component {
       this.userProfileObject.getBusCompanyId(),
       this.state.page,
       this.state.limit
-    ).then((e) => this.parseParcel(e));
+    )
+    .then((e) => this.parseParcel(e))
+    .catch(e=>{
+      console.log('[sales report module] error: ',e);
+      this.setState({fetching:false})
+    })
   };
 
   parseParcel = (dataResult) => {
-    console.info('parseParcel',dataResult)
-    try {
-      const { data, pagination, totalPrice, errorCode } = dataResult.data;
-      if (errorCode) {
-        this.handleErrorNotification(errorCode);
-        return;
-      }
+    const { data, pagination, totalPrice, errorCode } = dataResult.data;
+    if (errorCode) {
+      this.setState({ fetching: false });
+      this.handleErrorNotification(errorCode);
+      return;
+    }
 
-      const records = data.map((e, i) => {
-        return {
-          key: i,
-          associatedAmount: e.associatedAmount,
-          associatedCompanyId: e.associatedCompanyId,
-          associatedDestination: e.associatedDestination,
-          associatedOrigin: e.associatedOrigin,
-          associatedTariffRate: e.associatedTariffRate,
-          billOfLading: e.billOfLading,
-          declaredValue: e.declaredValue,
-          destination: e.destination,
-          origin: e.origin,
-          packageName: e.packageName,
-          packageWeight: e.packageWeight,
-          price: e.price,
-          quantity: e.quantity,
-          recipient: e.recipient,
-          scanCode: e.scanCode,
-          sender: e.sender,
-          sentDate: e.sentDate,
-          status: e.status,
-          recipientPhoneNo: e.recipientPhoneNo,
-          senderPhoneNo: e.senderPhoneNo,
-          remarks: e.remarks === "undefined" ? "" : e.remarks,
-        };
-      });
-      const { page, limit, totalRecords } = pagination;
-      this.setState({
-        page,
-        limit,
-        totalRecords,
-        fetching: false,
-        data: records,
-        totalAmount: totalPrice.toFixed(2),
-      });
-    } catch (error) {}
+    const records = data.map((e, i) => {
+      return {
+        key: i,
+        associatedAmount: e.associatedAmount,
+        associatedCompanyId: e.associatedCompanyId,
+        associatedDestination: e.associatedDestination,
+        associatedOrigin: e.associatedOrigin,
+        associatedTariffRate: e.associatedTariffRate,
+        billOfLading: e.billOfLading,
+        declaredValue: e.declaredValue,
+        destination: e.destination,
+        origin: e.origin,
+        packageName: e.packageName,
+        packageWeight: e.packageWeight,
+        price: e.price,
+        quantity: e.quantity,
+        recipient: e.recipient,
+        scanCode: e.scanCode,
+        sender: e.sender,
+        sentDate: e.sentDate,
+        status: e.status,
+        recipientPhoneNo: e.recipientPhoneNo,
+        senderPhoneNo: e.senderPhoneNo,
+        remarks: e.remarks === "undefined" ? "" : e.remarks,
+      };
+    });
+    const { page, limit, totalRecords } = pagination;
+    this.setState({
+      page,
+      limit,
+      totalRecords,
+      fetching: false,
+      data: records,
+      totalAmount: totalPrice.toFixed(2),
+    });
   };
 
   handleErrorNotification = (code) => {
@@ -361,21 +365,22 @@ class SalesReport extends React.Component {
   };
 
   downloadXls = () => {
-    const isP2P = this.props.isP2P || false
+    const isP2P = this.props.isP2P || false;
     const endStation = this.state.destination.options
       .filter((e) => this.state.tags.includes(e.name))
       .map((e) => e.data.end);
 
-    let originId = this.state.originId
-    const isAdmin = (Number(UserProfile.getRole()) === Number(config.role["staff-admin"]))
-    if(!isAdmin){
-      originId = this.userProfileObject.getAssignedStationId()
+    let originId = this.state.originId;
+    const isAdmin =
+      Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
+    if (!isAdmin) {
+      originId = this.userProfileObject.getAssignedStationId();
     }
 
     return ParcelService.exportCargoParcel(
       this.props.title || "SUMMARY OF CARGO SALES",
-      moment(this.state.startDay).format('YYYY-MM-DD'),
-      moment(this.state.endDay).format('YYYY-MM-DD'),
+      moment(this.state.startDay).format("YYYY-MM-DD"),
+      moment(this.state.endDay).format("YYYY-MM-DD"),
       originId,
       endStation,
       this.userProfileObject.getPersonFullName(),
@@ -406,6 +411,16 @@ class SalesReport extends React.Component {
     }
   };
 
+  onPageChange = (page) => {
+    if (page >= 0) {
+      const tempPage = page - 1;
+      if (tempPage !== this.state.page)
+        this.setState({ page: tempPage, fetching: true }, () =>
+          this.getParcel()
+        );
+    }
+  };
+
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
@@ -426,7 +441,8 @@ class SalesReport extends React.Component {
                         let tags = [...this.state.tags];
                         const _tags = tags.filter((e) => tags[i] !== e);
                         this.setState({ tags: _tags });
-                      }}>
+                      }}
+                    >
                       {" "}
                       {e.name}
                     </Tag>
@@ -576,7 +592,7 @@ class SalesReport extends React.Component {
               <>
                 <div>
                   <Table
-                    scroll={{ x: true }}  
+                    scroll={{ x: true }}
                     rowKey={(e) => e.key}
                     pagination={false}
                     columns={this.props.source}
@@ -592,11 +608,7 @@ class SalesReport extends React.Component {
                     }}
                   >
                     <Pagination
-                      onChange={(page) => {
-                        this.setState({ page: page - 1, fetching: true }, () =>
-                          this.getParcel()
-                        );
-                      }}
+                      onChange={(page) => this.onPageChange(page)}
                       defaultCurrent={this.state.page}
                       total={this.state.totalRecords}
                       showSizeChanger={false}
