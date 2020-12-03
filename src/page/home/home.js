@@ -101,7 +101,7 @@ const tableSourceBitsi = [
     title: "DATE",
     dataIndex: "sentDate",
     key: "sentDate",
-    render: (text) => moment(text).format("MMM DD, YYYY"),
+    //render: (text) => moment(text).format("MMM DD, YYYY"),
   },
   {
     title: "BL NO.",

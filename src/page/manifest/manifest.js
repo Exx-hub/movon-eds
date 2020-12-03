@@ -77,7 +77,7 @@ class Manifest extends React.Component {
     listOfTripDates: undefined,
     tempDestinationList: [],
     selected: undefined,
-    page: 0,
+    page: 1,
     limit: 10,
     totalRecords: 50,
     visibleCheckIn: false,
@@ -103,7 +103,7 @@ class Manifest extends React.Component {
           this.handleErrorNotification(errorCode);
           return;
         }
-        let state = { allRoutes: data };
+        let state = { allRoutes: data, page:1 };
         let clean = [];
 
         if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
@@ -163,7 +163,7 @@ class Manifest extends React.Component {
         moment(this.state.endDay).format("YYYY-MM-DD"),
         startStationId,
         endStationId,
-        this.state.page,
+        this.state.page -1,
         this.state.limit
       ).then((e) => this.parceData(e))
       .catch(e=>{
@@ -225,7 +225,7 @@ class Manifest extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay, page: 0 }, () => this.getManifestByDestination(this.state.destinationId));
+      this.setState({ startDay, endDay, page:1 }, () => this.getManifestByDestination(this.state.destinationId));
     }
   };
 
@@ -245,6 +245,7 @@ class Manifest extends React.Component {
       default: break;
     }
   };
+   
 
   getEndDestination = (data,stationId) => {
     if(!stationId)
@@ -272,7 +273,7 @@ class Manifest extends React.Component {
         .find((e) => e.stationName === value) || null;
         if(selected){
           const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
-          this.setState({ originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },
+          this.setState({ page:1, originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },
             ()=>this.getManifestByDestination(null));
         }
         break;
@@ -280,7 +281,7 @@ class Manifest extends React.Component {
         selected = this.state.endStationRoutes
         .find((e) => e.endStationName === value) || null;
         if(selected){
-          this.setState({destinationId:selected.end},()=>this.getManifestByDestination(selected.end))
+          this.setState({page:1, destinationId:selected.end},()=>this.getManifestByDestination(selected.end))
         }
         break;
       default:
@@ -361,12 +362,9 @@ class Manifest extends React.Component {
   }
 
   onPageChange = (page) =>{
-    if(page >= 0){
-      const tempPage = page -1;
-      if(tempPage !== this.state.page)
-        this.setState({ page: tempPage, fetching:true }, 
+    if(page !== this.state.page)
+        this.setState({ page, fetching:true }, 
           () => this.getManifestByDestination(this.state.destinationId))
-    }
   }
 
   render() {

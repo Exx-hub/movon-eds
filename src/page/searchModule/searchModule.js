@@ -41,7 +41,7 @@ class SearchModule extends React.Component {
       columns: [],
       visibleVoid: false,
       remarks: "",
-      page: 0,
+      page: 1,
       totalRecords: 0,
       limit: 10,
     };
@@ -124,7 +124,7 @@ class SearchModule extends React.Component {
           this.handleErrorNotification(errorCode);
           return;
         }
-        this.setState({selectedRecord: undefined, remarks: "", visibleVoid:false });
+        this.setState({page:1, selectedRecord: undefined, remarks: "", visibleVoid:false });
         this.fetchParcelList();
       })
     }
@@ -145,7 +145,7 @@ class SearchModule extends React.Component {
   };
 
   fetchParcelList = () => {
-    Parcel.parcelPagination(this.state.page, this.state.limit, this.state.searchValue).then((e) => {
+    Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue).then((e) => {
       const { data, errorCode } = e.data;
       if (errorCode) {
         this.setState({fetching:false})
@@ -196,12 +196,9 @@ class SearchModule extends React.Component {
   };
 
   onPageChange = (page) =>{
-    let tempPage = page -1;
-    if(tempPage >= 0){
-      if(tempPage !== this.state.page)
-        this.setState({page: tempPage, fetching:true},
-          ()=>this.fetchParcelList());
-    }
+    if(page !== this.state.page)
+      this.setState({page, fetching:true},
+        ()=>this.fetchParcelList());
   }
 
   render() {
@@ -237,8 +234,8 @@ class SearchModule extends React.Component {
               {this.state.parcelList.length > 0 && (
                 <div className="pagination">
                   <Pagination
-                    onChange={(page) => this.onPageChange(page)}
                     defaultCurrent={this.state.page}
+                    onChange={(page) => this.onPageChange(page)}
                     total={this.state.totalRecords}
                     showSizeChanger={false}
                   />
