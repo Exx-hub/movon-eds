@@ -255,6 +255,7 @@ class SalesReport extends React.Component {
   };
 
   parseParcel = (dataResult) => {
+    console.info('parseParcel',dataResult)
     try {
       const { data, pagination, totalPrice, errorCode } = dataResult.data;
       if (errorCode) {
@@ -575,6 +576,7 @@ class SalesReport extends React.Component {
               <>
                 <div>
                   <Table
+                    scroll={{ x: true }}  
                     rowKey={(e) => e.key}
                     pagination={false}
                     columns={this.props.source}

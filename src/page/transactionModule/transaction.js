@@ -152,6 +152,7 @@ class Transaction extends React.Component {
         />
       </div>
       <Table
+        scroll={{ x: true }}
         rowKey={(e) => e.key}
         pagination={false}
         columns={columns}

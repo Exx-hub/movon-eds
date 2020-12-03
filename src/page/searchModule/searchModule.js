@@ -128,6 +128,8 @@ class SearchModule extends React.Component {
     let record = this.state.selectedRecord;
     let remarks = this.state.remarks;
 
+    console.info('handleVoid',record)
+
     if (remarks) {
       TransactionService.voidParcel(record._id, remarks)
       .then(e=>{

@@ -60,6 +60,7 @@ const TableRoutesView = (props) => {
   ];
   return (
     <Table
+      scroll={{ x: true }}
       pagination={false}
       columns={columns}
       dataSource={props.dataSource}
