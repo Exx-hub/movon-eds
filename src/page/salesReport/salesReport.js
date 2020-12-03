@@ -23,7 +23,6 @@ import {
 } from "../../utility";
 
 import ParcelService from "../../service/Parcel";
-import ManifestService from "../../service/Manifest";
 import RoutesService from "../../service/Routes";
 
 import moment from "moment-timezone";
