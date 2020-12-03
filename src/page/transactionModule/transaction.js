@@ -82,8 +82,8 @@ class Transaction extends React.Component {
     this.state={
       data:[],
       search:null,
-      page:0,
-      limit:15,
+      page:1,
+      limit:10,
       totalRecords:0,
       fetching:false
     }
@@ -97,7 +97,7 @@ class Transaction extends React.Component {
 
   getVoidReport = () =>{
     const{limit,page,search}=this.state;
-    TransactionService.getAllTransaction(search,page,limit).then(e=>{
+    TransactionService.getAllTransaction(search,page-1,limit).then(e=>{
       const{data,errorCode}=e.data
     
       if(errorCode){
@@ -133,18 +133,15 @@ class Transaction extends React.Component {
   };
 
   doSearch = (val) =>{
-    this.setState({search:val, page:0},()=>{
+    this.setState({search:val, page:1},()=>{
       this.getVoidReport()
     })
   }
 
   onPageChange = (page) =>{
-    let tempPage = page -1;
-    if(tempPage >= 0){
-      if(tempPage !== this.state.page)
-      this.setState({ page: tempPage, fetching:true },
+    if(page !== this.state.page)
+      this.setState({ page, fetching:true },
         ()=>this.getVoidReport())
-    }
   }
 
   render() {
