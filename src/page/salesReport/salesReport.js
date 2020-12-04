@@ -60,7 +60,7 @@ class SalesReport extends React.Component {
       templist: [],
       templistValue: undefined,
       page: 1,
-      limit: 10,
+      limit: 15,
       totalRecords: 0,
       originId: null,
       destinationId: null,
@@ -122,6 +122,7 @@ class SalesReport extends React.Component {
         if (selected) {
           const isAllIn = selected.stationId === "null"; //all
           let state = {};
+          state.page =1;
           state.originId = isAllIn ? null : selected.stationId;
           state.endStationRoutes = isAllIn
             ? []
@@ -144,7 +145,7 @@ class SalesReport extends React.Component {
               tags.push({ end: selected.end, name: selected.endStationName });
             }
           }
-          this.setState({ destinationId: tags.map((e) => e.end), tags }, () =>
+          this.setState({ page:1, destinationId: tags.map((e) => e.end), tags }, () =>
             this.getParcel()
           );
         }
@@ -200,6 +201,8 @@ class SalesReport extends React.Component {
       this.handleErrorNotification(errorCode);
       return;
     }
+
+    console.log(' dataResult.data;', dataResult.data)
 
     const records = data.map((e, i) => {
       let _sentDate = e.sentDate.split('T')[0];
@@ -298,9 +301,7 @@ class SalesReport extends React.Component {
 
   downloadXls = () => {
     const isP2P = this.props.isP2P || false;
-    const endStation = this.state.destination.options
-      .filter((e) => this.state.tags.includes(e.name))
-      .map((e) => e.data.end);
+    const endStation = this.state.tags
 
     let originId = this.state.originId;
     const isAdmin =
@@ -314,7 +315,7 @@ class SalesReport extends React.Component {
       moment(this.state.startDay).format("YYYY-MM-DD"),
       moment(this.state.endDay).format("YYYY-MM-DD"),
       originId,
-      endStation,
+      this.state.tags.map((e) => e.end),
       this.userProfileObject.getPersonFullName(),
       this.state.totalAmount,
       this.getDestination(),

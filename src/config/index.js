@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.2.8(46)'
+        build: '1.2.8(47)'
     },
-    changeLogs: `fix issue on pagination and date mis-match`
+    changeLogs: `fix report computation`
 }
 
 export const ERROR_CODES = {
