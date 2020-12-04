@@ -25,7 +25,7 @@ import {
 import ParcelService from "../../service/Parcel";
 import RoutesService from "../../service/Routes";
 
-import moment from "moment-timezone";
+import moment from "moment";
 import "./salesReport.scss";
 import ReactToPrint from "react-to-print";
 import { config } from "../../config";
@@ -205,7 +205,6 @@ class SalesReport extends React.Component {
     console.log(' dataResult.data;', dataResult.data)
 
     const records = data.map((e, i) => {
-      let _sentDate = e.sentDate.split('T')[0];
       return {
         key: i,
         associatedAmount: e.associatedAmount,
@@ -224,7 +223,7 @@ class SalesReport extends React.Component {
         recipient: e.recipient,
         scanCode: e.scanCode,
         sender: e.sender,
-        sentDate:  moment(_sentDate).tz("Asia/Manila").format('MMM DD, YYYY'),
+        sentDate: moment(e.sentDate).format("MMM DD YYYY"),
         status: e.status,
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,
