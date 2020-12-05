@@ -162,9 +162,7 @@ const tableSourceBitsi = [
   {
     title: "AMOUNT",
     dataIndex: "price",
-    key: "price",
-    width:100,
-    fixed: 'right',
+    key: "price"
   },
 ];
 
