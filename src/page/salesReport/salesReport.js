@@ -1,20 +1,6 @@
 import React from "react";
-import {
-  Table,
-  DatePicker,
-  Select,
-  Button,
-  Row,
-  Col,
-  Space,
-  notification,
-  Skeleton,
-  Layout,
-  Tag,
-  AutoComplete,
-  Pagination,
-} from "antd";
-import { PrinterOutlined } from "@ant-design/icons";
+import {Table,DatePicker,Select,Button,Row,Col,Space,notification,Skeleton,Layout,Tag,AutoComplete,Pagination,Menu, Dropdown} from "antd";
+import { PrinterOutlined, DownOutlined } from "@ant-design/icons";
 
 import {
   openNotificationWithIcon,
@@ -29,12 +15,16 @@ import moment from "moment";
 import "./salesReport.scss";
 import ReactToPrint from "react-to-print";
 import { config } from "../../config";
+import { FilePdfOutlined, ProfileOutlined } from '@ant-design/icons';
+
 
 const dateFormat = "MMM DD, YYYY";
 
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+
+
 
 class SalesReport extends React.Component {
   constructor() {
@@ -122,7 +112,7 @@ class SalesReport extends React.Component {
         if (selected) {
           const isAllIn = selected.stationId === "null"; //all
           let state = {};
-          state.page =1;
+          state.page = 1;
           state.originId = isAllIn ? null : selected.stationId;
           state.endStationRoutes = isAllIn
             ? []
@@ -145,8 +135,9 @@ class SalesReport extends React.Component {
               tags.push({ end: selected.end, name: selected.endStationName });
             }
           }
-          this.setState({ page:1, destinationId: tags.map((e) => e.end), tags }, () =>
-            this.getParcel()
+          this.setState(
+            { page: 1, destinationId: tags.map((e) => e.end), tags },
+            () => this.getParcel()
           );
         }
         break;
@@ -180,18 +171,18 @@ class SalesReport extends React.Component {
 
     ParcelService.getAllParcel(
       startStationId,
-      moment(this.state.startDay).format("YYYY-MM-DD"),
-      moment(this.state.endDay).format("YYYY-MM-DD"),
+      new Date(this.state.startDay),
+      new Date(this.state.endDay),
       this.state.destinationId,
       this.userProfileObject.getBusCompanyId(),
-      this.state.page -1,
+      this.state.page - 1,
       this.state.limit
     )
-    .then((e) => this.parseParcel(e))
-    .catch(e=>{
-      console.log('[sales report module] error: ',e);
-      this.setState({fetching:false})
-    })
+      .then((e) => this.parseParcel(e))
+      .catch((e) => {
+        console.log("[sales report module] error: ", e);
+        this.setState({ fetching: false });
+      });
   };
 
   parseParcel = (dataResult) => {
@@ -202,7 +193,7 @@ class SalesReport extends React.Component {
       return;
     }
 
-    console.log(' dataResult.data;', dataResult.data)
+    console.log(" dataResult.data;", dataResult.data);
 
     const records = data.map((e, i) => {
       return {
@@ -218,12 +209,12 @@ class SalesReport extends React.Component {
         origin: e.origin,
         packageName: e.packageName,
         packageWeight: e.packageWeight,
-        price: e.price,
+        price: (e.price && Number(e.price).toFixed(2)) || "0.00",
         quantity: e.quantity,
         recipient: e.recipient,
         scanCode: e.scanCode,
         sender: e.sender,
-        sentDate: moment(e.sentDate).format("MMM DD YYYY"),
+        sentDate: moment(e.createdAt).format("MMMM DD, YYYY"),
         status: e.status,
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,
@@ -262,7 +253,7 @@ class SalesReport extends React.Component {
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ page:1, fetching: true, startDay, endDay }, () =>
+      this.setState({ page: 1, fetching: true, startDay, endDay }, () =>
         this.getParcel()
       );
     }
@@ -298,10 +289,42 @@ class SalesReport extends React.Component {
     });
   };
 
+  showTextDetails = (caption, value) => {
+    return (
+      <div>
+        <span style={{ width: 80, textAlign: "left", fontWeight: 200 }}>
+          {caption}
+        </span>
+        <span style={{ width: 200, textAlign: "left", fontWeight: "bold" }}>
+          {value}
+        </span>
+      </div>
+    );
+  };
+
+  onHandleMenu = (item) =>{
+    switch(item.key){
+      case 'downloadPdf': 
+      break;
+      case 'downloadXls': 
+      this.downloadXls(); break;
+      default: break;
+    }
+  }
+
+  menu = (
+    <Menu onClick={(e)=>this.onHandleMenu(e)}>
+      <Menu.Item style={{display:'none'}} key="downloadPdf" icon={<FilePdfOutlined />}>
+        Download PDF
+      </Menu.Item>
+      <Menu.Item key="downloadXls" icon={<ProfileOutlined />}>
+        Download XLS
+      </Menu.Item>
+    </Menu>
+  );
+
   downloadXls = () => {
     const isP2P = this.props.isP2P || false;
-    const endStation = this.state.tags
-
     let originId = this.state.originId;
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
@@ -311,8 +334,8 @@ class SalesReport extends React.Component {
 
     return ParcelService.exportCargoParcel(
       this.props.title || "SUMMARY OF CARGO SALES",
-      moment(this.state.startDay).format("YYYY-MM-DD"),
-      moment(this.state.endDay).format("YYYY-MM-DD"),
+      new Date(this.state.startDay),
+      new Date(this.state.endDay),
       originId,
       this.state.tags.map((e) => e.end),
       this.userProfileObject.getPersonFullName(),
@@ -344,18 +367,19 @@ class SalesReport extends React.Component {
   };
 
   onPageChange = (page) => {
-    if(page !== this.state.page)
-      this.setState({ page, fetching: true }, () =>
-        this.getParcel()
-    );
+    if (page !== this.state.page)
+      this.setState({ page, fetching: true }, () => this.getParcel());
   };
 
-  onRemoveTag = (e,val) =>{
+  onRemoveTag = (e, val) => {
     e.preventDefault();
     let tags = [...this.state.tags];
     const _tags = tags.filter((e) => e.end !== val.end);
-    this.setState({ page:1, tags: _tags, destinationId: _tags.map((e) => e.end) },()=>this.getParcel());
-  }
+    this.setState(
+      { page: 1, tags: _tags, destinationId: _tags.map((e) => e.end) },
+      () => this.getParcel()
+    );
+  };
 
   render() {
     const isAdmin =
@@ -363,45 +387,7 @@ class SalesReport extends React.Component {
 
     return (
       <Layout>
-        <Content style={{ padding: "1rem" }}>
-          <Row style={{ marginBottom: ".5rem" }}>
-            <Col span={12}>
-              <div style={{ display: "flex", height: "500%" }}>
-                <div>
-                  {this.state.tags.map((e, i) => (
-                    <Tag
-                      key={e.end}
-                      closable
-                      color="cyan"
-                      onClose={(c) => this.onRemoveTag(c, e)}>
-                      {" "}
-                      {e.name}
-                    </Tag>
-                  ))}
-                </div>
-              </div>
-            </Col>
-            <Col span={12}>
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <span>Download: </span>
-                <ReactToPrint
-                  onBeforeGetContent={() => this.setState({ isPrinting: true })}
-                  onAfterPrint={() => this.setState({ isPrinting: false })}
-                  content={() => this.printEl.current}
-                  trigger={() => {
-                    return (
-                      <Button>
-                        <PrinterOutlined /> <span>PDF</span>{" "}
-                      </Button>
-                    );
-                  }}
-                />
-                <Button onClick={() => this.downloadXls()}>XLS</Button>
-              </div>
-            </Col>
-          </Row>
-
-          <div>
+        <Content style={{ padding: "1rem", paddingTop:'2rem' }}>
             <Row>
               {isAdmin && (
                 <Col span={6}>
@@ -450,79 +436,90 @@ class SalesReport extends React.Component {
                 />
               </Col>
             </Row>
-          </div>
+          <Row style={{ marginTop: ".5rem" }}>
+            <Col span={12}>
+              <div style={{
+                padding:'0.5rem',
+                border:"dashed 2px rgba(128,128,128,0.2)",
+                display: "flex", background:'white', minHeight:"2rem", overflow:'hidden'}}>
+                <div>
+                  {this.state.tags.map((e, i) => (
+                    <Tag
+                      key={e.end}
+                      closable
+                      color="cyan"
+                      onClose={(c) => this.onRemoveTag(c, e)}
+                    >
+                      {" "}
+                      {e.name}
+                    </Tag>
+                  ))}
+                </div>
+              </div>
+            </Col>
+            <Col offset={6} span={6} justifyContent="flex-end">
+              {
+                // <span>Download: </span>
+                // <ReactToPrint
+                //   onBeforeGetContent={() => this.setState({ isPrinting: true })}
+                //   onAfterPrint={() => this.setState({ isPrinting: false })}
+                //   content={() => this.printEl.current}
+                //   trigger={() => {
+                //     return (
+                //       <Button>
+                //         <PrinterOutlined /> <span>PDF</span>{" "}
+                //       </Button>
+                //     );
+                //   }}
+                // />
+                // <Button onClick={() => this.downloadXls()}>XLS</Button>
+              }
+
+              <div style={{ display:'flex', flexDirection:'row', justifyContent:'flex-end'}}>
+              <Dropdown overlay={this.menu}>
+                <Button>
+                  <DownOutlined />  Download
+                </Button>
+              </Dropdown>
+              </div>
+              
+            </Col>
+          </Row>
+
+          <div
+            style={{
+              marginTop: "2rem",
+              borderBottom: "dashed  rgba(125,125,125,0.5)  1px",
+            }}
+          />
 
           <div style={{ marginTop: "1.2rem" }} ref={this.printEl}>
             <Header date={this.getDate()} title={this.props.title} />
-
-            <div style={{ padding: "1rem" }}>
-              <Row>
-                <Col span={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  ></div>
-                </Col>
-                <Col span={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  ></div>
-                </Col>
-                <Col span={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <span style={{ width: 80, textAlign: "left" }}>
-                      Total Sales:{" "}
-                    </span>
-                    <span style={{ width: 200, textAlign: "left" }}>
-                      {this.getTotalAmount()}
-                    </span>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <span style={{ width: 80 }}> Destination: </span>
-                    <span>{this.getDestination()}</span>
-                  </div>
-                </Col>
-
-                <Col span={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                    }}
-                  >
-                    <span style={{ width: 80 }}>Prepared: </span>
-                    <span>{this.getPreparedBy()}</span>
-                  </div>
-                </Col>
-              </Row>
+            <div
+              style={{
+                padding: "1rem",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                {this.showTextDetails("Destination: ", this.getDestination())}
+                {this.showTextDetails("Prepared: ", this.getPreparedBy())}
+              </div>
+              <div>
+                {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
+                {this.showTextDetails("Total Number of Transaction: ",this.state.totalRecords)}
+              </div>
             </div>
 
-            {this.state.fetching ? (
+            {false ? (
               <Skeleton active />
             ) : (
               <>
-                <div>
+                <div className="cargo-table">
                   <Table
+                    loading={this.state.fetching}
                     scroll={{ x: true }}
                     rowKey={(e) => e.key}
                     pagination={false}
@@ -530,22 +527,22 @@ class SalesReport extends React.Component {
                     dataSource={this.state.data}
                   />
                 </div>
-                {this.state.data.length > 0 && (
-                  <div
+                <div
                     style={{
                       display: "flex",
                       justifyContent: "center",
                       marginTop: "1rem",
+                      marginBottom: "3rem",
                     }}
                   >
                     <Pagination
+                      current={this.state.page}
                       onChange={(page) => this.onPageChange(page)}
-                      defaultCurrent={this.state.page}
                       total={this.state.totalRecords}
+                      pageSize={this.state.limit}
                       showSizeChanger={false}
                     />
                   </div>
-                )}
               </>
             )}
           </div>
@@ -566,9 +563,9 @@ function Header(props) {
         justifyContent: "center",
       }}
     >
-      <h3>{props.title}</h3>
+      <span style={{ fontWeight: 600, fontSize: "1.4rem" }}>{props.title}</span>
       <Space>
-        <span>{props.date}</span>
+        <span style={{ fontWeight: 200, fontSize: "1rem" }}>{props.date}</span>
       </Space>
     </div>
   );

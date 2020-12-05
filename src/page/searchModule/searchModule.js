@@ -65,22 +65,24 @@ class SearchModule extends React.Component {
           key: "billOfLading",
         },
         {
-          title: "Description",
-          dataIndex: "description",
-          key: "description",
-          sorter: (a, b) => a.description.length - b.description.length,
+          title: "Origin",
+          dataIndex: "startStationName",
+          key: "startStationName",
+        },
+        {
+          title: "Destination",
+          dataIndex: "endStationName",
+          key: "endStationName"
         },
         {
           title: "Sender",
           dataIndex: "sender",
-          key: "sender",
-          sorter: (a, b) => a.sender.length - b.sender.length,
+          key: "sender"
         },
         {
           title: "Receiver",
           dataIndex: "receiver",
-          key: "receiver",
-          sorter: (a, b) => a.receiver.length - b.receiver.length,
+          key: "receiver"
         },
         {
           title: "Pack. Count",
@@ -149,6 +151,7 @@ class SearchModule extends React.Component {
 
   fetchParcelList = () => {
     Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue).then((e) => {
+      console.log('parcelPagination',e)
       const { data, errorCode } = e.data;
       if (errorCode) {
         this.setState({fetching:false})
@@ -169,6 +172,8 @@ class SearchModule extends React.Component {
           travelStatus: e.status,
           packageImg: e.packageInfo.packageImages,
           tripId: e.tripId,
+          startStationName: e.startStationName,
+          endStationName: e.endStationName,
           _id: e._id
         };
       });

@@ -98,45 +98,46 @@ const tableSourceVliBitsi = [
 ];
 const tableSourceBitsi = [
   {
-    title: "DATE",
-    dataIndex: "sentDate",
-    key: "sentDate",
-    //render: (text) => moment(text).format("MMM DD, YYYY"),
-  },
-  {
     title: "BL NO.",
     dataIndex: "billOfLading",
     key: "billOfLading",
+    fixed: 'left',
+    width:100
+  },
+  {
+    title: "DATE",
+    dataIndex: "sentDate",
+    key: "sentDate",
+  },
+  {
+    title: "ORIGIN",
+    dataIndex: "origin",
+    key: "origin",
+  },
+  {
+    title: "DESTINATION",
+    dataIndex: "destination",
+    key: "destination",
   },
   {
     title: "SENDER",
     dataIndex: "sender",
-    key: "sender,",
+    key: "sender",
   },
   {
     title: "SENDER PHONE#.",
     dataIndex: "senderPhoneNo",
-    key: "senderPhoneNo,",
+    key: "senderPhoneNo",
   },
   {
     title: "RECEIVER",
     dataIndex: "recipient",
-    key: "recipient,",
+    key: "recipient",
   },
   {
     title: "RECEIVER PHONE#",
     dataIndex: "recipientPhoneNo",
     key: "recipientPhoneNo,",
-  },
-  {
-    title: "ORIGIN",
-    dataIndex: "origin",
-    key: "origin,",
-  },
-  {
-    title: "DESTINATION",
-    dataIndex: "destination",
-    key: "destination,",
   },
   {
     title: "WEIGHT",
@@ -162,6 +163,8 @@ const tableSourceBitsi = [
     title: "AMOUNT",
     dataIndex: "price",
     key: "price",
+    width:100,
+    fixed: 'right',
   },
 ];
 
@@ -316,19 +319,19 @@ function Home(props) {
               onNavigationMenuChange(e);
             }}
           >
-            <Menu.Item key="search-parcel" icon={<SearchOutlined />}>
+            <Menu.Item key="search-parcel" icon={<SearchOutlined style={{fontSize:'17px'}}/>}>
               Search
             </Menu.Item>
 
-            <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined />}>
+            <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined style={{fontSize:'17px'}}/>}>
               Create Parcel
             </Menu.Item>
 
-            <Menu.Item key="manifest-report" icon={<InboxOutlined />}>
+            <Menu.Item key="manifest-report" icon={<InboxOutlined style={{fontSize:'17px'}}/>}>
               Manifest
             </Menu.Item>
 
-            <Menu.Item key="transaction-parcel" icon={<SnippetsOutlined />}>
+            <Menu.Item key="transaction-parcel" icon={<SnippetsOutlined style={{fontSize:'17px'}}/>}>
               Void Transactions
             </Menu.Item>
 
