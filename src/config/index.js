@@ -32,7 +32,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        environment:"development",
+        environment:"",
         build: '1.2.8(48)'
     },
     changeLogs: `fix report computation`
