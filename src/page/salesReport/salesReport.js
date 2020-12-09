@@ -11,14 +11,14 @@ import {
 import ParcelService from "../../service/Parcel";
 import RoutesService from "../../service/Routes";
 
-import moment from "moment";
+import moment from "moment-timezone";
 import "./salesReport.scss";
 import ReactToPrint from "react-to-print";
 import { config } from "../../config";
 import { FilePdfOutlined, ProfileOutlined } from '@ant-design/icons';
 
 
-const dateFormat = "MMM DD, YYYY";
+const dateFormat = "MMM DD, YYYY hh:mm";
 
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
@@ -164,13 +164,14 @@ class SalesReport extends React.Component {
   };
 
   getParcel = () => {
-    console.info('CURRENT TIME:', new Date())
-    console.info('CURRENT TIME:', new Date())
+    console.info('CURRENT start TIME:', new Date(moment(this.state.startDay).format('YYYY-MM-DD hh:mm:ss')))
+    console.info('CURRENT end TIME:', new Date(moment(this.state.endDay).format('YYYY-MM-DD hh:mm:ss')))
     console.info('CURRENT TIME:', new Date())
 
-    console.log('request to server startDay',  new Date(moment(this.state.startDay).subtract(8,'hours').format()))
-    console.log('request to server endDay',  new Date(moment(this.state.endDay).subtract(8,'hours').format()))
-    
+    console.info('AFTER SUBTRACTION OF 8 HRS start TIME:', new Date(moment(this.state.startDay).format()))
+    console.info('AFTER SUBTRACTION OF 8 HRS end TIME:', new Date(moment(this.state.endDay).format()))
+
+
     let startStationId =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
         ? this.state.originId
@@ -178,8 +179,8 @@ class SalesReport extends React.Component {
 
     ParcelService.getAllParcel(
       startStationId,
-      new Date(moment(this.state.startDay).subtract(8,'hours').format()),
-      new Date(moment(this.state.endDay).subtract(8,'hours').format()),
+      moment(this.state.startDay).format('YYYY-MM-DD'),
+      moment(this.state.endDay).format('YYYY-MM-DD'),
       this.state.destinationId,
       this.userProfileObject.getBusCompanyId(),
       this.state.page - 1,
@@ -221,7 +222,7 @@ class SalesReport extends React.Component {
         recipient: e.recipient,
         scanCode: e.scanCode,
         sender: e.sender,
-        sentDate: moment(e.createdAt).format("MMMM DD, YYYY"),
+        sentDate: moment.tz(e.createdAt,"Asia/Manila").format('MMM DD, YYYY hh:mm:ss A'),
         status: e.status,
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,

@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.2.8(48)'
+        build: '1.2.8(49)'
     },
-    changeLogs: `fix report computation`
+    changeLogs: `fix report date range and filter`
 }
 
 export const ERROR_CODES = {
