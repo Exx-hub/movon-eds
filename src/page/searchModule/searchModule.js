@@ -1,6 +1,6 @@
 import React from "react";
 import "./searchModule.scss";
-import moment from "moment";
+import moment from "moment-timezone";
 import { config } from "../../config";
 import Parcel from "../../service/Parcel";
 import { PromptModal } from '../../component/modal';
@@ -127,7 +127,7 @@ class SearchModule extends React.Component {
           this.handleErrorNotification(errorCode);
           return;
         }
-        this.setState({fetching:true, page:1, selectedRecord: undefined, remarks: "", visibleVoid:false },
+        this.setState({page:1, selectedRecord: undefined, remarks: "", visibleVoid:false },
           ()=>this.fetchParcelList());
         ;
       })
@@ -158,11 +158,10 @@ class SearchModule extends React.Component {
         this.handleErrorNotification(errorCode);
         return;
       }
-
       const parcelList = data.list.map((e, i) => {
         return {
           key: i,
-          sentDate: moment(e.sentDate).format("MMM DD YYYY"),
+          sentDate: moment.tz(e.createdAt,"Asia/Manila").format("MMM DD, YYYY"),
           qrcode: e.scanCode,
           billOfLading: e.billOfLading,
           description: e.packageInfo.packageName,
@@ -172,8 +171,8 @@ class SearchModule extends React.Component {
           travelStatus: e.status,
           packageImg: e.packageInfo.packageImages,
           tripId: e.tripId,
-          startStationName: e.startStationName,
-          endStationName: e.endStationName,
+          startStationName: e.trips.startStation.name,
+          endStationName: e.trips.endStation.name,
           _id: e._id
         };
       });
