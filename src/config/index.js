@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"staging",
-        build: '1.2.8(50)'
+        build: '1.2.8(51)'
     },
     changeLogs: `fix report date range and filter`
 }

@@ -339,11 +339,11 @@ class SalesReport extends React.Component {
     if (!isAdmin) {
       originId = this.userProfileObject.getAssignedStationId();
     }
-
+    
     return ParcelService.exportCargoParcel(
       this.props.title || "SUMMARY OF CARGO SALES",
       moment(this.state.startDay).format("YYYY-MM-DD"),
-      moment(this.state.end).format("YYYY-MM-DD"),
+      moment(this.state.endDay).format("YYYY-MM-DD"),
       originId,
       this.state.tags.map((e) => e.end),
       this.userProfileObject.getPersonFullName(),
