@@ -795,10 +795,10 @@ class CreateParcel extends React.Component {
     //   return;
     // }
 
-    // if (this.userProfileObject.isFiveStar()) {
-    //   ParcelService.getFiveStarConvenienceFee(qty,0).then((res) =>this.parseSystemFeeResponse(res));
-    //   return;
-    // }
+    if (this.userProfileObject.isFiveStar()) {
+      ParcelService.getFiveStarConvenienceFee(qty,0).then((res) =>this.parseSystemFeeResponse(res));
+      return;
+    }
   };
 
   parseSystemFeeResponse = (res) => {
@@ -945,11 +945,10 @@ class CreateParcel extends React.Component {
       }
       if (name === "sticker_quantity") {
         if (Boolean(details.sticker_quantity.accepted)) {
-          //this.getConvinienceFee(value,undefined);
+          //five start convinience fee
           if (this.userProfileObject.isFiveStar()) {
-            ParcelService.getFiveStarConvenienceFee(value).then((res) =>
-              this.parseSystemFeeResponse(res)
-            );
+            ParcelService.getFiveStarConvenienceFee(value)
+            .then((res) =>this.parseSystemFeeResponse(res));
             return;
           }
         }

@@ -164,6 +164,13 @@ class SalesReport extends React.Component {
   };
 
   getParcel = () => {
+    console.info('CURRENT TIME:', new Date())
+    console.info('CURRENT TIME:', new Date())
+    console.info('CURRENT TIME:', new Date())
+
+    console.log('request to server startDay',  new Date(moment(this.state.startDay).subtract(8,'hours').format()))
+    console.log('request to server endDay',  new Date(moment(this.state.endDay).subtract(8,'hours').format()))
+    
     let startStationId =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
         ? this.state.originId
@@ -171,8 +178,8 @@ class SalesReport extends React.Component {
 
     ParcelService.getAllParcel(
       startStationId,
-      new Date(this.state.startDay),
-      new Date(this.state.endDay),
+      new Date(moment(this.state.startDay).subtract(8,'hours').format()),
+      new Date(moment(this.state.endDay).subtract(8,'hours').format()),
       this.state.destinationId,
       this.userProfileObject.getBusCompanyId(),
       this.state.page - 1,
