@@ -342,8 +342,8 @@ class SalesReport extends React.Component {
 
     return ParcelService.exportCargoParcel(
       this.props.title || "SUMMARY OF CARGO SALES",
-      new Date(this.state.startDay),
-      new Date(this.state.endDay),
+      moment(this.state.startDay).format("YYYY-MM-DD"),
+      moment(this.state.end).format("YYYY-MM-DD"),
       originId,
       this.state.tags.map((e) => e.end),
       this.userProfileObject.getPersonFullName(),

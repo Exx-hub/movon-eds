@@ -32,8 +32,8 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        environment:"",
-        build: '1.2.8(49)'
+        environment:"staging",
+        build: '1.2.8(50)'
     },
     changeLogs: `fix report date range and filter`
 }
