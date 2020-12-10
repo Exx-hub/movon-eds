@@ -32,7 +32,7 @@ export const config = {
         deviceType: '3'
     },
     version: {
-        environment:"staging",
+        environment:"",
         build: '1.2.8(52)'
     },
     changeLogs: `fix missing endstation name and startstation name`
