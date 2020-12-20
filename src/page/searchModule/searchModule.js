@@ -31,7 +31,7 @@ class SearchModule extends React.Component {
       showDetails: false,
       selectedItem: null,
       parcelData: null,
-      fetching: true,
+      fetching: false,
       searchValue: "",
       status: 0,
       date: undefined,
@@ -51,7 +51,7 @@ class SearchModule extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchParcelList();
+    //this.fetchParcelList();
     this.setState({
       columns: [
         {
@@ -143,6 +143,7 @@ class SearchModule extends React.Component {
   };
 
   doSearch = (el) => {
+    console.log('doSearch',el)
     const toSearch = el.toLowerCase();
     this.setState({ page:1, searchValue: toSearch, fetching: true }, () =>
       this.fetchParcelList()
@@ -150,8 +151,8 @@ class SearchModule extends React.Component {
   };
 
   fetchParcelList = () => {
-    Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue).then((e) => {
-      console.log('parcelPagination',e)
+    Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue)
+    .then((e) => {
       const { data, errorCode } = e.data;
       if (errorCode) {
         this.setState({fetching:false})
@@ -214,10 +215,9 @@ class SearchModule extends React.Component {
         <Row justify="center">
           <div style={{marginTop:'1rem', marginBottom:"1rem"}}>
             <Search
-              value={this.state.searchValue}
               className="manifest-details-search-box"
               placeholder="Sender | Receiver | QR Code | Bill of Lading"
-              onChange={(e) => this.doSearch(e.target.value)}
+              onSearch={(e) => this.doSearch(e)}
             />
           </div>
         </Row>
