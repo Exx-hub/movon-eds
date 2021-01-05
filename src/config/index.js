@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.2.8(52)'
+        build: '1.3.0(53)'
     },
-    changeLogs: `fix missing endstation name and startstation name`
+    changeLogs: `enhance matrix table (code refactoring)`
 }
 
 export const ERROR_CODES = {
