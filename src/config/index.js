@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.3.0(53)'
+        build: '1.4.0(0)'
     },
-    changeLogs: `enhance matrix table (code refactoring)`
+    changeLogs: `implement dltb matrix`
 }
 
 export const ERROR_CODES = {
