@@ -14,5 +14,16 @@ const Routes = {
             }
         })
     },
+    getAllRoutesByOrigin: (startId) => {
+        return axios({
+            method: 'get',
+            url: `${config.BASE_URL}/api/v1/account/delivery-person/routes/origin/${startId}`,
+            headers: {
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : UserProfile.getToken()
+            }
+        })
+    },
 }
 export default Routes

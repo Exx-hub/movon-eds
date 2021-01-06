@@ -1,40 +1,28 @@
 import React, { useEffect, useState } from "react";
-import {Collapse,Table,Space,Button,Select, AutoComplete, Modal} from "antd";
-import {MatrixModal, PromptModal} from '../../component/modal'
-import "./priceMatrix.css";
-
-import DeleteFixMatrixModalContent from './container/modal.delete.container'
-import AddFixMatrixModalContent from  './container/modal.add.container'
-import EditDefaultModalContent from './container/modal.edit.fixprice.container'
+import {Collapse,Table,Space,Button,Select, AutoComplete, Modal, notification, List, Card} from "antd";
+import {MatrixModal} from '../../component/modal'
+import AddFixMatrixModalContent from  './container/modal.fixmatrix.container'
+import MatrixModalContent from  './container/modal.matrix.default.container'
 import { UserProfile } from "../../utility";
+import MatrixService from "../../service/Matrix";
+import "./priceMatrix.css"
 
 const { Panel } = Collapse;
 const { Option } = Select;
-
-const mData = {
-    destination:"Naga",
-    dvRate:5,
-    addRate:70,
-    basePrice:100,
-    handlingFee:2,
-    weightRate:10,
-    allowableRate:7
-}
+const { Column, ColumnGroup } = Table;
 
 function DltbMatrix(props){
 
     const [state, setState] = useState({
         startName:"",
-        frOriginId:"",
-        frDestinationId:"",
-        frStartName:"",
-        frEndName:"",
+        fixMatrixOriginId:"",
+        fixMatrixDestinationId:"",
+        fixMatrixOriginName:"",
+        fixMatrixDestinationName:"",
         destinationList:[],
-        fixMatrix:[],
-        matrix:[],
         matrixList:[],
-        tempMatrixObject:{},
-        tempFixMatrixObject:{matrix:[],fixMatrix:[]}
+        tempMatrixObject:[],
+        tempFixMatrixObject:{matrix:[],fixMatrix:[]},
     })
 
     const [fixPriceModal, setFixPriceModal] = useState({
@@ -43,55 +31,87 @@ function DltbMatrix(props){
         type:undefined
     })
 
-    useEffect(()=>{
-        console.info("props",props)
-    });
+    const [matrixModal, setMatrixModal] = useState({
+        title:"Update Matrix",
+        visible:false,
+        data:undefined,
+        type:undefined
+    })
 
     const getMatrixTableColumn = () =>{
-        return [
-        {
-            title: 'Destination',
-            dataIndex: 'destination',
-            key: 'destination'
-        },
-        {
-            title: 'Declared Value Rate',
-            dataIndex: 'dvRate',
-            key: 'dvRate'
-        },
-        {
-            title: 'Allowable Weight',
-            dataIndex: 'allowableRate',
-            key: 'allowableRate'
-        },
-        {
-            title: 'Handling Fee (per Kg.)',
-            dataIndex: 'handlingFee',
-            key: 'handlingFee'
-        },
-        {
-            title: 'Additional Rate',
-            dataIndex: 'addRate',
-            key: 'addRate'
-        },
-        {
-            title: 'Base Price',
-            dataIndex: 'basePrice',
-            key: 'basePrice'
-        },
-        {
-            title: 'Action',
-            dataIndex: 'dvRate',
-            key: 'dvRate',
-            render: ()=>(<Space>
-                <Button size="small" style={{background:'gray'}}><span style={{color:"white", fontWeight:'bold', fontSize:'11px'}}>Edit</span></Button>
-            </Space>)
-        },
+
+        const dltb=[
+            {
+                title: 'Destination',
+                dataIndex: 'destination',
+                key: 'destination'
+            },
+            {
+                title: 'Min Declared Value',
+                dataIndex: 'minDeclaredValue',
+                key: 'minDeclaredValue'
+            },
+            {
+                title: 'Declared Value Rate',
+                dataIndex: 'dvRate',
+                key: 'dvRate'
+            },
+            {
+                title: 'Allowable Weight',
+                dataIndex: 'allowableWeight',
+                key: 'allowableWeight'
+            },
+            {
+                title: 'Excess Weight Rate',
+                dataIndex: 'weightRate',
+                key: 'weightRate'
+            },
+            {
+                title: 'Handling Fee (per Kg.)',
+                dataIndex: 'handlingFee',
+                key: 'handlingFee'
+            },
+            {
+                title: 'Additional Rate',
+                dataIndex: 'addRate',
+                key: 'addRate'
+            },
+            {
+                title: 'Base Price',
+                dataIndex: 'basePrice',
+                key: 'basePrice'
+            },
         ]
+        const defaultSource =  [{
+            title: 'Action',
+            dataIndex: 'action',
+            key: 'action',
+            render: (t,r,index)=>{
+                return (<Button 
+                    onClick={()=>setMatrixModal(e=>({...e, visible:true, data:{...r, index}}))}
+                    size="small" 
+                    style={{background:'green'}}><span style={{color:"white", fontWeight:'bold', fontSize:'11px'}}>Update</span></Button>)
+            }
+        }]
+        return [...dltb,...defaultSource]
     }
 
     const getMatrixTableSource = () =>{
-        return state.matrixData;
+        return state.tempMatrixObject.map(e=>{
+            let _value = props.data.MatrixObjects[UserProfile.getBusCompanyTag()]
+            if(e.stringValue){
+                const temp = JSON.parse(e.stringValue)
+                if(temp.matrix.length > 0){
+                    _value = temp.matrix[0]
+                }
+            }
+            return{
+                ..._value,
+                destination: e.endStationName,
+                destinationId: e.end,
+                originId: e.start
+            }
+        });
     }
 
     const getFixMatrixTableColumn = () =>{
@@ -104,26 +124,26 @@ function DltbMatrix(props){
             width:150
         },
         {
-            title: 'Price',
-            dataIndex: 'price',
-            key: "price"
-        },
-        {
             title: 'Declared Value Rate',
             dataIndex: 'declaredValue',
             key: 'declaredValue',
             width:150
         },
         {
+            title: 'Price',
+            dataIndex: 'price',
+            key: "price"
+        },
+        {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
             width:150,
-            render: (t,r)=>{
-                let fixMatrix = state.tempFixMatrixObject.fixMatrix
+            render: (t,r,index)=>{
+                let fixMatrix = state.tempFixMatrixObject.fixMatrix;
                 return(<Space>
                     {
-                        (fixMatrix.findIndex(e=> e.name === r.name) === fixMatrix.length-1) && <Button 
+                        (index === fixMatrix.length-1) && <Button 
                         onClick={()=>{
                             if(Number(r.declaredValue) > 0 && Number(r.price) > 0){
                                 setFixPriceModal(e=>({
@@ -131,7 +151,9 @@ function DltbMatrix(props){
                                     visible:true, 
                                     type:"add",
                                     title:"Add Fix Price", 
-                                    data:undefined}))
+                                    data:{
+                                        names: fixMatrix.map(e=>(e.name.toLowerCase())),
+                                    }}))
                             }else{
                                 Modal.error({
                                     title: 'Validation Error',
@@ -165,7 +187,7 @@ function DltbMatrix(props){
                         size="small" 
                         style={{background:'gray'}}><span style={{color:"white", fontWeight:'bold', fontSize:'11px'}}>Edit</span></Button>
                     {
-                        !(fixMatrix.findIndex(e=> e.name === r.name) === 0) && 
+                        (Boolean(index === fixMatrix.length-1 && fixMatrix.length > 1) || fixMatrix.length > 1) && 
                         <Button 
                             onClick={()=>{
                                 setFixPriceModal(e=>({
@@ -177,7 +199,7 @@ function DltbMatrix(props){
                                         description:r.name,
                                         dvRate: r.declaredValue,
                                         price: r.price,
-                                        index: fixMatrix.findIndex(e=> e.name === r.name),
+                                        index,
                                         names: fixMatrix.filter(e=>e.name !== r.name).map(e=>(e.name))
                                     }
                                 }))
@@ -202,63 +224,145 @@ function DltbMatrix(props){
 
     const parsePriceMatrix = (result) =>{
         const{success, data, errorCode}=result.data;
-        if(Boolean(success)){
+        if(!errorCode){
             let fixMatrix = [];
             let matrix = []
             if(!data){
                 fixMatrix = [{...props.data.FIX_PRICE_FORMAT}]
                 matrix = []
             }else{
-                fixMatrix = data.fixMatrix
-                matrix = data.matrix
+                const stringValue = JSON.parse(data.stringValues)
+                fixMatrix = stringValue.fixMatrix
+                matrix = stringValue.matrix
             }
             return {matrix,fixMatrix}
         }
     }
 
-    const updateFixMatrix = (val,index) =>{
+    const updateFixMatrix = (val,data) =>{
         const tempFixMatrixObject = {...state.tempFixMatrixObject}
-        let fixMatrix = [...tempFixMatrixObject.fixMatrix];
-        if(index > -1){
-            fixMatrix[index] = { name: val.name, price: val.price, declaredValue: val.declaredValue }
-        }else{
-            fixMatrix.push(val)
+        const fixMatrix = [...tempFixMatrixObject.fixMatrix];
+        const{index, type}=data;
+
+        switch (type) {
+            case 'delete':
+                fixMatrix = fixMatrix.filter((e,i)=> i !== index )
+                break;
+            case 'add':
+                fixMatrix.push(val)
+                break;
+            case 'edit':
+                fixMatrix[index] = { name: val.name, price: val.price, declaredValue: val.declaredValue }
+                break;       
+            default:
+                break;
         }
         tempFixMatrixObject.fixMatrix = fixMatrix;
-        console.log('data',JSON.stringify(tempFixMatrixObject))
-        setState(e=>({...e,tempFixMatrixObject}))
-        setFixPriceModal(e=>({...e, visible:false, data:undefined}))
+        MatrixService.create({
+            busCompanyId: UserProfile.getBusCompanyId(),
+            origin: state.fixMatrixOriginId,
+            destination: state.fixMatrixDestinationId,
+            stringValues: JSON.stringify(tempFixMatrixObject),
+          }).then((e) => {
+            const { success, errorCode } = e.data;
+            if (!errorCode){
+                setState(e=>({...e,tempFixMatrixObject}))
+                setFixPriceModal(e=>({...e, visible:false, data:undefined}))
+                notification["success"]({
+                    message: "Updated Successfuly",
+                    description: "All data are updated",
+                });
+            }
+          });
+    }
+
+    const updateMatrix = async(val,data) =>{
+        const{
+            destinationId,
+            index,
+            originId,
+        }=matrixModal.data;
+
+        const{
+            addRate,
+            allowableWeight,
+            basePrice,
+            dvRate,
+            handlingFee,
+            minDeclaredValue,
+            weightRate
+        }=val;
+
+        const matrix = [{
+            addRate,
+            allowableWeight,
+            basePrice,
+            dvRate,
+            handlingFee,
+            minDeclaredValue,
+            weightRate,
+        }]
+
+        const temp = JSON.parse(state.tempMatrixObject[index].stringValue);
+        const stringValues = JSON.stringify({...temp, matrix})
+        const _tempMatrixObject = [...state.tempMatrixObject]
+        _tempMatrixObject[index].stringValue = stringValues
+
+        MatrixService.create({
+            busCompanyId: UserProfile.getBusCompanyId(),
+            origin: originId,
+            destination: destinationId,
+            stringValues,
+          }).then(async(e) => {
+            const { success, errorCode } = e.data;
+            if (!errorCode){
+                setMatrixModal(e=>({...e, visible:false, data:undefined}))
+                notification["success"]({
+                    message: "Updated Successfuly",
+                    description: "All data are updated",
+                });
+                setState(e=>{
+                    return{
+                        ...e,
+                        tempMatrixObject: _tempMatrixObject
+                    }
+                });
+            }
+          });
     }
 
     const onSelect = async(name, val) =>{
         switch(name){
             case "startName" :   
+                const response = await props.data.getAllRoutesByOrigin(val);
                 setState(e=>{
                     return{
                         ...e,
                         startName: getListName(val, props.data.originList),
+                        tempMatrixObject: response
                     }
                 });
                 break;
-            case "frStartName" :   
+            case "fixMatrixOriginName" :   
                 setState(e=>{
                     return{
                         ...e,
-                        frOriginId:val,
-                        frStartName: getListName(val, props.data.originList),
-                        frEndName:"",
-                        frDestinationId:"",
+                        fixMatrixOriginId:val,
+                        fixMatrixOriginName: getListName(val, props.data.originList),
+                        fixMatrixDestinationName:"",
+                        fixMatrixDestinationId:"",
                         destinationList: props.data.getEndStations(val, props.data.routes)
                     }
                 });
                 break;
-            case "frEndName" :   
-                const result = await props.data.getMatrix(state.frOriginId, val)
+            case "fixMatrixDestinationName" :   
+                const result = await props.data.getMatrix(state.fixMatrixOriginId, val)
+                const tempFixMatrixObject = parsePriceMatrix(result);
                 setState(e=>({
                     ...e,
-                    tempFixMatrixObject: parsePriceMatrix(result),
-                    frDestinationId:val,
-                    frEndName: getListName(val, state.destinationList)
+                    tempFixMatrixObject,
+                    fixMatrixDestinationId:val,
+                    fixMatrixDestinationName: getListName(val, state.destinationList)
                 }));
                
             break;
@@ -268,36 +372,80 @@ function DltbMatrix(props){
 
     return(
         <div>
-            <Collapse defaultActiveKey={['1']}>
-                <Panel header="Price Matrix" key="1">
-                    <div style={{width:610, display:'flex', flexDirection:'row'}}>
-                        <AutoComplete value={state.startName} placeholder="Origin" style={{ width: 300, marginBottom:'1rem' }} onSelect={(e)=>onSelect("startName",e)}>
-                            {
-                                props.data.originList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
-                            }
-                        </AutoComplete>
-                    </div>
-                    <Table bordered={true} pagination={false} columns={getMatrixTableColumn()} dataSource={getMatrixTableSource()}/>
-                </Panel>
-            </Collapse>
-            <br />
-            <Collapse defaultActiveKey={['1']}>
+
+            <div style={{
+                    padding:'1rem',
+                    display:'flex', 
+                    justifyContent:'center',
+                    alignItems:'center',
+                    flexDirection:'column', 
+                    width:'100%'}}>
+
+                
+                <span style={{fontSize:'1.5rem', fontWeight:100}}>Price Matrix</span>
+                <span style={{fontSize:'1.2rem', fontWeight:100 }}>{UserProfile.getBusCompanyName()}</span>
+
+            </div>
+
+            <div style={{padding:'1rem'}}>
+                <Collapse defaultActiveKey={['1']}>
+                    <Panel header="Price Matrix" key="1">
+                        <div style={{width:610, display:'flex', flexDirection:'row'}}>
+                            <AutoComplete value={state.startName} placeholder="Origin" style={{ width: 300, marginBottom:'1rem' }} onSelect={(e)=>onSelect("startName",e)}>
+                                {
+                                    props.data.originList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
+                                }
+                            </AutoComplete>
+                        </div>
+                        {
+                            UserProfile.getBusCompanyTag() === "dltb" && 
+                            <Table 
+                                bordered={true} 
+                                pagination={false} 
+                                columns={getMatrixTableColumn()} 
+                                dataSource={getMatrixTableSource()}/>
+                        }
+                        {
+                             UserProfile.getBusCompanyTag() === "isarog-liner" && 
+                             <Table 
+                                bordered={true} 
+                                pagination={false} 
+                                dataSource={getMatrixTableSource()}>
+                                    <Column title="Destination" dataIndex="address" key="address" />
+                                    <Column title="Declared Value Rate" dataIndex="address" key="address" />
+                                    <Column title="Allowable Weight" dataIndex="address" key="address" />
+                                    <Column title="Excess Weight Rate" dataIndex="address" key="address" />
+                                    <ColumnGroup title="Max Length">
+                                        <Column title="Lenght 1" dataIndex="firstName" key="firstName" />
+                                        <Column title="Lenght 2" dataIndex="lastName" key="lastName" />
+                                    </ColumnGroup>
+                                    <ColumnGroup title="Excess Lenght Rate">
+                                        <Column title="Length Rate 1" dataIndex="firstName" key="firstName" />
+                                        <Column title="Length Rate 1" dataIndex="lastName" key="lastName" />
+                                    </ColumnGroup>
+                                    <Column title="Tariff Rate" dataIndex="address" key="address" />
+                                    <Column title="Price" dataIndex="address" key="address" />
+                            </Table>
+                        }
+                    </Panel>
+                </Collapse>
+                <Collapse>
                 <Panel header="Fix Price Matrix" key="1">
                     <div style={{width:610, display:'flex', flexDirection:'row',justifyContent:"space-around"}}>
                         <Select 
-                            value={state.frStartName} 
+                            value={state.fixMatrixOriginName} 
                             placeholder="Origin" 
                             style={{ width: 300, marginBottom:'1rem' }} 
-                            onSelect={(e)=>onSelect("frStartName",e)}>
+                            onSelect={(e)=>onSelect("fixMatrixOriginName",e)}>
                         {
                             props.data.originList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
                         }
                         </Select>
                         <Select 
-                            value={state.frEndName} 
+                            value={state.fixMatrixDestinationName} 
                             placeholder="Destination" 
-                            style={{ width: 300, marginBottom:'1rem'}}
-                            onSelect={(e)=>onSelect("frEndName",e)}>
+                            style={{width: 300, marginBottom:'1rem'}}
+                            onSelect={(e)=>onSelect("fixMatrixDestinationName",e)}>
                         {
                             state.destinationList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
                         }
@@ -311,6 +459,7 @@ function DltbMatrix(props){
                         dataSource={getFixMatrixTableSource()}/>
                 </Panel>
             </Collapse>
+            </div>
 
             <MatrixModal 
                 visible={fixPriceModal.visible} 
@@ -323,7 +472,21 @@ function DltbMatrix(props){
                         cancelText="Cancel"
                         data={fixPriceModal.data}
                         onCancel={()=>setFixPriceModal(e=>({...e, visible:false, data:undefined}))}
-                        onSubmit={(val,index)=>updateFixMatrix(val,index)}/>
+                        onSubmit={(val,data)=>updateFixMatrix(val,data)}/>
+
+            </MatrixModal>
+
+            <MatrixModal 
+                visible={matrixModal.visible} 
+                title={matrixModal.title}>
+                
+                    <MatrixModalContent 
+                        {...props}
+                        okText="Update" 
+                        cancelText="Cancel"
+                        data={matrixModal.data}
+                        onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
+                        onSubmit={(val,data)=>updateMatrix(val,data)}/>
 
             </MatrixModal>
 

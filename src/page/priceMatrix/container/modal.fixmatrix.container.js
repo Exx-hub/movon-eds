@@ -11,7 +11,11 @@ function AddFixMatrixModalContent(props){
         } catch (error) {
             index = -1
         }
-        props.onSubmit(values, index)
+        const data={
+            index,
+            type: props.type
+        }
+        props.onSubmit(values, data)
       };
     
       const onFinishFailed = errorInfo => {
@@ -46,7 +50,15 @@ function AddFixMatrixModalContent(props){
                 <Form.Item
                     label="Description"
                     name="name"
-                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    rules={[{ required: true, message: 'This is required field!' }, 
+                    ({ getFieldValue }) => ({
+                        validator(rule, value) {
+                            if (props.data && props.data.names.includes(value.toLowerCase())) {
+                                return Promise.reject('Name is already assigned');
+                            }
+                            return Promise.resolve()
+                        },
+                      })]}>
                     <Input disabled={Boolean(props.type === 'delete')} /> 
                 </Form.Item>
 
@@ -67,6 +79,7 @@ function AddFixMatrixModalContent(props){
                 <Form.Item {...tailLayout}>
                     <div style={{display:"flex", justifyContent:'center'}}>
                         <FooterModal 
+                            enableDelete={Boolean(props.type === "delete")}
                             cancelText={props.cancelText || "Cancel"}
                             okText={props.okText || "Save"} 
                             onOk={props.onOk} 

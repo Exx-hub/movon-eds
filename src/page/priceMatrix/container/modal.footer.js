@@ -15,7 +15,7 @@ function FooterModal(props){
                     htmlType="submit"
                     shape="round" 
                     onClick={()=>props.onOk}
-                    style={{fontWeight:'bold', width:150, backgroundColor:'red', color:'#fff'}}>"Delete"</Button> 
+                    style={{fontWeight:'bold', width:150, backgroundColor:'red', color:'#fff'}}>Delete</Button> 
                 : 
                 <Button 
                     htmlType="submit"

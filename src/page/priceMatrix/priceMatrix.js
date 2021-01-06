@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import DltbMatrix from './dltbMatrix'
+import DefaultMatrix from './orig.priceMatrix'
 import RoutesService from "../../service/Routes";
 import MatrixService from "../../service/Matrix";
 import { UserProfile } from '../../utility';
-import { config } from '../../config';
 
 
 const getStartStations = (data) =>{
@@ -49,17 +49,55 @@ const getEndStations = (startStationId, data) =>{
     return _endStationRoutes
 }
 
+const getAllRoutesByOrigin = async(originId) =>{
+  try {
+    const result = await RoutesService.getAllRoutesByOrigin(originId);
+    const{data,success,errorCode}=result.data;
+    if(!errorCode){
+      return Promise.resolve(data)
+    }
+    return Promise.reject(false)
+    
+  } catch (error) {
+    
+  }
+}
+
 const FIX_PRICE_FORMAT = {
     name:"No Data",
     price:0,
     declaredValue:0,
 }
 
+const MatrixObjects={
+  "dltb":{
+    destination:"",
+    dvRate:0,
+    addRate:0,
+    basePrice:0,
+    handlingFee:0,
+    weightRate:0,
+    allowableWeight:0,
+    minDeclaredValue:500
+  },
+  "isarog-liner":{
+    declaredValueRate: 0,
+    exceededPerKilo: 0,
+    maxAllowedLength:["1", "2"],
+    maxAllowedLengthRate:["5", "8"],
+    maxAllowedWeight: 0,
+    price: 0,
+    tariffRate: 0
+  }
+}
+
 const initState ={
-    originList:[],
-    getEndStations,
-    getMatrix,
-    FIX_PRICE_FORMAT
+  MatrixObjects,
+  FIX_PRICE_FORMAT,
+  originList:[],
+  getEndStations,
+  getMatrix,
+  getAllRoutesByOrigin
 }
 
 function PriceMatrix(props){
@@ -69,7 +107,6 @@ function PriceMatrix(props){
     useEffect(()=>{
         RoutesService.getAllRoutes()
         .then((e) => {
-            //console.info('getAllRoutes',e)
             const { data, errorCode } = e.data;
             if (errorCode) {
               console.info('error',errorCode)
@@ -85,17 +122,20 @@ function PriceMatrix(props){
           })
     },[])
 
-    // const getContainer = () =>{
-    //     let view = undefined;
-    //     switch(props.tag){
-    //         case "dltb" : break;
-    //         default: break;
-    //     }
-    // }
-    
-    return(
-        <DltbMatrix data={{...state}} {...props} />
-    )
+    const getContainer = () =>{
+        let  view = undefined;
+        switch(UserProfile.getBusCompanyTag()){
+            case "isarog-liner" : 
+              view = <DefaultMatrix {...props} />
+              break;
+            case "dltb" : 
+              view = <DltbMatrix data={{...state}} {...props} />
+              break;
+            default: break;
+        }
+        return view
+    }
+    return(<> {getContainer()}</>)
 }
 
 export default PriceMatrix;
