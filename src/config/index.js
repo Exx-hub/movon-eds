@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(1)'
+        build: '1.4.0(2)'
     },
-    changeLogs: `integrate DLTB api computation`
+    changeLogs: `fix no showing fix price when choosing Turbina`
 }
 
 export const ERROR_CODES = {
