@@ -252,8 +252,8 @@ function DltbMatrix(props){
                 matrix = []
             }else{
                 const stringValue = JSON.parse(data.stringValues)
-                fixMatrix = stringValue.fixMatrix
-                matrix = stringValue.matrix
+                fixMatrix = stringValue.fixMatrix.length > 0 ? stringValue.fixMatrix : [{...props.data.FIX_PRICE_FORMAT}]
+                matrix = stringValue.matrix || []
             }
             return {matrix,fixMatrix}
         }
