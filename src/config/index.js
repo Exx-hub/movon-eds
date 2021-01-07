@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(0)'
+        build: '1.4.0(1)'
     },
-    changeLogs: `implement dltb matrix`
+    changeLogs: `integrate DLTB api computation`
 }
 
 export const ERROR_CODES = {

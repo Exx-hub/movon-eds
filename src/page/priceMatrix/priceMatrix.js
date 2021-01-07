@@ -78,7 +78,10 @@ const MatrixObjects={
     handlingFee:0,
     weightRate:0,
     allowableWeight:0,
-    minDeclaredValue:500
+    minDeclaredValue:0,
+    insuranceFee:0,
+    isShortHaul:1,
+    maxDeclaredValue:0
   },
   "isarog-liner":{
     declaredValueRate: 0,

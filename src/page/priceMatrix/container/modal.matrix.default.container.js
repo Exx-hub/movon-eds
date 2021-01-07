@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Collapse,Table,Space,Button,Select, Form, Input, InputNumber} from "antd";
+import {Collapse,Table,Space,Button,Select, Form, Input, InputNumber, Switch} from "antd";
 import FooterModal from './modal.footer'
 import userEvent from "@testing-library/user-event";
 
@@ -43,6 +43,9 @@ function MatrixModalContent(props){
                     weightRate: (props.data && props.data.weightRate) || 0,
                     allowableWeight: (props.data && props.data.allowableWeight) || 0,
                     minDeclaredValue: (props.data && props.data.minDeclaredValue) || 0,
+                    insuranceFee: (props.data && props.data.insuranceFee) || 0,
+                    isShortHaul: (props.data && props.data.isShortHaul) || false,
+                    maxDeclaredValue: (props.data && props.data.maxDeclaredValue) || 0,
                   }}
                 >
 
@@ -61,14 +64,28 @@ function MatrixModalContent(props){
                 </Form.Item>
 
                 <Form.Item
-                    label="Declared Value Rate"
+                    label="Max Declared Value"
+                    name="maxDeclaredValue"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <InputNumber disabled={Boolean(props.type === 'delete')} style={{width:"100%"}} /> 
+                </Form.Item>
+
+                <Form.Item
+                    label="Declared Value Rate (%)"
                     name="dvRate"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber disabled={Boolean(props.type === 'delete')} style={{width:"100%"}} /> 
                 </Form.Item>
 
                 <Form.Item
-                    label="Handling Fee"
+                    label="Insurance Rate (%)"
+                    name="insuranceFee"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <InputNumber disabled={Boolean(props.type === 'delete')} style={{width:"100%"}} /> 
+                </Form.Item>
+
+                <Form.Item
+                    label="Handling Fee (per kg)"
                     name="handlingFee"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber disabled={Boolean(props.type === 'delete')} style={{width:"100%"}} /> 
@@ -100,6 +117,13 @@ function MatrixModalContent(props){
                     name="weightRate"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber disabled={Boolean(props.type === 'delete')} style={{width:"100%"}} /> 
+                </Form.Item>
+
+                <Form.Item
+                    label="Short Haul"
+                    name="isShortHaul"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <Switch defaultChecked={props.data.isShortHaul} /> 
                 </Form.Item>
                 
                 <Form.Item {...tailLayout}>

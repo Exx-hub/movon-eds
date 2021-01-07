@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Collapse,Table,Space,Button,Select, AutoComplete, Modal, notification, List, Card} from "antd";
+import {Collapse,Table,Space,Button,Select, AutoComplete, Modal, notification, Tag} from "antd";
 import {MatrixModal} from '../../component/modal'
 import AddFixMatrixModalContent from  './container/modal.fixmatrix.container'
 import MatrixModalContent from  './container/modal.matrix.default.container'
@@ -47,12 +47,22 @@ function DltbMatrix(props){
                 key: 'destination'
             },
             {
+                title: 'Insurance Fee (%)',
+                dataIndex: 'insuranceFee',
+                key: 'insuranceFee'
+            },
+            {
                 title: 'Min Declared Value',
                 dataIndex: 'minDeclaredValue',
                 key: 'minDeclaredValue'
             },
             {
-                title: 'Declared Value Rate',
+                title: 'Max Declared Value',
+                dataIndex: 'maxDeclaredValue',
+                key: 'maxDeclaredValue'
+            },
+            {
+                title: 'Declared Value Rate (%)',
                 dataIndex: 'dvRate',
                 key: 'dvRate'
             },
@@ -81,6 +91,15 @@ function DltbMatrix(props){
                 dataIndex: 'basePrice',
                 key: 'basePrice'
             },
+            {
+                title: 'Short Haul',
+                dataIndex: 'isShortHaul',
+                key: 'isShortHaul',
+                render: (val)=>{
+                    console.info('val',val)
+                    return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Yes" : "No") : "No" }`}</Tag>)
+                }
+            }, 
         ]
         const defaultSource =  [{
             title: 'Action',
@@ -98,6 +117,7 @@ function DltbMatrix(props){
 
     const getMatrixTableSource = () =>{
         return state.tempMatrixObject.map(e=>{
+            console.info('temp',e)
             let _value = props.data.MatrixObjects[UserProfile.getBusCompanyTag()]
             if(e.stringValue){
                 const temp = JSON.parse(e.stringValue)
@@ -290,7 +310,10 @@ function DltbMatrix(props){
             dvRate,
             handlingFee,
             minDeclaredValue,
-            weightRate
+            weightRate,
+            isShortHaul,
+            insuranceFee,
+            maxDeclaredValue
         }=val;
 
         const matrix = [{
@@ -301,10 +324,15 @@ function DltbMatrix(props){
             handlingFee,
             minDeclaredValue,
             weightRate,
+            isShortHaul,
+            insuranceFee,
+            maxDeclaredValue
         }]
 
         const temp = JSON.parse(state.tempMatrixObject[index].stringValue);
-        const stringValues = JSON.stringify({...temp, matrix})
+        const fixMatrix = temp.fixMatrix || []
+        const stringValues = JSON.stringify({matrix,fixMatrix})
+
         const _tempMatrixObject = [...state.tempMatrixObject]
         _tempMatrixObject[index].stringValue = stringValues
 
