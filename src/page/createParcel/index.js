@@ -348,6 +348,7 @@ class CreateParcel extends React.Component {
           value: 0,
           isRequired: true,
           accepted: true,
+          disabled: false,
         },
         fixMatrix: {
           name: "fixMatrix",
@@ -447,6 +448,10 @@ class CreateParcel extends React.Component {
       ...[{ name: "None", rate: "None" }],
     ];
     details.discount = discount;
+
+    if(UserProfile.getBusCompanyTag() === 'dltb'){
+      details.length.disabled = true
+    }
 
     this.setState({
       enalbeBicolIsarogWays: this.userProfileObject.isIsarogLiners(),
@@ -853,6 +858,7 @@ class CreateParcel extends React.Component {
       !isNull(weight) &&
       !isNull(decValue)
     ) {
+
       ParcelService.getDynamicPrice(
         busCompanyId,
         decValue,
@@ -862,7 +868,8 @@ class CreateParcel extends React.Component {
         startStation,
         weight,
         parcel_length
-      ).then((e) => {
+      )
+      .then((e) => {
         let details = { ...this.state.details };
         const { data, success, errorCode } = e.data;
         if (success) {
@@ -956,6 +963,17 @@ class CreateParcel extends React.Component {
       if (name === "declaredValue") {
         this.updateTotalShippingCost();
       }
+
+      // if(OBSERV_DLTB_ITEMS.includes(name)){
+      //   console.log('name----->>',name)
+      //   const{declaredValue,packageWeight,sticker_quantity}=details;
+      //   if(declaredValue.value && packageWeight.value && sticker_quantity.value ){
+      //     console.log('passsss===>> declaredValue', details["declaredValue"].value)
+      //     console.log('passsss===>> packageWeight', details["packageWeight"].value)
+      //     console.log('passsss===>> sticker_quantity', details["sticker_quantity"].value)
+      //   }
+      // }
+
     });
   };
 
@@ -1145,6 +1163,10 @@ class CreateParcel extends React.Component {
             data.stringValues &&
             JSON.parse(data.stringValues)) || { matrix: [], fixMatrix: [] };
             let details = { ...this.state.details };
+
+            if(!result.fixMatrix){
+              result.fixMatrix = []
+            }
 
           if (Array.isArray(result)) {
             details.fixMatrix = {
@@ -1546,14 +1568,18 @@ class CreateParcel extends React.Component {
       declaredValue,
       paxs,
       length,
+      sticker_quantity
     } = prevState.details;
+
     const oldConnectingRoutes = prevState.details.connectingRoutes.value;
     const oldConnectingCompany = prevState.details.connectingCompany.value;
+
     const hasFreshData =
       currentDetails.destination.value !== destination.value ||
       currentDetails.packageWeight.value !== packageWeight.value ||
       currentDetails.declaredValue.value !== declaredValue.value ||
       currentDetails.length.value !== length.value ||
+      currentDetails.sticker_quantity.value !== sticker_quantity.value ||
       oldConnectingRoutes !== currentDetails.connectingRoutes.value ||
       oldConnectingCompany !== currentDetails.connectingCompany.value;
 
@@ -1571,7 +1597,54 @@ class CreateParcel extends React.Component {
           ) {
             return;
           }
-          this.computePrice();
+
+          switch (UserProfile.getBusCompanyTag()) {
+            case "dltb":
+              const{declaredValue,packageWeight,sticker_quantity,destination}=currentDetails;
+              if(declaredValue.value && packageWeight.value && sticker_quantity.value ){
+
+                const selectedOption = destination.options.filter(
+                  (e) => e.value === destination.value
+                )[0];
+                const endStation = selectedOption.endStation || undefined;
+                const startStation = this.userProfileObject.getAssignedStationId();
+
+                const option = {
+                  origin:startStation,
+                  destination:endStation,
+                  declaredValue: Number(declaredValue.value),
+                  weight: Number(packageWeight.value),
+                  parcelCount: Number(sticker_quantity.value)
+                }
+                ParcelService.getDltbComputation(option).then(e=>{
+                  const{data,errorCode}=e.data;
+                  if(!errorCode){
+                    const{
+                      totalShippingCost,
+                      declaredValue,
+                      insuranceFee,
+                      systemFee,
+                    } = data;
+
+                    console.log('>>>>>>>data',data)
+
+                    const _data = {...this.state.details}
+                    _data.totalShippingCost.value = totalShippingCost;
+                    _data.packageInsurance.value = declaredValue;
+                    _data.systemFee.value = systemFee;
+                    _data.shippingCost.value = Number(Number(totalShippingCost) - ( Number(systemFee) + Number(declaredValue))).toFixed(2)
+                    this.setState({details:_data});
+                  }
+                })
+              }
+              break;
+          
+            default:
+              this.computePrice();
+              break;
+          }
+          
+          
         }
       }
     }
