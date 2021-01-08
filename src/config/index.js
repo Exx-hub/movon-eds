@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(57)'
+        build: '1.4.0(58)'
     },
-    changeLogs: `fix wrong declared value`
+    changeLogs: `fix update price matrix`
 }
 
 export const ERROR_CODES = {
