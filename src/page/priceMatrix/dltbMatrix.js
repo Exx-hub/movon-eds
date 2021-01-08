@@ -254,6 +254,8 @@ function DltbMatrix(props){
                 matrix = stringValue.matrix || []
             }
             return {matrix,fixMatrix}
+        }else{
+            props.data.handleErrorNotification(errorCode)
         }
     }
 
@@ -290,6 +292,8 @@ function DltbMatrix(props){
                     message: "Updated Successfuly",
                     description: "All data are updated",
                 });
+            }else{
+                props.data.handleErrorNotification(errorCode)
             }
           });
     }
@@ -355,7 +359,10 @@ function DltbMatrix(props){
                         tempMatrixObject: _tempMatrixObject
                     }
                 });
+            }else{
+                props.data.handleErrorNotification(errorCode)
             }
+
           });
     }
 
@@ -397,6 +404,8 @@ function DltbMatrix(props){
             default: break;
         }
     }
+
+   
 
     return(
         <div>

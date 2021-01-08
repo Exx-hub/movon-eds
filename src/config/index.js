@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(59)'
+        build: '1.4.0(60)'
     },
-    changeLogs: `fix update price matrix`
+    changeLogs: `fix length issue, throw if other use account`
 }
 
 export const ERROR_CODES = {
