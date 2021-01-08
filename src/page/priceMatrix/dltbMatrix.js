@@ -96,7 +96,6 @@ function DltbMatrix(props){
                 dataIndex: 'isShortHaul',
                 key: 'isShortHaul',
                 render: (val)=>{
-                    console.info('val',val)
                     return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Yes" : "No") : "No" }`}</Tag>)
                 }
             }, 
@@ -117,7 +116,6 @@ function DltbMatrix(props){
 
     const getMatrixTableSource = () =>{
         return state.tempMatrixObject.map(e=>{
-            console.info('temp',e)
             let _value = props.data.MatrixObjects[UserProfile.getBusCompanyTag()]
             if(e.stringValue){
                 const temp = JSON.parse(e.stringValue)
@@ -329,12 +327,14 @@ function DltbMatrix(props){
             maxDeclaredValue
         }]
 
-        const temp = JSON.parse(state.tempMatrixObject[index].stringValue);
-        const fixMatrix = temp.fixMatrix || []
-        const stringValues = JSON.stringify({matrix,fixMatrix})
-
         const _tempMatrixObject = [...state.tempMatrixObject]
-        _tempMatrixObject[index].stringValue = stringValues
+        let stringValues = JSON.stringify({matrix,fixMatrix:[]})
+        const temp = JSON.parse(state.tempMatrixObject[index].stringValue);
+        if(temp){
+            const fixMatrix = temp.fixMatrix || []
+            stringValues = JSON.stringify({matrix,fixMatrix})
+            _tempMatrixObject[index].stringValue = stringValues
+        }
 
         MatrixService.create({
             busCompanyId: UserProfile.getBusCompanyId(),
