@@ -48,8 +48,6 @@ const STEPS_LIST = [
   },
 ];
 
-const OBSERV_DLTB_ITEMS =["declaredValue","packageWeight","sticker_quantity"]
-
 const isNull = (value) => value === null || value === undefined || value === "";
 
 const showNotification = (props) => {
@@ -350,6 +348,7 @@ class CreateParcel extends React.Component {
           value: 0,
           isRequired: true,
           accepted: true,
+          disabled: false,
         },
         fixMatrix: {
           name: "fixMatrix",
@@ -449,6 +448,10 @@ class CreateParcel extends React.Component {
       ...[{ name: "None", rate: "None" }],
     ];
     details.discount = discount;
+
+    if(UserProfile.getBusCompanyTag() === 'dltb'){
+      details.length.disabled = true
+    }
 
     this.setState({
       enalbeBicolIsarogWays: this.userProfileObject.isIsarogLiners(),

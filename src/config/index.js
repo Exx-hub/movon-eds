@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(3)'
+        build: '1.4.0(57)'
     },
     changeLogs: `fix wrong declared value`
 }

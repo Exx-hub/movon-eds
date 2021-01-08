@@ -302,6 +302,7 @@ function BicolIsarogForm(props) {
               type="number"
               onBlur={() => props.onBlur(length.name)}
               detail={length}
+              disabled={Boolean(length.isDisabled) || false}
               onChange={props.onChange}
               placeholder="Length (meter)"
               errorMessage={length.errorMessage}
