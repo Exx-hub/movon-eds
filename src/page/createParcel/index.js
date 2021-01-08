@@ -1623,9 +1623,11 @@ class CreateParcel extends React.Component {
                       systemFee,
                     } = data;
 
+                    console.log('>>>>>>>data',data)
+
                     const _data = {...this.state.details}
                     _data.totalShippingCost.value = totalShippingCost;
-                    _data.packageInsurance.value = insuranceFee;
+                    _data.packageInsurance.value = declaredValue;
                     _data.systemFee.value = systemFee;
                     _data.shippingCost.value = Number(Number(totalShippingCost) - ( Number(systemFee) + Number(declaredValue))).toFixed(2)
                     this.setState({details:_data});
