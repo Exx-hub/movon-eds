@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(2)'
+        build: '1.4.0(3)'
     },
-    changeLogs: `fix no showing fix price when choosing Turbina`
+    changeLogs: `fix wrong declared value`
 }
 
 export const ERROR_CODES = {
