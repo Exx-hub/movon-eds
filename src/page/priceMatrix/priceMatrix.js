@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { notification } from "antd";
 import DltbMatrix from './dltbMatrix'
 import DefaultMatrix from './orig.priceMatrix'
 import RoutesService from "../../service/Routes";
 import MatrixService from "../../service/Matrix";
-import { UserProfile } from '../../utility';
+import { UserProfile, openNotificationWithIcon } from "../../utility";
 
 
 const getStartStations = (data) =>{
@@ -94,25 +95,43 @@ const MatrixObjects={
   }
 }
 
-const initState ={
-  MatrixObjects,
-  FIX_PRICE_FORMAT,
-  originList:[],
-  getEndStations,
-  getMatrix,
-  getAllRoutesByOrigin
-}
 
 function PriceMatrix(props){
 
-    const [state,setState] = useState(initState)
+  const handleErrorNotification = (code) => {
+    if (!code) {
+      notification["error"]({
+        message: "Server Error",
+        description: "Something went wrong",
+      });
+      return;
+    }
+  
+    if (code === 1000) {
+      openNotificationWithIcon("error", code);
+      UserProfile.clearData();
+      props.history.push("/");
+      return;
+    }
+    openNotificationWithIcon("error", code);
+  };
+
+    const [state,setState] = useState({
+      MatrixObjects,
+      FIX_PRICE_FORMAT,
+      originList:[],
+      getEndStations,
+      getMatrix,
+      getAllRoutesByOrigin,
+      handleErrorNotification
+    })
 
     useEffect(()=>{
         RoutesService.getAllRoutes()
         .then((e) => {
             const { data, errorCode } = e.data;
             if (errorCode) {
-              console.info('error',errorCode)
+              handleErrorNotification(errorCode)
               return;
             }
             setState( prevState =>{
