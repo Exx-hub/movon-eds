@@ -41,8 +41,8 @@ function AddFixMatrixModalContent(props){
                 style={{marginBottom:'.2rem', display:'flex', flexDirection:'column'}}
                 initialValues={{
                     remember: true,
-                    'declaredValue': (props.data && props.data.dvRate) || undefined,
-                    'price': (props.data && props.data.price) || undefined,
+                    'declaredValue': (props.data && props.data.dvRate) || 0,
+                    'price': (props.data && props.data.price) || 0,
                     'name': (props.data && props.data.description) || undefined
                   }}
                 >

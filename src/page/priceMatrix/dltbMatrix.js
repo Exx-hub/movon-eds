@@ -259,7 +259,7 @@ function DltbMatrix(props){
 
     const updateFixMatrix = (val,data) =>{
         const tempFixMatrixObject = {...state.tempFixMatrixObject}
-        const fixMatrix = [...tempFixMatrixObject.fixMatrix];
+        let fixMatrix = [...tempFixMatrixObject.fixMatrix];
         const{index, type}=data;
 
         switch (type) {

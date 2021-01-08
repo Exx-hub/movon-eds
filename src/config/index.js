@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(58)'
+        build: '1.4.0(59)'
     },
     changeLogs: `fix update price matrix`
 }
