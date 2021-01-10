@@ -103,6 +103,12 @@
 }
 
 .details-value-text{
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: auto;
+    padding-right: 1rem;
+    overflow: hidden;
     font-size: 1.5em;
     font-weight: bold;
     color: black;
