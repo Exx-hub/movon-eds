@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(61)'
+        build: '1.4.0(62)'
     },
-    changeLogs: `fix issue on missing fix price destination`
+    changeLogs: `fix issue on add fix matrix if zero`
 }
 
 export const ERROR_CODES = {
