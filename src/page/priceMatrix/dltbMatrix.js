@@ -163,22 +163,14 @@ function DltbMatrix(props){
                     {
                         (index === fixMatrix.length-1) && <Button 
                         onClick={()=>{
-                            if(Number(r.declaredValue) > 0 && Number(r.price) > 0){
-                                setFixPriceModal(e=>({
-                                    ...e, 
-                                    visible:true, 
-                                    type:"add",
-                                    title:"Add Fix Price", 
-                                    data:{
-                                        names: fixMatrix.map(e=>(e.name.toLowerCase())),
-                                    }}))
-                            }else{
-                                Modal.error({
-                                    title: 'Validation Error',
-                                    content: 'Declared Value or Price must greater than zero.',
-                                });
-                            }
-                           
+                            setFixPriceModal(e=>({
+                                ...e, 
+                                visible:true, 
+                                type:"add",
+                                title:"Add Fix Price", 
+                                data:{
+                                    names: fixMatrix.map(e=>(e.name.toLowerCase())),
+                                }}))
                         }}
                         size="small" 
                         style={{background:'green'}}>
@@ -381,6 +373,7 @@ function DltbMatrix(props){
                 break;
             case "fixMatrixOriginName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
+                console.log('fixMatrixOriginName',response)
                 setState(e=>{
                     return{
                         ...e,
