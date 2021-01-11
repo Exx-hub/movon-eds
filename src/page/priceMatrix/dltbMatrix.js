@@ -367,9 +367,10 @@ function DltbMatrix(props){
     }
 
     const onSelect = async(name, val) =>{
+        let response = undefined;
         switch(name){
             case "startName" :   
-                const response = await props.data.getAllRoutesByOrigin(val);
+                response = await props.data.getAllRoutesByOrigin(val);
                 setState(e=>{
                     return{
                         ...e,
@@ -379,6 +380,7 @@ function DltbMatrix(props){
                 });
                 break;
             case "fixMatrixOriginName" :   
+                response = await props.data.getAllRoutesByOrigin(val);
                 setState(e=>{
                     return{
                         ...e,
@@ -386,7 +388,7 @@ function DltbMatrix(props){
                         fixMatrixOriginName: getListName(val, props.data.originList),
                         fixMatrixDestinationName:"",
                         fixMatrixDestinationId:"",
-                        destinationList: props.data.getEndStations(val, props.data.routes)
+                        destinationList: props.data.getEndStations(val, response)
                     }
                 });
                 break;
