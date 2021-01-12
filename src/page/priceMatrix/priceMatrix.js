@@ -31,21 +31,28 @@ const getMatrix = async(originId,destinationId) =>{
 }
 
 const getEndStations = (startStationId, data) =>{
+  let unique = []
     const _endStationRoutes = data
     .filter((e) => e.start === startStationId)
     .map((e) => ({ stationId: e.end, stationName: e.endStationName }))
-
+    .filter(e=>{
+      if(!unique.includes(e.stationName)){
+        unique.push(e.stationName)
+        return true
+      }
+      return false
+    })
     _endStationRoutes.sort(function(a, b) {
-        var nameA = a.stationName.toUpperCase(); // ignore upper and lowercase
-        var nameB = b.stationName.toUpperCase(); // ignore upper and lowercase
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-        return 0;
-      });
+  var nameA = a.stationName.toUpperCase(); // ignore upper and lowercase
+  var nameB = b.stationName.toUpperCase(); // ignore upper and lowercase
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
+  return 0;
+});
 
     return _endStationRoutes
 }
@@ -53,9 +60,29 @@ const getEndStations = (startStationId, data) =>{
 const getAllRoutesByOrigin = async(originId) =>{
   try {
     const result = await RoutesService.getAllRoutesByOrigin(originId);
+    console.info('result',result)
     const{data,success,errorCode}=result.data;
     if(!errorCode){
-      return Promise.resolve(data)
+      let unique=[]
+      let _data = data.filter(e=>{
+        if(!unique.includes(e.endStationName)){
+          unique.push(e.endStationName)
+          return true
+        }
+        return false;
+      })
+      _data.sort(function(a, b) {
+        var nameA = a.endStationName.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.endStationName.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      })
+      return Promise.resolve(_data)
     }
     return Promise.reject(false)
     

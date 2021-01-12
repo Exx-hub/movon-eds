@@ -363,6 +363,7 @@ function DltbMatrix(props){
         switch(name){
             case "startName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
+                console.info('response',response)
                 setState(e=>{
                     return{
                         ...e,
@@ -373,17 +374,12 @@ function DltbMatrix(props){
                 break;
             case "fixMatrixOriginName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
-                console.log('fixMatrixOriginName',response)
-                setState(e=>{
-                    return{
-                        ...e,
-                        fixMatrixOriginId:val,
-                        fixMatrixOriginName: getListName(val, props.data.originList),
-                        fixMatrixDestinationName:"",
-                        fixMatrixDestinationId:"",
-                        destinationList: props.data.getEndStations(val, response)
-                    }
-                });
+                setState(e=>({...e,
+                    fixMatrixOriginId:val,
+                    fixMatrixOriginName: getListName(val, props.data.originList),
+                    fixMatrixDestinationName:"",
+                    fixMatrixDestinationId:"",
+                    destinationList: props.data.getEndStations(val, response)}));
                 break;
             case "fixMatrixDestinationName" :   
                 const result = await props.data.getMatrix(state.fixMatrixOriginId, val)
@@ -391,8 +387,7 @@ function DltbMatrix(props){
                 setState(e=>({
                     ...e,
                     tempFixMatrixObject,
-                    fixMatrixDestinationId:val,
-                    fixMatrixDestinationName: getListName(val, state.destinationList)
+                    fixMatrixDestinationId:val
                 }));
                
             break;
