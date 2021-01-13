@@ -1666,7 +1666,6 @@ class CreateParcel extends React.Component {
                   }
                 })
               }
-
       }
 
 

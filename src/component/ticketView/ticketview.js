@@ -106,7 +106,7 @@ const PCopy = (props) => {
     ];
 
     let _view = [];
-    for (let i = 0; i < noOfSticker; i++) {
+    for (let i = 0; i < 1; i++) {
       _view.push(
         <TicketDetails
           copy="Customer's Copy"
@@ -123,42 +123,52 @@ const PCopy = (props) => {
 };
 
 const MCopy = (props) => {
-  if (props && UserProfile.isIsarogLiners()) {
-    const {
-      recipientName,
-      recipientPhone,
-      senderName,
-      senderPhone,
-      startStationName,
-      totalPrice,
-      noOfSticker,
-      scanCode
-    } = props.value;
-
-    const parcelInfo = [
-      { title: "Sender", value: modifyName(senderName) },
-      { title: "Mobile No.", value: senderPhone },
-      { title: "Receiver", value: modifyName(recipientName) },
-      { title: "Mobile No.", value: recipientPhone },
-      { title: "Origin", value: startStationName },
-      { title: "Price", value: totalPrice },
-    ];
-
-    let _view = [];
-    for (let i = 0; i < noOfSticker; i++) {
-      _view.push(
-        <TicketDetails
-          copy="Merchant's Copy"
-          parcelInfo={parcelInfo}
-          key={"p-"+i}
-          {...props}
-          code={scanCode}
-        />
-      );
-    }
-    return _view;
+  let view = undefined;
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'dltb':
+    case 'isarog-liner':
+      if (props) {
+        const {
+          recipientName,
+          recipientPhone,
+          senderName,
+          senderPhone,
+          startStationName,
+          totalPrice,
+          noOfSticker,
+          scanCode
+        } = props.value;
+    
+        const parcelInfo = [
+          { title: "Sender", value: modifyName(senderName) },
+          { title: "Mobile No.", value: senderPhone },
+          { title: "Receiver", value: modifyName(recipientName) },
+          { title: "Mobile No.", value: recipientPhone },
+          { title: "Origin", value: startStationName },
+          { title: "Price", value: totalPrice },
+        ];
+    
+        let _view = [];
+        for (let i = 0; i < noOfSticker; i++) {
+          _view.push(
+            <TicketDetails
+              copy="Merchant's Copy"
+              parcelInfo={parcelInfo}
+              key={"p-"+i}
+              {...props}
+              code={scanCode}
+            />
+          );
+        }
+        view = _view;
+      }
+      break;
+  
+    default:
+      view = null
+      break;
   }
-  return null;
+  return view;
 };
 
 const SpCopy = (props) => {
