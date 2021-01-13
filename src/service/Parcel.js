@@ -73,6 +73,7 @@ const ParcelService = {
             tripCode,
             driverFullName,
             conductorFullName,
+            additionalFee
         } = details;
 
         const associatedTariffRate = tariffRate || undefined;
@@ -126,6 +127,10 @@ const ParcelService = {
         bodyFormData.set('driverFullName',driverFullName.value)
         bodyFormData.set('conductorFullName',conductorFullName.value)
         bodyFormData.set('associateORNumber', associateORNumber.value)
+        
+        if(UserProfile.getBusCompanyTag() === 'dltb'){
+            bodyFormData.set('additionalFee', additionalFee.value)
+        }
 
         return axios({
             method: 'post',
@@ -401,12 +406,12 @@ const ParcelService = {
         origin,
         destination,
         declaredValue,
-        weight,
-        parcelCount
+        parcelCount,
+        fixMatrixItemName
     }) => {
         return axios({
             method: 'post',
-            url: `${BASE_URL}/api/v1/account/delivery-person/matrix/computation`,
+            url: `${BASE_URL}/api/v1/account/delivery-person/matrix/computation/fix-matrix`,
             headers: {
                 'x-auth-deviceid': '1',
                 'x-auth-devicetype': config.header.deviceType,
@@ -416,8 +421,8 @@ const ParcelService = {
                 origin,
                 destination,
                 declaredValue,
-                weight,
-                parcelCount
+                parcelCount,
+                fixMatrixItemName
             }
         })
     }

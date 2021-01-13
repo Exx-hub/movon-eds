@@ -67,6 +67,7 @@ function BicolIsarogForm(props) {
     conductorFullName,
     sticker_quantity,
     discount,
+    additionalFee
   } = props.details;
   const lengthRate = props.lengthRate
 
@@ -275,6 +276,49 @@ function BicolIsarogForm(props) {
         <Row>
           <Col span={6} className="gutter-row">
             <InputBox
+              disabled={true}
+              type="number"
+              detail={packageInsurance}
+              onChange={props.onChange}
+              placeholder={packageInsurance.placeholder || "Insurance: 10%"}
+              title={packageInsurance.placeholder || "Insurance: 10%"}
+            />
+          </Col>
+
+          <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
+              detail={systemFee}
+              onChange={props.onChange}
+              title="System Fee"
+              disabled={true}
+              placeholder="System Fee"
+            />
+          </Col>
+          <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
+              title="Length Rate"
+              placeholder="Length Rate"
+              disabled={true}
+              value={lengthRate}
+            />
+          </Col>
+          <Col span={6} className="gutter-row">
+            <InputBox
+              type="number"
+              detail={shippingCost}
+              onChange={props.onChange}
+              title="Shipping Cost"
+              placeholder="Shipping Cost"
+            />
+          </Col>
+          
+        </Row>
+
+        <Row>
+          <Col span={6} className="gutter-row">
+            <InputBox
               type="number"
               onBlur={() => props.onBlur(declaredValue.name)}
               detail={declaredValue}
@@ -325,60 +369,32 @@ function BicolIsarogForm(props) {
         </Row>
 
         <Row>
-          <Col span={6} className="gutter-row">
-            <InputBox
-              disabled={true}
-              type="number"
-              detail={packageInsurance}
-              onChange={props.onChange}
-              placeholder={packageInsurance.placeholder || "Insurance: 10%"}
-              title={packageInsurance.placeholder || "Insurance: 10%"}
-            />
-          </Col>
-
-          <Col span={6} className="gutter-row">
-            <InputBox
-              type="number"
-              detail={systemFee}
-              onChange={props.onChange}
-              title="System Fee"
-              disabled={true}
-              placeholder="System Fee"
-            />
-          </Col>
-          <Col span={6} className="gutter-row">
-            <InputBox
-              type="number"
-              title="Length Rate"
-              placeholder="Length Rate"
-              disabled={true}
-              value={lengthRate}
-            />
-          </Col>
-          <Col span={6} className="gutter-row">
-            <InputBox
-              type="number"
-              detail={shippingCost}
-              onChange={props.onChange}
-              title="Shipping Cost"
-              placeholder="Shipping Cost"
-            />
-          </Col>
+          {
+            additionalFee.enabled && 
+            <Col span={6} className="gutter-row">
+              <InputBox
+                type="number"
+                onBlur={() => props.onBlur(additionalFee.name)}
+                detail={additionalFee}
+                onChange={props.onChange}
+                title="Additional Fee*"
+                errorMessage={additionalFee.errorMessage}
+                placeholder="Additional Fee"
+              />
+            </Col>
+          }
           
-        </Row>
-
-        <Row>
         <Col span={6} className="gutter-row">
-        <InputBox
-          type="number"
-          onBlur={() => props.onBlur(sticker_quantity.name)}
-          detail={sticker_quantity}
-          onChange={props.onChange}
-          title="Package Count"
-          errorMessage={sticker_quantity.errorMessage}
-          placeholder="Box / Parcel Count"
-        />
-      </Col>
+          <InputBox
+            type="number"
+            onBlur={() => props.onBlur(sticker_quantity.name)}
+            detail={sticker_quantity}
+            onChange={props.onChange}
+            title="Package Count"
+            errorMessage={sticker_quantity.errorMessage}
+            placeholder="Box / Parcel Count"
+          />
+        </Col>
           <Col span={6} className="gutter-row">
             <InputBox
               detail={additionNote}

@@ -20,6 +20,7 @@ import {
   debounce,
   UserProfile,
   alterPath,
+  dataURLtoFile,
 } from "../../utility";
 
 const { Content, Sider, Header } = Layout;
@@ -395,9 +396,16 @@ class CreateParcel extends React.Component {
           accepted: true,
           options: [],
         },
+        additionalFee: {
+          name: "additionalFee",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          enabled:false
+        }
       },
       enalbeBicolIsarogWays: false,
-      declaredValueAdditionFee: 0.1,
+      declaredValueadditionalFee: 0.1,
       noOfStickerCopy: 2,
       connectingCompanyComputation: 0,
       tariffRate: undefined,
@@ -897,6 +905,7 @@ class CreateParcel extends React.Component {
   };
 
   onInputChange = (name, value) => {
+
     let details = { ...this.state.details };
 
     if (name === "sticker_quantity" || name === "quantity") {
@@ -913,21 +922,37 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "declaredValue") {
-      const packageInsurance = { ...details.packageInsurance };
-      if (details.fixMatrix.value && details.fixMatrix.value !== "none") {
-        let option = details.fixMatrix.options.find(
-          (e) => e.name === details.fixMatrix.value
-        );
-        if (option) {
-          let declaredValue = Number(option.declaredValue);
-          let newVal =
-            declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
-          packageInsurance.value = Number(newVal).toFixed(2);
-        }
-      } else {
-        packageInsurance.value = 0;
+
+      switch (UserProfile.getBusCompanyTag()) {
+        case 'dltb':
+         
+          //this.setState({details})
+          let _details = {...this.state.details}
+          let declaredValue = {..._details.declaredValue}
+          declaredValue.value = value;
+          _details.declaredValue = declaredValue;
+          this.setState({details:_details})
+
+          break;
+      
+        default:
+          const packageInsurance = { ...details.packageInsurance };
+          if (details.fixMatrix.value && details.fixMatrix.value !== "none") {
+            let option = details.fixMatrix.options.find(
+              (e) => e.name === details.fixMatrix.value
+            );
+            if (option) {
+              let declaredValue = Number(option.declaredValue);
+              let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
+              packageInsurance.value = Number(newVal).toFixed(2);
+            }
+          } else {
+            packageInsurance.value = 0;
+          }
+          details = { ...details, ...{ packageInsurance } };
+          break;
       }
-      details = { ...details, ...{ packageInsurance } };
+      return
     }
 
     if (name === "billOfLading") {
@@ -944,6 +969,7 @@ class CreateParcel extends React.Component {
       ...details[name],
       ...{ value, accepted: true, hasError: false },
     };
+
     this.setState({ details: { ...details, ...{ [name]: item } } }, () => {
       if (name === "quantity") {
         if (Boolean(details.quantity.accepted)) {
@@ -963,16 +989,6 @@ class CreateParcel extends React.Component {
       if (name === "declaredValue") {
         this.updateTotalShippingCost();
       }
-
-      // if(OBSERV_DLTB_ITEMS.includes(name)){
-      //   console.log('name----->>',name)
-      //   const{declaredValue,packageWeight,sticker_quantity}=details;
-      //   if(declaredValue.value && packageWeight.value && sticker_quantity.value ){
-      //     console.log('passsss===>> declaredValue', details["declaredValue"].value)
-      //     console.log('passsss===>> packageWeight', details["packageWeight"].value)
-      //     console.log('passsss===>> sticker_quantity', details["sticker_quantity"].value)
-      //   }
-      // }
 
     });
   };
@@ -1235,38 +1251,49 @@ class CreateParcel extends React.Component {
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
         let price = Number(option.price).toFixed(2);
-        let declaredValue = Number(option.declaredValue).toFixed(2);
+        let declaredValue = Number(option.declaredValue);
+        let enableAdditionalFee = Boolean(option.additionalFee || false)
+        
         declaredValue = declaredValue / 100;
         details.fixMatrix.value = value;
+        details.additionalFee.enabled = enableAdditionalFee;
 
         if (Number(declaredValue) === Number(0)) {
-          details.packageInsurance.value = 0;
-          details.packageInsurance.disabled = true;
-          details.declaredValue.value = 0;
-          details.declaredValue.disabled = true;
-          //this.getConvinienceFee(0, price);
+            details.packageInsurance.value = 0;
+            details.packageInsurance.disabled = true;
+            details.declaredValue.value = 0;
+            details.declaredValue.disabled = true;
         } else {
-          details.packageInsurance.value = 0;
-          details.packageInsurance.disabled = false;
-          details.declaredValue.value = 0;
-          details.declaredValue.disabled = false;
-          details.systemFee.value = 0;
+            details.packageInsurance.value = 0;
+            details.packageInsurance.disabled = false;
+            details.declaredValue.value = 0;
+            details.declaredValue.disabled = false;
+            details.systemFee.value = 0;
         }
 
-        details.description.value = option.name;
-        details.shippingCost.value = price;
         details.packageWeight.disabled = true;
         details.packageWeight.value = 0;
         details.length.disabled = true;
         details.length.value = 0;
         details.quantity.disabled = false;
         details.quantity.value = 1;
+        details.description.value = option.name;
+        details.shippingCost.value = price;
 
-        this.setState({ lengthRate: 0, details }, () => {
-          this.updateTotalShippingCost();
-        });
+        switch (UserProfile.getBusCompanyTag()) {
+          case "dltb":
+            details.totalShippingCost.value = price
+            this.setState({ lengthRate: 0, details });
+            break;
         
+          default:
+            this.setState({ lengthRate: 0, details }, () => {
+              this.updateTotalShippingCost();
+            });
+            break;
+        }
       } else {
+        
         details.fixMatrix.value = "none";
         details.packageInsurance.disabled = false;
         details.declaredValue.disabled = false;
@@ -1286,9 +1313,17 @@ class CreateParcel extends React.Component {
         details.quantity.disabled = true;
         details.quantity.value = 1;
 
-        this.setState({ lengthRate: 0, details }, () =>
-          this.updateTotalShippingCost()
-        );
+        switch (UserProfile.getBusCompanyTag()) {
+          case "dltb":
+            this.setState({ lengthRate: 0, details });
+            break;
+        
+          default:
+            this.setState({ lengthRate: 0, details }, () => {
+              this.updateTotalShippingCost();
+            });
+            break;
+        }
       }
     }
   };
@@ -1566,16 +1601,18 @@ class CreateParcel extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const currentDetails = { ...this.state.details };
     const {
       destination,
       packageWeight,
       declaredValue,
       paxs,
       length,
-      sticker_quantity
+      sticker_quantity,
+      fixMatrix,
+      additionalFee
     } = prevState.details;
 
+    const currentDetails = { ...this.state.details };
     const oldConnectingRoutes = prevState.details.connectingRoutes.value;
     const oldConnectingCompany = prevState.details.connectingCompany.value;
 
@@ -1584,15 +1621,56 @@ class CreateParcel extends React.Component {
       currentDetails.packageWeight.value !== packageWeight.value ||
       currentDetails.declaredValue.value !== declaredValue.value ||
       currentDetails.length.value !== length.value ||
+      currentDetails.fixMatrix.value !== fixMatrix.value ||
+      currentDetails.additionalFee.value !== additionalFee.value ||
       currentDetails.sticker_quantity.value !== sticker_quantity.value ||
       oldConnectingRoutes !== currentDetails.connectingRoutes.value ||
       oldConnectingCompany !== currentDetails.connectingCompany.value;
 
     if (hasFreshData) {
-      if (
-        currentDetails.packageWeight.value !== undefined &&
-        currentDetails.declaredValue.value !== undefined
-      ) {
+      
+
+      if(UserProfile.getBusCompanyTag() === 'dltb'){
+
+        if(currentDetails.fixMatrix.value 
+            && currentDetails.fixMatrix.value !== 'none' 
+              && currentDetails.additionalFee.value){
+
+          let d = {...this.state.details}
+          d.totalShippingCost.value = Number(d.totalShippingCost.value) + Number(d.additionalFee.value || 0)
+          this.setState({details:d})
+          return
+        }
+
+        if(currentDetails.sticker_quantity.value 
+          && currentDetails.destination.value 
+            && currentDetails.fixMatrix.value 
+              && currentDetails.fixMatrix.value !== 'none'){
+
+                const options={
+                  origin:UserProfile.getAssignedStationId(),
+                  destination: currentDetails.destination.value,
+                  declaredValue: currentDetails.declaredValue.value,
+                  parcelCount: currentDetails.sticker_quantity.value,
+                  fixMatrixItemName: currentDetails.fixMatrix.value
+                }
+        
+                ParcelService.getDltbFixMatrixComputation(options).then(e=>{
+                  const{data,errorCode}=e.data;
+                  if(!errorCode){
+                    let d = {...this.state.details}
+                    d.packageInsurance.value = data.declaredValue
+                    d.systemFee.value = data.systemFee
+                    d.totalShippingCost.value = Number(data.computeTotalShippingCost) + Number(d.additionalFee.value || 0)
+                    this.setState({details:d})
+                  }
+                })
+              }
+
+      }
+
+
+      if (currentDetails.packageWeight.value !== undefined && currentDetails.declaredValue.value !== undefined) {
         this.computeForConnectinRoutes();
 
         if (currentDetails.destination.value !== undefined) {
@@ -1606,14 +1684,12 @@ class CreateParcel extends React.Component {
           switch (UserProfile.getBusCompanyTag()) {
             case "dltb":
               const{declaredValue,packageWeight,sticker_quantity,destination}=currentDetails;
+
+              const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
+              const endStation = selectedOption.endStation || undefined;
+              const startStation = this.userProfileObject.getAssignedStationId();
+
               if(declaredValue.value && packageWeight.value && sticker_quantity.value ){
-
-                const selectedOption = destination.options.filter(
-                  (e) => e.value === destination.value
-                )[0];
-                const endStation = selectedOption.endStation || undefined;
-                const startStation = this.userProfileObject.getAssignedStationId();
-
                 const option = {
                   origin:startStation,
                   destination:endStation,
@@ -1621,6 +1697,7 @@ class CreateParcel extends React.Component {
                   weight: Number(packageWeight.value),
                   parcelCount: Number(sticker_quantity.value)
                 }
+
                 ParcelService.getDltbComputation(option).then(e=>{
                   const{data,errorCode}=e.data;
                   if(!errorCode){
@@ -1631,8 +1708,6 @@ class CreateParcel extends React.Component {
                       systemFee,
                     } = data;
 
-                    console.log('>>>>>>>data',data)
-
                     const _data = {...this.state.details}
                     _data.totalShippingCost.value = totalShippingCost;
                     _data.packageInsurance.value = declaredValue;
@@ -1642,6 +1717,7 @@ class CreateParcel extends React.Component {
                   }
                 })
               }
+
               break;
           
             default:

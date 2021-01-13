@@ -97,6 +97,7 @@ const FIX_PRICE_FORMAT = {
     name:"No Data",
     price:0,
     declaredValue:0,
+    additionalFee:true
 }
 
 const MatrixObjects={

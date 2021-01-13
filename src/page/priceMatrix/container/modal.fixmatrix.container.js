@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {Collapse,Table,Space,Button,Select, Form, Input, InputNumber} from "antd";
+import {Collapse,Table,Space,Button,Select, Switch, Form, Input, InputNumber} from "antd";
 import FooterModal from './modal.footer'
 
 function AddFixMatrixModalContent(props){
+
+    console.log('props AddFixMatrixModalContent',props)
 
     const onFinish = values => {
         let index = -1
@@ -40,9 +42,9 @@ function AddFixMatrixModalContent(props){
                 onFinishFailed={onFinishFailed}
                 style={{marginBottom:'.2rem', display:'flex', flexDirection:'column'}}
                 initialValues={{
-                    remember: true,
                     'declaredValue': (props.data && props.data.dvRate) || 0,
                     'price': (props.data && props.data.price) || 0,
+                    'additionalFee': (props.data && props.data.additionalFee) || true,
                     'name': (props.data && props.data.description) || undefined
                   }}
                 >
@@ -75,6 +77,14 @@ function AddFixMatrixModalContent(props){
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber disabled={Boolean(props.type === 'delete')} style={{width:"100%"}} /> 
                 </Form.Item>
+
+                <Form.Item
+                    label="Enable Additional Fee"
+                    name="additionalFee"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <Switch disabled={Boolean(props.type === 'delete')} defaultChecked={props.data.additionalFee} /> 
+                </Form.Item>
+
                 
                 <Form.Item {...tailLayout}>
                     <div style={{display:"flex", justifyContent:'center'}}>

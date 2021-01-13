@@ -100,6 +100,7 @@ function DltbMatrix(props){
                 }
             }, 
         ]
+
         const defaultSource =  [{
             title: 'Action',
             dataIndex: 'action',
@@ -153,6 +154,14 @@ function DltbMatrix(props){
             key: "price"
         },
         {
+            title: 'Enable Additional Fee',
+            dataIndex: 'additionalFee',
+            key: "additionalFee",
+            render: (val)=>{
+                return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Yes" : "No") : "No" }`}</Tag>)
+            }
+        }, 
+        {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
@@ -189,6 +198,7 @@ function DltbMatrix(props){
                                     description:r.name,
                                     dvRate: r.declaredValue,
                                     price: r.price,
+                                    additionalFee: r.additionalFee,
                                     index: fixMatrix.findIndex(e=> e.name === r.name),
                                     names: fixMatrix.filter(e=>e.name !== r.name).map(e=>(e.name))
                                 }
@@ -210,6 +220,7 @@ function DltbMatrix(props){
                                         dvRate: r.declaredValue,
                                         price: r.price,
                                         index,
+                                        additionalFee: r.additionalFee,
                                         names: fixMatrix.filter(e=>e.name !== r.name).map(e=>(e.name))
                                     }
                                 }))
@@ -224,7 +235,16 @@ function DltbMatrix(props){
     }
 
     const getFixMatrixTableSource = () =>{
-        return state.tempFixMatrixObject.fixMatrix;
+        const result = [...state.tempFixMatrixObject.fixMatrix]
+       
+        const _fixMatrix = result.map(e=>{
+            let additionalFee = true;
+            if(e.additionalFee){
+                additionalFee = e.additionalFee;
+            }
+            return {...e, additionalFee}
+        })
+        return _fixMatrix;
     }
 
     const getListName = (id, data) =>{
@@ -264,12 +284,18 @@ function DltbMatrix(props){
                 fixMatrix.push(val)
                 break;
             case 'edit':
-                fixMatrix[index] = { name: val.name, price: val.price, declaredValue: val.declaredValue }
+                fixMatrix[index] = { 
+                    name: val.name, 
+                    price: val.price, 
+                    declaredValue: val.declaredValue,
+                    additionalFee: val.additionalFee 
+                }
                 break;       
             default:
                 break;
         }
         tempFixMatrixObject.fixMatrix = fixMatrix;
+
         MatrixService.create({
             busCompanyId: UserProfile.getBusCompanyId(),
             origin: state.fixMatrixOriginId,
@@ -395,8 +421,6 @@ function DltbMatrix(props){
         }
     }
 
-   
-
     return(
         <div>
 
@@ -479,7 +503,7 @@ function DltbMatrix(props){
                         </Select>
                     </div>
                     <Table 
-                        style={{width:610}} 
+                        style={{width:800}} 
                         bordered={true} 
                         pagination={false} 
                         columns={getFixMatrixTableColumn()} 
