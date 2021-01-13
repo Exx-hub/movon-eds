@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(63)'
+        build: '1.4.0(64)'
     },
-    changeLogs: `fix issue on duplicate destination`
+    changeLogs: `catch if payload is incorrect`
 }
 
 export const ERROR_CODES = {

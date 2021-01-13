@@ -31,6 +31,7 @@ const getMatrix = async(originId,destinationId) =>{
 }
 
 const getEndStations = (startStationId, data) =>{
+  console.log('>>>>>data',data)
   let unique = []
     const _endStationRoutes = data
     .filter((e) => e.start === startStationId)
@@ -60,17 +61,17 @@ const getEndStations = (startStationId, data) =>{
 const getAllRoutesByOrigin = async(originId) =>{
   try {
     const result = await RoutesService.getAllRoutesByOrigin(originId);
-    console.info('result',result)
     const{data,success,errorCode}=result.data;
     if(!errorCode){
       let unique=[]
       let _data = data.filter(e=>{
-        if(!unique.includes(e.endStationName)){
+        if(e.endStationName && !unique.includes(e.endStationName)){
           unique.push(e.endStationName)
           return true
         }
         return false;
       })
+      
       _data.sort(function(a, b) {
         var nameA = a.endStationName.toUpperCase(); // ignore upper and lowercase
         var nameB = b.endStationName.toUpperCase(); // ignore upper and lowercase
@@ -82,6 +83,7 @@ const getAllRoutesByOrigin = async(originId) =>{
         }
         return 0;
       })
+      
       return Promise.resolve(_data)
     }
     return Promise.reject(false)

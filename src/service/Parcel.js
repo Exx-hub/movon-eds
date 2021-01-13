@@ -396,6 +396,30 @@ const ParcelService = {
                 parcelCount
             }
         })
+    },
+    getDltbFixMatrixComputation: ({
+        origin,
+        destination,
+        declaredValue,
+        weight,
+        parcelCount
+    }) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/matrix/computation`,
+            headers: {
+                'x-auth-deviceid': '1',
+                'x-auth-devicetype': config.header.deviceType,
+                'x-auth-token': userProfileObject.getToken()
+            },
+            data: {
+                origin,
+                destination,
+                declaredValue,
+                weight,
+                parcelCount
+            }
+        })
     }
 
 }

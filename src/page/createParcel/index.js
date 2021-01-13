@@ -1265,6 +1265,7 @@ class CreateParcel extends React.Component {
         this.setState({ lengthRate: 0, details }, () => {
           this.updateTotalShippingCost();
         });
+        
       } else {
         details.fixMatrix.value = "none";
         details.packageInsurance.disabled = false;
