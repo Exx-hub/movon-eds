@@ -990,6 +990,13 @@ class CreateParcel extends React.Component {
         this.updateTotalShippingCost();
       }
 
+      if(name == "additionalFee"){
+        let d = {...this.state.details}
+        const total = (Number(d.systemFee.value || 0) + Number(d.packageInsurance.value || 0) + Number(d.shippingCost.value || 0) + Number(d.additionalFee.value || 0) ) 
+        d.totalShippingCost.value = total
+        this.setState({details:d})
+      }
+
     });
   };
 
@@ -1631,17 +1638,6 @@ class CreateParcel extends React.Component {
       
 
       if(UserProfile.getBusCompanyTag() === 'dltb'){
-
-        if(currentDetails.fixMatrix.value 
-            && currentDetails.fixMatrix.value !== 'none' 
-              && currentDetails.additionalFee.value){
-
-          let d = {...this.state.details}
-          d.totalShippingCost.value = Number(d.totalShippingCost.value) + Number(d.additionalFee.value || 0)
-          this.setState({details:d})
-          return
-        }
-
         if(currentDetails.sticker_quantity.value 
           && currentDetails.destination.value 
             && currentDetails.fixMatrix.value 

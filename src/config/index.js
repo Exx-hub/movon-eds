@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(66)'
+        build: '1.4.0(67)'
     },
-    changeLogs: `fix number of stickers`
+    changeLogs: `fix additional fee computation`
 }
 
 export const ERROR_CODES = {
