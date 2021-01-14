@@ -955,7 +955,9 @@ class CreateParcel extends React.Component {
     }
 
     if(name === 'quantity' || name == "additionalFee"){
-      details.totalShippingCost.value = this.addFixMatrixFee()
+      if(UserProfile.getBusCompanyTag() === 'dltb'){
+        details.totalShippingCost.value = this.addFixMatrixFee()
+      }
     }
 
     if (name === "declaredValue") {
