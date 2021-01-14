@@ -925,10 +925,9 @@ class CreateParcel extends React.Component {
         if(quantity > 1){
           total -= systemFee;
           total = total * quantity;
+          total += systemFee
         }
-
         total += Number(d.additionalFee.value || 0)
-        total += systemFee
 
         d.totalShippingCost.value = total;
         d.packageInsurance.value = data.declaredValue
@@ -952,6 +951,8 @@ class CreateParcel extends React.Component {
 
   onInputChange = (name, value) => {
 
+    console.log('onInputChange',name, value)
+
     let details = { ...this.state.details };
 
     if (name === "sticker_quantity" || name === "quantity") {
@@ -967,7 +968,6 @@ class CreateParcel extends React.Component {
       details = { ...details, ...{ [name]: item } };
     }
 
-    
     if(UserProfile.getBusCompanyTag() === 'dltb'){
       let qty = undefined;
       let addrate = undefined
@@ -975,12 +975,13 @@ class CreateParcel extends React.Component {
       if(name === 'quantity'){
         qty = Number(value)
         addrate = Number(details.additionalFee.value || 0)
+        details.totalShippingCost.value = this.addFixMatrixFee(qty,addrate)
       }
       if(name == "additionalFee"){
         qty = Number(details.quantity.value || 1)
         addrate = Number(value)
+        details.totalShippingCost.value = this.addFixMatrixFee(qty,addrate)
       }
-      details.totalShippingCost.value = this.addFixMatrixFee(qty,addrate)
     }
 
     if (name === "declaredValue") {
