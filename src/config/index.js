@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(68)'
+        build: '1.4.0(69)'
     },
-    changeLogs: `fix price computation for dltb`
+    changeLogs: `fix price computation for dltb quantity issue`
 }
 
 export const ERROR_CODES = {

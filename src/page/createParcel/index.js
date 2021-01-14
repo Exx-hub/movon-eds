@@ -918,7 +918,14 @@ class CreateParcel extends React.Component {
       if(!errorCode){
         d.packageInsurance.value = data.declaredValue
         d.systemFee.value = data.systemFee
-        d.totalShippingCost.value = Number(data.computeTotalShippingCost) + Number(d.additionalFee.value || 0)
+        
+        let qty = Number(d.quantity.value || 1)
+        let quantity = qty < 1 ? 1 : qty;
+        let total = Number(data.computeTotalShippingCost)
+        total = total * quantity;
+        total += + Number(d.additionalFee.value || 0)
+        d.totalShippingCost.value = total;
+
         this.setState({details:d})
       }
     })
@@ -1763,9 +1770,11 @@ class CreateParcel extends React.Component {
                     } = data;
 
                     const _data = {...this.state.details}
-                    _data.totalShippingCost.value = totalShippingCost;
                     _data.packageInsurance.value = declaredValue;
                     _data.systemFee.value = systemFee;
+                    let quantity = Number(_data.quantity.value || 1)
+                    quantity = quantity > 0 ? quantity : 1;
+                    _data.totalShippingCost.value = (Number(totalShippingCost) * quantity);
                     _data.shippingCost.value = Number(Number(totalShippingCost) - ( Number(systemFee) + Number(declaredValue))).toFixed(2)
                     this.setState({details:_data});
                   }
