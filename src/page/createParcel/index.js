@@ -951,8 +951,6 @@ class CreateParcel extends React.Component {
 
   onInputChange = (name, value) => {
 
-    console.log('onInputChange',name, value)
-
     let details = { ...this.state.details };
 
     if (name === "sticker_quantity" || name === "quantity") {
@@ -1336,6 +1334,7 @@ class CreateParcel extends React.Component {
       details.additionalFee.value = 0;
       details.sticker_quantity.value = 0;
       details.totalShippingCost.value = 0
+      details.additionNote.value = ""
 
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
