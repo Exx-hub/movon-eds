@@ -11,7 +11,7 @@ import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
 import { Button, notification, Layout, Checkbox } from "antd";
 import ReactToPrint from "react-to-print";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, NumberOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
 import ManifestService from "../../service/Manifest";
@@ -924,16 +924,15 @@ class CreateParcel extends React.Component {
     })
   }
 
-  addFixMatrixFee = () =>{
+  addFixMatrixFee = (_qty, addrate) =>{
     let d = {...this.state.details}
     let total = (Number(d.packageInsurance.value || 0) + Number(d.shippingCost.value || 0))
-    let qty = Number(d.quantity.value || 0)
+    let qty = Number(_qty || 0)
     let quantity = qty < 1 ? 1 : qty;
     total = total * quantity;
     total += Number(d.systemFee.value || 0) 
-    total += Number(d.additionalFee.value || 0) 
+    total += addrate 
     d.totalShippingCost.value = total 
-    //this.setState({details:d})
     return total;
   }
 
@@ -954,10 +953,19 @@ class CreateParcel extends React.Component {
       details = { ...details, ...{ [name]: item } };
     }
 
-    if(name === 'quantity' || name == "additionalFee"){
-      if(UserProfile.getBusCompanyTag() === 'dltb'){
-        details.totalShippingCost.value = this.addFixMatrixFee()
+    
+    if(UserProfile.getBusCompanyTag() === 'dltb'){
+      let qty = undefined;
+      let addrate = undefined
+      if(name === 'quantity'){
+        qty = Number(value)
+        addrate = Number(details.additionalFee.value || 0)
       }
+      if(name == "additionalFee"){
+        qty = Number(details.quantity.value || 1)
+        addrate = Number(value)
+      }
+      details.totalShippingCost.value = this.addFixMatrixFee(qty,addrate)
     }
 
     if (name === "declaredValue") {
