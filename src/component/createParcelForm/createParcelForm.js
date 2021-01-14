@@ -267,7 +267,7 @@ function BicolIsarogForm(props) {
           <Col span={12} className={["gutter-row"]}>
             <div className="total-shiping-cost">
               <span className="txt-total-shiping-cost">
-                Total Shipping Cost: {totalShippingCost.value}
+                Total Shipping Cost: { Number(totalShippingCost.value || 0).toFixed(2)}
               </span>
             </div>
           </Col>

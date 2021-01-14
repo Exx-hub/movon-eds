@@ -913,19 +913,26 @@ class CreateParcel extends React.Component {
       fixMatrixItemName: d.fixMatrix.value
     }
     ParcelService.getDltbFixMatrixComputation(options).then(e=>{
-      console.log('>>>>>>dltb response', e)
       const{data,errorCode}=e.data;
       if(!errorCode){
-        d.packageInsurance.value = data.declaredValue
-        d.systemFee.value = data.systemFee
-        
+
+        const systemFee = Number(data.systemFee);
+        let total = Number(data.computeTotalShippingCost);
+
         let qty = Number(d.quantity.value || 1)
         let quantity = qty < 1 ? 1 : qty;
-        let total = Number(data.computeTotalShippingCost)
-        total = total * quantity;
-        total += + Number(d.additionalFee.value || 0)
-        d.totalShippingCost.value = total;
 
+        if(quantity > 1){
+          total -= systemFee;
+          total = total * quantity;
+        }
+
+        total += Number(d.additionalFee.value || 0)
+        total += systemFee
+
+        d.totalShippingCost.value = total;
+        d.packageInsurance.value = data.declaredValue
+        d.systemFee.value = data.systemFee
         this.setState({details:d})
       }
     })
@@ -964,6 +971,7 @@ class CreateParcel extends React.Component {
     if(UserProfile.getBusCompanyTag() === 'dltb'){
       let qty = undefined;
       let addrate = undefined
+
       if(name === 'quantity'){
         qty = Number(value)
         addrate = Number(details.additionalFee.value || 0)
@@ -1024,6 +1032,7 @@ class CreateParcel extends React.Component {
     };
 
     this.setState({ details: { ...details, ...{ [name]: item } } }, () => {
+      
       if (name === "quantity") {
         if(UserProfile.getBusCompanyTag() === 'dltb'){
           //this.addFixMatrixFee()
@@ -1034,6 +1043,7 @@ class CreateParcel extends React.Component {
         }
         
       }
+
       if (name === "sticker_quantity") {
         if (Boolean(details.sticker_quantity.accepted)) {
           //five start convinience fee
@@ -1051,6 +1061,7 @@ class CreateParcel extends React.Component {
           }
         }
       }
+
       if (name === "declaredValue") {
         if(UserProfile.getBusCompanyTag() === 'dltb'){
           let d ={...this.state.details};
@@ -1320,6 +1331,10 @@ class CreateParcel extends React.Component {
     if (name === "fixMatrix") {
       let details = { ...this.state.details };
       details.additionalFee.enabled = false
+      details.quantity.value = 1;
+      details.additionalFee.value = 0;
+      details.sticker_quantity.value = 0;
+      details.totalShippingCost.value = 0
 
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
@@ -1330,6 +1345,7 @@ class CreateParcel extends React.Component {
         declaredValue = declaredValue / 100;
         details.fixMatrix.value = value;
         details.additionalFee.enabled = enableAdditionalFee;
+       
 
         if (Number(declaredValue) === Number(0)) {
             details.packageInsurance.value = 0;
@@ -1769,12 +1785,20 @@ class CreateParcel extends React.Component {
                       systemFee,
                     } = data;
 
+                    let total = Number(totalShippingCost) 
+
                     const _data = {...this.state.details}
-                    _data.packageInsurance.value = declaredValue;
-                    _data.systemFee.value = systemFee;
                     let quantity = Number(_data.quantity.value || 1)
                     quantity = quantity > 0 ? quantity : 1;
-                    _data.totalShippingCost.value = (Number(totalShippingCost) * quantity);
+
+                    if(quantity > 1){
+                      total -= Number(systemFee)
+                      total = total * quantity
+                    }
+
+                    _data.totalShippingCost.value = Number(total || 0).toFixed(2);
+                    _data.packageInsurance.value = declaredValue;
+                    _data.systemFee.value = systemFee;
                     _data.shippingCost.value = Number(Number(totalShippingCost) - ( Number(systemFee) + Number(declaredValue))).toFixed(2)
                     this.setState({details:_data});
                   }
