@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { notification } from "antd";
-import DltbMatrix from './dltbMatrix'
+import MatrixEditor from './matrix.editor'
 import DefaultMatrix from './orig.priceMatrix'
 import RoutesService from "../../service/Routes";
 import MatrixService from "../../service/Matrix";
@@ -125,7 +125,6 @@ const MatrixObjects={
   }
 }
 
-
 function PriceMatrix(props){
 
   const handleErrorNotification = (code) => {
@@ -177,13 +176,13 @@ function PriceMatrix(props){
     const getContainer = () =>{
         let  view = undefined;
         switch(UserProfile.getBusCompanyTag()){
-            case "isarog-liner" : 
+          case "five-star" : 
+          case "dltb" : 
+          view = <MatrixEditor data={{...state}} {...props} />
+              break;
+            default: 
               view = <DefaultMatrix {...props} />
-              break;
-            case "dltb" : 
-              view = <DltbMatrix data={{...state}} {...props} />
-              break;
-            default: break;
+            break
         }
         return view
     }

@@ -3,7 +3,7 @@ import Manifest from "../manifest";
 import User from "../../service/User";
 import movonLogo from "../../assets/movoncargo.png";
 import { UserProfile, alterPath } from "../../utility";
-import { PriceMatrix, VictoryLinerMatrix, DltbMatrix } from "../priceMatrix";
+import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
@@ -413,7 +413,6 @@ function Home(props) {
               </Route>
 
               { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/own")}><PriceMatrix {...props} /></Route>) }
-              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/dltb")}><DltbMatrix {...props} /></Route>) }
               { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/victory-liners")}><VictoryLinerMatrix {...props} /></Route>) }
               { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/report/sales/vli-bitsi")}><SalesReport source={tableSourceVliBitsi} isP2P={true} {...props} title="SUMMARY OF VLI-BITSI SALES" /></Route>) }
           

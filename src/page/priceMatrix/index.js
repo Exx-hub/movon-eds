@@ -1,9 +1,9 @@
 import PriceMatrix from './priceMatrix';
 import VictoryLinerMatrix from './victoryLinerMatrix';
-import DltbMatrix from './dltbMatrix'
+import MatrixEditor from './matrix.editor'
 
 export {
     PriceMatrix,
     VictoryLinerMatrix,
-    DltbMatrix
+    MatrixEditor
 }

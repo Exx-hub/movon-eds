@@ -1,6 +1,7 @@
 import {notification} from 'antd';
 import { ERROR_CODES} from '../config'
 import UserProfileClass from './userprofile'
+import FiveStar from './busCompanies/fivestar'
 
 const UserProfile = new UserProfileClass();
 
@@ -79,6 +80,7 @@ export{
   openNotificationWithDuration, 
   openNotificationWithIcon,
   UserProfile, 
-  dataURLtoFile
+  dataURLtoFile,
+  FiveStar
 }
   
