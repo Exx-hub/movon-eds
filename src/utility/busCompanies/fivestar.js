@@ -179,11 +179,13 @@ class FiveStar{
     }
 
     getMatrixTable(callback){
-        return (<Table 
-        bordered={true} 
-        pagination={false} 
-        columns={this.getTableColumn(callback)} 
-        dataSource={this.getMatrixDataSource()}/>)
+        return (
+        <Table 
+            scroll={{x:true}}
+            bordered={true} 
+            pagination={false} 
+            columns={this.getTableColumn(callback)} 
+            dataSource={this.getMatrixDataSource()}/>)
     }
 
     getFixMatrixTableColumn(callback){
@@ -247,6 +249,7 @@ class FiveStar{
     getFixPriceTableComponent(callback){
         return(<>
             <Table 
+                scroll={{x:true}}
                 style={{width:700}} 
                 bordered={true} 
                 pagination={false} 

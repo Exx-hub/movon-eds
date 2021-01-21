@@ -172,6 +172,7 @@ function DltbMatrix(props){
         switch(name){
             case "startName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
+                console.info('test0',response)
                 busPartner.parseMatrixDataSource(response)
                 setState(e=>{
                     return{
@@ -184,6 +185,7 @@ function DltbMatrix(props){
 
             case "fixMatrixOriginName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
+                console.info('test1',response)
                 setState(e=>({...e,
                     fixMatrixOriginId:val,
                     fixMatrixOriginName: getListName(val, props.data.originList),
@@ -195,7 +197,7 @@ function DltbMatrix(props){
             case "fixMatrixDestinationName" :   
                 const result = await props.data.getMatrix(state.fixMatrixOriginId, val)
                 const tempFixMatrixObject = parsePriceMatrix(result);
-                console.info('fixMatrixDestinationName',tempFixMatrixObject)
+                console.info('test2',tempFixMatrixObject)
                 busPartner.setPriceMatrix(tempFixMatrixObject)
                 setState(e=>({
                     ...e,
@@ -214,41 +216,47 @@ function DltbMatrix(props){
 
         const{ data, action, index } = e
         switch (action) {
+            
             case "five-star-view-lenght-click":
                 setFiveStarLenghtRangeModal(e=>({...e, visible:true, data, index}))
                 break;
+            
             case "five-star-view-weight-click":
-                setFiveStarWeightRangeModal(e=>({...e, visible:true, data, index}))
-                break; 
+            setFiveStarWeightRangeModal(e=>({...e, visible:true, data, index}))
+            break; 
+        
             case "five-star-update-click":
-                setMatrixModal(e=>({...e, 
-                    visible:true, 
-                    data:{
-                        ...data,
-                        index
-                    }, 
-                    matrixInfo:{
-                        destination: data.destination,
-                        destinationId: data.destinationId,
-                        originId: data.originId,
-                        fixMatrix: data.fixMatrix,
-                        index
-                    } 
-                }))
-                break; 
-            case "five-star-edit-fixmatrix-click":
-                setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"edit", data:{
-                    ...data,
-                    index,
-                    names:state.tempFixMatrixObject.fixMatrix.map(e=>(e.name))
-                }}))
-                break;
-            case "five-star-del-fixmatrix-click":
-                setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"delete", data:{
+            setMatrixModal(e=>({...e, 
+                visible:true, 
+                data:{
                     ...data,
                     index
-                }}))
-                break;
+                }, 
+                matrixInfo:{
+                    destination: data.destination,
+                    destinationId: data.destinationId,
+                    originId: data.originId,
+                    fixMatrix: data.fixMatrix,
+                    index
+                } 
+            }))
+            break; 
+        
+            case "five-star-edit-fixmatrix-click":
+            setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"edit", data:{
+                ...data,
+                index,
+                names:state.tempFixMatrixObject.fixMatrix.map(e=>(e.name))
+            }}))
+            break;
+        
+            case "five-star-del-fixmatrix-click":
+            setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"delete", data:{
+                ...data,
+                index
+            }}))
+            break;
+        
             case "five-star-add-fixmatrix-click":
                 setFixPriceModal(e=>({
                     ...e, 
@@ -260,9 +268,7 @@ function DltbMatrix(props){
                     }
                 }))
                 break;
-            case "dltb-update-click":
-                setMatrixModal(e=>({...e, visible:true, data:{...data, index}}))
-                default:
+            
             case "dltb-edit-fixmatrix-click":
                 setFixPriceModal(e=>({
                     ...e,
@@ -272,10 +278,18 @@ function DltbMatrix(props){
                     data:{
                         ...data,
                         index: index,
-                        names: busPartner.getFixMatrix().map(e=>(e.name))
+                        names: busPartner.getFixMatrix() && busPartner.getFixMatrix().map(e=>(e.name))
                     }
                 }))
                 break;
+
+            case "dltb-update-click":
+                setMatrixModal(e=>({...e, visible:true, data:{...data, index}}))
+                break;
+            
+            default:
+                break;
+            
         }
     }
 
@@ -405,14 +419,6 @@ function DltbMatrix(props){
             <MatrixModal 
                 visible={matrixModal.visible} 
                 title={matrixModal.title}>
-                
-                    {/* {<MatrixModalContent 
-                        {...props}
-                        okText="Update" 
-                        cancelText="Cancel"
-                        data={matrixModal.data}
-                        onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
-                        onSubmit={(val,data)=>updateMatrix(val,data)}/>} */}
 
                     <MatrixModalContainer {...props} />
 
