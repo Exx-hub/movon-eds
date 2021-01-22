@@ -11,7 +11,7 @@ import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
 import { Button, notification, Layout, Checkbox } from "antd";
 import ReactToPrint from "react-to-print";
-import { ArrowLeftOutlined, NumberOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, CodeOutlined, NumberOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
 import ManifestService from "../../service/Manifest";
@@ -904,6 +904,7 @@ class CreateParcel extends React.Component {
   };
 
   dltbFixPriceComputation = () =>{
+
     let d = {...this.state.details}
     const options={
       origin:UserProfile.getAssignedStationId(),
@@ -915,7 +916,6 @@ class CreateParcel extends React.Component {
     ParcelService.getDltbFixMatrixComputation(options).then(e=>{
       const{data,errorCode}=e.data;
       if(!errorCode){
-
         const systemFee = Number(data.systemFee);
         let total = Number(data.computeTotalShippingCost);
 
@@ -933,6 +933,8 @@ class CreateParcel extends React.Component {
         d.packageInsurance.value = data.declaredValue
         d.systemFee.value = data.systemFee
         this.setState({details:d})
+      }else{
+        this.handleErrorNotification(errorCode);
       }
     })
   }
@@ -983,20 +985,8 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "declaredValue") {
-
       switch (UserProfile.getBusCompanyTag()) {
-        case 'dltb':
-         
-          //this.setState({details})
-          //let _details = {...this.state.details}
-          //let declaredValue = {..._details.declaredValue}
-          //declaredValue.value = value;
-          //_details.declaredValue = declaredValue;
-          //this.setState({details:_details})
-
-          break;
-      
-        default:
+        case 'isarog-liner':
           const packageInsurance = { ...details.packageInsurance };
           if (details.fixMatrix.value && details.fixMatrix.value !== "none") {
             let option = details.fixMatrix.options.find(
@@ -1011,6 +1001,9 @@ class CreateParcel extends React.Component {
             packageInsurance.value = 0;
           }
           details = { ...details, ...{ packageInsurance } };
+          break;
+      
+        default:
           break;
       }
     }
@@ -1031,47 +1024,16 @@ class CreateParcel extends React.Component {
     };
 
     this.setState({ details: { ...details, ...{ [name]: item } } }, () => {
-      
-      if (name === "quantity") {
-        if(UserProfile.getBusCompanyTag() === 'dltb'){
-          //this.addFixMatrixFee()
-        }else{
-          if (Boolean(details.quantity.accepted)) {
+      if (name === "declaredValue" || name === "quantity") {
+        switch (UserProfile.getBusCompanyTag()) {
+          case 'isarog-liner':
             this.updateTotalShippingCost();
-          }
-        }
+            break;
         
-      }
-
-      if (name === "sticker_quantity") {
-        if (Boolean(details.sticker_quantity.accepted)) {
-          //five start convinience fee
-          if (this.userProfileObject.isFiveStar()) {
-            ParcelService.getFiveStarConvenienceFee(value)
-            .then((res) =>this.parseSystemFeeResponse(res));
-            return;
-          }
-          if(UserProfile.getBusCompanyTag() === 'dltb'){
-            let d = {...this.state.details}
-            if(d.fixMatrix.value && d.fixMatrix.value !== 'none'){
-              this.dltbFixPriceComputation()
-            }
-            return;
-          }
+          default:
+            break;
         }
       }
-
-      if (name === "declaredValue") {
-        if(UserProfile.getBusCompanyTag() === 'dltb'){
-          let d ={...this.state.details};
-          if(d.sticker_quantity.value && d.fixMatrix.value && d.fixMatrix.value !== 'none'){
-            this.dltbFixPriceComputation()
-          }
-        }else{
-          this.updateTotalShippingCost();
-        }
-      }
-
     });
   };
 
@@ -1695,6 +1657,12 @@ class CreateParcel extends React.Component {
     const endStation = selectedOption.endStation || undefined;
     const startStation = this.userProfileObject.getAssignedStationId();
 
+    if(!endStation || !startStation)
+      return
+
+      console.info('endStation',endStation)
+      console.info('startStation',startStation)
+
     const option = {
       origin:startStation,
       destination:endStation,
@@ -1704,7 +1672,9 @@ class CreateParcel extends React.Component {
       length: Number(length.value)
     }
 
-    ParcelService.getDltbComputation(option).then(e=>{
+    ParcelService.getDltbComputation(option)
+    .then(e=>{
+      console.log('getDltbComputation',e)
       const{data,errorCode}=e.data;
 
       if(!errorCode){
@@ -1735,6 +1705,7 @@ class CreateParcel extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+
     const {
       destination,
       packageWeight,
@@ -1774,8 +1745,9 @@ class CreateParcel extends React.Component {
             return;
           }
 
+          console.info("tag",UserProfile.getBusCompanyTag())
           const{ declaredValue,packageWeight,sticker_quantity,length}=currentDetails;
-
+          
           switch (UserProfile.getBusCompanyTag()) {
             case "dltb":
               if(declaredValue.value && packageWeight.value && sticker_quantity.value ){
@@ -1791,29 +1763,29 @@ class CreateParcel extends React.Component {
 
             default:
               this.computePrice();
+              const oldDetails = prevState.details;
+              const curDetails = this.state.details;
+                if (
+                  (this.state.details.fixMatrix.value === "none" ||
+                    this.state.details.fixMatrix.value === undefined) &&
+                  (oldDetails.shippingCost.value !== curDetails.shippingCost.value ||
+                    oldDetails.systemFee.value !== curDetails.systemFee.value ||
+                    oldDetails.packageInsurance.value !==
+                      curDetails.packageInsurance.value ||
+                    prevState.connectingCompanyComputation !==
+                      this.state.connectingCompanyComputation)
+                ){
+                  this.updateTotalShippingCost();
+                }
               break;
           }
         }
       }
     }
-
-    const oldDetails = prevState.details;
-    const curDetails = this.state.details;
-
-    if (
-      (this.state.details.fixMatrix.value === "none" ||
-        this.state.details.fixMatrix.value === undefined) &&
-      (oldDetails.shippingCost.value !== curDetails.shippingCost.value ||
-        oldDetails.systemFee.value !== curDetails.systemFee.value ||
-        oldDetails.packageInsurance.value !==
-          curDetails.packageInsurance.value ||
-        prevState.connectingCompanyComputation !==
-          this.state.connectingCompanyComputation)
-    )
-      this.updateTotalShippingCost();
   }
 
   updateTotalShippingCost = () => {
+    console.info("updateTotalShippingCost>>>>>>>>>>>>>>>>>>>>>>")
     let currentDetails = { ...this.state.details };
     const quantity = Number(currentDetails.quantity.value || 0);
 
