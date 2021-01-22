@@ -59,12 +59,12 @@ function FiveStarMatrixModalContent(props) {
                     <Input disabled={true} />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                     label="Base Price"
                     name="price"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber style={{width:'100%'}} min={0}/>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                     label="Declared Value Rate %"
