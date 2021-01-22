@@ -1,27 +1,31 @@
 import React from "react";
-import { Button, Form, Input, InputNumber, Space } from "antd";
+import { Button, Form, Input, InputNumber, Space, List } from "antd";
 import FooterModal from './modal.footer'
 import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function MatrixModalContent(props) {
 
     return (<div>
-
-        <div style={{marginTop:'1rem',  display:'flex', justifyContent:'space-between', paddingLeft:'1rem', paddingRight:'1rem'}}>
-            <div>Range</div>
-            <div>Percentage</div>
-        </div>
-
-        {
-            props.data.lengthRange.map(e=>(<>
-            <div style={{marginTop:'.8rem', border:"dashed gray 1.5px", display:'flex', justifyContent:'space-between', padding:'1rem'}}>
-            <div><span style={{fontSize:16, fontWeight:'bold'}}>{e.meter} meter(s)</span></div>
-            <div style={{color:'green', fontSize:16, fontWeight:'bold'}}>{e.percentage}%</div>
-            </div>
-            </>))
-        }
-
-        <div style={{marginTop:'2rem', display: "flex", justifyContent: 'flex-end' }}>
+        <List
+            size="small"
+            dataSource={props.data.lengthRange}
+            renderItem={e => {
+                return (
+                    <List.Item>
+                        <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <span style={{ fontSize: 14, fontWeight: 'bold' }}>{e.meter}</span> 
+                                <span style={{ fontSize: 12, fontWeight: 400, fontStyle:'italic' }}>&nbsp;&nbsp;meter(s)</span>
+                            </div>
+                            <div>
+                                <span style={{ color: 'green', fontSize: 14, fontWeight: 'bold' }}>{e.percentage}%</span><br />
+                            </div>
+                        </div>
+                    </List.Item>)
+            }
+            }
+        />
+        <div style={{ marginTop: '2rem', display: "flex", justifyContent: 'flex-end' }}>
             <FooterModal
                 enableSingleButton={true}
                 cancelText={props.cancelText || "Cancel"}
@@ -29,8 +33,8 @@ function MatrixModalContent(props) {
                 onOk={props.onOk}
                 onCancel={props.onCancel} />
         </div>
-            
-        </div>)
+
+    </div>)
 }
 
 export default MatrixModalContent;

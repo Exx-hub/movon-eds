@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(71)'
+        build: '1.5.1(72)'
     },
-    changeLogs: `implement five star computation, new five star matrix editor`
+    changeLogs: `update Five Star weight modal editor`
 }
 
 export const ERROR_CODES = {
