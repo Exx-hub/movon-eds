@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(73)'
+        build: '1.5.1(74)'
     },
     changeLogs: `fix edit,delete,add matrix for dltb, add validation on weight and length`
 }
