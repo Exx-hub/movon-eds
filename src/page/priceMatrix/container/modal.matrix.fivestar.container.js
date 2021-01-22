@@ -98,7 +98,7 @@ function FiveStarMatrixModalContent(props) {
                                         fieldKey={[field.fieldKey, 'weight1']}
                                         rules={[{ required: true, message: 'Missing first weight' }]}
                                     >
-                                        <InputNumber style={{minWidth:120}} min={0} placeholder="Weight(kg)" />
+                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -109,7 +109,7 @@ function FiveStarMatrixModalContent(props) {
                                         fieldKey={[field.fieldKey, 'weight2']}
                                         rules={[{ required: true, message: 'Missing second weight' }]}
                                     >
-                                        <InputNumber style={{minWidth:120}} min={0} placeholder="Weight(kg)" />
+                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -120,7 +120,18 @@ function FiveStarMatrixModalContent(props) {
                                         fieldKey={[field.fieldKey, 'amount']}
                                         rules={[{ required: true, message: 'Missing amount' }]}
                                     >
-                                        <InputNumber style={{minWidth:130}} min={0} placeholder="Amount(Php)" />
+                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Amount(Php)" />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        style={{marginBottom:5, marginRight:5}}
+                                        {...{wrapperCol:1}}
+                                        {...field}
+                                        name={[field.name, 'kiloRate']}
+                                        fieldKey={[field.fieldKey, 'kiloRate']}
+                                        rules={[{ required: true, message: 'Missing kilo rate' }]}
+                                    >
+                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
                                     </Form.Item>
                                     <Button shape="circle" size="small" style={{background:'#c32020bf'}} onClick={() => remove(field.name)}>
                                         <DeleteOutlined style={{color:'white'}}/>
