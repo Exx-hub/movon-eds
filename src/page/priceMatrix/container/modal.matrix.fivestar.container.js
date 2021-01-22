@@ -34,6 +34,16 @@ function FiveStarMatrixModalContent(props) {
         wrapperCol: { offset: 8, span: 16 },
     };
 
+    const validate = ({ getFieldValue }) => ({
+        validator(rule, value) {
+            var reg = new RegExp('^[0-9]+$');
+            if(value && !reg.test(value)){
+                return Promise.reject('Not allowed')
+            }
+            return Promise.resolve()
+        },
+      })
+
     return (
         <>
             <Form
@@ -83,7 +93,7 @@ function FiveStarMatrixModalContent(props) {
                             style={{padding:'.5rem', marginBottom:'1.5rem', border:'dashed 2px #014949a1'}}>
                             {fields.map(field => (
                                 <div key={field.key} style={{
-                                    height:35,
+                                    height:50,
                                     width:'100%',   
                                     display: 'flex', 
                                     flexDirection:'row', 
@@ -96,40 +106,39 @@ function FiveStarMatrixModalContent(props) {
                                         style={{marginBottom:5, marginRight:5}}
                                         name={[field.name, 'weight1']}
                                         fieldKey={[field.fieldKey, 'weight1']}
-                                        rules={[{ required: true, message: 'Missing first weight' }]}
-                                    >
+                                        rules={[{ required: true, message: 'required field' },validate]}>
                                         <InputNumber style={{minWidth:110}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
                                         {...{wrapperCol:1}}
-                                        style={{marginBottom:5, marginRight:5}}
+                                        style={{marginBottom:7, marginRight:5}}
                                         {...field}
                                         name={[field.name, 'weight2']}
                                         fieldKey={[field.fieldKey, 'weight2']}
-                                        rules={[{ required: true, message: 'Missing second weight' }]}
+                                        rules={[{ required: true, message: 'required field' },validate]}
                                     >
                                         <InputNumber style={{minWidth:110}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
-                                        style={{marginBottom:5, marginRight:5}}
+                                        style={{marginBottom:7, marginRight:5}}
                                         {...{wrapperCol:1}}
                                         {...field}
                                         name={[field.name, 'amount']}
                                         fieldKey={[field.fieldKey, 'amount']}
-                                        rules={[{ required: true, message: 'Missing amount' }]}
+                                        rules={[{ required: true, message: 'required field' },validate]}
                                     >
                                         <InputNumber style={{minWidth:110}} min={0} placeholder="Amount(Php)" />
                                     </Form.Item>
 
                                     <Form.Item
-                                        style={{marginBottom:5, marginRight:5}}
+                                        style={{marginBottom:7, marginRight:5}}
                                         {...{wrapperCol:1}}
                                         {...field}
                                         name={[field.name, 'kiloRate']}
                                         fieldKey={[field.fieldKey, 'kiloRate']}
-                                        rules={[{ required: true, message: 'Missing kilo rate' }]}
+                                        rules={[{ required: true, message: 'required field' },validate]}
                                     >
                                         <InputNumber style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
                                     </Form.Item>
@@ -167,27 +176,27 @@ function FiveStarMatrixModalContent(props) {
                                     width:'100%',   
                                     display: 'flex', 
                                     flexDirection:'row', 
-                                    height:35,
+                                    height:50,
                                     alignItems:'center',
                                     justifyContent:'flex-start'}}>
 
                                     <Form.Item
                                         {...{wrapperCol:2}}
                                         {...field}
-                                        style={{marginBottom:5, marginRight:5}}
+                                        style={{marginBottom:7, marginRight:5}}
                                         name={[field.name, 'meter']}
                                         fieldKey={[field.fieldKey, 'meter']}
-                                        rules={[{ required: true, message: 'Missing lenght' }]}
+                                        rules={[{ required: true, message: 'Missing lenght' },validate]}
                                     >
                                         <InputNumber style={{minWidth:120}} min={0} placeholder="Lenght(m)" />
                                     </Form.Item>
 
                                     <Form.Item
-                                        style={{marginBottom:5, marginRight:5}}
+                                        style={{marginBottom:7, marginRight:5}}
                                         {...field}
                                         name={[field.name, 'percentage']}
                                         fieldKey={[field.fieldKey, 'percentage']}
-                                        rules={[{ required: true, message: 'Missing percent' }]}
+                                        rules={[{ required: true, message: 'Missing percent' },validate]}
                                     >
                                         <InputNumber style={{minWidth:120}} min={0} placeholder="Percentage %" />
                                     </Form.Item>

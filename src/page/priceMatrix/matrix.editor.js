@@ -242,21 +242,24 @@ function DltbMatrix(props){
             }))
             break; 
         
+            case "dltb-edit-fixmatrix-click":
             case "five-star-edit-fixmatrix-click":
-            setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"edit", data:{
-                ...data,
-                index,
-                names:state.tempFixMatrixObject.fixMatrix.map(e=>(e.name))
-            }}))
+                setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"edit", data:{
+                    ...data,
+                    index,
+                    names:state.tempFixMatrixObject.fixMatrix.map(e=>(e.name))
+                }}))
             break;
         
+            case "dltb-del-fixmatrix-click":
             case "five-star-del-fixmatrix-click":
-            setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"delete", data:{
-                ...data,
-                index
-            }}))
+                setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"delete", data:{
+                    ...data,
+                    index
+                }}))
             break;
         
+            case "dltb-add-fixmatrix-click":
             case "five-star-add-fixmatrix-click":
                 setFixPriceModal(e=>({
                     ...e, 
@@ -269,20 +272,6 @@ function DltbMatrix(props){
                 }))
                 break;
             
-            case "dltb-edit-fixmatrix-click":
-                setFixPriceModal(e=>({
-                    ...e,
-                    visible:true,
-                    title:"Edit Fix Price",
-                    type:"edit",
-                    data:{
-                        ...data,
-                        index: index,
-                        names: busPartner.getFixMatrix() && busPartner.getFixMatrix().map(e=>(e.name))
-                    }
-                }))
-                break;
-
             case "dltb-update-click":
                 setMatrixModal(e=>({...e, visible:true, data:{...data, index}}))
                 break;
