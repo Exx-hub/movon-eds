@@ -34,7 +34,18 @@ function FiveStarMatrixModalContent(props) {
         wrapperCol: { offset: 8, span: 16 },
     };
 
-    const validate = ({ getFieldValue }) => ({
+    const validateAmount = ({ getFieldValue }) => ({
+        validator(rule, value) {
+            const reg = /^-{0,1}\d*\.{0,1}\d+$/;
+            if(value && !reg.test(value)){
+                return Promise.reject('Not allowed')
+            }
+            return Promise.resolve()
+        },
+      })
+
+
+  const validate = ({ getFieldValue }) => ({
         validator(rule, value) {
             var reg = new RegExp('^[0-9]+$');
             if(value && !reg.test(value)){
@@ -107,7 +118,7 @@ function FiveStarMatrixModalContent(props) {
                                         name={[field.name, 'weight1']}
                                         fieldKey={[field.fieldKey, 'weight1']}
                                         rules={[{ required: true, message: 'required field' },validate]}>
-                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Weight(kg)" />
+                                        <Input type="number" suffix="kg" style={{width:90}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -116,9 +127,8 @@ function FiveStarMatrixModalContent(props) {
                                         {...field}
                                         name={[field.name, 'weight2']}
                                         fieldKey={[field.fieldKey, 'weight2']}
-                                        rules={[{ required: true, message: 'required field' },validate]}
-                                    >
-                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Weight(kg)" />
+                                        rules={[{ required: true, message: 'required field' },validate]}>
+                                        <Input type="number" suffix="kg" style={{width:90}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -127,9 +137,8 @@ function FiveStarMatrixModalContent(props) {
                                         {...field}
                                         name={[field.name, 'amount']}
                                         fieldKey={[field.fieldKey, 'amount']}
-                                        rules={[{ required: true, message: 'required field' },validate]}
-                                    >
-                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Amount(Php)" />
+                                        rules={[{ required: true, message: 'required field' },validateAmount]}>
+                                        <Input type="number" suffix="Php" style={{minWidth:80}} min={0} placeholder="Amount(Php)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -138,10 +147,10 @@ function FiveStarMatrixModalContent(props) {
                                         {...field}
                                         name={[field.name, 'kiloRate']}
                                         fieldKey={[field.fieldKey, 'kiloRate']}
-                                        rules={[{ required: true, message: 'required field' },validate]}
-                                    >
-                                        <InputNumber style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
+                                        rules={[{ required: true, message: 'required field' },validateAmount]}>
+                                        <Input type="number" suffix="Php" style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
                                     </Form.Item>
+
                                     <Button shape="circle" size="small" style={{background:'#c32020bf'}} onClick={() => remove(field.name)}>
                                         <DeleteOutlined style={{color:'white'}}/>
                                     </Button>
@@ -188,7 +197,7 @@ function FiveStarMatrixModalContent(props) {
                                         fieldKey={[field.fieldKey, 'meter']}
                                         rules={[{ required: true, message: 'Missing lenght' },validate]}
                                     >
-                                        <InputNumber style={{minWidth:120}} min={0} placeholder="Lenght(m)" />
+                                        <InputNumber addonAfter="m" style={{minWidth:120}} min={0} placeholder="Lenght(m)" />
                                     </Form.Item>
 
                                     <Form.Item
