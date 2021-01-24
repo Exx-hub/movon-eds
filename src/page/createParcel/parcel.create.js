@@ -1,222 +1,280 @@
-import React from 'react'
-import { ArrowLeftOutlined, NumberOutlined } from "@ant-design/icons";
-import { Button, notification, Layout, Steps, Form, Input, Space, Col, Row } from "antd";
-import {ParcelHeader} from '../../componentV2/Header'
+import React, { useState } from "react";
+import "./parcel.scss";
+import { Button, notification, Layout, Breadcrumb, Input, Form, Space, Tooltip } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+import isarog from '../../assets/bicol.png'
+import Modal from '../../component/modal/matrixModal'
 
-const { Content, Sider } = Layout;
-const { Step } = Steps;
+const { Content, Sider, Header } = Layout;
 const { TextArea } = Input;
 
-function StepTitle(props){
-    return(<div style={{
-        display:'flex', 
-        borderTopRightRadius:10, 
-        borderTopLeftRadius:10,
-        height:40,
-        background:'teal', 
-        width:'100%',
-        alignItems:'center'
-    }}><span style={{margin:"1rem", fontSize:"18px", color:'#fff'}}>{props.title}</span></div>)
-}
+function CreateParcel(props) {
 
-function TakePicture(props){
+    const [currentStep, setCurrentStep] = useState(0)
+
+    const updateSteps = () => {
+    }
+
+    const stepView = () => {
+    }
+
     return (
-        <>
-            <StepTitle title="Parcel Information" />
-            <div style={{width:'100%', display:'flex'}}>
-                <div style={{width:'40%', background:'#fff', padding:'1rem'}}>
-                    <div style={{border:'dashed 2px gray', marginRight:'1rem'}}>
-                        <img style={{height:'100%', width:"100%"}} src="https://lh3.googleusercontent.com/proxy/n32aLpcZFOYk0JftAPuByZ6C8DK3NnDqjCLkR16vOtujM0FEflvKGlLEoS9ClzZbAa7BmPuHwnT159XLyPhc5b0G4wWMmduU2-ie1r7SSAoGZHDtRoCjsymDL2ZwyUrWFACSwWkheZG7M1g" alt="parcel-icon"></img>
-                    </div>
-                    <div style={{display:'flex', justifyContent:"center", margin:'1rem'}}>
-                        <span>Take Photo</span> &nbsp; | &nbsp; 
-                        <span>Upload Picture</span>
-                    </div>
-                </div>
-                <div style={{width:'70%', background:'#fff', padding:'1rem'}}>
-                        {/* {Sender} */}
-                        <div style={{display:'flex', marginTop:'1.5rem'}}>
-                            <Form.Item    
-                                style={{width:'100%', margin:'2px'}}  
-                                name="declaredValue"
-                                rules={[{ required: true, message: 'This is required field!' }]}>
-                                <label style={{fontSize:'17px'}}>Sender Full Name*</label>
-                                <Input style={{width:"100%"}} /> 
-                            </Form.Item>
+        <Layout className="parcel-creator-page">
 
-                            <Form.Item 
-                                style={{width:'100%', margin:'2px'}}  
-                                {...{wrapperCol: 1}}     
-                                name="declaredValue"
-                                rules={[{ required: true, message: 'This is required field!' }]}>
-                                <label style={{fontSize:'17px'}}>Sender Mobile*</label>
-                                <Input style={{width:"100%"}} /> 
-                            </Form.Item>
-
-                            <Form.Item  
-                                style={{width:'70%', margin:'2px'}}      
-                                name="declaredValue"
-                                rules={[{ required: true, message: 'This is required field!' }]}>
-                                <label style={{fontSize:'17px'}}>Sender Email</label>
-                                <Input style={{width:"100%"}} /> 
-                            </Form.Item>
+            <Layout>
+                <Content style={{background:'white'}}>
+                        <div style={{display:'flex', marginTop:'1rem', marginBottom:'1rem', width:'100%', alignItems:'center', justifyContent:'space-between'}}>
+                            <Breadcrumb>
+                                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                                <Breadcrumb.Item>
+                                <a href="">Application Center</a>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item>
+                                <a href="">Application List</a>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item>An Application</Breadcrumb.Item>
+                            </Breadcrumb>
+                                <Tooltip title="Back to home page" style={{ position:'absolute', width:'100%', float:'right' }}>
+                                    <Button size="large"  style={{ height:50, width:50 }} shape="circle" icon={<CloseOutlined style={{fontSize:30}} />} />
+                                </Tooltip>
                         </div>
-
-                        {/* {Receiver} */}
-                        <div style={{display:'flex', marginTop:'1rem'}}>
-                            <Form.Item    
-                                style={{width:'100%', margin:'2px'}}  
-                                name="declaredValue"
-                                rules={[{ required: true, message: 'This is required field!' }]}>
-                                <label style={{fontSize:'17px'}}>Receiver Full Name*</label>
-                                <Input size="large" style={{width:"100%"}} /> 
-                            </Form.Item>
-
-                            <Form.Item 
-                                style={{width:'100%', margin:'2px'}}  
-                                {...{wrapperCol: 1}}     
-                                name="declaredValue"
-                                rules={[{ required: true, message: 'This is required field!' }]}>
-                                <label style={{fontSize:'17px'}}>Receiver Mobile*</label>
-                                <Input size="large" style={{width:"100%"}} /> 
-                            </Form.Item>
-
-                            <Form.Item  
-                                style={{width:'70%', margin:'2px'}}      
-                                name="declaredValue"
-                                rules={[{ required: true, message: 'This is required field!' }]}>
-                                <label style={{fontSize:'17px'}}>Receiver Email</label>
-                                <Input size="large" style={{width:"100%"}} /> 
-                            </Form.Item>
+                        <div style={{display:'flex', flexDirection:'column'}}>
+                            <img style={{marginBottom:'2rem'}} height={100} width={300} src={isarog} />
                         </div>
+                        <Form
+                            style={{marginBottom:'4rem'}}
+                            name="basic"
+                            onFinish={(e) => console.info(e)}
+                            onFinishFailed={(e) => console.info(e)}
+                            initialValues={{}}>
 
-                        {/* {Note} */}
-                        <div style={{display:'flex', marginTop:'1rem'}}>
-                            <Form.Item  
-                                style={{width:'100%', margin:'2px'}}      
-                                name="declaredValue"
-                                rules={[{ required: true, message: 'This is required field!' }]}>
-                                <label style={{fontSize:'17px'}}>Additional Note</label>
-                                <TextArea rows={5} size="large" style={{width:"100%"}} /> 
-                            </Form.Item>
-                        </div>
-                </div>
-            </div>
-            <><Button type="dashed" size="large" style={{width:'100%'}}>Next</Button></>
-        </>)
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', marginBottom: '2rem', boxShadow:"5px 10px 10px" }}>
+                                <div style={{ fontWeight: 'bold', color: 'white', padding: '1rem', borderTopLeftRadius: 10, borderTopRightRadius: 10, display: 'flex', background: 'red', fontSize: 24, width: '100%' }}>Package Information</div>
+                                <div style={{ display: 'flex', flexDirection: 'row', width: '100%', background: 'rgba(167, 159, 159, 0.4)' }}>
+                                    <div style={{ display: 'flex', width: '60%', flexDirection: 'column', borderRight: "solid rgba(56,56,56,0.2) 1px", padding: '1rem',  marginTop: '1.2rem', marginBottom: '1.2rem' }}>
+
+                                        <Space style={{ display: 'flex', width: '100%', flexWrap: 'wrap' }}>
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Destination</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Description</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Fix Price</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Sender Name</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Sender Phone No.</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: false, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Sender Email.</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Receiver Name</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Receiver Phone No.</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name="declaredValue"
+                                                rules={[{ required: false, message: 'This is required field!' }]}>
+                                                <Space direction="vertical">
+                                                    <label style={{ fontSize: 18, fontWeight: 400 }}>Receiver Email.</label>
+                                                    <Input size="large" style={{ width: 230 }} />
+                                                </Space>
+                                            </Form.Item>
+                                        </Space>
+
+                                    </div>
+
+                                    <div style={{ display: 'flex', width: '40%', padding: '1rem' }}>
+                                        <div style={{ alignItems: 'center', justifyContent: 'center', display: 'flex', width: '100%', height: '100%', position: 'relative' }}>
+                                            <Form.Item
+                                                name="declaredValue"
+                                                style={{ display: 'flex', width: '80%' }}
+                                                rules={[{ required: true, message: 'This is required field!' }]}>
+                                                <Input disabled={true} size="large" style={{ width: '100%', height: 250 }} />
+                                            </Form.Item>
+                                            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: "translate3d(-50%,-50%,0)" }}>
+                                                Take Picture | upload
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', marginBottom: '1rem', boxShadow:"5px 10px 10px"  }}>
+                                <div style={{ fontWeight: 'bold', color: 'white', padding: '1rem', borderTopLeftRadius: 10, borderTopRightRadius: 10, display: 'flex', background: 'red', fontSize: 24, width: '100%' }}>Package Information</div>
+                                <div style={{ display: 'flex', flexDirection: 'row', width: '100%', background: 'rgba(167, 159, 159, 0.4)' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%', padding: '1rem' }}>
+
+                                        <div style={{ display: 'flex', width: '60%', flexDirection: 'column', marginTop: '1.2rem', borderRight: "solid gray 1px" }}>
+                                            <Space style={{ display: 'flex', width: '100%', flexWrap: 'wrap' }}>
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: true, message: 'This is required field!' }]}>
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Declared Value</label>
+                                                        <Input type="number" addonBefore="₱" size="large" style={{ width: 170 }} />
+                                                    </Space>
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: true, message: 'This is required field!' }]}>
+
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Weight</label>
+                                                        <Input type="number" addonAfter="Kg." size="large" style={{ width: 170 }} />
+                                                    </Space>
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: true, message: 'This is required field!' }]}>
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Length</label>
+                                                        <Input type="number" addonAfter="m" size="large" style={{ width: 170 }} />
+                                                    </Space>
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: true, message: 'This is required field!' }]}>
+
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Package Count</label>
+                                                        <Input type="number" size="large" style={{ width: 170, }} />
+                                                    </Space>
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: true, message: 'This is required field!' }]}>
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Additional Fee</label>
+                                                        <Input type="number" addonBefore="₱" size="large" style={{ width: 170 }} />
+                                                    </Space>
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: true, message: 'This is required field!' }]}>
+
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Quantity</label>
+                                                        <Input type="number" size="large" style={{ width: 170 }} />
+                                                    </Space>
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: true, message: 'This is required field!' }]}>
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Number of Paxs</label>
+                                                        <Input type="number" size="large" style={{ width: 170 }} />
+                                                    </Space>
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="declaredValue"
+                                                    rules={[{ required: false, message: 'This is required field!' }]}>
+                                                    <Space direction="vertical">
+                                                        <label style={{ fontSize: 18, fontWeight: 400 }}>Additional Note</label>
+                                                        <TextArea size="large" style={{ width: 350 }} />
+                                                    </Space>
+                                                </Form.Item>
+
+
+                                            </Space>
+                                        </div>
+
+                                        <div style={{ display: 'flex', flexDirection: 'column', width: '40%', padding: '2rem' }}>
+                                            <FeeContainer label="Declared Value Fee" value="₱ 10.00" />
+                                            <FeeContainer label="Additional Fee" value="₱ 10.00" />
+                                            <FeeContainer label="Weight Fee" value="₱ 10.00" />
+                                            <FeeContainer label="Length Fee" value="₱ 10.00" />
+                                            <FeeContainer label="Porter's Fee" value="₱ 10.00" />
+                                            <FeeContainer label="System Fee" value="₱ 10.00" />
+                                            <Space style={{ marginTop: '1rem' }}>
+                                                <div style={{ minWidth: '240px', fontSize: '22px', fontWeight: 'bold' }}>Total Shipping Fee :</div>
+                                                <label style={{ color: "green", fontWeight: 'bold', minWidth: '100px', fontSize: '22px' }}>₱ 40.00</label>
+                                            </Space>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <Button
+                                htmlType="submit"
+                                type="dashed"
+                                onClick={() => props.onOk}
+                                style={{ marginTop: '2rem', fontSize: 20, fontWeight: 'bold', height: 80, width: '100%', }}>Validate Parcel</Button>
+                        </Form>
+                </Content>
+            </Layout>
+        </Layout>
+    )
 }
 
-function FreightComputationView(){
-    return(
-    <div>
-        <div style={{display:'flex', width:"100%", height:'100%'}}>
-            <div style={{width:'60%'}}>
-                <div style={{display:'flex', marginTop:'1.2rem'}}>
-                    <Form.Item    
-                        style={{width:'100%', margin:'2px'}}  
-                        name="declaredValue"
-                        rules={[{ required: true, message: 'This is required field!' }]}>
-                        <label style={{fontSize:'17px'}}>Sender Full Name*</label>
-                        <Input size="large" style={{width:"100%"}} /> 
-                    </Form.Item>
-
-                    <Form.Item 
-                        style={{width:'100%', margin:'2px'}}  
-                        {...{wrapperCol: 1}}     
-                        name="declaredValue"
-                        rules={[{ required: true, message: 'This is required field!' }]}>
-                        <label style={{fontSize:'17px'}}>Sender Mobile*</label>
-                        <Input size="large" style={{width:"100%"}} /> 
-                    </Form.Item>
-
-                    <Form.Item  
-                        style={{width:'70%', margin:'2px'}}      
-                        name="declaredValue"
-                        rules={[{ required: true, message: 'This is required field!' }]}>
-                        <label style={{fontSize:'17px'}}>Sender Email</label>
-                        <Input size="large" style={{width:"100%"}} /> 
-                    </Form.Item>
-                </div>
-
-                <div style={{display:'flex', marginTop:'1.2rem'}}>
-                    <Form.Item    
-                        style={{width:'100%', margin:'2px'}}  
-                        name="declaredValue"
-                        rules={[{ required: true, message: 'This is required field!' }]}>
-                        <label style={{fontSize:'17px'}}>Sender Full Name*</label>
-                        <Input size="large" style={{width:"100%"}} /> 
-                    </Form.Item>
-
-                    <Form.Item 
-                        style={{width:'100%', margin:'2px'}}  
-                        {...{wrapperCol: 1}}     
-                        name="declaredValue"
-                        rules={[{ required: true, message: 'This is required field!' }]}>
-                        <label style={{fontSize:'17px'}}>Sender Mobile*</label>
-                        <Input size="large" style={{width:"100%"}} /> 
-                    </Form.Item>
-
-                    <Form.Item  
-                        style={{width:'70%', margin:'2px'}}      
-                        name="declaredValue"
-                        rules={[{ required: true, message: 'This is required field!' }]}>
-                        <label style={{fontSize:'17px'}}>Sender Email</label>
-                        <Input size="large" style={{width:"100%"}} /> 
-                    </Form.Item>
-                </div>
-            </div>
-            
-            <div style={{display:'flex', flexDirection:'column', alignSelf:'flex-end', width:'40%', background:'red', padding:'2rem'}}>
-                <Space direction="horizontal">
-                    <div style={{width:200, fontSize:20}}>Declared Value Fee:</div>
-                    <span>0.00</span>
-                </Space>
-                <Space direction="horizontal">
-                    <div style={{width:200, fontSize:20}}>Length Fee:</div>
-                    <span>0.00</span>
-                </Space>
-                <Space direction="horizontal">
-                    <div style={{width:200, fontSize:20}}>Weight Fee:</div>
-                    <span>0.00</span>
-                </Space>
-                <Space direction="horizontal">
-                    <div style={{width:200, fontSize:20}}>Shipping Cost:</div>
-                    <span>0.00</span>
-                </Space>
-                <Space direction="horizontal">
-                    <div style={{width:200, fontSize:20}}>Total:</div>
-                    <div>0.00</div> 
-                </Space>
-            </div>
-        </div>
-    </div>)
+function FeeContainer(props) {
+    return (<Space>
+        <div style={{ fontStyle: 'italic', fontWeight: 300, minWidth: '250px', fontSize: '20px', color: 'gray' }}>{props.label} :</div>
+        <label style={{ color: "gray", fontWeight: 'bold', minWidth: '100px', fontSize: '18px' }}>{props.value}</label>
+    </Space>)
 }
 
-
-
-function Parcel(props){
-    return(<Layout>
-        <ParcelHeader {...props} title="Home" onNavigation={()=>props.history.push("/")}> <span>Hi Ronnie! </span> </ParcelHeader>
-        <div style={{display:'flex', margin:'2rem'}} >
-            <Form 
-                name="basic"
-                onFinish={(e)=>console.info(e)}
-                onFinishFailed={(e)=>console.info(e)}
-                style={{marginBottom:'.2rem', display:'flex', flexDirection:'column'}}
-                initialValues={{}}>
-                <Steps direction="vertical" current={1}>
-                    <Step description={ <TakePicture {...props} /> }/>
-                    <Step title="In Progress" description={<FreightComputationView />} />
-                    <Step title="Waiting" description="This is a description." />
-                </Steps>
-                <Button 
-                    htmlType="submit"
-                    shape="round" 
-                    onClick={()=>props.onOk}
-                    style={{fontWeight:'bold', width:150, backgroundColor:'#43b73e', color:'#fff'}}>{props.okText || "Ok"}</Button>
-            </Form>
-        </div>
-    </Layout>)
-}
-
-export default Parcel;
+export default CreateParcel;

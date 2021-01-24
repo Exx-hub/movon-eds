@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./create.scss";
 import {
   BicolIsarogForm,
@@ -9,7 +9,7 @@ import WebCam from "../../component/webcam";
 import ScheduledTrips from "../../component/scheduledTrips";
 import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
-import { Button, notification, Layout, Checkbox } from "antd";
+import { Button, notification, Layout, Checkbox, Input, Form, Space } from "antd";
 import ReactToPrint from "react-to-print";
 import { ArrowLeftOutlined, CodeOutlined, NumberOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
@@ -22,9 +22,9 @@ import {
   alterPath,
   dataURLtoFile,
 } from "../../utility";
-import { queryByTestId } from "@testing-library/react";
 
 const { Content, Sider, Header } = Layout;
+const { TextArea } = Input;
 
 const MIN_WIDTH = 800;
 const STEPS_LIST = [
@@ -63,8 +63,7 @@ const StepControllerView = (props) => {
   return (
     <div
       className={[
-        `step-controller-container-item ${
-          props.width < 500 ? "button-steps" : ""
+        `step-controller-container-item ${props.width < 500 ? "button-steps" : ""
         }`,
       ]}
     >
@@ -81,9 +80,8 @@ const StepControllerView = (props) => {
       {!props.disableNextButton && (
         <Button
           disabled={props.disabled}
-          className={`${
-            props.disabled ? "create-btn disabled-btn" : "create-btn btn-next"
-          }`}
+          className={`${props.disabled ? "create-btn disabled-btn" : "create-btn btn-next"
+            }`}
           onClick={() => {
             props.onNextStep();
           }}
@@ -402,7 +400,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          enabled:false
+          enabled: false
         }
       },
       enalbeBicolIsarogWays: false,
@@ -456,7 +454,7 @@ class CreateParcel extends React.Component {
     ];
     details.discount = discount;
 
-    if(UserProfile.getBusCompanyTag() === 'dltb'){
+    if (UserProfile.getBusCompanyTag() === 'dltb') {
       details.length.disabled = true
     }
 
@@ -808,7 +806,7 @@ class CreateParcel extends React.Component {
     // }
 
     if (this.userProfileObject.isFiveStar()) {
-      ParcelService.getFiveStarConvenienceFee(qty,0).then((res) =>this.parseSystemFeeResponse(res));
+      ParcelService.getFiveStarConvenienceFee(qty, 0).then((res) => this.parseSystemFeeResponse(res));
       return;
     }
   };
@@ -876,53 +874,53 @@ class CreateParcel extends React.Component {
         weight,
         parcel_length
       )
-      .then((e) => {
-        let details = { ...this.state.details };
-        const { data, success, errorCode } = e.data;
-        if (success) {
-          const lengthRate = parseFloat(data.lengthRate);
-          const declaredRate = parseFloat(data.declaredRate);
-          const totalCost = parseFloat(data.totalCost);
+        .then((e) => {
+          let details = { ...this.state.details };
+          const { data, success, errorCode } = e.data;
+          if (success) {
+            const lengthRate = parseFloat(data.lengthRate);
+            const declaredRate = parseFloat(data.declaredRate);
+            const totalCost = parseFloat(data.totalCost);
 
-          const shippingCost = {
-            ...details.shippingCost,
-            ...{ value: totalCost.toFixed(2) },
-          };
-          const packageInsurance = {
-            ...details.packageInsurance,
-            ...{ value: declaredRate.toFixed(2) },
-          };
-          details = { ...details, ...{ shippingCost } };
-          details = { ...details, ...{ packageInsurance } };
+            const shippingCost = {
+              ...details.shippingCost,
+              ...{ value: totalCost.toFixed(2) },
+            };
+            const packageInsurance = {
+              ...details.packageInsurance,
+              ...{ value: declaredRate.toFixed(2) },
+            };
+            details = { ...details, ...{ shippingCost } };
+            details = { ...details, ...{ packageInsurance } };
 
-          this.setState({lengthRate: lengthRate.toFixed(2),details,},() => this.updateTotalShippingCost());
-        } else {
-          this.handleErrorNotification(errorCode);
-        }
-      });
+            this.setState({ lengthRate: lengthRate.toFixed(2), details, }, () => this.updateTotalShippingCost());
+          } else {
+            this.handleErrorNotification(errorCode);
+          }
+        });
     }
   };
 
-  dltbFixPriceComputation = () =>{
+  dltbFixPriceComputation = () => {
 
-    let d = {...this.state.details}
-    const options={
-      origin:UserProfile.getAssignedStationId(),
+    let d = { ...this.state.details }
+    const options = {
+      origin: UserProfile.getAssignedStationId(),
       destination: d.destination.value,
       declaredValue: d.declaredValue.value || 0,
       parcelCount: d.sticker_quantity.value,
       fixMatrixItemName: d.fixMatrix.value
     }
-    ParcelService.getDltbFixMatrixComputation(options).then(e=>{
-      const{data,errorCode}=e.data;
-      if(!errorCode){
+    ParcelService.getDltbFixMatrixComputation(options).then(e => {
+      const { data, errorCode } = e.data;
+      if (!errorCode) {
         const systemFee = Number(data.systemFee);
         let total = Number(data.computeTotalShippingCost);
 
         let qty = Number(d.quantity.value || 1)
         let quantity = qty < 1 ? 1 : qty;
 
-        if(quantity > 1){
+        if (quantity > 1) {
           total -= systemFee;
           total = total * quantity;
           total += systemFee
@@ -932,22 +930,22 @@ class CreateParcel extends React.Component {
         d.totalShippingCost.value = total;
         d.packageInsurance.value = data.declaredValue
         d.systemFee.value = data.systemFee
-        this.setState({details:d})
-      }else{
+        this.setState({ details: d })
+      } else {
         this.handleErrorNotification(errorCode);
       }
     })
   }
 
-  addFixMatrixFee = (_qty, addrate) =>{
-    let d = {...this.state.details}
+  addFixMatrixFee = (_qty, addrate) => {
+    let d = { ...this.state.details }
     let total = (Number(d.packageInsurance.value || 0) + Number(d.shippingCost.value || 0))
     let qty = Number(_qty || 0)
     let quantity = qty < 1 ? 1 : qty;
     total = total * quantity;
-    total += Number(d.systemFee.value || 0) 
-    total += addrate 
-    d.totalShippingCost.value = total 
+    total += Number(d.systemFee.value || 0)
+    total += addrate
+    d.totalShippingCost.value = total
     return total;
   }
 
@@ -968,19 +966,19 @@ class CreateParcel extends React.Component {
       details = { ...details, ...{ [name]: item } };
     }
 
-    if(UserProfile.getBusCompanyTag() === 'dltb'){
+    if (UserProfile.getBusCompanyTag() === 'dltb') {
       let qty = undefined;
       let addrate = undefined
 
-      if(name === 'quantity'){
+      if (name === 'quantity') {
         qty = Number(value)
         addrate = Number(details.additionalFee.value || 0)
-        details.totalShippingCost.value = this.addFixMatrixFee(qty,addrate)
+        details.totalShippingCost.value = this.addFixMatrixFee(qty, addrate)
       }
-      if(name == "additionalFee"){
+      if (name == "additionalFee") {
         qty = Number(details.quantity.value || 1)
         addrate = Number(value)
-        details.totalShippingCost.value = this.addFixMatrixFee(qty,addrate)
+        details.totalShippingCost.value = this.addFixMatrixFee(qty, addrate)
       }
     }
 
@@ -1002,7 +1000,7 @@ class CreateParcel extends React.Component {
           }
           details = { ...details, ...{ packageInsurance } };
           break;
-      
+
         default:
           break;
       }
@@ -1029,7 +1027,7 @@ class CreateParcel extends React.Component {
           case 'isarog-liner':
             this.updateTotalShippingCost();
             break;
-        
+
           default:
             break;
         }
@@ -1151,7 +1149,7 @@ class CreateParcel extends React.Component {
 
     if (name === "connectingRoutes") {
 
-      const associateFixPrice = {...details.associateFixPrice};
+      const associateFixPrice = { ...details.associateFixPrice };
       associateFixPrice.value = undefined;
       associateFixPrice.options = [];
       //details.associateFixPrice = associateFixPrice;
@@ -1162,7 +1160,7 @@ class CreateParcel extends React.Component {
       };
 
       details = { ...details, ...{ connectingRoutes, associateFixPrice } };
-      
+
       this.getMatrixValue(
         this.state.details.connectingCompany.value,
         this.state.details.connectingRoutes.options.filter((e) => e.end)[0]
@@ -1199,19 +1197,19 @@ class CreateParcel extends React.Component {
         ...{ value, accepted: true },
       };
 
-      let fixMatrix = {...details.fixMatrix}
+      let fixMatrix = { ...details.fixMatrix }
       fixMatrix.value = undefined;
       fixMatrix.options = []
       details.fixMatrix = fixMatrix
 
-      let description = {...details.description}
-      description.value=undefined;
+      let description = { ...details.description }
+      description.value = undefined;
       details.description = description;
 
       details = { ...details, ...{ destination } };
       this.setState({ details, selectedDestination });
 
-    
+
       MatrixService.getMatrix({
         busCompanyId: this.userProfileObject.getBusCompanyId(),
         origin: this.userProfileObject.getAssignedStationId(),
@@ -1222,11 +1220,11 @@ class CreateParcel extends React.Component {
           let result = (data &&
             data.stringValues &&
             JSON.parse(data.stringValues)) || { matrix: [], fixMatrix: [] };
-            let details = { ...this.state.details };
+          let details = { ...this.state.details };
 
-            if(!result.fixMatrix){
-              result.fixMatrix = []
-            }
+          if (!result.fixMatrix) {
+            result.fixMatrix = []
+          }
 
           if (Array.isArray(result)) {
             details.fixMatrix = {
@@ -1303,23 +1301,23 @@ class CreateParcel extends React.Component {
         let price = Number(option.price).toFixed(2);
         let declaredValue = Number(option.declaredValue);
         let enableAdditionalFee = Boolean(option.additionalFee || true)
-        
+
         declaredValue = declaredValue / 100;
         details.fixMatrix.value = value;
         details.additionalFee.enabled = enableAdditionalFee;
-       
+
 
         if (Number(declaredValue) === Number(0)) {
-            details.packageInsurance.value = 0;
-            details.packageInsurance.disabled = true;
-            details.declaredValue.value = 0;
-            details.declaredValue.disabled = true;
+          details.packageInsurance.value = 0;
+          details.packageInsurance.disabled = true;
+          details.declaredValue.value = 0;
+          details.declaredValue.disabled = true;
         } else {
-            details.packageInsurance.value = 0;
-            details.packageInsurance.disabled = false;
-            details.declaredValue.value = 0;
-            details.declaredValue.disabled = false;
-            details.systemFee.value = 0;
+          details.packageInsurance.value = 0;
+          details.packageInsurance.disabled = false;
+          details.declaredValue.value = 0;
+          details.declaredValue.disabled = false;
+          details.systemFee.value = 0;
         }
 
         details.packageWeight.disabled = true;
@@ -1336,7 +1334,7 @@ class CreateParcel extends React.Component {
             details.totalShippingCost.value = price
             this.setState({ lengthRate: 0, details });
             break;
-        
+
           default:
             this.setState({ lengthRate: 0, details }, () => {
               this.updateTotalShippingCost();
@@ -1344,7 +1342,7 @@ class CreateParcel extends React.Component {
             break;
         }
       } else {
-        
+
         details.fixMatrix.value = "none";
         details.packageInsurance.disabled = false;
         details.declaredValue.disabled = false;
@@ -1355,11 +1353,11 @@ class CreateParcel extends React.Component {
         details.declaredValue.value = 0;
         details.shippingCost.value = 0;
         details.packageWeight.value = 0;
-        
-        if(UserProfile.getBusCompanyTag() !== "dltb"){
+
+        if (UserProfile.getBusCompanyTag() !== "dltb") {
           details.length.disabled = false;
         }
-       
+
         details.length.value = 0;
         details.quantity.disabled = true;
         details.quantity.value = 1;
@@ -1368,7 +1366,7 @@ class CreateParcel extends React.Component {
           case "dltb":
             this.setState({ lengthRate: 0, details });
             break;
-        
+
           default:
             this.setState({ lengthRate: 0, details }, () => {
               this.updateTotalShippingCost();
@@ -1442,26 +1440,26 @@ class CreateParcel extends React.Component {
                 }
               />
             ) : (
-              <CreateParcelForm
-                enableInterConnection={this.state.enalbeBicolIsarogWays}
-                onBlur={(name) => {
-                  let item = this.onBlurValidation(name);
-                  if (item)
-                    this.setState({
-                      details: { ...this.state.details, ...{ [name]: item } },
-                    });
-                }}
-                lengthRate={this.state.lengthRate}
-                details={this.state.details}
-                onTypeChange={(e) => this.onTypeChange(e.target.value)}
-                onSelectChange={(value, name) =>
-                  this.onSelectChange(value, name)
-                }
-                onChange={(e) =>
-                  this.onInputChange(e.target.name, e.target.value)
-                }
-              />
-            )}
+                <CreateParcelForm
+                  enableInterConnection={this.state.enalbeBicolIsarogWays}
+                  onBlur={(name) => {
+                    let item = this.onBlurValidation(name);
+                    if (item)
+                      this.setState({
+                        details: { ...this.state.details, ...{ [name]: item } },
+                      });
+                  }}
+                  lengthRate={this.state.lengthRate}
+                  details={this.state.details}
+                  onTypeChange={(e) => this.onTypeChange(e.target.value)}
+                  onSelectChange={(value, name) =>
+                    this.onSelectChange(value, name)
+                  }
+                  onChange={(e) =>
+                    this.onInputChange(e.target.name, e.target.value)
+                  }
+                />
+              )}
 
             <StepControllerView
               width={this.state.width}
@@ -1518,7 +1516,7 @@ class CreateParcel extends React.Component {
               width={this.state.width}
               disableNextButton={true}
               onPreviousStep={() => this.onPreviousStep()}
-              onNextStep={() => {}}
+              onNextStep={() => { }}
             />
           </>
         );
@@ -1651,21 +1649,21 @@ class CreateParcel extends React.Component {
     }
   };
 
-  requestComputation = () =>{
-    const{declaredValue,packageWeight,sticker_quantity,destination, length}=this.state.details;
+  requestComputation = () => {
+    const { declaredValue, packageWeight, sticker_quantity, destination, length } = this.state.details;
     const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
     const endStation = selectedOption.endStation || undefined;
     const startStation = this.userProfileObject.getAssignedStationId();
 
-    if(!endStation || !startStation)
+    if (!endStation || !startStation)
       return
 
-      console.info('endStation',endStation)
-      console.info('startStation',startStation)
+    console.info('endStation', endStation)
+    console.info('startStation', startStation)
 
     const option = {
-      origin:startStation,
-      destination:endStation,
+      origin: startStation,
+      destination: endStation,
       declaredValue: Number(declaredValue.value),
       weight: Number(packageWeight.value),
       parcelCount: Number(sticker_quantity.value),
@@ -1673,35 +1671,35 @@ class CreateParcel extends React.Component {
     }
 
     ParcelService.getDltbComputation(option)
-    .then(e=>{
-      console.log('getDltbComputation',e)
-      const{data,errorCode}=e.data;
+      .then(e => {
+        console.log('getDltbComputation', e)
+        const { data, errorCode } = e.data;
 
-      if(!errorCode){
-        const{
-          totalShippingCost,
-          declaredValueFee,
-          systemFee,
-        } = data;
+        if (!errorCode) {
+          const {
+            totalShippingCost,
+            declaredValueFee,
+            systemFee,
+          } = data;
 
-        let total = Number(totalShippingCost) 
+          let total = Number(totalShippingCost)
 
-        const _data = {...this.state.details}
-        let quantity = Number(_data.quantity.value || 1)
-        quantity = quantity > 0 ? quantity : 1;
+          const _data = { ...this.state.details }
+          let quantity = Number(_data.quantity.value || 1)
+          quantity = quantity > 0 ? quantity : 1;
 
-        if(quantity > 1){
-          total -= Number(systemFee)
-          total = total * quantity
+          if (quantity > 1) {
+            total -= Number(systemFee)
+            total = total * quantity
+          }
+
+          _data.totalShippingCost.value = Number(total || 0).toFixed(2);
+          _data.packageInsurance.value = declaredValueFee;
+          _data.systemFee.value = systemFee;
+          _data.shippingCost.value = Number(Number(totalShippingCost) - (Number(systemFee) + Number(declaredValue))).toFixed(2)
+          this.setState({ details: _data });
         }
-
-        _data.totalShippingCost.value = Number(total || 0).toFixed(2);
-        _data.packageInsurance.value = declaredValueFee;
-        _data.systemFee.value = systemFee;
-        _data.shippingCost.value = Number(Number(totalShippingCost) - ( Number(systemFee) + Number(declaredValue))).toFixed(2)
-        this.setState({details:_data});
-      }
-    })
+      })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -1733,7 +1731,7 @@ class CreateParcel extends React.Component {
       oldConnectingCompany !== currentDetails.connectingCompany.value;
 
     if (hasFreshData) {
-      
+
       if (currentDetails.packageWeight.value !== undefined && currentDetails.declaredValue.value !== undefined) {
         this.computeForConnectinRoutes();
 
@@ -1745,18 +1743,18 @@ class CreateParcel extends React.Component {
             return;
           }
 
-          console.info("tag",UserProfile.getBusCompanyTag())
-          const{ declaredValue,packageWeight,sticker_quantity,length}=currentDetails;
-          
+          console.info("tag", UserProfile.getBusCompanyTag())
+          const { declaredValue, packageWeight, sticker_quantity, length } = currentDetails;
+
           switch (UserProfile.getBusCompanyTag()) {
             case "dltb":
-              if(declaredValue.value && packageWeight.value && sticker_quantity.value ){
+              if (declaredValue.value && packageWeight.value && sticker_quantity.value) {
                 this.requestComputation()
               }
               break;
 
             case "five-star":
-              if(declaredValue.value && packageWeight.value && sticker_quantity.value && length.value){
+              if (declaredValue.value && packageWeight.value && sticker_quantity.value && length.value) {
                 this.requestComputation()
               }
               break;
@@ -1765,18 +1763,18 @@ class CreateParcel extends React.Component {
               this.computePrice();
               const oldDetails = prevState.details;
               const curDetails = this.state.details;
-                if (
-                  (this.state.details.fixMatrix.value === "none" ||
-                    this.state.details.fixMatrix.value === undefined) &&
-                  (oldDetails.shippingCost.value !== curDetails.shippingCost.value ||
-                    oldDetails.systemFee.value !== curDetails.systemFee.value ||
-                    oldDetails.packageInsurance.value !==
-                      curDetails.packageInsurance.value ||
-                    prevState.connectingCompanyComputation !==
-                      this.state.connectingCompanyComputation)
-                ){
-                  this.updateTotalShippingCost();
-                }
+              if (
+                (this.state.details.fixMatrix.value === "none" ||
+                  this.state.details.fixMatrix.value === undefined) &&
+                (oldDetails.shippingCost.value !== curDetails.shippingCost.value ||
+                  oldDetails.systemFee.value !== curDetails.systemFee.value ||
+                  oldDetails.packageInsurance.value !==
+                  curDetails.packageInsurance.value ||
+                  prevState.connectingCompanyComputation !==
+                  this.state.connectingCompanyComputation)
+              ) {
+                this.updateTotalShippingCost();
+              }
               break;
           }
         }
@@ -1819,21 +1817,21 @@ class CreateParcel extends React.Component {
 
     //total +=
     //  parseFloat(this.state.connectingCompanyComputation || 0) //+
-      //parseFloat(currentDetails.systemFee.value || 0);
+    //parseFloat(currentDetails.systemFee.value || 0);
 
-    if(this.userProfileObject.isIsarogLiners()){
+    if (this.userProfileObject.isIsarogLiners()) {
       total += parseFloat(this.state.connectingCompanyComputation || 0)
-      let systemFee = {...currentDetails.systemFee, ...{value:0}};
-      if(total < 500){
+      let systemFee = { ...currentDetails.systemFee, ...{ value: 0 } };
+      if (total < 500) {
         total += 10;
-        systemFee = {...currentDetails.systemFee, ...{value:10}};
+        systemFee = { ...currentDetails.systemFee, ...{ value: 10 } };
       }
       currentDetails.systemFee = systemFee
-    }else{
+    } else {
       total += parseFloat(currentDetails.systemFee.value || 0)
     }
 
-    const totalShippingCost = {...currentDetails.totalShippingCost, ...{ value: parseFloat(total).toFixed(2) }};
+    const totalShippingCost = { ...currentDetails.totalShippingCost, ...{ value: parseFloat(total).toFixed(2) } };
     this.setState({ details: { ...currentDetails, ...{ totalShippingCost } } });
   };
 
