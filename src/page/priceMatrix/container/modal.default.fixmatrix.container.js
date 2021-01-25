@@ -25,7 +25,7 @@ function AddFixMatrixModalContent(props) {
     };
 
     const layout = {
-        labelCol: { span: 8 },
+        labelCol: { span: 4 },
         wrapperCol: { span: 16 },
     };
 

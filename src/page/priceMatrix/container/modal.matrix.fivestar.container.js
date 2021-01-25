@@ -26,8 +26,8 @@ function FiveStarMatrixModalContent(props) {
     })
 
     const layout = {
-        labelCol: { span: 7 },
-        wrapperCol: { span: 16 },
+        labelCol: { span: 6 },
+        wrapperCol: { span: 20 },
     };
 
     const tailLayout = {
@@ -95,12 +95,12 @@ function FiveStarMatrixModalContent(props) {
                 </Form.Item>
 
                 <div style={{display:'flex'}}>
-                    <div className="ant-col ant-col-7 ant-form-item-label">
+                    <div className="ant-col ant-col-6 ant-form-item-label">
                         <label className="ant-form-item-label">Weight Range</label>
                     </div>
                     <Form.List name="weightRange">
                     {(fields, { add, remove }) => (
-                        <div className="ant-col ant-col-16 ant-form-item-control" 
+                        <div className="ant-col ant-col-20 ant-form-item-control" 
                             style={{padding:'.5rem', marginBottom:'1.5rem', border:'dashed 2px #014949a1'}}>
                             {fields.map(field => (
                                 <div key={field.key} style={{
@@ -118,7 +118,7 @@ function FiveStarMatrixModalContent(props) {
                                         name={[field.name, 'weight1']}
                                         fieldKey={[field.fieldKey, 'weight1']}
                                         rules={[{ required: true, message: 'required field' },validate]}>
-                                        <Input type="number" suffix="kg" style={{width:90}} min={0} placeholder="Weight(kg)" />
+                                        <Input type="number" addonBefore="kg" style={{width:120}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -128,7 +128,7 @@ function FiveStarMatrixModalContent(props) {
                                         name={[field.name, 'weight2']}
                                         fieldKey={[field.fieldKey, 'weight2']}
                                         rules={[{ required: true, message: 'required field' },validate]}>
-                                        <Input type="number" suffix="kg" style={{width:90}} min={0} placeholder="Weight(kg)" />
+                                        <Input type="number" addonBefore="kg" style={{width:120}} min={0} placeholder="Weight(kg)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -138,7 +138,7 @@ function FiveStarMatrixModalContent(props) {
                                         name={[field.name, 'amount']}
                                         fieldKey={[field.fieldKey, 'amount']}
                                         rules={[{ required: true, message: 'required field' },validateAmount]}>
-                                        <Input type="number" suffix="Php" style={{minWidth:80}} min={0} placeholder="Amount(Php)" />
+                                        <Input type="number" addonBefore="₱" style={{minWidth:80}} min={0} placeholder="Amount(Php)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -148,7 +148,7 @@ function FiveStarMatrixModalContent(props) {
                                         name={[field.name, 'kiloRate']}
                                         fieldKey={[field.fieldKey, 'kiloRate']}
                                         rules={[{ required: true, message: 'required field' },validateAmount]}>
-                                        <Input type="number" suffix="Php" style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
+                                        <Input type="number" addonBefore="₱" style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
                                     </Form.Item>
 
                                     <Button shape="circle" size="small" style={{background:'#c32020bf'}} onClick={() => remove(field.name)}>
@@ -173,12 +173,12 @@ function FiveStarMatrixModalContent(props) {
                 </div>
 
                 <div style={{display:'flex'}}>
-                    <div className="ant-col ant-col-7 ant-form-item-label">
+                    <div className="ant-col ant-col-6 ant-form-item-label">
                         <label className="ant-form-item-label">Lenght Range</label>
                     </div>
                     <Form.List name="lengthRange">
                     {(fields, { add, remove }) => (
-                        <div className="ant-col ant-col-16 ant-form-item-control" 
+                        <div className="ant-col ant-col-20 ant-form-item-control" 
                             style={{padding:'.5rem', marginBottom:'1.5rem', border:'dashed 2px #014949a1'}}>
                             {fields.map((field, index) => (
                                 <div key={field.key} style={{
@@ -197,7 +197,7 @@ function FiveStarMatrixModalContent(props) {
                                         fieldKey={[field.fieldKey, 'meter']}
                                         rules={[{ required: true, message: 'Missing lenght' },validate]}
                                     >
-                                        <InputNumber addonAfter="m" style={{minWidth:120}} min={0} placeholder="Lenght(m)" />
+                                        <Input type="number" addonAfter="m" style={{width:120}} min={0} placeholder="Lenght(m)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -207,7 +207,7 @@ function FiveStarMatrixModalContent(props) {
                                         fieldKey={[field.fieldKey, 'percentage']}
                                         rules={[{ required: true, message: 'Missing percent' },validate]}
                                     >
-                                        <InputNumber style={{minWidth:120}} min={0} placeholder="Percentage %" />
+                                        <Input type="number" addonAfter="%" style={{width:120}} min={0} placeholder="Percentage %" />
                                     </Form.Item>
                                     
                                     <Button shape="circle" size="small" style={{background:'#c32020bf'}} onClick={() => remove(field.name)}>

@@ -42,11 +42,12 @@ function CreateParcel(props) {
                             initialValues={{}}>
 
                             <div style={{ display: 'flex', flexDirection: 'column', width: '100%', marginBottom: '2rem', boxShadow:"5px 10px 10px" }}>
-                                <div style={{ fontWeight: 'bold', color: 'white', padding: '1rem', borderTopLeftRadius: 10, borderTopRightRadius: 10, display: 'flex', background: 'red', fontSize: 24, width: '100%' }}>Package Information</div>
+                                <div style={{ fontWeight: 'bold', color: 'white', padding: '1rem', borderTopLeftRadius: 10, borderTopRightRadius: 10, display: 'flex', background: '#cc2728', fontSize: 24, width: '100%' }}>Package Information</div>
                                 <div style={{ display: 'flex', flexDirection: 'row', width: '100%', background: 'rgba(167, 159, 159, 0.4)' }}>
                                     <div style={{ display: 'flex', width: '60%', flexDirection: 'column', borderRight: "solid rgba(56,56,56,0.2) 1px", padding: '1rem',  marginTop: '1.2rem', marginBottom: '1.2rem' }}>
 
                                         <Space style={{ display: 'flex', width: '100%', flexWrap: 'wrap' }}>
+                                            
                                             <Form.Item
                                                 name="declaredValue"
                                                 rules={[{ required: true, message: 'This is required field!' }]}>
@@ -148,7 +149,7 @@ function CreateParcel(props) {
                             </div>
 
                             <div style={{ display: 'flex', flexDirection: 'column', width: '100%', marginBottom: '1rem', boxShadow:"5px 10px 10px"  }}>
-                                <div style={{ fontWeight: 'bold', color: 'white', padding: '1rem', borderTopLeftRadius: 10, borderTopRightRadius: 10, display: 'flex', background: 'red', fontSize: 24, width: '100%' }}>Package Information</div>
+                                <div style={{ fontWeight: 'bold', color: 'white', padding: '1rem', borderTopLeftRadius: 10, borderTopRightRadius: 10, display: 'flex', background: '#cc2728', fontSize: 24, width: '100%' }}>Package Information</div>
                                 <div style={{ display: 'flex', flexDirection: 'row', width: '100%', background: 'rgba(167, 159, 159, 0.4)' }}>
                                     <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%', padding: '1rem' }}>
 
