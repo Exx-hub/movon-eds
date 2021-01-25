@@ -385,6 +385,12 @@ class ManifestDetails extends React.Component {
       scanCode: data.scanCode,
       createdAt: data.createdAt,
       subParcels: data.subParcels,
+      lengthFee: data.priceDetails.lengthFee,
+      length:data.packageInfo.length,
+      weightFee: data.priceDetails.weightFee,
+      portersFee: data.priceDetails.portersFee,
+      declaredValue: data.packageInfo.estimatedValue,
+      additionalFee: data.priceDetails.additionalFee
     };
   };
 

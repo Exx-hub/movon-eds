@@ -112,6 +112,14 @@ const getReviewDetails = (state) => {
     additionalNote: state.details.additionNote.value,
     billOfLading: state.billOfLading,
     checkIn: state.checkIn,
+    destination: state.details.value,
+    lengthFee: "test",
+    length:"test",
+    weightFee: 'test',
+    portersFee: 'test',
+    stickerCount: 'test',
+    declaredValue: 'test',
+    additionalFee: 'test'
   };
 };
 
@@ -166,8 +174,8 @@ class CreateParcel extends React.Component {
       width: window.innerWidth,
       height: window.innerHeight,
       packageImagePreview: null,
-      currentStep: 0,
-      verifiedSteps: 0,
+      currentStep: 3,
+      verifiedSteps: 3,
       trips: undefined,
       selectedTrip: undefined,
       createParcelResponseData: undefined,
