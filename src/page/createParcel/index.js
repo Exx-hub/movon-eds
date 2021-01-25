@@ -183,13 +183,14 @@ class CreateParcel extends React.Component {
       page: 1,
       checkIn: false,
       isLoading: false,
-      billOfLading: {
-        name: "billOfLading",
-        value: undefined,
-        isRequired: true,
-        accepted: true,
-      },
       details: {
+        billOfLading: {
+          name: "billOfLading",
+          value: undefined,
+          isRequired: true,
+          accepted: true,
+          errorMessage:"Bill of Lading is required!"
+        },
         senderName: {
           name: "senderName",
           value: undefined,

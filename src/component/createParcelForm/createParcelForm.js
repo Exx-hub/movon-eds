@@ -67,8 +67,10 @@ function BicolIsarogForm(props) {
     conductorFullName,
     sticker_quantity,
     discount,
-    additionalFee
+    additionalFee,
+    billOfLading
   } = props.details;
+
   const lengthRate = props.lengthRate
 
   const enableInterConnection = props.enableInterConnection;
@@ -413,6 +415,17 @@ function BicolIsarogForm(props) {
             errorMessage={paxs.errorMessage}
             title="Number of Pax"
             placeholder="Number of Pax"
+          />
+        </Col>
+
+        <Col span={6} className="gutter-row">
+          <InputBox
+            onBlur={() => props.onBlur(billOfLading.name)}
+            detail={billOfLading}
+            onChange={props.onChange}
+            errorMessage={billOfLading.errorMessage}
+            title="Bill Of Lading"
+            placeholder="Bill Of Lading"
           />
         </Col>
         </Row>

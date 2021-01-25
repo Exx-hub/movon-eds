@@ -69,7 +69,8 @@ function BicolIsarogForm(props) {
     conductorFullName,
     sticker_quantity,
     discount,
-    associateFixPrice
+    associateFixPrice,
+    billOfLading
   } = props.details;
 
   const lengthRate = props.lengthRate
@@ -442,6 +443,18 @@ function BicolIsarogForm(props) {
             placeholder="Number of Pax"
           />
         </Col>
+
+        <Col span={6} className="gutter-row">
+          <InputBox
+            type="number"
+            onBlur={() => props.onBlur(billOfLading.name)}
+            detail={billOfLading}
+            onChange={props.onChange}
+            errorMessage={billOfLading.errorMessage}
+            title="Bill of Lading"
+            placeholder="Bill of Lading"
+          />
+        </Col>
           {
           //   <Col span={8} className="gutter-row">
           //   {!enableInterConnection && (
@@ -461,7 +474,7 @@ function BicolIsarogForm(props) {
         </Row>
       </div>
 
-      <div className="input-container-border">
+      <div className="input-container-border" style={{display:'none'}}>
         <h4 className="create-group-title">Bus Information</h4>
 
         <Row>
@@ -477,7 +490,7 @@ function BicolIsarogForm(props) {
           </Col>
         </Row>
 
-        <Row>
+        <Row >
           <Col span={8} className="gutter-row">
             <InputBox
               type="text"

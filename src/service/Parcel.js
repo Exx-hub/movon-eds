@@ -41,12 +41,12 @@ const ParcelService = {
             checkIn,
             packageImagePreview,
             selectedTrip,
-            billOfLading,
             tariffRate,
             lengthRate
         }=state;
 
         const {
+            billOfLading,
             senderName,
             senderMobile,
             senderEmail,
