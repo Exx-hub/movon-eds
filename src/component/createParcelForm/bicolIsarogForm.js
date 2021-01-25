@@ -37,6 +37,8 @@ function InputBox(props) {
 }
 
 function BicolIsarogForm(props) {
+
+  console.info('BicolIsarogForm', props)
   const {
     senderName,
     senderMobile,
@@ -69,6 +71,7 @@ function BicolIsarogForm(props) {
     discount,
     associateFixPrice
   } = props.details;
+
   const lengthRate = props.lengthRate
 
   const enableInterConnection = props.enableInterConnection;
@@ -109,7 +112,7 @@ function BicolIsarogForm(props) {
                 >
                   {destination.options.map((e) => (
                     <Option key={e.value} value={e.value}>
-                      {e.name}
+                      {e.name || "no-name"}
                     </Option>
                   ))}
                 </Select>

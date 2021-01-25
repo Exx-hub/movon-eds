@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(74)'
+        build: '1.5.1(75)'
     },
-    changeLogs: `fix edit,delete,add matrix for dltb, add validation on weight and length`
+    changeLogs: `update matrix preview`
 }
 
 export const ERROR_CODES = {

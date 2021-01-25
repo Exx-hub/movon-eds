@@ -120,11 +120,13 @@ export function ReviewDetails(props){
 function PackageInformationSection(props){
     const data = props.value;
     const destination = data.startStationName ? data.startStationName : data.destination;
+    const billOfLading = data.billOfLading || ""
+
     return(<div className="vertical-layout" style={{...props.style}}>
         <div className="text-list-container">
             <TextContainer label="Destination" value={destination} />
             <TextContainer label="Description" value={props.value.packageName || ''}/>
-            <TextContainer label="Bill of Lading" value={props.value.billOfLading || ''}/>
+            <TextContainer label="Bill of Lading" value={billOfLading}/>
             <div className="header-layout">
                 <span>Sender:</span> 
                 <TextContainer label="Sender Name" value={props.value.senderName || 'senderName'} />
@@ -208,6 +210,7 @@ function FeeSection(props){
 }
 
 function TextContainer(props){
+    console.info('TextContainer',props)
     return(<div className="text-section">
         <div className="label"><label>{props.label}</label></div>
         :<div className="label-value"><label>{props.value}</label></div>

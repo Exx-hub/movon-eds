@@ -4,19 +4,18 @@ import { Button, notification, Layout, Breadcrumb, Input, Form, Space, Tooltip }
 import { CloseOutlined } from "@ant-design/icons";
 import isarog from '../../assets/bicol.png'
 import Modal from '../../component/modal/matrixModal'
+import { useEffect } from "react";
 
 const { Content, Sider, Header } = Layout;
 const { TextArea } = Input;
 
 function CreateParcel(props) {
 
-    const [currentStep, setCurrentStep] = useState(0)
+    const [breadCrum,setBredCrum] = useState({})
 
-    const updateSteps = () => {
-    }
-
-    const stepView = () => {
-    }
+    useEffect(()=>{
+        console.info('props',props)
+    },[])
 
     return (
         <Layout className="parcel-creator-page">
@@ -25,14 +24,8 @@ function CreateParcel(props) {
                 <Content style={{background:'white'}}>
                         <div style={{display:'flex', marginTop:'1rem', marginBottom:'1rem', width:'100%', alignItems:'center', justifyContent:'space-between'}}>
                             <Breadcrumb>
-                                <Breadcrumb.Item>Home</Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                <a href="">Application Center</a>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                <a href="">Application List</a>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item>An Application</Breadcrumb.Item>
+                                <Breadcrumb.Item><a href="/">Dashboard</a></Breadcrumb.Item>
+                                <Breadcrumb.Item>create-parcel-v2</Breadcrumb.Item>
                             </Breadcrumb>
                                 <Tooltip title="Back to home page" style={{ position:'absolute', width:'100%', float:'right' }}>
                                     <Button size="large"  style={{ height:50, width:50 }} shape="circle" icon={<CloseOutlined style={{fontSize:30}} />} />

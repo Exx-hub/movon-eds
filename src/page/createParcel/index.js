@@ -19,8 +19,7 @@ import {
   openNotificationWithIcon,
   debounce,
   UserProfile,
-  alterPath,
-  dataURLtoFile,
+  alterPath
 } from "../../utility";
 
 const { Content, Sider, Header } = Layout;
@@ -110,15 +109,15 @@ const getReviewDetails = (state) => {
     price: state.details.shippingCost.value,
     totalPrice: state.details.totalShippingCost.value,
     additionalNote: state.details.additionNote.value,
-    billOfLading: state.billOfLading,
+    billOfLading: state.billOfLading.value,
     checkIn: state.checkIn,
-    destination: state.details.value,
+    destination: state.details.destination.value,
     lengthFee: "test",
-    length:"test",
-    weightFee: 'test',
-    portersFee: 'test',
-    stickerCount: 'test',
-    declaredValue: 'test',
+    length: state.details.length.value,
+    weightFee: state.priceDetails.weightFee,
+    portersFee: state.priceDetails.portersFee,
+    stickerCount: state.stickerCount.value,
+    declaredValue: state.details.declaredValue.value,
     additionalFee: 'test'
   };
 };
@@ -174,8 +173,8 @@ class CreateParcel extends React.Component {
       width: window.innerWidth,
       height: window.innerHeight,
       packageImagePreview: null,
-      currentStep: 3,
-      verifiedSteps: 3,
+      currentStep: 0,
+      verifiedSteps: 0,
       trips: undefined,
       selectedTrip: undefined,
       createParcelResponseData: undefined,
@@ -474,7 +473,8 @@ class CreateParcel extends React.Component {
 
     ManifestService.getRoutes().then((e) => {
       const { data, success, errorCode } = e.data;
-      if (success) {
+      console.info('data',data)
+      if (!errorCode) {
         if (data) {
           const details = { ...this.state.details };
           let _myOption = [];
