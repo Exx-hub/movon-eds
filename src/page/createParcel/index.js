@@ -473,7 +473,6 @@ class CreateParcel extends React.Component {
 
     ManifestService.getRoutes().then((e) => {
       const { data, success, errorCode } = e.data;
-      console.info('data',data)
       if (!errorCode) {
         if (data) {
           const details = { ...this.state.details };
@@ -1300,11 +1299,12 @@ class CreateParcel extends React.Component {
       details.totalShippingCost.value = 0
       details.additionNote.value = ""
 
+
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
         let price = Number(option.price).toFixed(2);
         let declaredValue = Number(option.declaredValue);
-        let enableAdditionalFee = Boolean(option.additionalFee || true)
+        let enableAdditionalFee = Boolean(option.additionalFee)
 
         declaredValue = declaredValue / 100;
         details.fixMatrix.value = value;
@@ -1336,7 +1336,7 @@ class CreateParcel extends React.Component {
         switch (UserProfile.getBusCompanyTag()) {
           case "dltb":
             details.totalShippingCost.value = price
-            this.setState({ lengthRate: 0, details });
+            this.setState({weightFee:0, lengthFee:0, lengthRate: 0, handlingFee:0, portersFee:0, lengthRate: 0, details });
             break;
 
           default:
@@ -1366,17 +1366,15 @@ class CreateParcel extends React.Component {
         details.quantity.disabled = true;
         details.quantity.value = 1;
 
-        switch (UserProfile.getBusCompanyTag()) {
-          case "dltb":
-            this.setState({ lengthRate: 0, details });
-            break;
-
-          default:
-            this.setState({ lengthRate: 0, details }, () => {
+        this.setState({ weightFee:0, lengthFee:0, lengthRate: 0, handlingFee:0, portersFee:0, details }, () => {
+          switch (UserProfile.getBusCompanyTag()) {
+            case 'bicol-isarog':
               this.updateTotalShippingCost();
-            });
-            break;
-        }
+
+            default:
+              break;
+          }
+        });
       }
     }
   };
@@ -1743,7 +1741,6 @@ class CreateParcel extends React.Component {
           } = data;
 
           const _lengthFee = Number(lengthFee)
-          console.info('lenghtFee',_lengthFee)
           const _weightFee = Number(weightFee)
           const _handlingFee = Number(handlingFee)
           const _additionFee = Number(additionalFee)
@@ -1780,8 +1777,6 @@ class CreateParcel extends React.Component {
 
   computeV2 = () =>{
     const { declaredValue, packageWeight, sticker_quantity, length, destination } = this.state.details;
-
-    console.info('computeV2',declaredValue.value)
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
@@ -1841,7 +1836,6 @@ class CreateParcel extends React.Component {
             return;
           }
 
-          console.info("tag", UserProfile.getBusCompanyTag())
           const { declaredValue, packageWeight, sticker_quantity, length } = currentDetails;
 
           switch (UserProfile.getBusCompanyTag()) {

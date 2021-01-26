@@ -39,7 +39,6 @@ function InputBox(props) {
 }
 
 function BicolIsarogForm(props) {
-  console.info('props',props)
   const {
     senderName,
     senderMobile,

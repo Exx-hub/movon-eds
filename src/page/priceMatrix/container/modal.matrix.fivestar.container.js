@@ -5,8 +5,6 @@ import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/i
 
 function FiveStarMatrixModalContent(props) {
 
-    console.info()
-
     const onFinish = values => {
         // let _data = {...props.data};
         // delete _data.destination
