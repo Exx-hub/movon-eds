@@ -9,7 +9,7 @@ import WebCam from "../../component/webcam";
 import ScheduledTrips from "../../component/scheduledTrips";
 import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
-import { Button, notification, Layout, Checkbox, Input, Form, Space } from "antd";
+import { Button, notification, Layout, Checkbox, Input, Form, Space, Divider } from "antd";
 import ReactToPrint from "react-to-print";
 import { ArrowLeftOutlined, CodeOutlined, NumberOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
@@ -189,7 +189,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: true,
           accepted: true,
-          errorMessage:"Bill of Lading is required!"
+          errorMessage: "Bill of Lading is required!"
         },
         senderName: {
           name: "senderName",
@@ -356,7 +356,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: true,
           accepted: true,
-          errorMessage:"Length is required!"
+          errorMessage: "Length is required!"
         },
         fixMatrix: {
           name: "fixMatrix",
@@ -419,7 +419,7 @@ class CreateParcel extends React.Component {
       lengthFee: 0,
       portersFee: 0,
       weightFee: 0,
-      handlingFee:0
+      handlingFee: 0
     };
     this.userProfileObject = UserProfile;
     this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -431,7 +431,7 @@ class CreateParcel extends React.Component {
   }
 
   componentDidMount() {
-    
+
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
@@ -461,7 +461,7 @@ class CreateParcel extends React.Component {
 
     if (UserProfile.getBusCompanyTag() === 'dltb') {
       details.length.disabled = true
-      details.length.isRequired= false
+      details.length.isRequired = false
       details.discount.disabled = true
     }
 
@@ -919,33 +919,33 @@ class CreateParcel extends React.Component {
       parcelCount: d.sticker_quantity.value,
       fixMatrixItemName: d.fixMatrix.value
     }
-    console.info('options',options)
+    console.info('options', options)
     ParcelService.getDltbFixMatrixComputation(options)
-    .then(e => {
-      const { data, errorCode } = e.data;
-      console.info("getDltbFixMatrixComputation",e)
-      if (!errorCode) {
-        const systemFee = Number(data.systemFee);
-        let total = Number(data.computeTotalShippingCost);
+      .then(e => {
+        const { data, errorCode } = e.data;
+        console.info("getDltbFixMatrixComputation", e)
+        if (!errorCode) {
+          const systemFee = Number(data.systemFee);
+          let total = Number(data.computeTotalShippingCost);
 
-        let qty = Number(d.quantity.value || 1)
-        let quantity = qty < 1 ? 1 : qty;
+          let qty = Number(d.quantity.value || 1)
+          let quantity = qty < 1 ? 1 : qty;
 
-        if (quantity > 1) {
-          total -= systemFee;
-          total = total * quantity;
-          total += systemFee
+          if (quantity > 1) {
+            total -= systemFee;
+            total = total * quantity;
+            total += systemFee
+          }
+          total += Number(d.additionalFee.value || 0)
+
+          d.totalShippingCost.value = total;
+          d.packageInsurance.value = data.declaredValue
+          d.systemFee.value = data.systemFee
+          this.setState({ details: d })
+        } else {
+          this.handleErrorNotification(errorCode);
         }
-        total += Number(d.additionalFee.value || 0)
-
-        d.totalShippingCost.value = total;
-        d.packageInsurance.value = data.declaredValue
-        d.systemFee.value = data.systemFee
-        this.setState({ details: d })
-      } else {
-        this.handleErrorNotification(errorCode);
-      }
-    })
+      })
   }
 
   addFixMatrixFee = (_qty, addrate) => {
@@ -1033,10 +1033,10 @@ class CreateParcel extends React.Component {
             break;
         }
       }
-      if(name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'weight' ){
+      if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'weight') {
         this.computeV2()
       }
-      
+
     });
   };
 
@@ -1252,7 +1252,7 @@ class CreateParcel extends React.Component {
                 ],
               },
             };
-            this.setState({ details },()=>{
+            this.setState({ details }, () => {
               this.computeV2();
             });
           }
@@ -1339,7 +1339,7 @@ class CreateParcel extends React.Component {
           case 'five-star':
           case "dltb":
             console.log('passsss>>>>>>>>111111')
-            this.setState({weightFee:0, lengthFee:0, lengthRate: 0, handlingFee:0, portersFee:0, lengthRate: 0, details },()=>{
+            this.setState({ weightFee: 0, lengthFee: 0, lengthRate: 0, handlingFee: 0, portersFee: 0, lengthRate: 0, details }, () => {
               this.dltbFixPriceComputation()
             });
             break;
@@ -1371,12 +1371,12 @@ class CreateParcel extends React.Component {
         details.quantity.disabled = true;
         details.quantity.value = 1;
 
-        this.setState({ weightFee:0, lengthFee:0, lengthRate: 0, handlingFee:0, portersFee:0, details }, () => {
+        this.setState({ weightFee: 0, lengthFee: 0, lengthRate: 0, handlingFee: 0, portersFee: 0, details }, () => {
           switch (UserProfile.getBusCompanyTag()) {
             case 'bicol-isarog':
               console.info('passsss>>>>777777')
               this.updateTotalShippingCost();
-            break;
+              break;
 
             default:
               break;
@@ -1427,119 +1427,74 @@ class CreateParcel extends React.Component {
     switch (step) {
       case 1:
 
-      switch (UserProfile.getBusCompanyTag()) {
+        switch (UserProfile.getBusCompanyTag()) {
 
-        default:
-          view = (
-            <>
-            <BicolIsarogForm
-                enableInterConnection={this.state.enalbeBicolIsarogWays}
-                onBlur={(name) => {
-                  let item = this.onBlurValidation(name);
-                  if (item)
-                    this.setState({
-                      details: { ...this.state.details, ...{ [name]: item } },
-                    });
-                }}
-                lengthRate={this.state.lengthRate}
-                priceDetails={{
-                  lengthFee:this.state.lengthFee,
-                  portersFee: this.state.portersFee,
-                  weightFee: this.state.weightFee,
-                  handlingFee: this.state.handlingFee
-                }}
-                details={this.state.details}
-                onTypeChange={(e) => this.onTypeChange(e.target.value)}
-                onSelectChange={(value, name) =>
-                  this.onSelectChange(value, name)
-                }
-                onChange={(e) =>
-                  this.onInputChange(e.target.name, e.target.value)
-                }
-              />
-              <StepControllerView
-                    width={this.state.width}
-                    onPreviousStep={() => this.onPreviousStep()}
-                    onNextStep={() => {
-                      let isValid = this.validateStep();
-                      if (isValid) {
-                        this.gotoNextStep();
-                      }
-                    }}
-                  />
-                  </>
-          )
-          break;
-      }
-
-
-        // view = (
-        //   <>
-        //     {this.state.enalbeBicolIsarogWays ? (
-        //       <div>
-        //       <BicolIsarogForm
-        //         enableInterConnection={this.state.enalbeBicolIsarogWays}
-        //         onBlur={(name) => {
-        //           let item = this.onBlurValidation(name);
-        //           if (item)
-        //             this.setState({
-        //               details: { ...this.state.details, ...{ [name]: item } },
-        //             });
-        //         }}
-        //         lengthRate={this.state.lengthRate}
-        //         priceDetails={{
-        //           lengthRate:this.state.lengthRate,
-        //           portersFee: this.state.portersFee,
-        //           weightFee: this.state.weightFee
-        //         }}
-        //         details={this.state.details}
-        //         onTypeChange={(e) => this.onTypeChange(e.target.value)}
-        //         onSelectChange={(value, name) =>
-        //           this.onSelectChange(value, name)
-        //         }
-        //         onChange={(e) =>
-        //           this.onInputChange(e.target.name, e.target.value)
-        //         }
-        //       />
-        //       </div>
-        //     ) : (
-        //         <CreateParcelForm
-        //           enableInterConnection={this.state.enalbeBicolIsarogWays}
-        //           onBlur={(name) => {
-        //             let item = this.onBlurValidation(name);
-        //             if (item)
-        //               this.setState({
-        //                 details: { ...this.state.details, ...{ [name]: item } },
-        //               });
-        //           }}
-        //           lengthRate={this.state.lengthRate}
-        //           details={this.state.details}
-        //           onTypeChange={(e) => this.onTypeChange(e.target.value)}
-        //           onSelectChange={(value, name) =>
-        //             this.onSelectChange(value, name)
-        //           }
-        //           onChange={(e) =>
-        //             this.onInputChange(e.target.name, e.target.value)
-        //           }
-        //         />
-        //       )}
-
-        //     <StepControllerView
-        //       width={this.state.width}
-        //       onPreviousStep={() => this.onPreviousStep()}
-        //       onNextStep={() => {
-        //         let isValid = this.validateStep();
-        //         if (isValid) {
-        //           this.gotoNextStep();
-        //         }
-        //       }}
-        //     />
-        //   </>
-        // );
+          default:
+            view = (
+              <>
+                <BicolIsarogForm
+                  enableInterConnection={this.state.enalbeBicolIsarogWays}
+                  onBlur={(name) => {
+                    let item = this.onBlurValidation(name);
+                    if (item)
+                      this.setState({
+                        details: { ...this.state.details, ...{ [name]: item } },
+                      });
+                  }}
+                  lengthRate={this.state.lengthRate}
+                  priceDetails={{
+                    lengthFee: this.state.lengthFee,
+                    portersFee: this.state.portersFee,
+                    weightFee: this.state.weightFee,
+                    handlingFee: this.state.handlingFee
+                  }}
+                  details={this.state.details}
+                  onTypeChange={(e) => this.onTypeChange(e.target.value)}
+                  onSelectChange={(value, name) =>
+                    this.onSelectChange(value, name)
+                  }
+                  onChange={(e) =>
+                    this.onInputChange(e.target.name, e.target.value)
+                  }
+                />
+                <StepControllerView
+                  width={this.state.width}
+                  onPreviousStep={() => this.onPreviousStep()}
+                  onNextStep={() => {
+                    let isValid = this.validateStep();
+                    if (isValid) {
+                      this.gotoNextStep();
+                    }
+                  }}
+                />
+              </>
+            )
+            break;
+        }
         break;
       case 0:
         view = (
           <>
+            <div style={{ background: '#fff', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem' }}>
+              <img style={{ maxHeight: '170px', maxWidth: '250px' }} src={UserProfile.getBusCompanyLogo()} />
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', marginTop: '1rem', padding: '1rem' }}>
+                <Space direction="vertical">
+                  <Space>
+                    <div style={{ width: 90, fontSize: "14px", fontWeight: 300 }}>Company</div>
+                :&nbsp;<span style={{ width: 80, fontSize: "14px", fontWeight: 300 }}>{UserProfile.getBusCompanyName()}</span>
+                  </Space>
+                  <Space>
+                    <div style={{ width: 90, fontSize: "14px", fontWeight: 300 }}>Full Name</div>
+                :&nbsp;<span style={{ width: 80, fontSize: "14px", fontWeight: 300 }}>{UserProfile.getPersonFullName()}</span>
+                  </Space>
+                  <Space>
+                    <div style={{ width: 90, fontSize: "14px", fontWeight: 300 }}>Address</div>
+                :&nbsp;<span style={{ width: 80, fontSize: "14px", fontWeight: 300 }}>{UserProfile.getPersonAddress()}</span>
+                  </Space>
+                </Space>
+              </div>
+            </div>
+            <Divider />
             <WebCam
               image={this.state.packageImagePreview}
               onCapture={(packageImagePreview) =>
@@ -1754,7 +1709,7 @@ class CreateParcel extends React.Component {
           const _systemFee = Number(systemFee)
           const _declaredValueFee = Number(declaredValueFee)
           let total = Number(totalShippingCost)
-          
+
 
           const _shippingCost = Number(shippingCost);
           const _data = { ...this.state.details }
@@ -1772,17 +1727,17 @@ class CreateParcel extends React.Component {
           _data.systemFee.value = _systemFee;
           _data.shippingCost.value = _shippingCost;
 
-          this.setState({ 
-              handlingFee:_handlingFee,
-              lengthFee: _lengthFee,
-              weightFee: _weightFee,
-              details: _data 
+          this.setState({
+            handlingFee: _handlingFee,
+            lengthFee: _lengthFee,
+            weightFee: _weightFee,
+            details: _data
           });
         }
       })
   }
 
-  computeV2 = () =>{
+  computeV2 = () => {
     const { declaredValue, packageWeight, sticker_quantity, length, destination } = this.state.details;
 
     switch (UserProfile.getBusCompanyTag()) {
@@ -1886,7 +1841,7 @@ class CreateParcel extends React.Component {
     console.info("updateTotalShippingCost>>>>>>>>>>>>>>>>>>>>>>")
     let currentDetails = { ...this.state.details };
     const quantity = Number(currentDetails.quantity.value || 0);
-    
+
 
     let total = Number(parseFloat(currentDetails.shippingCost.value || 0));
     if (quantity > 1) { total = total * quantity; }
@@ -1906,7 +1861,7 @@ class CreateParcel extends React.Component {
 
     if (discount > 0) { total = total * ((100 - discount) / 100); }
 
-    
+
     const portersFee = 30;
     if (this.userProfileObject.isIsarogLiners()) {
       total += parseFloat(this.state.connectingCompanyComputation || 0)
@@ -1962,10 +1917,9 @@ class CreateParcel extends React.Component {
   };
 
   render() {
-    const { width } = this.state;
     return (
-      <Layout className="create-parcelview-parent-container">
-        <Header className="home-header-view" style={{ padding: 0 }}>
+      <Layout className="create-parcelview-parent-container" style={{ background: 'white' }}>
+        {<Header className="home-header-view" style={{ padding: 0 }}>
           <div style={{ float: "left" }}>
             <Button
               type="link"
@@ -1975,34 +1929,20 @@ class CreateParcel extends React.Component {
               <span style={{ fontSize: "20px", color: "#fff" }}>Home</span>
             </Button>
           </div>
-        </Header>
-
+        </Header>}
         <Layout>
-          {width > MIN_WIDTH && (
-            <Sider width={200} className="create-side-bar">
-              <div style={{ marginLeft: "2rem", marginTop: "1rem" }}>
-                <StepsView
-                  stepList={STEPS_LIST}
-                  current={this.state.currentStep}
-                  onchange={(s) => this.updateSteps(s)}
-                  direction="vertical"
-                />
-              </div>
-            </Sider>
-          )}
+          <Sider width={200} className="create-side-bar">
+            <div style={{ marginLeft: "2rem", marginTop: "1rem" }}>
+              <StepsView
+                stepList={STEPS_LIST}
+                current={this.state.currentStep}
+                onchange={(s) => this.updateSteps(s)}
+                direction="vertical"
+              />
+            </div>
+          </Sider>
           <Content>
             <div className="create-content-container">
-              <div
-                className={`horizontal-step ${width > MIN_WIDTH ? "hide" : ""}`}
-              >
-                <StepsView
-                  stepList={STEPS_LIST}
-                  current={this.state.currentStep}
-                  onchange={(s) => this.updateSteps(s)}
-                  progressDot={true}
-                  direction="horizontal"
-                />
-              </div>
               {this.stepView(this.state.currentStep)}
             </div>
           </Content>
