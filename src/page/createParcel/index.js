@@ -422,7 +422,7 @@ class CreateParcel extends React.Component {
       handlingFee: 0
     };
     this.userProfileObject = UserProfile;
-    this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
+    //this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
     this.printEl = React.createRef();
   }
 
@@ -832,7 +832,6 @@ class CreateParcel extends React.Component {
   };
 
   computePrice = () => {
-    console.log('computePrice======>>')
     if (
       this.state.details.fixMatrix.value &&
       this.state.details.fixMatrix.value !== "none"
@@ -919,7 +918,6 @@ class CreateParcel extends React.Component {
       parcelCount: d.sticker_quantity.value,
       fixMatrixItemName: d.fixMatrix.value
     }
-    console.info('options', options)
     ParcelService.getDltbFixMatrixComputation(options)
       .then(e => {
         const { data, errorCode } = e.data;
@@ -961,6 +959,8 @@ class CreateParcel extends React.Component {
   }
 
   onInputChange = (name, value) => {
+
+    console.info('onInputChange', name, value)
 
     let details = { ...this.state.details };
 
@@ -1033,7 +1033,7 @@ class CreateParcel extends React.Component {
             break;
         }
       }
-      if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'weight') {
+      if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
         this.computeV2()
       }
 
@@ -1338,7 +1338,6 @@ class CreateParcel extends React.Component {
         switch (UserProfile.getBusCompanyTag()) {
           case 'five-star':
           case "dltb":
-            console.log('passsss>>>>>>>>111111')
             this.setState({ weightFee: 0, lengthFee: 0, lengthRate: 0, handlingFee: 0, portersFee: 0, lengthRate: 0, details }, () => {
               this.dltbFixPriceComputation()
             });
@@ -1374,7 +1373,6 @@ class CreateParcel extends React.Component {
         this.setState({ weightFee: 0, lengthFee: 0, lengthRate: 0, handlingFee: 0, portersFee: 0, details }, () => {
           switch (UserProfile.getBusCompanyTag()) {
             case 'bicol-isarog':
-              console.info('passsss>>>>777777')
               this.updateTotalShippingCost();
               break;
 
@@ -1814,7 +1812,6 @@ class CreateParcel extends React.Component {
               break;
 
             default:
-              console.log('>>>>>>>>>>>>>>>>>>pass here')
               this.computePrice();
               const oldDetails = prevState.details;
               const curDetails = this.state.details;

@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(78)'
+        build: '1.5.1(79)'
     },
-    changeLogs: `add logo, add credentials `
+    changeLogs: `fix error on not computing `
 }
 
 export const ERROR_CODES = {
