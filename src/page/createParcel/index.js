@@ -277,7 +277,7 @@ class CreateParcel extends React.Component {
         },
         sticker_quantity: {
           name: "sticker_quantity",
-          value: undefined,
+          value: 1,
           isRequired: true,
           accepted: true,
         },
