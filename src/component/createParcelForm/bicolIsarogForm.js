@@ -526,6 +526,7 @@ function BicolIsarogForm(props) {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '35%', paddingLeft: '1.5rem', paddingRight: '1.5rem', marginLeft: '1rem', borderLeft: 'solid 1px rgba(56,56,56,.1)' }}>
+            <div>Payment Breakdown</div>
             <TextContainer title="Insurance Fee" value={Number(packageInsurance.value).toFixed(2)} />
 
             {UserProfile.getBusCompanyTag() === "five-star" &&

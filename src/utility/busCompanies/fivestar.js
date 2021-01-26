@@ -110,11 +110,11 @@ class FiveStar{
                 dataIndex: 'destination',
                 key: 'destination'
             },
-            {
-                title: 'Base Price',
-                dataIndex: 'price',
-                key: 'price'
-            },
+            // {
+            //     title: 'Base Price',
+            //     dataIndex: 'price',
+            //     key: 'price'
+            // },
             {
                 title: 'Declared Value Rate %',
                 dataIndex: 'declaredValueRate',
