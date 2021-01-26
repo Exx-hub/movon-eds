@@ -81,7 +81,8 @@ function BicolIsarogForm(props) {
     handlingFee,
     basePrice,
     isShortHaul,
-    declaredValueFee
+    declaredValueFee,
+    isFixedPrice
   } = props.priceDetails
 
   const enableInterConnection = props.enableInterConnection;
@@ -551,6 +552,7 @@ function BicolIsarogForm(props) {
               <ShowDltbBreakDown 
                 data={{
                   ...props.priceDetails, 
+                  isFixedPrice,
                   additionalFee: Number(additionalFee.value).toFixed(2), 
                   systemFee:Number(systemFee.value).toFixed(2)
                 }} 
@@ -629,7 +631,7 @@ function BicolIsarogForm(props) {
   );
 }
 
-function ShowDltbBreakDown(props){
+function ShowFiveStarBreakDown(props){
   let view = undefined;
     const{
       weightFee,
@@ -641,9 +643,30 @@ function ShowDltbBreakDown(props){
       insuranceFee,
       additionalFee
     }=props.data;
+
+    if(isShortHaul !== undefined){
+      return(view)
+    }
+    return(<div style={{display:'flex', justifyContent:'center', marginTop:'2rem', marginBottom:'3rem'}}>No Data</div>);
+    
+}
+
+function ShowDltbBreakDown(props){
+  let view = undefined;
+    const{
+      weightFee,
+      handlingFee,
+      basePrice,
+      isShortHaul,
+      declaredValueFee,
+      systemFee,
+      insuranceFee,
+      additionalFee,
+      isFixedPrice
+    }=props.data;
     
 
-    if(isShortHaul){
+    if(isShortHaul || isFixedPrice){
       view = (<>
         <TextContainer title="Base Price" value={basePrice} /> 
         <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
@@ -660,7 +683,7 @@ function ShowDltbBreakDown(props){
       </>)
     }
 
-  if(isShortHaul !== undefined){
+  if(isShortHaul !== undefined || isFixedPrice){
     return(view)
   }
   return(<div style={{display:'flex', justifyContent:'center', marginTop:'2rem', marginBottom:'3rem'}}>No Data</div>);

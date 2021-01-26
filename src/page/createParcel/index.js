@@ -423,7 +423,8 @@ class CreateParcel extends React.Component {
       isShortHaul:undefined,
       basePrice:0,
       declaredValueFee:0,
-      insuranceFee:0
+      insuranceFee:0,
+      isFixedPrice:false
     };
     this.userProfileObject = UserProfile;
     //this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -927,23 +928,34 @@ class CreateParcel extends React.Component {
         const { data, errorCode } = e.data;
         console.info("getDltbFixMatrixComputation", e)
         if (!errorCode) {
-          const systemFee = Number(data.systemFee);
+
+          const{
+            declaredValueFee,
+            systemFee,
+            basePrice
+          }= data
+
+          const _systemFee = Number(data.systemFee);
+          const additionalFee = Number(d.additionalFee.value);
           let total = Number(data.computeTotalShippingCost);
 
           let qty = Number(d.quantity.value || 1)
           let quantity = qty < 1 ? 1 : qty;
 
           if (quantity > 1) {
-            total -= systemFee;
+            total -= _systemFee;
             total = total * quantity;
-            total += systemFee
+            total += _systemFee
           }
-          total += Number(d.additionalFee.value || 0)
+          total += additionalFee
 
           d.totalShippingCost.value = total;
-          d.packageInsurance.value = data.declaredValue
-          d.systemFee.value = data.systemFee
-          this.setState({ details: d })
+          d.systemFee.value = systemFee;
+
+          this.setState({
+            declaredValueFee,
+            basePrice,
+            details: d })
         } else {
           this.handleErrorNotification(errorCode);
         }
@@ -1309,6 +1321,20 @@ class CreateParcel extends React.Component {
       details.additionNote.value = ""
       details.systemFee.value = 0;
 
+      let state = {...this.state,
+        engthFee: 0,
+        portersFee: 0,
+        weightFee: 0,
+        handlingFee: 0,
+        isShortHaul:undefined,
+        isFixedPrice:false,
+        basePrice:0,
+        declaredValueFee:0,
+        insuranceFee:0,
+        lengthRate:0
+      }
+
+
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
         let price = Number(option.price).toFixed(2);
@@ -1343,13 +1369,13 @@ class CreateParcel extends React.Component {
         switch (UserProfile.getBusCompanyTag()) {
           case 'five-star':
           case "dltb":
-            this.setState({ weightFee: 0, lengthFee: 0, lengthRate: 0, handlingFee: 0, portersFee: 0, lengthRate: 0, details }, () => {
+            this.setState({ ...state, isFixedPrice:true, details }, () => {
               this.dltbFixPriceComputation()
             });
             break;
 
           default:
-            this.setState({ lengthRate: 0, details }, () => {
+            this.setState({ ...state, isFixedPrice:true, details}, () => {
               this.updateTotalShippingCost();
             });
             break;
@@ -1375,7 +1401,7 @@ class CreateParcel extends React.Component {
         details.quantity.disabled = true;
         details.quantity.value = 1;
 
-        this.setState({ weightFee: 0, lengthFee: 0, lengthRate: 0, handlingFee: 0, portersFee: 0, details }, () => {
+        this.setState({ ...state, details }, () => {
           switch (UserProfile.getBusCompanyTag()) {
             case 'bicol-isarog':
               this.updateTotalShippingCost();
@@ -1453,7 +1479,8 @@ class CreateParcel extends React.Component {
                     isShortHaul: this.state.isShortHaul,
                     basePrice: this.state.basePrice,
                     declaredValueFee: this.state.declaredValueFee,
-                    insuranceFee: this.state.insuranceFee
+                    insuranceFee: this.state.insuranceFee,
+                    isFixedPrice: this.state.isFixedPrice
                   }}
                   details={this.state.details}
                   onTypeChange={(e) => this.onTypeChange(e.target.value)}
