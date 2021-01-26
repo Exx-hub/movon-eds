@@ -42,7 +42,11 @@ const ParcelService = {
             packageImagePreview,
             selectedTrip,
             tariffRate,
-            lengthRate
+            lengthRate,
+            portersFee,
+            weightFee,
+            handlingFee,
+            lengthFee
         }=state;
 
         const {
@@ -130,6 +134,16 @@ const ParcelService = {
         
         if(UserProfile.getBusCompanyTag() === 'dltb'){
             bodyFormData.set('additionalFee', additionalFee.value)
+            bodyFormData.set('handlingFee', handlingFee)
+        }
+
+        if(UserProfile.getBusCompanyTag() === 'isarog-liner'){
+            bodyFormData.set('portersFee', portersFee)
+            bodyFormData.set('lengthFee', lengthFee)
+        }
+
+        if(UserProfile.getBusCompanyTag() === 'five-star'){
+            bodyFormData.set('weightFee', weightFee)
         }
 
         return axios({

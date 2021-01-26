@@ -23,7 +23,6 @@ import {
 } from "../../utility";
 
 const { Content, Sider, Header } = Layout;
-const { TextArea } = Input;
 
 const MIN_WIDTH = 800;
 const STEPS_LIST = [
@@ -183,6 +182,7 @@ class CreateParcel extends React.Component {
       page: 1,
       checkIn: false,
       isLoading: false,
+
       details: {
         billOfLading: {
           name: "billOfLading",
@@ -270,7 +270,7 @@ class CreateParcel extends React.Component {
         },
         quantity: {
           name: "quantity",
-          value: 0,
+          value: 1,
           isRequired: true,
           accepted: true,
           disabled: true,
@@ -296,7 +296,7 @@ class CreateParcel extends React.Component {
         },
         packageInsurance: {
           name: "packageInsurance",
-          value: undefined,
+          value: 0,
           isRequired: false,
           accepted: true,
           title: "",
@@ -353,10 +353,10 @@ class CreateParcel extends React.Component {
         },
         length: {
           name: "length",
-          value: 0,
+          value: undefined,
           isRequired: true,
           accepted: true,
-          disabled: false,
+          errorMessage:"Length is required!"
         },
         fixMatrix: {
           name: "fixMatrix",
@@ -405,7 +405,7 @@ class CreateParcel extends React.Component {
         },
         additionalFee: {
           name: "additionalFee",
-          value: undefined,
+          value: 0,
           isRequired: false,
           accepted: true,
           enabled: false
@@ -416,18 +416,14 @@ class CreateParcel extends React.Component {
       noOfStickerCopy: 2,
       connectingCompanyComputation: 0,
       tariffRate: undefined,
-      lengthRate: 0,
+      lengthFee: 0,
+      portersFee: 0,
+      weightFee: 0,
+      handlingFee:0
     };
     this.userProfileObject = UserProfile;
     this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
     this.printEl = React.createRef();
-
-    window.addEventListener("resize", (e) => {
-      this.setState({
-        height: e.currentTarget.innerHeight,
-        width: e.currentTarget.innerWidth,
-      });
-    });
   }
 
   componentWillUnmount() {
@@ -435,6 +431,7 @@ class CreateParcel extends React.Component {
   }
 
   componentDidMount() {
+    
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
@@ -464,6 +461,8 @@ class CreateParcel extends React.Component {
 
     if (UserProfile.getBusCompanyTag() === 'dltb') {
       details.length.disabled = true
+      details.length.isRequired= false
+      details.discount.disabled = true
     }
 
     this.setState({
@@ -1015,16 +1014,6 @@ class CreateParcel extends React.Component {
       }
     }
 
-    if (name === "billOfLading") {
-      this.setState({
-        billOfLading: {
-          ...this.state.billOfLading,
-          ...{ value, accepted: !isNull(value) },
-        },
-      });
-      return;
-    }
-
     let item = {
       ...details[name],
       ...{ value, accepted: true, hasError: false },
@@ -1041,6 +1030,10 @@ class CreateParcel extends React.Component {
             break;
         }
       }
+      if(name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'weight' ){
+        this.computeV2()
+      }
+      
     });
   };
 
@@ -1256,7 +1249,9 @@ class CreateParcel extends React.Component {
                 ],
               },
             };
-            this.setState({ details });
+            this.setState({ details },()=>{
+              this.computeV2();
+            });
           }
         } else {
           this.handleErrorNotification(errorCode);
@@ -1426,10 +1421,13 @@ class CreateParcel extends React.Component {
 
     switch (step) {
       case 1:
-        view = (
-          <>
-            {this.state.enalbeBicolIsarogWays ? (
-              <BicolIsarogForm
+
+      switch (UserProfile.getBusCompanyTag()) {
+
+        default:
+          view = (
+            <>
+            <BicolIsarogForm
                 enableInterConnection={this.state.enalbeBicolIsarogWays}
                 onBlur={(name) => {
                   let item = this.onBlurValidation(name);
@@ -1439,6 +1437,12 @@ class CreateParcel extends React.Component {
                     });
                 }}
                 lengthRate={this.state.lengthRate}
+                priceDetails={{
+                  lengthFee:this.state.lengthFee,
+                  portersFee: this.state.portersFee,
+                  weightFee: this.state.weightFee,
+                  handlingFee: this.state.handlingFee
+                }}
                 details={this.state.details}
                 onTypeChange={(e) => this.onTypeChange(e.target.value)}
                 onSelectChange={(value, name) =>
@@ -1448,40 +1452,85 @@ class CreateParcel extends React.Component {
                   this.onInputChange(e.target.name, e.target.value)
                 }
               />
-            ) : (
-                <CreateParcelForm
-                  enableInterConnection={this.state.enalbeBicolIsarogWays}
-                  onBlur={(name) => {
-                    let item = this.onBlurValidation(name);
-                    if (item)
-                      this.setState({
-                        details: { ...this.state.details, ...{ [name]: item } },
-                      });
-                  }}
-                  lengthRate={this.state.lengthRate}
-                  details={this.state.details}
-                  onTypeChange={(e) => this.onTypeChange(e.target.value)}
-                  onSelectChange={(value, name) =>
-                    this.onSelectChange(value, name)
-                  }
-                  onChange={(e) =>
-                    this.onInputChange(e.target.name, e.target.value)
-                  }
-                />
-              )}
+              <StepControllerView
+                    width={this.state.width}
+                    onPreviousStep={() => this.onPreviousStep()}
+                    onNextStep={() => {
+                      let isValid = this.validateStep();
+                      if (isValid) {
+                        this.gotoNextStep();
+                      }
+                    }}
+                  />
+                  </>
+          )
+          break;
+      }
 
-            <StepControllerView
-              width={this.state.width}
-              onPreviousStep={() => this.onPreviousStep()}
-              onNextStep={() => {
-                let isValid = this.validateStep();
-                if (isValid) {
-                  this.gotoNextStep();
-                }
-              }}
-            />
-          </>
-        );
+
+        // view = (
+        //   <>
+        //     {this.state.enalbeBicolIsarogWays ? (
+        //       <div>
+        //       <BicolIsarogForm
+        //         enableInterConnection={this.state.enalbeBicolIsarogWays}
+        //         onBlur={(name) => {
+        //           let item = this.onBlurValidation(name);
+        //           if (item)
+        //             this.setState({
+        //               details: { ...this.state.details, ...{ [name]: item } },
+        //             });
+        //         }}
+        //         lengthRate={this.state.lengthRate}
+        //         priceDetails={{
+        //           lengthRate:this.state.lengthRate,
+        //           portersFee: this.state.portersFee,
+        //           weightFee: this.state.weightFee
+        //         }}
+        //         details={this.state.details}
+        //         onTypeChange={(e) => this.onTypeChange(e.target.value)}
+        //         onSelectChange={(value, name) =>
+        //           this.onSelectChange(value, name)
+        //         }
+        //         onChange={(e) =>
+        //           this.onInputChange(e.target.name, e.target.value)
+        //         }
+        //       />
+        //       </div>
+        //     ) : (
+        //         <CreateParcelForm
+        //           enableInterConnection={this.state.enalbeBicolIsarogWays}
+        //           onBlur={(name) => {
+        //             let item = this.onBlurValidation(name);
+        //             if (item)
+        //               this.setState({
+        //                 details: { ...this.state.details, ...{ [name]: item } },
+        //               });
+        //           }}
+        //           lengthRate={this.state.lengthRate}
+        //           details={this.state.details}
+        //           onTypeChange={(e) => this.onTypeChange(e.target.value)}
+        //           onSelectChange={(value, name) =>
+        //             this.onSelectChange(value, name)
+        //           }
+        //           onChange={(e) =>
+        //             this.onInputChange(e.target.name, e.target.value)
+        //           }
+        //         />
+        //       )}
+
+        //     <StepControllerView
+        //       width={this.state.width}
+        //       onPreviousStep={() => this.onPreviousStep()}
+        //       onNextStep={() => {
+        //         let isValid = this.validateStep();
+        //         if (isValid) {
+        //           this.gotoNextStep();
+        //         }
+        //       }}
+        //     />
+        //   </>
+        // );
         break;
       case 0:
         view = (
@@ -1667,9 +1716,6 @@ class CreateParcel extends React.Component {
     if (!endStation || !startStation)
       return
 
-    console.info('endStation', endStation)
-    console.info('startStation', startStation)
-
     const option = {
       origin: startStation,
       destination: endStation,
@@ -1689,26 +1735,70 @@ class CreateParcel extends React.Component {
             totalShippingCost,
             declaredValueFee,
             systemFee,
+            handlingFee,
+            additionalFee,
+            shippingCost,
+            weightFee,
+            lengthFee
           } = data;
 
+          const _lengthFee = Number(lengthFee)
+          console.info('lenghtFee',_lengthFee)
+          const _weightFee = Number(weightFee)
+          const _handlingFee = Number(handlingFee)
+          const _additionFee = Number(additionalFee)
+          const _systemFee = Number(systemFee)
+          const _declaredValueFee = Number(declaredValueFee)
           let total = Number(totalShippingCost)
+          
 
+          const _shippingCost = Number(shippingCost);
           const _data = { ...this.state.details }
+
           let quantity = Number(_data.quantity.value || 1)
           quantity = quantity > 0 ? quantity : 1;
 
           if (quantity > 1) {
-            total -= Number(systemFee)
-            total = total * quantity
+            total = shippingCost * quantity
           }
 
-          _data.totalShippingCost.value = Number(total || 0).toFixed(2);
-          _data.packageInsurance.value = declaredValueFee;
-          _data.systemFee.value = systemFee;
-          _data.shippingCost.value = Number(Number(totalShippingCost) - (Number(systemFee) + Number(declaredValue))).toFixed(2)
-          this.setState({ details: _data });
+          _data.totalShippingCost.value = total
+          _data.packageInsurance.value = _declaredValueFee;
+          _data.additionalFee.value = _additionFee;
+          _data.systemFee.value = _systemFee;
+          _data.shippingCost.value = _shippingCost;
+
+          this.setState({ 
+              handlingFee:_handlingFee,
+              lengthFee: _lengthFee,
+              weightFee: _weightFee,
+              details: _data 
+          });
         }
       })
+  }
+
+  computeV2 = () =>{
+    const { declaredValue, packageWeight, sticker_quantity, length, destination } = this.state.details;
+
+    console.info('computeV2',declaredValue.value)
+
+    switch (UserProfile.getBusCompanyTag()) {
+      case "dltb":
+        if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value) {
+          this.requestComputation()
+        }
+        break;
+
+      case "five-star":
+        if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value && length.value) {
+          this.requestComputation()
+        }
+        break;
+
+      default:
+        break;
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -1740,7 +1830,6 @@ class CreateParcel extends React.Component {
       oldConnectingCompany !== currentDetails.connectingCompany.value;
 
     if (hasFreshData) {
-
       if (currentDetails.packageWeight.value !== undefined && currentDetails.declaredValue.value !== undefined) {
         this.computeForConnectinRoutes();
 
@@ -1757,15 +1846,15 @@ class CreateParcel extends React.Component {
 
           switch (UserProfile.getBusCompanyTag()) {
             case "dltb":
-              if (declaredValue.value && packageWeight.value && sticker_quantity.value) {
-                this.requestComputation()
-              }
+              // if (declaredValue.value && packageWeight.value && sticker_quantity.value) {
+              //   this.requestComputation()
+              // }
               break;
 
             case "five-star":
-              if (declaredValue.value && packageWeight.value && sticker_quantity.value && length.value) {
-                this.requestComputation()
-              }
+              // if (declaredValue.value && packageWeight.value && sticker_quantity.value && length.value) {
+              //   this.requestComputation()
+              // }
               break;
 
             default:
@@ -1795,53 +1884,41 @@ class CreateParcel extends React.Component {
     console.info("updateTotalShippingCost>>>>>>>>>>>>>>>>>>>>>>")
     let currentDetails = { ...this.state.details };
     const quantity = Number(currentDetails.quantity.value || 0);
+    
 
-    let total = Number(
-      parseFloat(currentDetails.shippingCost.value || 0) +
-      parseFloat(this.state.lengthRate) +
-      parseFloat(currentDetails.packageInsurance.value || 0)
-    );
+    let total = Number(parseFloat(currentDetails.shippingCost.value || 0));
+    if (quantity > 1) { total = total * quantity; }
 
-    let discountIndex = currentDetails.discount.options.findIndex(
-      (e) => e.name === currentDetails.discount.value
-    );
+    total += Number(parseFloat(this.state.lengthRate) + parseFloat(currentDetails.packageInsurance.value || 0));
+
+    let discountIndex = currentDetails.discount.options.findIndex((e) => e.name === currentDetails.discount.value);
     let discount = 0;
 
-    if (
-      currentDetails.discount.value &&
-      currentDetails.discount.value.toLowerCase() !== "none"
-    ) {
+    if (currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== "none") {
+
       discount =
         discountIndex > -1
           ? Number(currentDetails.discount.options[discountIndex].rate || 0)
           : 0;
     }
-    if (discount > 0) {
-      total = total * ((100 - discount) / 100);
-    }
 
-    if (quantity > 0) {
-      total = total * quantity;
-    }
+    if (discount > 0) { total = total * ((100 - discount) / 100); }
 
-    //total +=
-    //  parseFloat(this.state.connectingCompanyComputation || 0) //+
-    //parseFloat(currentDetails.systemFee.value || 0);
-
+    
+    const portersFee = 30;
     if (this.userProfileObject.isIsarogLiners()) {
       total += parseFloat(this.state.connectingCompanyComputation || 0)
-      let systemFee = { ...currentDetails.systemFee, ...{ value: 0 } };
-      if (total < 500) {
+      if (total > 500) {
         total += 10;
-        systemFee = { ...currentDetails.systemFee, ...{ value: 10 } };
+        currentDetails.systemFee.value = 10;
       }
-      currentDetails.systemFee = systemFee
     } else {
       total += parseFloat(currentDetails.systemFee.value || 0)
     }
 
+    total += portersFee;
     const totalShippingCost = { ...currentDetails.totalShippingCost, ...{ value: parseFloat(total).toFixed(2) } };
-    this.setState({ details: { ...currentDetails, ...{ totalShippingCost } } });
+    this.setState({ portersFee, details: { ...currentDetails, ...{ totalShippingCost } } });
   };
 
   getMatrixFare = ({ weight, declaredValue, length }) => {
