@@ -78,7 +78,10 @@ function BicolIsarogForm(props) {
     lengthFee,
     portersFee,
     weightFee,
-    handlingFee
+    handlingFee,
+    basePrice,
+    isShortHaul,
+    declaredValueFee
   } = props.priceDetails
 
   const divRef = React.useRef()
@@ -530,7 +533,7 @@ function BicolIsarogForm(props) {
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '35%', paddingLeft: '1.5rem', paddingRight: '1.5rem', marginLeft: '1rem', borderLeft: 'solid 1px rgba(56,56,56,.1)' }}>
             <div style={{ alignSelf:'center', fontSize: 18, fontWeight:400, marginBottom:'2.5rem'}}>Payment Breakdown</div>
 
-            <TextContainer title="Insurance Fee" value={Number(packageInsurance.value).toFixed(2)} />
+            
             {UserProfile.getBusCompanyTag() === "five-star" &&
               <> 
                 <TextContainer title="Weight Fee" value={Number(weightFee).toFixed(2)} /> 
@@ -543,14 +546,25 @@ function BicolIsarogForm(props) {
                 <TextContainer title="Length Fee" value={Number(lengthFee).toFixed(2)} />
               </>
             }
-            {UserProfile.getBusCompanyTag() === "dltb" &&
-              <> 
-                <TextContainer title="Additional Fee" value={Number(additionalFee.value).toFixed(2)} /> 
-                <TextContainer title="Handling Fee" value={Number(handlingFee).toFixed(2)} /> 
+            {
+              UserProfile.getBusCompanyTag() === "dltb" &&
+              <>
+              {
+                isShortHaul ? 
+                <> 
+                  <TextContainer title="Base Price" value={basePrice} /> 
+                  <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
+                </>
+                :
+                <>
+                  <TextContainer title="Additional Fee" value={Number(additionalFee.value).toFixed(2)} /> 
+                  <TextContainer title="Handling Fee" value={Number(handlingFee).toFixed(2)} /> 
+                </>
+              }
               </>
             }
+            {/* {<TextContainer title="Insurance Fee" value={Number(packageInsurance.value).toFixed(2)} />} */}
             <TextContainer title="System Fee" value={Number(systemFee.value).toFixed(2)} />
-            <TextContainer title="Shipping Cost" value={Number(shippingCost.value).toFixed(2)} />
             <Space>
               <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 17, width: 200, fontWeight: 400 }}><label>Total Shipping Cost</label></div>
                   &nbsp;<div style={{fontSize: 19, textAlign: 'right', width: 100, fontWeight: 'bold' }}><label> ₱ {Number(totalShippingCost.value).toFixed(2)}</label></div>

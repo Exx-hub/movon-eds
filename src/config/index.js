@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(79)'
+        build: '1.5.1(80)'
     },
     changeLogs: `fix error on not computing `
 }

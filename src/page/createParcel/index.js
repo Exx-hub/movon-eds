@@ -419,7 +419,10 @@ class CreateParcel extends React.Component {
       lengthFee: 0,
       portersFee: 0,
       weightFee: 0,
-      handlingFee: 0
+      handlingFee: 0,
+      isShortHaul:false,
+      basePrice:0,
+      declaredValueFee:0
     };
     this.userProfileObject = UserProfile;
     //this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -1023,20 +1026,21 @@ class CreateParcel extends React.Component {
     };
 
     this.setState({ details: { ...details, ...{ [name]: item } } }, () => {
-      if (name === "declaredValue" || name === "quantity") {
-        switch (UserProfile.getBusCompanyTag()) {
-          case 'isarog-liner':
+      switch (UserProfile.getBusCompanyTag()) {
+        case 'isarog-liner':
+          if (name === "declaredValue" || name === "quantity") {
             this.updateTotalShippingCost();
-            break;
-
-          default:
-            break;
-        }
+          }
+          break;
+        
+        case "dltb":
+        case "five-star":
+          if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
+            this.computeV2()
+          }
+        default:
+          break;
       }
-      if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
-        this.computeV2()
-      }
-
     });
   };
 
@@ -1302,7 +1306,7 @@ class CreateParcel extends React.Component {
       details.sticker_quantity.value = 1;
       details.totalShippingCost.value = 0
       details.additionNote.value = ""
-
+      details.systemFee.value = 0;
 
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
@@ -1444,7 +1448,10 @@ class CreateParcel extends React.Component {
                     lengthFee: this.state.lengthFee,
                     portersFee: this.state.portersFee,
                     weightFee: this.state.weightFee,
-                    handlingFee: this.state.handlingFee
+                    handlingFee: this.state.handlingFee,
+                    isShortHaul: this.state.isShortHaul,
+                    basePrice: this.state.basePrice,
+                    declaredValueFee: this.state.declaredValueFee
                   }}
                   details={this.state.details}
                   onTypeChange={(e) => this.onTypeChange(e.target.value)}
@@ -1697,7 +1704,9 @@ class CreateParcel extends React.Component {
             additionalFee,
             shippingCost,
             weightFee,
-            lengthFee
+            lengthFee,
+            basePrice,
+            isShortHaul
           } = data;
 
           const _lengthFee = Number(lengthFee)
@@ -1726,17 +1735,20 @@ class CreateParcel extends React.Component {
           _data.shippingCost.value = _shippingCost;
 
           this.setState({
+            declaredValueFee,
             handlingFee: _handlingFee,
             lengthFee: _lengthFee,
             weightFee: _weightFee,
-            details: _data
+            details: _data,
+            basePrice,
+            isShortHaul: Boolean(isShortHaul)
           });
         }
       })
   }
 
   computeV2 = () => {
-    const { declaredValue, packageWeight, sticker_quantity, length, destination } = this.state.details;
+    const { declaredValue, packageWeight, sticker_quantity, length, destination, fixMatrix } = this.state.details;
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
@@ -1746,8 +1758,12 @@ class CreateParcel extends React.Component {
         break;
 
       case "five-star":
-        if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value && length.value) {
-          this.requestComputation()
+        if(!fixMatrix.value || fixMatrix.value === "none"){
+          if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value && length.value ) {
+            this.requestComputation()
+          }
+        }else{
+          this.dltbFixPriceComputation()
         }
         break;
 
