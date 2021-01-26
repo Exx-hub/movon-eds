@@ -420,9 +420,10 @@ class CreateParcel extends React.Component {
       portersFee: 0,
       weightFee: 0,
       handlingFee: 0,
-      isShortHaul:false,
+      isShortHaul:undefined,
       basePrice:0,
-      declaredValueFee:0
+      declaredValueFee:0,
+      insuranceFee:0
     };
     this.userProfileObject = UserProfile;
     //this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -1451,7 +1452,8 @@ class CreateParcel extends React.Component {
                     handlingFee: this.state.handlingFee,
                     isShortHaul: this.state.isShortHaul,
                     basePrice: this.state.basePrice,
-                    declaredValueFee: this.state.declaredValueFee
+                    declaredValueFee: this.state.declaredValueFee,
+                    insuranceFee: this.state.insuranceFee
                   }}
                   details={this.state.details}
                   onTypeChange={(e) => this.onTypeChange(e.target.value)}
@@ -1706,7 +1708,8 @@ class CreateParcel extends React.Component {
             weightFee,
             lengthFee,
             basePrice,
-            isShortHaul
+            isShortHaul,
+            insuranceFee
           } = data;
 
           const _lengthFee = Number(lengthFee)
@@ -1735,10 +1738,11 @@ class CreateParcel extends React.Component {
           _data.shippingCost.value = _shippingCost;
 
           this.setState({
+            insuranceFee,
             declaredValueFee,
             handlingFee: _handlingFee,
             lengthFee: _lengthFee,
-            weightFee: _weightFee,
+            weightFee,
             details: _data,
             basePrice,
             isShortHaul: Boolean(isShortHaul)

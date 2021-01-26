@@ -84,8 +84,6 @@ function BicolIsarogForm(props) {
     declaredValueFee
   } = props.priceDetails
 
-  const divRef = React.useRef()
-
   const enableInterConnection = props.enableInterConnection;
   const _temList = destination.options.map((e) => e.name);
   const [tempList, setTempList] = React.useState(_temList);
@@ -538,33 +536,28 @@ function BicolIsarogForm(props) {
               <> 
                 <TextContainer title="Weight Fee" value={Number(weightFee).toFixed(2)} /> 
                 <TextContainer title="Length Fee" value={Number(lengthFee).toFixed(2)} />
+                <TextContainer title="System Fee" value={Number(systemFee.value).toFixed(2)} />
               </>
             }
             {UserProfile.getBusCompanyTag() === "isarog-liner" &&
               <> 
                 <TextContainer title="Porters Fee" value={Number(portersFee).toFixed(2)} /> 
                 <TextContainer title="Length Fee" value={Number(lengthFee).toFixed(2)} />
+                <TextContainer title="System Fee" value={Number(systemFee.value).toFixed(2)} />
               </>
             }
             {
-              UserProfile.getBusCompanyTag() === "dltb" &&
-              <>
-              {
-                isShortHaul ? 
-                <> 
-                  <TextContainer title="Base Price" value={basePrice} /> 
-                  <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
-                </>
-                :
-                <>
-                  <TextContainer title="Additional Fee" value={Number(additionalFee.value).toFixed(2)} /> 
-                  <TextContainer title="Handling Fee" value={Number(handlingFee).toFixed(2)} /> 
-                </>
-              }
-              </>
+              UserProfile.getBusCompanyTag() === "dltb" && 
+              <ShowDltbBreakDown 
+                data={{
+                  ...props.priceDetails, 
+                  additionalFee: Number(additionalFee.value).toFixed(2), 
+                  systemFee:Number(systemFee.value).toFixed(2)
+                }} 
+              />
             }
             {/* {<TextContainer title="Insurance Fee" value={Number(packageInsurance.value).toFixed(2)} />} */}
-            <TextContainer title="System Fee" value={Number(systemFee.value).toFixed(2)} />
+           
             <Space>
               <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 17, width: 200, fontWeight: 400 }}><label>Total Shipping Cost</label></div>
                   &nbsp;<div style={{fontSize: 19, textAlign: 'right', width: 100, fontWeight: 'bold' }}><label> ₱ {Number(totalShippingCost.value).toFixed(2)}</label></div>
@@ -634,6 +627,44 @@ function BicolIsarogForm(props) {
 
     </div>
   );
+}
+
+function ShowDltbBreakDown(props){
+  let view = undefined;
+    const{
+      weightFee,
+      handlingFee,
+      basePrice,
+      isShortHaul,
+      declaredValueFee,
+      systemFee,
+      insuranceFee,
+      additionalFee
+    }=props.data;
+    
+
+    if(isShortHaul){
+      view = (<>
+        <TextContainer title="Base Price" value={basePrice} /> 
+        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
+        <TextContainer title="System Fee" value={systemFee} />
+      </>)
+    }else{
+      view = (<>
+        <TextContainer title="Weight Fee" value={weightFee} /> 
+        <TextContainer title="Additional Fee" value={additionalFee} /> 
+        <TextContainer title="Handling Fee" value={Number(handlingFee).toFixed(2)} /> 
+        <TextContainer title="Insurance Fee" value={insuranceFee} />
+        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
+        <TextContainer title="System Fee" value={systemFee} />
+      </>)
+    }
+
+  if(isShortHaul !== undefined){
+    return(view)
+  }
+  return(<div style={{display:'flex', justifyContent:'center', marginTop:'2rem', marginBottom:'3rem'}}>No Data</div>);
+  
 }
 
 function TextContainer(props) {

@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(80)'
+        build: '1.5.1(81)'
     },
-    changeLogs: `fix error on not computing `
+    changeLogs: `DLTB break down payments`
 }
 
 export const ERROR_CODES = {
