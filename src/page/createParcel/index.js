@@ -424,7 +424,7 @@ class CreateParcel extends React.Component {
       basePrice:0,
       declaredValueFee:0,
       insuranceFee:0,
-      isFixedPrice:false
+      isFixedPrice:undefined
     };
     this.userProfileObject = UserProfile;
     //this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -953,6 +953,7 @@ class CreateParcel extends React.Component {
           d.systemFee.value = systemFee;
 
           this.setState({
+            isFixedPrice:true,
             declaredValueFee,
             basePrice,
             details: d })
@@ -1229,7 +1230,21 @@ class CreateParcel extends React.Component {
       details.description = description;
 
       details = { ...details, ...{ destination } };
-      this.setState({ details, selectedDestination });
+
+      let state = {...this.state,
+        engthFee: 0,
+        portersFee: 0,
+        weightFee: 0,
+        handlingFee: 0,
+        isShortHaul:undefined,
+        isFixedPrice:false,
+        basePrice:0,
+        declaredValueFee:0,
+        insuranceFee:0,
+        lengthRate:0,
+        isFixedPrice:undefined
+      }
+      this.setState({...state, details, selectedDestination });
 
 
       MatrixService.getMatrix({
@@ -1331,7 +1346,8 @@ class CreateParcel extends React.Component {
         basePrice:0,
         declaredValueFee:0,
         insuranceFee:0,
-        lengthRate:0
+        lengthRate:0,
+        isFixedPrice:undefined
       }
 
 
@@ -1772,7 +1788,8 @@ class CreateParcel extends React.Component {
             weightFee,
             details: _data,
             basePrice,
-            isShortHaul: Boolean(isShortHaul)
+            isShortHaul: Boolean(isShortHaul),
+            isFixedPrice:false
           });
         }
       })

@@ -534,11 +534,11 @@ function BicolIsarogForm(props) {
 
             
             {UserProfile.getBusCompanyTag() === "five-star" &&
-              <> 
-                <TextContainer title="Weight Fee" value={Number(weightFee).toFixed(2)} /> 
-                <TextContainer title="Length Fee" value={Number(lengthFee).toFixed(2)} />
-                <TextContainer title="System Fee" value={Number(systemFee.value).toFixed(2)} />
-              </>
+              <ShowFiveStarBreakDown data={{
+                ...props.priceDetails, 
+                  isFixedPrice,
+                  systemFee:Number(systemFee.value).toFixed(2)
+              }}/>
             }
             {UserProfile.getBusCompanyTag() === "isarog-liner" &&
               <> 
@@ -635,16 +635,29 @@ function ShowFiveStarBreakDown(props){
   let view = undefined;
     const{
       weightFee,
-      handlingFee,
       basePrice,
-      isShortHaul,
       declaredValueFee,
       systemFee,
-      insuranceFee,
-      additionalFee
+      isFixedPrice,
+      lengthFee
     }=props.data;
 
-    if(isShortHaul !== undefined){
+    if(isFixedPrice){
+      view=(<>
+        <TextContainer title="Base Price" value={basePrice} /> 
+        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
+        <TextContainer title="System Fee" value={systemFee} />
+      </>)
+    }else{
+      view=(<>
+        <TextContainer title="Weight Fee" value={weightFee} /> 
+        <TextContainer title="Length Fee" value={lengthFee} />
+        <TextContainer title="Declared Value Fee" value={declaredValueFee} />
+        <TextContainer title="System Fee" value={systemFee} />
+      </>)
+    }
+
+    if(isFixedPrice !== undefined){
       return(view)
     }
     return(<div style={{display:'flex', justifyContent:'center', marginTop:'2rem', marginBottom:'3rem'}}>No Data</div>);
@@ -669,6 +682,7 @@ function ShowDltbBreakDown(props){
     if(isShortHaul || isFixedPrice){
       view = (<>
         <TextContainer title="Base Price" value={basePrice} /> 
+        <TextContainer title="Additional Fee" value={additionalFee} />
         <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
         <TextContainer title="System Fee" value={systemFee} />
       </>)

@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(82)'
+        build: '1.5.1(83)'
     },
     changeLogs: `DLTB break down payments`
 }
