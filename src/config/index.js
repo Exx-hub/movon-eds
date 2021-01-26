@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(75)'
+        build: '1.5.1(76)'
     },
-    changeLogs: `update matrix preview`
+    changeLogs: `update computation`
 }
 
 export const ERROR_CODES = {
