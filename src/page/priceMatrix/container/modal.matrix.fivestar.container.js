@@ -138,7 +138,7 @@ function FiveStarMatrixModalContent(props) {
                                         name={[field.name, 'amount']}
                                         fieldKey={[field.fieldKey, 'amount']}
                                         rules={[{ required: true, message: 'required field' },validateAmount]}>
-                                        <Input type="number" addonBefore="₱" style={{minWidth:80}} min={0} placeholder="Amount(Php)" />
+                                        <Input addonBefore="₱" style={{minWidth:80}} min={0} placeholder="Amount(Php)" />
                                     </Form.Item>
 
                                     <Form.Item
@@ -148,7 +148,7 @@ function FiveStarMatrixModalContent(props) {
                                         name={[field.name, 'kiloRate']}
                                         fieldKey={[field.fieldKey, 'kiloRate']}
                                         rules={[{ required: true, message: 'required field' },validateAmount]}>
-                                        <Input type="number" addonBefore="₱" style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
+                                        <Input addonBefore="₱" style={{minWidth:110}} min={0} placeholder="Kilo Rate(Php)" />
                                     </Form.Item>
 
                                     <Button shape="circle" size="small" style={{background:'#c32020bf'}} onClick={() => remove(field.name)}>
