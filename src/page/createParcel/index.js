@@ -832,6 +832,7 @@ class CreateParcel extends React.Component {
   };
 
   computePrice = () => {
+    console.log('computePrice======>>')
     if (
       this.state.details.fixMatrix.value &&
       this.state.details.fixMatrix.value !== "none"
@@ -918,8 +919,11 @@ class CreateParcel extends React.Component {
       parcelCount: d.sticker_quantity.value,
       fixMatrixItemName: d.fixMatrix.value
     }
-    ParcelService.getDltbFixMatrixComputation(options).then(e => {
+    console.info('options',options)
+    ParcelService.getDltbFixMatrixComputation(options)
+    .then(e => {
       const { data, errorCode } = e.data;
+      console.info("getDltbFixMatrixComputation",e)
       if (!errorCode) {
         const systemFee = Number(data.systemFee);
         let total = Number(data.computeTotalShippingCost);
@@ -1295,7 +1299,7 @@ class CreateParcel extends React.Component {
       details.additionalFee.enabled = false
       details.quantity.value = 1;
       details.additionalFee.value = 0;
-      details.sticker_quantity.value = 0;
+      details.sticker_quantity.value = 1;
       details.totalShippingCost.value = 0
       details.additionNote.value = ""
 
@@ -1304,12 +1308,10 @@ class CreateParcel extends React.Component {
         let option = details.fixMatrix.options.find((e) => e.name === value);
         let price = Number(option.price).toFixed(2);
         let declaredValue = Number(option.declaredValue);
-        let enableAdditionalFee = Boolean(option.additionalFee)
 
+        details.additionalFee.enabled = Boolean(option.additionalFee);
         declaredValue = declaredValue / 100;
         details.fixMatrix.value = value;
-        details.additionalFee.enabled = enableAdditionalFee;
-
 
         if (Number(declaredValue) === Number(0)) {
           details.packageInsurance.value = 0;
@@ -1334,9 +1336,12 @@ class CreateParcel extends React.Component {
         details.shippingCost.value = price;
 
         switch (UserProfile.getBusCompanyTag()) {
+          case 'five-star':
           case "dltb":
-            details.totalShippingCost.value = price
-            this.setState({weightFee:0, lengthFee:0, lengthRate: 0, handlingFee:0, portersFee:0, lengthRate: 0, details });
+            console.log('passsss>>>>>>>>111111')
+            this.setState({weightFee:0, lengthFee:0, lengthRate: 0, handlingFee:0, portersFee:0, lengthRate: 0, details },()=>{
+              this.dltbFixPriceComputation()
+            });
             break;
 
           default:
@@ -1369,7 +1374,9 @@ class CreateParcel extends React.Component {
         this.setState({ weightFee:0, lengthFee:0, lengthRate: 0, handlingFee:0, portersFee:0, details }, () => {
           switch (UserProfile.getBusCompanyTag()) {
             case 'bicol-isarog':
+              console.info('passsss>>>>777777')
               this.updateTotalShippingCost();
+            break;
 
             default:
               break;
@@ -1852,6 +1859,7 @@ class CreateParcel extends React.Component {
               break;
 
             default:
+              console.log('>>>>>>>>>>>>>>>>>>pass here')
               this.computePrice();
               const oldDetails = prevState.details;
               const curDetails = this.state.details;

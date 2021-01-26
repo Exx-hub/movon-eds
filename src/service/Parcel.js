@@ -425,6 +425,7 @@ const ParcelService = {
         parcelCount,
         fixMatrixItemName
     }) => {
+        console.info('passsss............',`${BASE_URL}/api/v1/account/delivery-person/matrix/computation/fix-matrix`)
         return axios({
             method: 'post',
             url: `${BASE_URL}/api/v1/account/delivery-person/matrix/computation/fix-matrix`,
