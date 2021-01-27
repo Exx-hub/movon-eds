@@ -92,6 +92,13 @@ const StepControllerView = (props) => {
 };
 
 const getReviewDetails = (state) => {
+
+  console.log('getReviewDetails state', state)
+  const destination = {...state.details.destination}
+
+  const option = destination.options.find(e=>e.endStation === destination.value)
+  console.info('option',option)
+
   return {
     packageName: state.details.description.value,
     packageWeight: state.details.packageWeight.value,
@@ -110,18 +117,19 @@ const getReviewDetails = (state) => {
     additionalNote: state.details.additionNote.value,
     billOfLading: state.details.billOfLading.value,
     checkIn: state.checkIn,
-    destination: state.details.destination.value,
+    destination: option.name,
     length: state.details.length.value,
     stickerCount: state.details.sticker_quantity.value,
     declaredValue: state.details.declaredValue.value,
     lengthFee: state.lengthFee,
-    portersFee: Number(0).toFixed(2),
+    portersFee: state.portersFee,
     weightFee: state.portersFee,
     handlingFee: state.handlingFee,
     basePrice: state.basePrice,
     declaredValueFee: state.declaredValueFee,
     insuranceFee: state.insuranceFee,
-    additionalFee: state.details.additionalFee.value
+    additionalFee: state.details.additionalFee.value,
+    discountFee: state.discountFee
   };
 };
 
@@ -198,13 +206,13 @@ class CreateParcel extends React.Component {
         },
         senderName: {
           name: "senderName",
-          value: undefined,
+          value: "ron test",
           isRequired: true,
           accepted: true,
         },
         senderMobile: {
           name: "senderMobile",
-          value: undefined,
+          value: '11111111111',
           isRequired: true,
           accepted: true,
         },
@@ -217,13 +225,13 @@ class CreateParcel extends React.Component {
         },
         receiverName: {
           name: "receiverName",
-          value: undefined,
+          value: "leslie Test",
           isRequired: true,
           accepted: true,
         },
         receiverMobile: {
           name: "receiverMobile",
-          value: undefined,
+          value: "11111111111",
           isRequired: true,
           accepted: true,
         },
@@ -783,19 +791,6 @@ class CreateParcel extends React.Component {
     }
 
     if (currentStep === 3) {
-      if (isNull(billOfLading.value)) {
-        showNotification({
-          title: "Create Parcel Validation",
-          type: "error",
-          message: "Please fill up required fields",
-        });
-        const billOfLading = {
-          ...this.state.billOfLading,
-          ...{ accepted: false },
-        };
-        this.setState({ billOfLading });
-        return false;
-      }
       if (this.isRequiredDetailsHasNull()) {
         showNotification({
           title: "Create Parcel Validation",
@@ -1415,7 +1410,6 @@ class CreateParcel extends React.Component {
         details.quantity.disabled = false;
         details.quantity.value = 1;
         details.description.value = option.name;
-        //details.shippingCost.value = price;
 
         switch (UserProfile.getBusCompanyTag()) {
           case 'five-star':
@@ -1942,7 +1936,7 @@ class CreateParcel extends React.Component {
         total -= discountFee;
       }
 
-      if (total > 500) {
+      if (total < 500) {
         systemFee = 10;
         total += systemFee;
       }
@@ -1975,7 +1969,7 @@ class CreateParcel extends React.Component {
           }
           total += portersFee;
 
-          if (total > 500) {
+          if (total < 500) {
             systemFee = 10;
             total += systemFee;
           }
@@ -1989,6 +1983,9 @@ class CreateParcel extends React.Component {
             declaredValueFee: declaredValueFee.toFixed(2),
             portersFee: Number(portersFee).toFixed(2),
             details: currentDetails
+          }, ()=>{
+            const state = this.state;
+            console.info('state',state)
           });
         }
       });

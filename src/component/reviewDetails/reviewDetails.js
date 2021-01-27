@@ -149,7 +149,7 @@ function FeeSection(props){
     let feesSection=undefined;
 
     const data = props.value;
-    const length = (data.length && data.lengthFee + "m") || "0 m";
+    const length = (data.length && data.lengthFee + " m") || "0 m";
     const lengthFee = data.lengthFee ? "₱ "+Number(data.lengthFee).toFixed(2) : '₱ 0.00';
     const weight = data.packageWeight ? Number(data.packageWeight) + " kg" : 0 + " kg"
     const stickerCount = (data.subParcels ? data.subParcels.length : data.stickerCount) || 0;
@@ -161,10 +161,17 @@ function FeeSection(props){
     const convenienceFee = (data.convenienceFee && "₱ "+Number(data.convenienceFee).toFixed(2)) || '₱ 0.00';
     const totalPrice = (data.totalPrice && "₱ "+Number(data.totalPrice).toFixed(2)) || '₱ 0.00';
     const declaredValue = (data.declaredValue && "₱ "+Number(data.declaredValue).toFixed(2)) || '₱ 0.00';
-    
+   
+    const declaredValueFee = "₱ "+ Number(data.declaredValueFee || '0').toFixed(2);
+    const discountFee = "- ₱ " + Number(data.discountFee || "0").toFixed(2);
+
+    console.info('discountFee',discountFee)
+
     switch (UserProfile.getBusCompanyTag()) {
         case "dltb":
-            feesSection = (<NumberContainer label="Additional Fee" value={Number(data.additionalFee).toFixed(2)} />)
+            feesSection = (<>
+            <NumberContainer label="Additional Fee" value={Number(data.additionalFee).toFixed(2)} />
+            </>)
             break;
 
         case "five-star":
@@ -172,14 +179,17 @@ function FeeSection(props){
             feesSection = (<>
                 <NumberContainer label="Base Price" value={basePrice} />
                 <NumberContainer label="Length Fee" value={lengthFee} />
+                <NumberContainer label="Weight Fee" value={weightFee} />
             </>)
             break;
 
         case 'isarog-liner':
             inputSection = (<TextContainer label="Length" value={length} />)
             feesSection = (<>
+                <NumberContainer label="Porter's Fee" value={portersFee}/>
                 <NumberContainer label="Length Fee" value={lengthFee}/>
-                <NumberContainer label="Porter's Fee" value={portersFee} />
+                <NumberContainer label="Discount" value={discountFee}/>
+                <NumberContainer label="Declared Value Fee" value={declaredValueFee} />
             </>)
             break;
     
@@ -199,8 +209,6 @@ function FeeSection(props){
             </div>
 
             <div className="vertical-layout" style={{width:'50%'}}> 
-                <NumberContainer label="Declared Value Fee" value={insuranceFee} />
-                <NumberContainer label="Weight Fee" value={weightFee} />
                 {feesSection}
                 <NumberContainer label="System Fee" value={convenienceFee} />
                 <NumberContainer label="Total Shipping Cost" value={totalPrice} />
@@ -211,7 +219,6 @@ function FeeSection(props){
 }
 
 function TextContainer(props){
-    console.info('TextContainer',props)
     return(<div className="text-section">
         <div className="label"><label>{props.label}</label></div>
         :<div className="label-value"><label>{props.value}</label></div>
