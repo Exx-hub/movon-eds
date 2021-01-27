@@ -963,6 +963,42 @@ class CreateParcel extends React.Component {
     let details = { ...this.state.details };
     let state = {...this.state}
 
+    if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
+
+      if(name === "quantity" || name === "additionalFee"){
+        
+        let detail = {...this.state.details};
+        let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
+        let quantity = name === "quantity" ? Number(value) : Number(details.quantity.value);
+        let additionalFee = name === "additionalFee" ? Number(value) : Number(details.additionalFee.value);
+        let basePrice = Number(option.price);
+        let systemFee = Number(details.systemFee.value)
+        let declaredValueFee = Number(this.state.declaredValueFee);
+        let total = 0;
+
+        console.info('option',option)
+        const fixPriceDvRate = Number(option.declaredValue) 
+        if(Number(basePrice) === 0 && fixPriceDvRate > 0){
+          declaredValueFee = declaredValueFee * quantity;
+          total += declaredValueFee;
+        }else{
+          basePrice = basePrice * quantity;
+          total += basePrice
+        }
+
+        total += (additionalFee + systemFee)
+        detail.totalShippingCost.value = Number(total).toFixed(2)
+        detail[name].value = value;
+
+        this.setState({
+          declaredValueFee: Number(declaredValueFee).toFixed(2),
+          basePrice:Number(basePrice).toFixed(2),
+          detail
+        })
+        return;
+      }
+    }
+
     if (name === "sticker_quantity" || name === "quantity") {
       const isValid = Number(value) > -1;
       let item = {
@@ -1017,36 +1053,6 @@ class CreateParcel extends React.Component {
         case "five-star":
         case "dltb":
           if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
-            if(name === "quantity" || name === "additionalFee"){
-              let detail = {...this.state.details};
-              let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
-              let quantity = Number(details.quantity.value);
-              let additionalFee = Number(details.additionalFee.value);
-              let basePrice = Number(option.price);
-              let systemFee = Number(details.systemFee.value)
-              let declaredValueFee = Number(this.state.declaredValueFee);
-              let total = 0;
-
-              console.info('option',option)
-              const fixPriceDvRate = Number(option.declaredValue) 
-              if(Number(basePrice) === 0 && fixPriceDvRate > 0){
-                declaredValueFee = declaredValueFee * quantity;
-                total += declaredValueFee;
-              }else{
-                basePrice = basePrice * quantity;
-                total += basePrice
-              }
-
-              total += (additionalFee + systemFee)
-              detail.totalShippingCost.value = Number(total).toFixed(2)
-
-              this.setState({
-                declaredValueFee: Number(declaredValueFee).toFixed(2),
-                basePrice:Number(basePrice).toFixed(2),
-                detail})
-              return;
-            }
-
             if(name === 'declaredValue' || name === "sticker_quantity") {
               let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
               if (option && Number(option.price) === 0) {
@@ -1968,7 +1974,7 @@ class CreateParcel extends React.Component {
       }
 
       if(fixPriceDvRate > 0 ){
-        declaredValueFee = declaredValue * fixPriceDvRate;
+        declaredValueFee = declaredValue * (fixPriceDvRate / 100);
         total += declaredValueFee;
       }
 
