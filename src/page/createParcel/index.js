@@ -960,6 +960,7 @@ class CreateParcel extends React.Component {
   onInputChange = (name, value) => {
 
     let details = { ...this.state.details };
+    let state = {...this.state}
 
     if (name === "sticker_quantity" || name === "quantity") {
       const isValid = Number(value) > -1;
@@ -972,22 +973,6 @@ class CreateParcel extends React.Component {
         },
       };
       details = { ...details, ...{ [name]: item } };
-    }
-
-    if (UserProfile.getBusCompanyTag() === 'dltb') {
-      let qty = undefined;
-      let addrate = undefined
-
-      if (name === 'quantity') {
-        qty = Number(value)
-        addrate = Number(details.additionalFee.value || 0)
-        details.totalShippingCost.value = this.addFixMatrixFee(qty, addrate)
-      }
-      if (name == "additionalFee") {
-        qty = Number(details.quantity.value || 1)
-        addrate = Number(value)
-        details.totalShippingCost.value = this.addFixMatrixFee(qty, addrate)
-      }
     }
 
     if (name === "declaredValue") {
@@ -1014,13 +999,12 @@ class CreateParcel extends React.Component {
       }
     }
 
-
     let item = {
       ...details[name],
       ...{ value, accepted: true, hasError: false },
     };
 
-    this.setState({ details: { ...details, ...{ [name]: item } } }, () => {
+    this.setState({...state, details: { ...details, ...{ [name]: item } } }, () => {
 
       switch (UserProfile.getBusCompanyTag()) {
         case 'isarog-liner':
@@ -1031,12 +1015,34 @@ class CreateParcel extends React.Component {
 
         case "five-star":
         case "dltb":
-          if ((name === 'declaredValue' || name === "sticker_quantity") && details.fixMatrix.value !== "none") {
-            let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
-            if (option && Number(option.price) === 0) {
-              this.dltbFixPriceComputation()
+          if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
+            if(name === "quantity" || name === "additionalFee"){
+              let detail = {...this.state.details};
+              let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
+              let quantity = Number(this.state.details.quantity.value);
+              let additionalFee = Number(this.state.details.additionalFee.value);
+              let basePrice = Number(option.price);
+              let systemFee = Number(this.state.details.systemFee.value)
+              let total = basePrice;
+             
+              if(quantity > 1){
+                basePrice = basePrice * quantity;
+                total = basePrice
+              }
+              total += (additionalFee + systemFee)
+              detail.totalShippingCost.value = Number(total).toFixed(2)
+              this.setState({basePrice:Number(basePrice),detail})
+              return;
+            }
+            if(name === 'declaredValue' || name === "sticker_quantity") {
+              let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
+              if (option && Number(option.price) === 0) {
+                this.dltbFixPriceComputation()
+              }
+              return;
             }
           }
+
           if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
             this.computeV2()
           }
@@ -1413,9 +1419,17 @@ class CreateParcel extends React.Component {
 
         switch (UserProfile.getBusCompanyTag()) {
           case 'five-star':
-          case "dltb":
             this.setState({ ...state, isFixedPrice: true, details }, () => {
               if (option && Number(option.price) === 0) {
+                return;
+              }
+              this.dltbFixPriceComputation()
+            });
+            break;
+          case "dltb":
+            console.info('dltb option',option)
+            this.setState({ ...state, isFixedPrice: true, details }, () => {
+              if (option && Number(option.price) === 0 && Number(option.declaredValue) !== 0) {
                 return;
               }
               this.dltbFixPriceComputation()
@@ -1929,7 +1943,10 @@ class CreateParcel extends React.Component {
       const computedDvRate = declaredValue * dvRate;
       const computedPrice = computedDvRate + fixPrice;
 
-      total = computedPrice * quantity;
+      if(quantity > 1){
+        total = computedPrice * quantity;
+        fixPrice = fixPrice * quantity;
+      }
 
       if (discount) {
         discountFee = total * (Number(discount.rate) / 100);
@@ -1956,12 +1973,17 @@ class CreateParcel extends React.Component {
       //compute for matrix;
       this.computePrice((e) => {
         if (e) {
-          const basePrice = Number(e.totalCost);
+          let basePrice = Number(e.totalCost);
           const declaredValueFee = Number(e.declaredRate);
           const lengthFee = Number(e.lengthRate);
           total = basePrice + declaredValueFee + lengthFee;
 
           console.info('<<<<<<',discount)
+
+          if(quantity > 1){
+            total = total * quantity;
+            basePrice = basePrice * quantity;
+          }
 
           if (discount) {
             discountFee = total * (Number(discount.rate) / 100);

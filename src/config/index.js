@@ -35,7 +35,7 @@ export const config = {
         environment:"",
         build: '1.5.1(87)'
     },
-    changeLogs: `update BI computation, fix issue on quantity`
+    changeLogs: `DP511, DP513`
 }
 
 export const ERROR_CODES = {

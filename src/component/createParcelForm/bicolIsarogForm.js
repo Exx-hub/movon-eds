@@ -562,10 +562,10 @@ function BicolIsarogForm(props) {
             }
             {/* {<TextContainer title="Insurance Fee" value={Number(packageInsurance.value).toFixed(2)} />} */}
            
-            <Space>
-              <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 17, width: 200, fontWeight: 400 }}><label>Total Shipping Cost</label></div>
-                  &nbsp;<div style={{fontSize: 19, textAlign: 'right', width: 100, fontWeight: 'bold' }}><label> ₱ {Number(totalShippingCost.value).toFixed(2)}</label></div>
-            </Space>
+            <div style={{display:'flex', justifyContent:'space-between'}}>
+              <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, fontWeight:"bold" }}><label>Total Shipping Cost</label></div>
+              <div style={{fontSize: 17, textAlign: 'right', fontWeight: 'bold' }}><label> ₱ {Number(totalShippingCost.value).toFixed(2)}</label></div>
+            </div>
           </div>
         </div>
 
@@ -738,10 +738,10 @@ function ShowDltbBreakDown(props){
 }
 
 function TextContainer(props) {
-  return (<Space style={{ borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
-    <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, width: 200 }}><label>{props.title}</label></div>
-    <div style={{ fontSize: 15, textAlign: 'right', width: 110 }}><label> ₱ {props.value}</label></div>
-  </Space>)
+  return (<div style={{ display:'flex', justifyContent:'space-between', borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
+    <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15 }}><label>{props.title}</label></div>
+    <div style={{ fontSize: 15, textAlign: 'right' }}><label> ₱ {props.value}</label></div>
+  </div>)
 }
 
 function TextDiscountContainer(props) {
