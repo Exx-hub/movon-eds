@@ -436,7 +436,8 @@ class CreateParcel extends React.Component {
       declaredValueFee: Number(0).toFixed(2),
       insuranceFee: Number(0).toFixed(2),
       isFixedPrice: false,
-      discountFee: Number(0).toFixed(2)
+      discountFee: Number(0).toFixed(2),
+      stopStep:false
     };
     this.userProfileObject = UserProfile;
     this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -2093,6 +2094,7 @@ class CreateParcel extends React.Component {
           <Sider width={200} className="create-side-bar">
             <div style={{ marginLeft: "2rem", marginTop: "1rem" }}>
               <StepsView
+                disabled={this.state.stopStep}
                 stepList={STEPS_LIST}
                 current={this.state.currentStep}
                 onchange={(s) => this.updateSteps(s)}
