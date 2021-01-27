@@ -1427,7 +1427,6 @@ class CreateParcel extends React.Component {
             });
             break;
           case "dltb":
-            console.info('dltb option',option)
             this.setState({ ...state, isFixedPrice: true, details }, () => {
               if (option && Number(option.price) === 0 && Number(option.declaredValue) !== 0) {
                 return;
@@ -1437,6 +1436,7 @@ class CreateParcel extends React.Component {
             break;
 
           default:
+            console.info('BI option',option)
             this.setState({ ...state, basePrice: price, isFixedPrice: true, details }, () => {
               if (option && Number(option.declaredValue) > 0) {
                 return;
@@ -1789,7 +1789,8 @@ class CreateParcel extends React.Component {
     ParcelService.getDltbComputation(option)
       .then(e => {
         const { data, errorCode } = e.data;
-
+    ParcelService.getDltbComputation(option)
+        console.info("getDltbComputation e",e)
         if (!errorCode) {
           const {
             totalShippingCost,
@@ -1938,25 +1939,31 @@ class CreateParcel extends React.Component {
     if (currentDetails.fixMatrix.value && currentDetails.fixMatrix.value.toLowerCase() !== 'none') {
       let option = currentDetails.fixMatrix.options.find((e) => e.name === currentDetails.fixMatrix.value);
       let declaredValue = Number(currentDetails.declaredValue.value);
-      let fixPrice = Number(option.price);
-      let dvRate = Number(option.declaredValue) / 100;
-      const computedDvRate = declaredValue * dvRate;
-      const computedPrice = computedDvRate + fixPrice;
+      let basePrice = Number(option.price);
+      let fixPriceDvRate = Number(option.declaredValue);
+      let declaredValueFee = 0;
+      let total = basePrice;
 
       if(quantity > 1){
-        total = computedPrice * quantity;
-        fixPrice = fixPrice * quantity;
+        basePrice = basePrice * quantity;
+        total = basePrice;
       }
 
-      if (discount) {
+      if(discount) {
         discountFee = total * (Number(discount.rate) / 100);
         total -= discountFee;
+      }
+
+      if(fixPriceDvRate > 0 ){
+        declaredValueFee = declaredValue * fixPriceDvRate;
+        total += declaredValueFee;
       }
 
       if (total < 500) {
         systemFee = 10;
         total += systemFee;
       }
+
       total += portersFee;
 
       currentDetails.systemFee.value = systemFee;
@@ -1964,8 +1971,8 @@ class CreateParcel extends React.Component {
 
       this.setState({
         discountFee: discountFee.toFixed(2),
-        basePrice: fixPrice.toFixed(2),
-        declaredValueFee: Number(computedDvRate).toFixed(2),
+        basePrice: basePrice.toFixed(2),
+        declaredValueFee: Number(declaredValueFee).toFixed(2),
         portersFee: Number(portersFee).toFixed(2),
         details: currentDetails
       });
