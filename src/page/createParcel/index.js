@@ -1139,6 +1139,20 @@ class CreateParcel extends React.Component {
     });
   };
 
+  getDiscount = (discountName) =>{
+    let details = {...this.state.details};
+    let option = details.discount.options.find((e) => e.name === discountName);
+    const totalShippingCost = Number(details.totalShippingCost.value);
+    const systemFee = Number(details.systemFee.value);
+    const shippingCost = (totalShippingCost - systemFee);
+    const discountFee = shippingCost * (Number(option.rate) / 100) ;
+    const total = (shippingCost - discountFee) + systemFee;
+    return {
+      total,
+      discountFee
+    }
+  }
+
   onSelectChange = async (value, name) => {
     let details = { ...this.state.details };
 
@@ -1243,7 +1257,9 @@ class CreateParcel extends React.Component {
       let fixMatrix = { ...details.fixMatrix }
       fixMatrix.value = undefined;
       fixMatrix.options = []
-      details.fixMatrix = fixMatrix
+      details.fixMatrix = fixMatrix;
+
+      details.discount.value = undefined;
 
       let description = { ...details.description }
       description.value = undefined;
@@ -1327,14 +1343,8 @@ class CreateParcel extends React.Component {
       details.discount = discount;
       details.additionNote = additionNote;
 
-      let option = details.discount.options.find((e) => e.name === value);
-      const totalShippingCost = Number(details.totalShippingCost.value);
-      const systemFee = Number(details.systemFee.value);
-      const shippingCost = (totalShippingCost - systemFee);
-      const discountFee = shippingCost * (Number(option.rate) / 100) ;
-      console.info('discountFee',discountFee)
-      const total = (shippingCost - discountFee) + systemFee;
-      details.totalShippingCost.value = total
+      const{total, discountFee}=this.getDiscount(value)
+      details.totalShippingCost.value = total;
 
       this.setState({ discountFee: Number(discountFee).toFixed(2), details }, () =>{
         switch (UserProfile.getBusCompanyTag()) {
@@ -1376,6 +1386,7 @@ class CreateParcel extends React.Component {
       details.totalShippingCost.value = 0
       details.additionNote.value = ""
       details.systemFee.value = 0;
+      details.discount.value = undefined;
 
       let state = {...this.state,
         lengthFee: Number(0).toFixed(2),
@@ -1968,7 +1979,9 @@ class CreateParcel extends React.Component {
     if (discount > 0) { total = total * ((100 - discount) / 100); }
 
 
-    const portersFee = 30;
+    let option = currentDetails.fixMatrix.options.find((e) => e.name === currentDetails.fixMatrix.value);
+    const portersFee = (option.name.toLowerCase() === 'envelop') ? 0 : 30;
+
     if (this.userProfileObject.isIsarogLiners()) {
       total += parseFloat(this.state.connectingCompanyComputation || 0)
       if (total > 500) {
