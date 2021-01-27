@@ -93,11 +93,9 @@ const StepControllerView = (props) => {
 
 const getReviewDetails = (state) => {
 
-  console.log('getReviewDetails state', state)
   const destination = {...state.details.destination}
 
   const option = destination.options.find(e=>e.endStation === destination.value)
-  console.info('option',option)
 
   return {
     packageName: state.details.description.value,
@@ -110,9 +108,7 @@ const getReviewDetails = (state) => {
     senderName: state.details.senderName.value,
     senderEmail: state.details.senderEmail.value,
     senderPhone: state.details.senderMobile.value,
-    convenienceFee: state.details.systemFee.value,
-    insuranceFee: state.details.packageInsurance.value,
-    price: state.details.shippingCost.value,
+    
     totalPrice: state.details.totalShippingCost.value,
     additionalNote: state.details.additionNote.value,
     billOfLading: state.details.billOfLading.value,
@@ -121,11 +117,13 @@ const getReviewDetails = (state) => {
     length: state.details.length.value,
     stickerCount: state.details.sticker_quantity.value,
     declaredValue: state.details.declaredValue.value,
+    price: state.basePrice,
+
+    convenienceFee: state.details.systemFee.value,
     lengthFee: state.lengthFee,
     portersFee: state.portersFee,
     weightFee: state.portersFee,
     handlingFee: state.handlingFee,
-    basePrice: state.basePrice,
     declaredValueFee: state.declaredValueFee,
     insuranceFee: state.insuranceFee,
     additionalFee: state.details.additionalFee.value,
@@ -976,7 +974,6 @@ class CreateParcel extends React.Component {
         let declaredValueFee = Number(this.state.declaredValueFee);
         let total = 0;
 
-        console.info('option',option)
         const fixPriceDvRate = Number(option.declaredValue) 
         if(Number(basePrice) === 0 && fixPriceDvRate > 0){
           declaredValueFee = declaredValueFee * quantity;

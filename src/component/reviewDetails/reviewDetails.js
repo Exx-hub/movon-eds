@@ -149,37 +149,42 @@ function FeeSection(props){
     let feesSection=undefined;
 
     const data = props.value;
-    const length = (data.length && data.lengthFee + " m") || "0 m";
-    const lengthFee = data.lengthFee ? "₱ "+Number(data.lengthFee).toFixed(2) : '₱ 0.00';
-    const weight = data.packageWeight ? Number(data.packageWeight) + " kg" : 0 + " kg"
+    const length = (data.lengthFee || 0) + " m";
+    const weight = (data.packageWeight || 0) + " kg";
     const stickerCount = (data.subParcels ? data.subParcels.length : data.stickerCount) || 0;
-    const packageQty = (data.packageQty && Number(data.packageQty)) || 1;
-    const weightFee = (data.weightFee && "₱ "+Number(data.weightFee).toFixed(2)) || '₱ 0.00';
-    const insuranceFee = (data.insuranceFee && "₱ "+Number(data.insuranceFee || 0).toFixed(2)) || "₱ 0.00"
-    const portersFee = (data.portersFee && "₱"+Number(data.portersFee).toFixed(2)) || '₱ 0.00';
-    const basePrice = (data.basePrice && "₱"+Number(data.basePrice).toFixed(2)) || '₱ 0.00';
-    const convenienceFee = (data.convenienceFee && "₱ "+Number(data.convenienceFee).toFixed(2)) || '₱ 0.00';
-    const totalPrice = (data.totalPrice && "₱ "+Number(data.totalPrice).toFixed(2)) || '₱ 0.00';
-    const declaredValue = (data.declaredValue && "₱ "+Number(data.declaredValue).toFixed(2)) || '₱ 0.00';
+    const packageQty = data.packageQty || 0;
+
+    const convenienceFee = "₱ "+ Number(data.convenienceFee || '0').toFixed(2);
+    const declaredValue = "₱ "+ Number(data.declaredValue || '0').toFixed(2);
+    const totalPrice = "₱ "+ Number(data.totalPrice || '0').toFixed(2);
    
+    const portersFee = "₱ "+ Number(data.portersFee || '0').toFixed(2);
     const declaredValueFee = "₱ "+ Number(data.declaredValueFee || '0').toFixed(2);
     const discountFee = "- ₱ " + Number(data.discountFee || "0").toFixed(2);
-
-    console.info('discountFee',discountFee)
+    const handlingFee = " ₱ " + Number(data.handlingFee || "0").toFixed(2);
+    const additionalFee = " ₱ " + Number(data.additionalFee || "0").toFixed(2);
+    const insuranceFee = " ₱ " + Number(data.insuranceFee || "0").toFixed(2);
+    const weightFee = " ₱ " + Number(data.weightFee || "0").toFixed(2);
+    const lengthFee = " ₱ " + Number(data.lengthFee || "0").toFixed(2);
 
     switch (UserProfile.getBusCompanyTag()) {
         case "dltb":
             feesSection = (<>
-            <NumberContainer label="Additional Fee" value={Number(data.additionalFee).toFixed(2)} />
+                <NumberContainer label="Additional Fee" value={additionalFee} />
+                <NumberContainer label="Weight Fee" value={weightFee} />
+                <NumberContainer label="Handling Fee" value={handlingFee} />
+                <NumberContainer label="Insurance Fee" value={insuranceFee} />
+                <NumberContainer label="Declared Value Fee" value={declaredValueFee} />
             </>)
             break;
 
         case "five-star":
             inputSection = (<TextContainer label="Length" value={length} />)
             feesSection = (<>
-                <NumberContainer label="Base Price" value={basePrice} />
                 <NumberContainer label="Length Fee" value={lengthFee} />
                 <NumberContainer label="Weight Fee" value={weightFee} />
+                <NumberContainer label="Discount" value={discountFee}/>
+                <NumberContainer label="Insurance Fee" value={declaredValueFee} />
             </>)
             break;
 
@@ -189,7 +194,7 @@ function FeeSection(props){
                 <NumberContainer label="Porter's Fee" value={portersFee}/>
                 <NumberContainer label="Length Fee" value={lengthFee}/>
                 <NumberContainer label="Discount" value={discountFee}/>
-                <NumberContainer label="Declared Value Fee" value={declaredValueFee} />
+                <NumberContainer label="Insurance Fee" value={declaredValueFee} />
             </>)
             break;
     
@@ -201,10 +206,10 @@ function FeeSection(props){
         <div className="horizontal-layout" style={{padding:'1rem'}}>
             
             <div className="vertical-layout" style={{width:'50%'}}> 
-                <TextContainer label="Declared Value" value={declaredValue} />
                 <TextContainer label="Package Count" value={stickerCount}/>
                 <TextContainer label="Quantity" value={packageQty } />
                 <TextContainer label="Weight" value={weight} />
+                <TextContainer label="Declared Value" value={declaredValue} />
                 {inputSection}
             </div>
 
