@@ -206,13 +206,13 @@ class CreateParcel extends React.Component {
         },
         senderName: {
           name: "senderName",
-          value: "ron test",
+          value: undefined,
           isRequired: true,
           accepted: true,
         },
         senderMobile: {
           name: "senderMobile",
-          value: '11111111111',
+          value: undefined,
           isRequired: true,
           accepted: true,
         },
@@ -225,13 +225,13 @@ class CreateParcel extends React.Component {
         },
         receiverName: {
           name: "receiverName",
-          value: "leslie Test",
+          value: undefined,
           isRequired: true,
           accepted: true,
         },
         receiverMobile: {
           name: "receiverMobile",
-          value: "11111111111",
+          value: undefined,
           isRequired: true,
           accepted: true,
         },
