@@ -1461,10 +1461,11 @@ class CreateParcel extends React.Component {
         this.setState({ ...state, details }, () => {
           switch (UserProfile.getBusCompanyTag()) {
             case 'bicol-isarog':
-              this.updateTotalShippingCost();
-              break;
+            case 'dltb':
+            break;
 
             default:
+              this.updateTotalShippingCost();
               break;
           }
         });
@@ -1899,40 +1900,6 @@ class CreateParcel extends React.Component {
             currentDetails.paxs.value === paxs.value
           ) {
             return;
-          }
-
-          const { declaredValue, packageWeight, sticker_quantity, length } = currentDetails;
-
-          switch (UserProfile.getBusCompanyTag()) {
-            case "dltb":
-              // if (declaredValue.value && packageWeight.value && sticker_quantity.value) {
-              //   this.requestComputation()
-              // }
-              break;
-
-            case "five-star":
-              // if (declaredValue.value && packageWeight.value && sticker_quantity.value && length.value) {
-              //   this.requestComputation()
-              // }
-              break;
-
-            default:
-              // this.computePrice();
-              // const oldDetails = prevState.details;
-              // const curDetails = this.state.details;
-              // if (
-              //   (this.state.details.fixMatrix.value === "none" ||
-              //     this.state.details.fixMatrix.value === undefined) &&
-              //   (oldDetails.shippingCost.value !== curDetails.shippingCost.value ||
-              //     oldDetails.systemFee.value !== curDetails.systemFee.value ||
-              //     oldDetails.packageInsurance.value !==
-              //     curDetails.packageInsurance.value ||
-              //     prevState.connectingCompanyComputation !==
-              //     this.state.connectingCompanyComputation)
-              // ) {
-              //   this.updateTotalShippingCost();
-              // }
-              break;
           }
         }
       }
