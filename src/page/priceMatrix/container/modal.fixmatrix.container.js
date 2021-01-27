@@ -4,8 +4,6 @@ import FooterModal from './modal.footer'
 
 function AddFixMatrixModalContent(props){
 
-    console.log('props AddFixMatrixModalContent',props)
-
     const onFinish = values => {
         let index = -1
         try {
@@ -55,7 +53,7 @@ function AddFixMatrixModalContent(props){
                     rules={[{ required: true, message: 'This is required field!' }, 
                     ({ getFieldValue }) => ({
                         validator(rule, value) {
-                            if (props.type !== 'delete' && props.data && props.data.names.includes(value.toLowerCase())) {
+                            if (props.type !== 'delete' && props.data && props.data.names.map(e=>(e.name)).includes(value.toLowerCase().trim())) {
                                 return Promise.reject('Name is already assigned');
                             }
                             return Promise.resolve()

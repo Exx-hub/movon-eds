@@ -247,7 +247,7 @@ function DltbMatrix(props){
                 setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"edit", data:{
                     ...data,
                     index,
-                    names:state.tempFixMatrixObject.fixMatrix.map(e=>(e.name))
+                    names:state.tempFixMatrixObject.fixMatrix
                 }}))
             break;
         

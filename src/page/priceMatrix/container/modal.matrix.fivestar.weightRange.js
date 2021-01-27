@@ -18,13 +18,13 @@ function MatrixModalContent(props) {
                             <div style={{display:'flex'}}>
                                 <div style={{ marginRight:'2rem', display:'flex', flexDirection:'column', minWidth:'50px', alignItems:'center', justifyContent:'center'}}>
                                    
-                                    <span style={{ color:'orange', fontSize: 14, fontWeight: 'bold',  }}>{e.weight1}</span> 
+                                    <span style={{ color:'orange', fontSize: 17, fontWeight: 'bold',  }}>{e.weight1}</span> 
                                     <span style={{ fontSize: 8, fontWeight: 'bold' }}>range 1</span> 
                                     
                                 </div>
                                 <div style={{ display:'flex', flexDirection:'column', minWidth:'50px', alignItems:'center', justifyContent:'center'}}>
                                    
-                                   <span style={{ color:'orange', fontSize: 14, fontWeight: 'bold',  }}>{e.weight2}</span> 
+                                   <span style={{ color:'orange', fontSize: 17, fontWeight: 'bold',  }}>{e.weight2}</span> 
                                    <span style={{ fontSize: 8, fontWeight: 'bold' }}>range 2</span> 
                                    
                                </div>
@@ -32,13 +32,13 @@ function MatrixModalContent(props) {
                             <div style={{display:'flex'}}>
                                 <div style={{ marginRight:'2rem', display:'flex', flexDirection:'column', minWidth:'50px', alignItems:'center', justifyContent:'center'}}>
                                    
-                                    <span style={{  color:'green', fontSize: 14, fontWeight: 'bold',  }}>{e.amount}</span> 
+                                    <span style={{  color:'green', fontSize: 17, fontWeight: 'bold',  }}>{e.amount}</span> 
                                     <span style={{ fontSize: 8, fontWeight: 'bold' }}>Amount</span> 
                                     
                                 </div>
                                 <div style={{ display:'flex', flexDirection:'column', minWidth:'50px', alignItems:'center', justifyContent:'center'}}>
                                    
-                                   <span style={{ color:'green', fontSize: 14, fontWeight: 'bold',  }}>{e.kiloRate}</span> 
+                                   <span style={{ color:'green', fontSize: 17, fontWeight: 'bold',  }}>{e.kiloRate}</span> 
                                    <span style={{ fontSize: 8, fontWeight: 'bold' }}>Kilo Rate</span> 
                                    
                                </div>
