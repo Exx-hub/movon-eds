@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(85)'
+        build: '1.5.1(86)'
     },
     changeLogs: `DP-497`
 }
