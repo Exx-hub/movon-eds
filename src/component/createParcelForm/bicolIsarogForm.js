@@ -745,10 +745,10 @@ function TextContainer(props) {
 }
 
 function TextDiscountContainer(props) {
-  return (<Space style={{ borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
+  return (<div style={{ display:'flex', justifyContent:'space-between', borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
     <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, width: 200 }}><label>{props.title}</label></div>
     <div style={{ fontSize: 15, textAlign: 'right', width: 110 }}><label> - ₱ {props.value}</label></div>
-  </Space>)
+  </div>)
 }
 
 function HeaderContainer(props) {

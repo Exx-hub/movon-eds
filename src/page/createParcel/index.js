@@ -907,6 +907,7 @@ class CreateParcel extends React.Component {
     }
     ParcelService.getDltbFixMatrixComputation(options)
       .then(e => {
+        console.info('getDltbFixMatrixComputation',e)
         const { data, errorCode } = e.data;
         if (!errorCode) {
 
@@ -1019,21 +1020,33 @@ class CreateParcel extends React.Component {
             if(name === "quantity" || name === "additionalFee"){
               let detail = {...this.state.details};
               let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
-              let quantity = Number(this.state.details.quantity.value);
-              let additionalFee = Number(this.state.details.additionalFee.value);
+              let quantity = Number(details.quantity.value);
+              let additionalFee = Number(details.additionalFee.value);
               let basePrice = Number(option.price);
-              let systemFee = Number(this.state.details.systemFee.value)
-              let total = basePrice;
-             
-              if(quantity > 1){
+              let systemFee = Number(details.systemFee.value)
+              let declaredValueFee = Number(this.state.declaredValueFee);
+              let total = 0;
+
+              console.info('option',option)
+              const fixPriceDvRate = Number(option.declaredValue) 
+              if(Number(basePrice) === 0 && fixPriceDvRate > 0){
+                declaredValueFee = declaredValueFee * quantity;
+                total += declaredValueFee;
+              }else{
                 basePrice = basePrice * quantity;
-                total = basePrice
+                total += basePrice
               }
+
               total += (additionalFee + systemFee)
               detail.totalShippingCost.value = Number(total).toFixed(2)
-              this.setState({basePrice:Number(basePrice),detail})
+
+              this.setState({
+                declaredValueFee: Number(declaredValueFee).toFixed(2),
+                basePrice:Number(basePrice).toFixed(2),
+                detail})
               return;
             }
+
             if(name === 'declaredValue' || name === "sticker_quantity") {
               let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
               if (option && Number(option.price) === 0) {
