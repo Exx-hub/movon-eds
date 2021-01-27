@@ -71,7 +71,8 @@ function BicolIsarogForm(props) {
     discount,
     associateFixPrice,
     billOfLading,
-    additionalFee
+    additionalFee,
+    discountFee,
   } = props.details;
 
   const {
@@ -544,6 +545,7 @@ function BicolIsarogForm(props) {
               <> 
                 <TextContainer title="Porters Fee" value={Number(portersFee).toFixed(2)} /> 
                 <TextContainer title="Length Fee" value={Number(lengthFee).toFixed(2)} />
+                <TextContainer title="Discount" value={discountFee} /> 
                 <TextContainer title="System Fee" value={Number(systemFee.value).toFixed(2)} />
               </>
             }
@@ -632,6 +634,7 @@ function BicolIsarogForm(props) {
 }
 
 function ShowFiveStarBreakDown(props){
+  console.info("ShowFiveStarBreakDown",props)
   let view = undefined;
     const{
       weightFee,
@@ -639,13 +642,15 @@ function ShowFiveStarBreakDown(props){
       declaredValueFee,
       systemFee,
       isFixedPrice,
-      lengthFee
+      lengthFee,
+      discountFee
     }=props.data;
 
     if(isFixedPrice){
       view=(<>
         <TextContainer title="Base Price" value={basePrice} /> 
         <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
+        <TextContainer title="Discount" value={discountFee} /> 
         <TextContainer title="System Fee" value={systemFee} />
       </>)
     }else{
@@ -653,6 +658,7 @@ function ShowFiveStarBreakDown(props){
         <TextContainer title="Weight Fee" value={weightFee} /> 
         <TextContainer title="Length Fee" value={lengthFee} />
         <TextContainer title="Declared Value Fee" value={declaredValueFee} />
+        <TextContainer title="Discount" value={discountFee} /> 
         <TextContainer title="System Fee" value={systemFee} />
       </>)
     }

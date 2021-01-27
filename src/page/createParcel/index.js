@@ -429,7 +429,8 @@ class CreateParcel extends React.Component {
       basePrice:Number(0).toFixed(2),
       declaredValueFee:Number(0).toFixed(2),
       insuranceFee:Number(0).toFixed(2),
-      isFixedPrice:false
+      isFixedPrice:false,
+      discountFee:Number(0).toFixed(2)
     };
     this.userProfileObject = UserProfile;
     this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -1057,6 +1058,7 @@ class CreateParcel extends React.Component {
           }
           break;
         
+        case "five-star":
         case "dltb":
           if (name === 'declaredValue' && details.fixMatrix.value !== "none") {
             let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
@@ -1069,10 +1071,7 @@ class CreateParcel extends React.Component {
             this.computeV2()
           }
           break
-        case "five-star":
-          if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
-            this.computeV2()
-          }
+
         default:
           break;
       }
@@ -1263,6 +1262,7 @@ class CreateParcel extends React.Component {
         declaredValueFee:Number(0).toFixed(2),
         insuranceFee:Number(0).toFixed(2),
         lengthRate:Number(0).toFixed(2),
+        discountFee:Number(0).toFixed(2),
       }
       this.setState({...state, details, selectedDestination });
 
@@ -1315,16 +1315,37 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "discount") {
-      const additionNote = {
-        ...details.additionNote,
-        ...{
-          value: value.toLowerCase() === "none" ? undefined : value,
-          accepted: true,
-        },
-      };
-      const discount = { ...details.discount, ...{ value, accepted: true } };
-      details = { ...details, ...{ discount, additionNote } };
-      this.setState({ details }, () => this.updateTotalShippingCost());
+
+      let additionNote = {...details.additionNote};
+      additionNote.value = value.toLowerCase() === "none" ? undefined : value
+      additionNote.accepted= true;
+
+      let discount = {...details.discount};
+      discount.value = value;
+      discount.accepted = true;
+
+      details.discount = discount;
+      details.additionNote = additionNote;
+
+      let option = details.discount.options.find((e) => e.name === value);
+      const totalShippingCost = Number(details.totalShippingCost.value);
+      const systemFee = Number(details.systemFee.value);
+      const shippingCost = (totalShippingCost - systemFee);
+      const discountFee = shippingCost * (Number(option.rate) / 100) ;
+      console.info('discountFee',discountFee)
+      const total = (shippingCost - discountFee) + systemFee;
+      details.totalShippingCost.value = total
+
+      this.setState({ discountFee: Number(discountFee).toFixed(2), details }, () =>{
+        switch (UserProfile.getBusCompanyTag()) {
+          case 'dltb':
+          case 'five-star':
+            break;
+          default:
+            this.updateTotalShippingCost();
+            break;
+        }
+      });
     }
 
     if (name === "associateFixPrice") {
@@ -1367,6 +1388,7 @@ class CreateParcel extends React.Component {
         declaredValueFee:Number(0).toFixed(2),
         insuranceFee:Number(0).toFixed(2),
         lengthRate:Number(0).toFixed(2),
+        discountFee:Number(0).toFixed(2),
       }
 
 
@@ -1403,14 +1425,8 @@ class CreateParcel extends React.Component {
 
         switch (UserProfile.getBusCompanyTag()) {
           case 'five-star':
-            this.setState({ ...state, isFixedPrice:true, details }, () => {
-              this.dltbFixPriceComputation()
-            });
-            break;
-
           case "dltb":
             this.setState({ ...state, isFixedPrice:true, details }, () => {
-              console.info('fixPrice Option',option.price)
               if(option && Number(option.price) === 0){
                 return;
               }
@@ -1524,7 +1540,8 @@ class CreateParcel extends React.Component {
                     basePrice: this.state.basePrice,
                     declaredValueFee: this.state.declaredValueFee,
                     insuranceFee: this.state.insuranceFee,
-                    isFixedPrice: this.state.isFixedPrice
+                    isFixedPrice: this.state.isFixedPrice,
+                    discountFee: this.state.discountFee
                   }}
                   details={this.state.details}
                   onTypeChange={(e) => this.onTypeChange(e.target.value)}
