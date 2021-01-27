@@ -1967,6 +1967,8 @@ class CreateParcel extends React.Component {
         total += systemFee;
       }
       total += portersFee;
+
+      currentDetails.systemFee.value = systemFee;
       currentDetails.totalShippingCost.value = Number(total).toFixed(2)
       
       this.setState({ 
@@ -1989,12 +1991,14 @@ class CreateParcel extends React.Component {
             discountFee = total * (Number(discount.rate) / 100);
             total -= discountFee;
           }
-
           total += portersFee;
+
           if(total > 500){
             systemFee = 10;
             total += systemFee;
           }
+
+          currentDetails.systemFee.value = systemFee;
           currentDetails.totalShippingCost.value = Number(total).toFixed(2)
           this.setState({ 
             basePrice: basePrice.toFixed(2),
