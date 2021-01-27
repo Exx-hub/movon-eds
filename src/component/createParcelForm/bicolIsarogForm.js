@@ -657,10 +657,7 @@ function ShowFiveStarBreakDown(props){
       </>)
     }
 
-    if(isFixedPrice !== undefined){
-      return(view)
-    }
-    return(<div style={{display:'flex', justifyContent:'center', marginTop:'2rem', marginBottom:'3rem'}}>No Data</div>);
+    return(view)
     
 }
 
@@ -697,11 +694,7 @@ function ShowDltbBreakDown(props){
       </>)
     }
 
-  if(isShortHaul !== undefined || isFixedPrice){
     return(view)
-  }
-  return(<div style={{display:'flex', justifyContent:'center', marginTop:'2rem', marginBottom:'3rem'}}>No Data</div>);
-  
 }
 
 function TextContainer(props) {

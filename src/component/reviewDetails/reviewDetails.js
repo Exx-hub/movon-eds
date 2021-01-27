@@ -127,20 +127,14 @@ function PackageInformationSection(props){
             <TextContainer label="Destination" value={destination} />
             <TextContainer label="Description" value={props.value.packageName || ''}/>
             <TextContainer label="Bill of Lading" value={billOfLading}/>
-            <div className="header-layout">
-                <span>Sender:</span> 
-                <TextContainer label="Sender Name" value={props.value.senderName || 'senderName'} />
-                <TextContainer label="Sender Phone No" value={props.value.senderPhone || 'senderPhone'} />
-                {props.value.senderEmail && <TextContainer label="Sender Email" value={props.value.senderEmail || ''} />}
-            </div>
-            
+            <br />
+            <TextContainer label="Sender Name" value={props.value.senderName || 'senderName'} />
+            <TextContainer label="Sender Phone No" value={props.value.senderPhone || 'senderPhone'} />
+            {props.value.senderEmail && <TextContainer label="Sender Email" value={props.value.senderEmail || ''} />}
             <br/>
-            <div className="header-layout">
-                <span>Reciever:</span> 
-                <TextContainer label="Receiver Name" value={props.value.recipientName || 'recipientName'} />
+            <TextContainer label="Receiver Name" value={props.value.recipientName || 'recipientName'} />
                 <TextContainer label="Receiver Phone No" value={props.value.recipientPhone || 'recipientPhone'} />
                 { props.value.recipientEmail && <TextContainer label="Receiver Email" value={props.value.recipientEmail || ''} />}
-            </div>
             <br/>
         </div>
     </div>)
@@ -153,16 +147,17 @@ function FeeSection(props){
 
     const data = props.value;
     const length = (data.length && data.lengthFee + "m") || "0 m";
-    const lengthFee = data.lengthFee ? "Php "+Number(data.lengthFee).toFixed(2) : 'Php 0.00';
+    const lengthFee = data.lengthFee ? "₱ "+Number(data.lengthFee).toFixed(2) : '₱ 0.00';
     const weight = data.packageWeight ? Number(data.packageWeight) + " kg" : 0 + " kg"
     const stickerCount = (data.subParcels ? data.subParcels.length : data.stickerCount) || 0;
     const packageQty = (data.packageQty && Number(data.packageQty)) || 1;
-    const weightFee = (data.weightFee && "Php "+Number(data.weightFee).toFixed(2)) || 'Php 0.00';
-    const insuranceFee = (data.insuranceFee && "Php "+Number(data.insuranceFee || 0).toFixed(2)) || "Php 0.00"
-    const portersFee = (data.portersFee && "Php "+Number(data.portersFee).toFixed(2)) || 'Php 0.00';
-    const convenienceFee = (data.convenienceFee && "Php "+Number(data.convenienceFee).toFixed(2)) || 'Php 0.00';
-    const totalPrice = (data.totalPrice && "Php "+Number(data.totalPrice).toFixed(2)) || 'Php 0.00';
-    const declaredValue = (data.declaredValue && "Php "+Number(data.declaredValue).toFixed(2)) || 'Php 0.00';
+    const weightFee = (data.weightFee && "₱ "+Number(data.weightFee).toFixed(2)) || '₱ 0.00';
+    const insuranceFee = (data.insuranceFee && "₱ "+Number(data.insuranceFee || 0).toFixed(2)) || "₱ 0.00"
+    const portersFee = (data.portersFee && "₱"+Number(data.portersFee).toFixed(2)) || '₱ 0.00';
+    const basePrice = (data.basePrice && "₱"+Number(data.basePrice).toFixed(2)) || '₱ 0.00';
+    const convenienceFee = (data.convenienceFee && "₱ "+Number(data.convenienceFee).toFixed(2)) || '₱ 0.00';
+    const totalPrice = (data.totalPrice && "₱ "+Number(data.totalPrice).toFixed(2)) || '₱ 0.00';
+    const declaredValue = (data.declaredValue && "₱ "+Number(data.declaredValue).toFixed(2)) || '₱ 0.00';
     
     switch (UserProfile.getBusCompanyTag()) {
         case "dltb":
@@ -170,8 +165,11 @@ function FeeSection(props){
             break;
 
         case "five-star":
-            inputSection = (<NumberContainer label="Length" value={length} />)
-            feesSection = (<NumberContainer label="Length Fee" value={lengthFee} />)
+            inputSection = (<TextContainer label="Length" value={length} />)
+            feesSection = (<>
+                <NumberContainer label="Base Price" value={basePrice} />
+                <NumberContainer label="Length Fee" value={lengthFee} />
+            </>)
             break;
 
         case 'isarog-liner':
@@ -189,22 +187,22 @@ function FeeSection(props){
     return(<div className="vertical-layout" style={{...props.style}}>
         <div className="horizontal-layout" style={{padding:'1rem'}}>
             
-            <div className="header-layout" style={{width:'50%'}}>
-                <span>Inputs:</span> 
+            <div className="vertical-layout" style={{width:'50%'}}> 
                 <TextContainer label="Declared Value" value={declaredValue} />
                 <TextContainer label="Package Count" value={stickerCount}/>
                 <TextContainer label="Quantity" value={packageQty } />
                 <TextContainer label="Weight" value={weight} />
                 {inputSection}
             </div>
-            <div className="header-layout" style={{width:'50%'}}>
-                <span>Fees:</span>
+
+            <div className="vertical-layout" style={{width:'50%'}}> 
                 <NumberContainer label="Declared Value Fee" value={insuranceFee} />
                 <NumberContainer label="Weight Fee" value={weightFee} />
                 {feesSection}
                 <NumberContainer label="System Fee" value={convenienceFee} />
                 <NumberContainer label="Total Shipping Cost" value={totalPrice} />
             </div>
+
         </div>
     </div>)
 }

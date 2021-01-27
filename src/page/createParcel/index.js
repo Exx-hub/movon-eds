@@ -108,16 +108,20 @@ const getReviewDetails = (state) => {
     price: state.details.shippingCost.value,
     totalPrice: state.details.totalShippingCost.value,
     additionalNote: state.details.additionNote.value,
-    billOfLading: state.billOfLading.value,
+    billOfLading: state.details.billOfLading.value,
     checkIn: state.checkIn,
     destination: state.details.destination.value,
-    lengthFee: "test",
     length: state.details.length.value,
-    weightFee: state.priceDetails.weightFee,
-    portersFee: state.priceDetails.portersFee,
-    stickerCount: state.stickerCount.value,
+    stickerCount: state.details.sticker_quantity.value,
     declaredValue: state.details.declaredValue.value,
-    additionalFee: 'test'
+    lengthFee: state.lengthFee,
+    portersFee: Number(0).toFixed(2),
+    weightFee: state.portersFee,
+    handlingFee:state.handlingFee,
+    basePrice: state.basePrice,
+    declaredValueFee:state.declaredValueFee,
+    insuranceFee: state.insuranceFee,
+    additionalFee: state.details.additionalFee.value
   };
 };
 
@@ -166,8 +170,9 @@ const parceResponseData = (data) => {
 };
 
 class CreateParcel extends React.Component {
-  constructor() {
-    super();
+
+  constructor(props) {
+    super(props);
     this.state = {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -416,18 +421,18 @@ class CreateParcel extends React.Component {
       noOfStickerCopy: 2,
       connectingCompanyComputation: 0,
       tariffRate: undefined,
-      lengthFee: 0,
-      portersFee: 0,
-      weightFee: 0,
-      handlingFee: 0,
+      lengthFee: Number(0).toFixed(2),
+      portersFee: Number(0).toFixed(2),
+      weightFee: Number(0).toFixed(2),
+      handlingFee:Number(0).toFixed(2),
       isShortHaul:undefined,
-      basePrice:0,
-      declaredValueFee:0,
-      insuranceFee:0,
-      isFixedPrice:undefined
+      basePrice:Number(0).toFixed(2),
+      declaredValueFee:Number(0).toFixed(2),
+      insuranceFee:Number(0).toFixed(2),
+      isFixedPrice:false
     };
     this.userProfileObject = UserProfile;
-    //this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
+    this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
     this.printEl = React.createRef();
   }
 
@@ -436,6 +441,8 @@ class CreateParcel extends React.Component {
   }
 
   componentDidMount() {
+
+    console.info('props',this.props)
 
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
@@ -476,7 +483,8 @@ class CreateParcel extends React.Component {
       details,
     });
 
-    ManifestService.getRoutes().then((e) => {
+    ManifestService.getRoutes()
+    .then((e) => {
       const { data, success, errorCode } = e.data;
       if (!errorCode) {
         if (data) {
@@ -513,7 +521,9 @@ class CreateParcel extends React.Component {
       } else {
         this.handleErrorNotification(errorCode);
       }
-    });
+    })
+    .catch(e=>console.info('error',e))
+    ;
   }
 
   handleErrorNotification = (code) => {
@@ -1048,6 +1058,17 @@ class CreateParcel extends React.Component {
           break;
         
         case "dltb":
+          if (name === 'declaredValue' && details.fixMatrix.value !== "none") {
+            let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
+            console.info('option',option)
+            if(option && Number(option.price) === 0){
+              this.dltbFixPriceComputation()
+            }
+          }
+          if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
+            this.computeV2()
+          }
+          break
         case "five-star":
           if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
             this.computeV2()
@@ -1232,17 +1253,16 @@ class CreateParcel extends React.Component {
       details = { ...details, ...{ destination } };
 
       let state = {...this.state,
-        engthFee: 0,
-        portersFee: 0,
-        weightFee: 0,
-        handlingFee: 0,
+        lengthFee: Number(0).toFixed(2),
+        portersFee: Number(0).toFixed(2),
+        weightFee: Number(0).toFixed(2),
+        handlingFee: Number(0).toFixed(2),
         isShortHaul:undefined,
         isFixedPrice:false,
-        basePrice:0,
-        declaredValueFee:0,
-        insuranceFee:0,
-        lengthRate:0,
-        isFixedPrice:undefined
+        basePrice:Number(0).toFixed(2),
+        declaredValueFee:Number(0).toFixed(2),
+        insuranceFee:Number(0).toFixed(2),
+        lengthRate:Number(0).toFixed(2),
       }
       this.setState({...state, details, selectedDestination });
 
@@ -1337,17 +1357,16 @@ class CreateParcel extends React.Component {
       details.systemFee.value = 0;
 
       let state = {...this.state,
-        engthFee: 0,
-        portersFee: 0,
-        weightFee: 0,
-        handlingFee: 0,
+        lengthFee: Number(0).toFixed(2),
+        portersFee: Number(0).toFixed(2),
+        weightFee: Number(0).toFixed(2),
+        handlingFee: Number(0).toFixed(2),
         isShortHaul:undefined,
         isFixedPrice:false,
-        basePrice:0,
-        declaredValueFee:0,
-        insuranceFee:0,
-        lengthRate:0,
-        isFixedPrice:undefined
+        basePrice:Number(0).toFixed(2),
+        declaredValueFee:Number(0).toFixed(2),
+        insuranceFee:Number(0).toFixed(2),
+        lengthRate:Number(0).toFixed(2),
       }
 
 
@@ -1384,8 +1403,17 @@ class CreateParcel extends React.Component {
 
         switch (UserProfile.getBusCompanyTag()) {
           case 'five-star':
+            this.setState({ ...state, isFixedPrice:true, details }, () => {
+              this.dltbFixPriceComputation()
+            });
+            break;
+
           case "dltb":
             this.setState({ ...state, isFixedPrice:true, details }, () => {
+              console.info('fixPrice Option',option.price)
+              if(option && Number(option.price) === 0){
+                return;
+              }
               this.dltbFixPriceComputation()
             });
             break;
