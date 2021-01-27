@@ -99,6 +99,9 @@ const sReviewDetails = (props) =>{
 }
 
 export function ReviewDetails(props){
+
+    console.info('ReviewDetails', props)
+
     return(<div className="preview-details">
         <Container title="Package Information">
             <div className="horizontal-layout">
