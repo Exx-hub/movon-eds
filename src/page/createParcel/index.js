@@ -443,8 +443,6 @@ class CreateParcel extends React.Component {
 
   componentDidMount() {
 
-    console.info('props',this.props)
-
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
@@ -847,7 +845,7 @@ class CreateParcel extends React.Component {
     );
   };
 
-  computePrice = () => {
+  computePrice = (callback) => {
     if (
       this.state.details.fixMatrix.value &&
       this.state.details.fixMatrix.value !== "none"
@@ -855,74 +853,52 @@ class CreateParcel extends React.Component {
       return;
     }
 
-    const {
-      destination,
-      declaredValue,
-      paxs,
-      packageWeight,
-      type,
-      length,
-    } = this.state.details;
+    const {destination, declaredValue, paxs, packageWeight, type, length} = this.state.details;
 
-    const busCompanyId = this.userProfileObject.getBusCompanyId();
-    const startStation = this.userProfileObject.getAssignedStationId();
-    const selectedOption = destination.options.filter(
-      (e) => e.value === destination.value
-    )[0];
-    const endStation = selectedOption.endStation || undefined;
-    const decValue = declaredValue.value
-      ? parseFloat(declaredValue.value).toFixed(2)
-      : undefined;
-    const pax = paxs.value || 0;
-    const parcel_length = length.value || 0;
-    const weight = packageWeight.value
-      ? parseFloat(packageWeight.value).toFixed(2)
-      : undefined;
-
-    if (
-      !isNull(busCompanyId) &&
-      !isNull(startStation) &&
-      !isNull(endStation) &&
-      !isNull(weight) &&
-      !isNull(decValue)
-    ) {
-
-      ParcelService.getDynamicPrice(
-        busCompanyId,
-        decValue,
-        endStation,
-        type.value,
-        pax,
-        startStation,
-        weight,
-        parcel_length
-      )
-        .then((e) => {
-          let details = { ...this.state.details };
-          const { data, success, errorCode } = e.data;
-          if (success) {
-            const lengthRate = parseFloat(data.lengthRate);
-            const declaredRate = parseFloat(data.declaredRate);
-            const totalCost = parseFloat(data.totalCost);
-
-            const shippingCost = {
-              ...details.shippingCost,
-              ...{ value: totalCost.toFixed(2) },
-            };
-            const packageInsurance = {
-              ...details.packageInsurance,
-              ...{ value: declaredRate.toFixed(2) },
-            };
-            details = { ...details, ...{ shippingCost } };
-            details = { ...details, ...{ packageInsurance } };
-
-            this.setState({ lengthRate: lengthRate.toFixed(2), details, }, () => this.updateTotalShippingCost());
-          } else {
-            this.handleErrorNotification(errorCode);
-          }
-        });
+    if(destination.value && packageWeight.value && length.value && declaredValue.value){
+      const busCompanyId = this.userProfileObject.getBusCompanyId();
+      const startStation = this.userProfileObject.getAssignedStationId();
+      const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
+      const endStation = selectedOption.endStation || undefined;
+      const decValue = declaredValue.value
+        ? parseFloat(declaredValue.value).toFixed(2)
+        : undefined;
+      const pax = paxs.value || 0;
+      const parcel_length = length.value || 0;
+      const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2): undefined;
+  
+      if (
+        !isNull(busCompanyId) &&
+        !isNull(startStation) &&
+        !isNull(endStation) &&
+        !isNull(weight) &&
+        !isNull(decValue)
+      ) {
+  
+        ParcelService.getDynamicPrice(
+          busCompanyId,
+          decValue,
+          endStation,
+          type.value,
+          pax,
+          startStation,
+          weight,
+          parcel_length
+        )
+          .then((e) => {
+            console.info('BicolIsarog compute',e)
+            callback()
+  
+            const { data, success, errorCode } = e.data;
+            if(errorCode){
+              this.handleErrorNotification(errorCode);
+              return;
+            }
+            callback(data);
+          });
     }
-  };
+  }
+  }
 
   dltbFixPriceComputation = () => {
 
@@ -937,7 +913,6 @@ class CreateParcel extends React.Component {
     ParcelService.getDltbFixMatrixComputation(options)
       .then(e => {
         const { data, errorCode } = e.data;
-        console.info("getDltbFixMatrixComputation", e)
         if (!errorCode) {
 
           const{
@@ -987,8 +962,6 @@ class CreateParcel extends React.Component {
   }
 
   onInputChange = (name, value) => {
-
-    console.info('onInputChange', name, value)
 
     let details = { ...this.state.details };
 
@@ -1045,24 +1018,25 @@ class CreateParcel extends React.Component {
       }
     }
 
+
     let item = {
       ...details[name],
       ...{ value, accepted: true, hasError: false },
     };
 
     this.setState({ details: { ...details, ...{ [name]: item } } }, () => {
+
       switch (UserProfile.getBusCompanyTag()) {
         case 'isarog-liner':
-          if (name === "declaredValue" || name === "quantity") {
+          if (name === 'declaredValue' || name === "sticker_quantity" || name==="length" || name === "quantity" || name === "packageWeight" ) {
             this.updateTotalShippingCost();
           }
           break;
         
         case "five-star":
         case "dltb":
-          if (name === 'declaredValue' && details.fixMatrix.value !== "none") {
+          if ((name === 'declaredValue' || name === "sticker_quantity" ) && details.fixMatrix.value !== "none") {
             let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
-            console.info('option',option)
             if(option && Number(option.price) === 0){
               this.dltbFixPriceComputation()
             }
@@ -1388,6 +1362,11 @@ class CreateParcel extends React.Component {
       details.systemFee.value = 0;
       details.discount.value = undefined;
 
+      details.packageInsurance.value = 0;
+      details.packageInsurance.disabled = false;
+      details.declaredValue.value = 0;
+      details.declaredValue.disabled = false;
+
       let state = {...this.state,
         lengthFee: Number(0).toFixed(2),
         portersFee: Number(0).toFixed(2),
@@ -1402,7 +1381,6 @@ class CreateParcel extends React.Component {
         discountFee:Number(0).toFixed(2),
       }
 
-
       if (value !== "none") {
         let option = details.fixMatrix.options.find((e) => e.name === value);
         let price = Number(option.price).toFixed(2);
@@ -1413,17 +1391,9 @@ class CreateParcel extends React.Component {
         details.fixMatrix.value = value;
 
         if (Number(declaredValue) === Number(0)) {
-          details.packageInsurance.value = 0;
           details.packageInsurance.disabled = true;
-          details.declaredValue.value = 0;
           details.declaredValue.disabled = true;
-        } else {
-          details.packageInsurance.value = 0;
-          details.packageInsurance.disabled = false;
-          details.declaredValue.value = 0;
-          details.declaredValue.disabled = false;
-          details.systemFee.value = 0;
-        }
+        } 
 
         details.packageWeight.disabled = true;
         details.packageWeight.value = 0;
@@ -1432,7 +1402,7 @@ class CreateParcel extends React.Component {
         details.quantity.disabled = false;
         details.quantity.value = 1;
         details.description.value = option.name;
-        details.shippingCost.value = price;
+        //details.shippingCost.value = price;
 
         switch (UserProfile.getBusCompanyTag()) {
           case 'five-star':
@@ -1446,7 +1416,10 @@ class CreateParcel extends React.Component {
             break;
 
           default:
-            this.setState({ ...state, isFixedPrice:true, details}, () => {
+            this.setState({ ...state, basePrice:price, isFixedPrice:true, details}, () => {
+              if(option && Number(option.declaredValue) > 0){
+                return;
+              }
               this.updateTotalShippingCost();
             });
             break;
@@ -1793,7 +1766,6 @@ class CreateParcel extends React.Component {
 
     ParcelService.getDltbComputation(option)
       .then(e => {
-        console.log('getDltbComputation', e)
         const { data, errorCode } = e.data;
 
         if (!errorCode) {
@@ -1932,21 +1904,21 @@ class CreateParcel extends React.Component {
               break;
 
             default:
-              this.computePrice();
-              const oldDetails = prevState.details;
-              const curDetails = this.state.details;
-              if (
-                (this.state.details.fixMatrix.value === "none" ||
-                  this.state.details.fixMatrix.value === undefined) &&
-                (oldDetails.shippingCost.value !== curDetails.shippingCost.value ||
-                  oldDetails.systemFee.value !== curDetails.systemFee.value ||
-                  oldDetails.packageInsurance.value !==
-                  curDetails.packageInsurance.value ||
-                  prevState.connectingCompanyComputation !==
-                  this.state.connectingCompanyComputation)
-              ) {
-                this.updateTotalShippingCost();
-              }
+              // this.computePrice();
+              // const oldDetails = prevState.details;
+              // const curDetails = this.state.details;
+              // if (
+              //   (this.state.details.fixMatrix.value === "none" ||
+              //     this.state.details.fixMatrix.value === undefined) &&
+              //   (oldDetails.shippingCost.value !== curDetails.shippingCost.value ||
+              //     oldDetails.systemFee.value !== curDetails.systemFee.value ||
+              //     oldDetails.packageInsurance.value !==
+              //     curDetails.packageInsurance.value ||
+              //     prevState.connectingCompanyComputation !==
+              //     this.state.connectingCompanyComputation)
+              // ) {
+              //   this.updateTotalShippingCost();
+              // }
               break;
           }
         }
@@ -1957,44 +1929,83 @@ class CreateParcel extends React.Component {
   updateTotalShippingCost = () => {
     console.info("updateTotalShippingCost>>>>>>>>>>>>>>>>>>>>>>")
     let currentDetails = { ...this.state.details };
-    const quantity = Number(currentDetails.quantity.value || 0);
+    let discount=undefined;
+    
+    let systemFee = 0;
+    let portersFee = 30;
+    
+    let quantity = Number(currentDetails.quantity.value)
+    let total = 0;
+    let discountFee = 0;
 
-
-    let total = Number(parseFloat(currentDetails.shippingCost.value || 0));
-    if (quantity > 1) { total = total * quantity; }
-
-    total += Number(parseFloat(this.state.lengthRate) + parseFloat(currentDetails.packageInsurance.value || 0));
-
-    let discountIndex = currentDetails.discount.options.findIndex((e) => e.name === currentDetails.discount.value);
-    let discount = 0;
-
-    if (currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== "none") {
-
-      discount =
-        discountIndex > -1
-          ? Number(currentDetails.discount.options[discountIndex].rate || 0)
-          : 0;
+    if(currentDetails.discount.value && currentDetails.discount.value !== 'none'){
+      discount = currentDetails.discount.options.find((e) => e.name === currentDetails.discount.value);
     }
 
-    if (discount > 0) { total = total * ((100 - discount) / 100); }
+    if(currentDetails.fixMatrix.value && currentDetails.fixMatrix.value.toLowerCase() === "envelope"){
+      portersFee = 0;
+    }
+  
+    //computation for fix matrix (BI)
+    if(currentDetails.fixMatrix.value && currentDetails.fixMatrix.value !== 'none'){
+      let option = currentDetails.fixMatrix.options.find((e) => e.name === currentDetails.fixMatrix.value);
+      let declaredValue = Number(currentDetails.declaredValue.value);
+      let fixPrice = Number(option.price);
+      let dvRate = Number(option.declaredValue) / 100;
+      const computedDvRate = declaredValue * dvRate;
+      const computedPrice = computedDvRate + fixPrice;
 
+      total = computedPrice * quantity;
 
-    let option = currentDetails.fixMatrix.options.find((e) => e.name === currentDetails.fixMatrix.value);
-    const portersFee = (option.name.toLowerCase() === 'envelop') ? 0 : 30;
-
-    if (this.userProfileObject.isIsarogLiners()) {
-      total += parseFloat(this.state.connectingCompanyComputation || 0)
-      if (total > 500) {
-        total += 10;
-        currentDetails.systemFee.value = 10;
+      if(discount){
+        discountFee = total * (Number(discount.rate) / 100);
+        total -= discountFee;
       }
-    } else {
-      total += parseFloat(currentDetails.systemFee.value || 0)
-    }
 
-    total += portersFee;
-    const totalShippingCost = { ...currentDetails.totalShippingCost, ...{ value: parseFloat(total).toFixed(2) } };
-    this.setState({ portersFee, details: { ...currentDetails, ...{ totalShippingCost } } });
+      if(total > 500){
+        systemFee = 10;
+        total += systemFee;
+      }
+      total += portersFee;
+      currentDetails.totalShippingCost.value = Number(total).toFixed(2)
+      
+      this.setState({ 
+          discountFee: discountFee.toFixed(2), 
+          basePrice: fixPrice.toFixed(2),
+          declaredValueFee: Number(computedDvRate).toFixed(2),
+          portersFee: Number(portersFee).toFixed(2), 
+          details:currentDetails 
+      });
+    } else{
+      //compute for matrix;
+      this.computePrice((e)=>{
+        if(e){
+          const basePrice = Number(e.totalCost);
+          const declaredValueFee = Number(e.declaredRate);
+          const lengthFee = Number(e.lengthRate);
+          total = basePrice + declaredValueFee + lengthFee;
+
+          if(discount){
+            discountFee = total * (Number(discount.rate) / 100);
+            total -= discountFee;
+          }
+
+          total += portersFee;
+          if(total > 500){
+            systemFee = 10;
+            total += systemFee;
+          }
+          currentDetails.totalShippingCost.value = Number(total).toFixed(2)
+          this.setState({ 
+            basePrice: basePrice.toFixed(2),
+            lengthFee: lengthFee.toFixed(2),
+            declaredValueFee: declaredValueFee.toFixed(2),
+            portersFee: Number(portersFee).toFixed(2), 
+            details:currentDetails 
+          });
+        }
+      });
+    }
   };
 
   getMatrixFare = ({ weight, declaredValue, length }) => {

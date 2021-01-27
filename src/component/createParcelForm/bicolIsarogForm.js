@@ -542,12 +542,12 @@ function BicolIsarogForm(props) {
               }}/>
             }
             {UserProfile.getBusCompanyTag() === "isarog-liner" &&
-              <> 
-                <TextContainer title="Porters Fee" value={Number(portersFee).toFixed(2)} /> 
-                <TextContainer title="Length Fee" value={Number(lengthFee).toFixed(2)} />
-                <TextContainer title="Discount" value={discountFee} /> 
-                <TextContainer title="System Fee" value={Number(systemFee.value).toFixed(2)} />
-              </>
+              <ShowBicolIsarogBreakDown 
+                data={{
+                  ...props.priceDetails, 
+                  isFixedPrice,
+                  systemFee:Number(systemFee.value).toFixed(2)
+                }} /> 
             }
             {
               UserProfile.getBusCompanyTag() === "dltb" && 
@@ -633,8 +633,42 @@ function BicolIsarogForm(props) {
   );
 }
 
+function ShowBicolIsarogBreakDown(props){
+  let view = undefined;
+    const{
+      weightFee,
+      basePrice,
+      declaredValueFee,
+      systemFee,
+      isFixedPrice,
+      lengthFee,
+      discountFee,
+      portersFee
+    }=props.data;
+
+    if(isFixedPrice){
+      view=(<>
+        <TextContainer title="Base Price" value={basePrice} /> 
+        <TextContainer title="Porters Fee" value={portersFee} /> 
+        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
+        <TextContainer title="System Fee" value={systemFee} />
+        <TextDiscountContainer title="Discount" value={discountFee} /> 
+      </>)
+    }else{
+      view=(<>
+          <TextContainer title="Base Price" value={basePrice} /> 
+          <TextContainer title="Porters Fee" value={portersFee} /> 
+          <TextContainer title="Length Fee" value={lengthFee} />
+          <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
+          <TextContainer title="System Fee" value={systemFee} />
+          <TextDiscountContainer title="Discount" value={discountFee} /> 
+      </>)
+    }
+
+    return(view)
+}
+
 function ShowFiveStarBreakDown(props){
-  console.info("ShowFiveStarBreakDown",props)
   let view = undefined;
     const{
       weightFee,
@@ -650,16 +684,16 @@ function ShowFiveStarBreakDown(props){
       view=(<>
         <TextContainer title="Base Price" value={basePrice} /> 
         <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
-        <TextContainer title="Discount" value={discountFee} /> 
         <TextContainer title="System Fee" value={systemFee} />
+        <TextDiscountContainer title="Discount" value={discountFee} /> 
       </>)
     }else{
       view=(<>
         <TextContainer title="Weight Fee" value={weightFee} /> 
         <TextContainer title="Length Fee" value={lengthFee} />
         <TextContainer title="Declared Value Fee" value={declaredValueFee} />
-        <TextContainer title="Discount" value={discountFee} /> 
         <TextContainer title="System Fee" value={systemFee} />
+        <TextDiscountContainer title="Discount" value={discountFee} /> 
       </>)
     }
 
@@ -707,6 +741,13 @@ function TextContainer(props) {
   return (<Space style={{ borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
     <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, width: 200 }}><label>{props.title}</label></div>
     <div style={{ fontSize: 15, textAlign: 'right', width: 110 }}><label> ₱ {props.value}</label></div>
+  </Space>)
+}
+
+function TextDiscountContainer(props) {
+  return (<Space style={{ borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
+    <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, width: 200 }}><label>{props.title}</label></div>
+    <div style={{ fontSize: 15, textAlign: 'right', width: 110 }}><label> - ₱ {props.value}</label></div>
   </Space>)
 }
 
