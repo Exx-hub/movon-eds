@@ -127,7 +127,8 @@ const getReviewDetails = (state) => {
     declaredValueFee: state.declaredValueFee,
     insuranceFee: state.insuranceFee || 0,
     additionalFee: state.details.additionalFee.value || 0,
-    discountFee: state.discountFee || 0
+    discountFee: state.discountFee || 0,
+    basePrice: state.basePrice || 0
   };
 };
 

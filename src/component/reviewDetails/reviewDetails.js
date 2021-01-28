@@ -166,6 +166,7 @@ function FeeSection(props){
     const insuranceFee = " ₱ " + Number(data.insuranceFee || "0").toFixed(2);
     const weightFee = " ₱ " + Number(data.weightFee || "0").toFixed(2);
     const lengthFee = " ₱ " + Number(data.lengthFee || "0").toFixed(2);
+    const basePrice = " ₱ " + Number(data.basePrice || "0").toFixed(2);
 
     switch (UserProfile.getBusCompanyTag()) {
         case "dltb":
@@ -210,6 +211,7 @@ function FeeSection(props){
                 <TextContainer label="Quantity" value={packageQty } />
                 <TextContainer label="Weight" value={weight} />
                 <TextContainer label="Declared Value" value={declaredValue} />
+                <TextContainer label="Base Price" value={basePrice} />
                 {inputSection}
             </div>
 

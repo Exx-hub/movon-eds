@@ -33,7 +33,10 @@ function AddFixMatrixModalContent(props) {
         wrapperCol: { offset: 8, span: 16 },
     };
 
-    const names = props.data.names.filter(e=> e.name !== props.data.name).map(e=>(e.name.toLowerCase().trim()))
+    let names = []
+    if(props.data.names){
+        names = props.data.names.filter(e=> e.name !== props.data.name).map(e=>(e.name.toLowerCase().trim()))
+    }
 
     return (
         <>
