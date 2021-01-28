@@ -31,6 +31,8 @@ function App() {
   }
 
   return (
+    <>
+    {!internetConnection && <div className="no-internet-connection"/>}
     <Router>
       <Switch>
       <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
@@ -41,25 +43,9 @@ function App() {
       <ProtectedRoute exact={true} path={alterPath("/create-parcel-v2")} component={CreateParcelV2}  /> 
       <ProtectedRoute path={alterPath("/")} component={Home}  /> 
       </Switch>
-    </Router>
+    </Router> 
+    </>
   );
-  // if(internetConnection){
-  //   return (
-  //     <Router>
-  //       <Switch>
-  //       <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
-  //       <ProtectedRoute exact={true} path={alterPath("/about")} component={About}/>
-  //       <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={ManifestDetails}/>
-  //       <ProtectedRoute exact={true} path={alterPath("/manifest/print/")} component={PrinManifestDetails} />
-  //       <ProtectedRoute exact={true} path={alterPath("/create-parcel")} component={CreateParcel}  /> 
-  //       <ProtectedRoute exact={true} path={alterPath("/create-parcel-v2")} component={CreateParcelV2}  /> 
-  //       <ProtectedRoute path={alterPath("/")} component={Home}  /> 
-  //       </Switch>
-  //     </Router>
-  //   );
-  // }else{
-  //   return(<div className="no-internet-connection" />)
-  // }
 }
 
 export default App;

@@ -24,6 +24,7 @@ html body{
 }
 
 .no-internet-connection{
+    z-index: 1000000;
     height: 100vh;
     background: url("./assets/no_internet_connection.jpg") no-repeat center center fixed; 
     -webkit-background-size: cover;

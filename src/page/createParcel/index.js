@@ -450,6 +450,8 @@ class CreateParcel extends React.Component {
 
   componentDidMount() {
 
+    console.info('online',this.props)
+
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
@@ -1334,43 +1336,45 @@ class CreateParcel extends React.Component {
       details.discount = discount;
       details.additionNote = additionNote;
 
-      let isFixMatrix = details.fixMatrix.value && details.fixMatrix.value !== 'none';
-      let basePrice = Number(state.basePrice || 0);
-      let systemFee = Number(details.systemFee.value || 0)
-      let declaredValueFee = Number(state.declaredValueFee || 0)
-      let discountFee = 0; 
-      let weightFee = Number(state.weightFee || 0);
-      let lengthFee = Number(state.lengthFee || 0);
-      let portersFee = Number(state.portersFee || 0) 
-      let total = basePrice + declaredValueFee + systemFee + weightFee + lengthFee + portersFee;
+      switch (UserProfile.getBusCompanyTag()) {
+        case "dltb":
+        case "five-star":
+          let isFixMatrix = details.fixMatrix.value && details.fixMatrix.value !== 'none';
+          let basePrice = Number(state.basePrice || 0);
+          let systemFee = Number(details.systemFee.value || 0)
+          let declaredValueFee = Number(state.declaredValueFee || 0)
+          let weightFee = Number(state.weightFee || 0);
+          let lengthFee = Number(state.lengthFee || 0);
+          let discountFee = 0; 
+          
+          let total = basePrice + declaredValueFee + weightFee + lengthFee 
 
-      //discount === "ex: Senior Citizen"
-      if(value.toLowerCase() !== 'none'){
-        let option = details.discount.options.find((e) => e.name === value);
-        const rate = Number(option.rate) / 100;
-        console.info('rate', rate)
+          //discount === "ex: Senior Citizen"
+          if(value.toLowerCase() !== 'none'){
+            let option = details.discount.options.find((e) => e.name === value);
+            const rate = Number(option.rate) / 100;
+            if(Boolean(isFixMatrix)){
+              discountFee = basePrice * rate
+              total = basePrice - discountFee;
+            }else{
+              discountFee = total * rate
+              total -= discountFee;
+            }
+          }
 
-        if(Boolean(isFixMatrix)){
-          discountFee = basePrice * rate
-          total = basePrice - discountFee;
-        }else{
-          discountFee = total * rate
-        }
+          total += systemFee; 
+
+          details.totalShippingCost.value = Number(total).toFixed(2);
+          state.discountFee = Number(discountFee).toFixed(2)
+          this.setState({ ...state, details });
+
+          break;
+      
+        default:
+          this.setState({ ...state, details },()=>this.updateTotalShippingCost());
+          break;
       }
-
-      details.totalShippingCost.value = Number(total).toFixed(2);
-      state.discountFee = Number(discountFee).toFixed(2)
-
-      this.setState({ ...state, details }, () => {
-        switch (UserProfile.getBusCompanyTag()) {
-          case 'dltb':
-          case 'five-star':
-            break;
-          default:
-            this.updateTotalShippingCost();
-            break;
-        }
-      });
+      return;
     }
 
     if (name === "associateFixPrice") {
@@ -1834,13 +1838,13 @@ class CreateParcel extends React.Component {
             insuranceFee
           } = data;
 
-          const _lengthFee = Number(lengthFee)
-          const _weightFee = Number(weightFee)
-          const _handlingFee = Number(handlingFee)
-          const _additionFee = Number(additionalFee)
-          const _systemFee = Number(systemFee)
-          const _declaredValueFee = Number(declaredValueFee)
-          let total = Number(totalShippingCost)
+          const _lengthFee = Number(lengthFee || 0)
+          const _weightFee = Number(weightFee || 0)
+          const _handlingFee = Number(handlingFee || 0)
+          const _additionFee = Number(additionalFee || 0)
+          const _systemFee = Number(systemFee || 0)
+          const _declaredValueFee = Number(declaredValueFee || 0)
+          let total = Number(totalShippingCost || 0)
 
 
           const _shippingCost = Number(shippingCost);
@@ -1863,8 +1867,8 @@ class CreateParcel extends React.Component {
             insuranceFee,
             declaredValueFee,
             handlingFee: _handlingFee,
-            lengthFee: _lengthFee,
-            weightFee,
+            lengthFee: _lengthFee.toFixed(2),
+            weightFee:_weightFee.toFixed(2),
             details: _data,
             basePrice,
             isShortHaul: Boolean(isShortHaul),
