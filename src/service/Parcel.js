@@ -46,7 +46,10 @@ const ParcelService = {
             portersFee,
             weightFee,
             handlingFee,
-            lengthFee
+            lengthFee,
+            declaredvalueFee,
+            basePrice,
+            discountFee
         }=state;
 
         const {
@@ -135,15 +138,22 @@ const ParcelService = {
         if(UserProfile.getBusCompanyTag() === 'dltb'){
             bodyFormData.set('additionalFee', additionalFee.value)
             bodyFormData.set('handlingFee', handlingFee)
+            bodyFormData.set('basePrice', handlingFee)
         }
 
         if(UserProfile.getBusCompanyTag() === 'isarog-liner'){
             bodyFormData.set('portersFee', portersFee)
             bodyFormData.set('lengthFee', lengthFee)
+            bodyFormData.set('declaredvalueFee', declaredvalueFee)
+            bodyFormData.set('discountFee', discountFee)
         }
 
         if(UserProfile.getBusCompanyTag() === 'five-star'){
             bodyFormData.set('weightFee', weightFee)
+            bodyFormData.set('lengthFee', lengthFee)
+            bodyFormData.set('declaredvalueFee', declaredvalueFee)
+            bodyFormData.set('basePrice', basePrice) 
+            bodyFormData.set('discountFee', discountFee)
         }
 
         return axios({
@@ -314,6 +324,7 @@ const ParcelService = {
             link.remove();
          });
     },
+    
     getAllParcel: (startStation,dateFrom,dateTo,endStation,busCompanyId,page,limit)=>{
         return axios({
             method: 'get',
@@ -333,6 +344,7 @@ const ParcelService = {
              }
         })
     },
+    
     exportCargoParcel: (
         title,
         dateFrom,
@@ -380,6 +392,7 @@ const ParcelService = {
             link.remove();
         })
     },
+    
     parcelPagination: (page, limit, search) => {
         return axios({
             method: 'get',
@@ -392,6 +405,7 @@ const ParcelService = {
             params: {page, limit, search}
         })
     },
+    
     getDltbComputation: ({
         origin,
         destination,
@@ -418,6 +432,7 @@ const ParcelService = {
             }
         })
     },
+    
     getDltbFixMatrixComputation: ({
         origin,
         destination,
