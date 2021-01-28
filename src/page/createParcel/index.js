@@ -1132,20 +1132,6 @@ class CreateParcel extends React.Component {
     });
   };
 
-  getDiscount = (discountName) => {
-    let details = { ...this.state.details };
-    let option = details.discount.options.find((e) => e.name === discountName);
-    const totalShippingCost = Number(details.totalShippingCost.value);
-    const systemFee = Number(details.systemFee.value);
-    const shippingCost = (totalShippingCost - systemFee);
-    const discountFee = shippingCost * (Number(option.rate) / 100);
-    const total = (shippingCost - discountFee) + systemFee;
-    return {
-      total,
-      discountFee
-    }
-  }
-
   onSelectChange = async (value, name) => {
     let details = { ...this.state.details };
     let state = {...this.state}
@@ -1348,12 +1334,31 @@ class CreateParcel extends React.Component {
       details.discount = discount;
       details.additionNote = additionNote;
 
-      console.info('discount', value)
+      let isFixMatrix = details.fixMatrix.value && details.fixMatrix.value !== 'none';
+      let basePrice = Number(state.basePrice || 0);
+      let systemFee = Number(details.systemFee.value || 0)
+      let declaredValueFee = Number(state.declaredValueFee || 0)
+      let discountFee = 0; 
+      let weightFee = Number(state.weightFee || 0);
+      let lengthFee = Number(state.lengthFee || 0);
+      let total = basePrice + declaredValueFee + systemFee + weightFee + lengthFee;
+
+      //discount === "ex: Senior Citizen"
       if(value.toLowerCase() !== 'none'){
-        const { total, discountFee } = this.getDiscount(value)
-        state.discountFee = Number(discountFee).toFixed(2)
-        details.totalShippingCost.value = total;
+        let option = details.discount.options.find((e) => e.name === value);
+        const rate = Number(option.rate) / 100;
+        console.info('rate', rate)
+
+        if(Boolean(isFixMatrix)){
+          discountFee = basePrice * rate
+          total = basePrice - discountFee;
+        }else{
+          discountFee = total * rate
+        }
       }
+
+      details.totalShippingCost.value = Number(total).toFixed(2);
+      state.discountFee = Number(discountFee).toFixed(2)
 
       this.setState({ ...state, details }, () => {
         switch (UserProfile.getBusCompanyTag()) {
