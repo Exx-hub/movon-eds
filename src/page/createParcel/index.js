@@ -1361,16 +1361,16 @@ class CreateParcel extends React.Component {
       let details = { ...this.state.details };
       details.additionalFee.enabled = false
       details.quantity.value = 1;
-      details.additionalFee.value = 0;
+      details.additionalFee.value = undefined;
       details.sticker_quantity.value = 1;
       details.totalShippingCost.value = 0
       details.additionNote.value = ""
-      details.systemFee.value = 0;
+      details.systemFee.value = undefined;
       details.discount.value = undefined;
 
-      details.packageInsurance.value = 0;
+      details.packageInsurance.value = undefined;
       details.packageInsurance.disabled = false;
-      details.declaredValue.value = 0;
+      details.declaredValue.value = undefined;
       details.declaredValue.disabled = false;
 
       let state = {
@@ -1403,9 +1403,9 @@ class CreateParcel extends React.Component {
         }
 
         details.packageWeight.disabled = true;
-        details.packageWeight.value = 0;
+        details.packageWeight.value = undefined;
         details.length.disabled = true;
-        details.length.value = 0;
+        details.length.value = undefined;
         details.quantity.disabled = false;
         details.quantity.value = 1;
         details.description.value = option.name;
@@ -1446,16 +1446,16 @@ class CreateParcel extends React.Component {
         details.packageWeight.disabled = false;
         details.description.value = "";
 
-        details.packageInsurance.value = 0;
-        details.declaredValue.value = 0;
-        details.shippingCost.value = 0;
-        details.packageWeight.value = 0;
+        details.packageInsurance.value = undefined;
+        details.declaredValue.value = undefined;
+        details.shippingCost.value = undefined;
+        details.packageWeight.value = undefined;
 
         if (UserProfile.getBusCompanyTag() !== "dltb") {
           details.length.disabled = false;
         }
 
-        details.length.value = 0;
+        details.length.value = undefined;
         details.quantity.disabled = true;
         details.quantity.value = 1;
 
@@ -1851,7 +1851,7 @@ class CreateParcel extends React.Component {
 
       case "five-star":
         if (!fixMatrix.value || fixMatrix.value === "none") {
-          if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value && length.value) {
+          if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value && length.value !== undefined) {
             this.requestComputation()
           }
         } else {

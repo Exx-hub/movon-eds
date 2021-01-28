@@ -86,7 +86,6 @@ function BicolIsarogForm(props) {
     isFixedPrice
   } = props.priceDetails
 
-  console.info('form props',length)
 
   const enableInterConnection = props.enableInterConnection;
   const _temList = destination.options.map((e) => e.name);

@@ -7,17 +7,12 @@ function InputView(props) {
     let accepted = Boolean(props.accepted, false)
     let hasError = Boolean(isRequired && !accepted)
 
-    if(props.name === 'length'){
-        console.info('inputView', props)
-    }
-
     return (
     <div className="component-input">
         <>
         {
            props.type === 'number' ? <InputNumber
            {...props}
-           min={0}
            size={props.size || "default"}
            style={{width:'100%'}}
            disabled={props.disabled}
