@@ -109,25 +109,25 @@ const getReviewDetails = (state) => {
     senderEmail: state.details.senderEmail.value,
     senderPhone: state.details.senderMobile.value,
     
-    totalPrice: state.details.totalShippingCost.value,
+    totalPrice: state.details.totalShippingCost.value || 0,
     additionalNote: state.details.additionNote.value,
     billOfLading: state.details.billOfLading.value,
     checkIn: state.checkIn,
-    destination: option.name,
-    length: state.details.length.value,
-    stickerCount: state.details.sticker_quantity.value,
-    declaredValue: state.details.declaredValue.value,
-    price: state.basePrice,
+    destination: option.name || 0,
+    length: state.details.length.value || 0,
+    stickerCount: state.details.sticker_quantity.value || 0,
+    declaredValue: state.details.declaredValue.value || 0,
+    price: state.basePrice || 0,
 
-    convenienceFee: state.details.systemFee.value,
-    lengthFee: state.lengthFee,
-    portersFee: state.portersFee,
-    weightFee: state.weightFee,
-    handlingFee: state.handlingFee,
+    convenienceFee: state.details.systemFee.value || 0,
+    lengthFee: state.lengthFee || 0,
+    portersFee: state.portersFee || 0,
+    weightFee: state.weightFee || 0,
+    handlingFee: state.handlingFee || 0,
     declaredValueFee: state.declaredValueFee,
-    insuranceFee: state.insuranceFee,
-    additionalFee: state.details.additionalFee.value,
-    discountFee: state.discountFee
+    insuranceFee: state.insuranceFee || 0,
+    additionalFee: state.details.additionalFee.value || 0,
+    discountFee: state.discountFee || 0
   };
 };
 
@@ -1147,6 +1147,7 @@ class CreateParcel extends React.Component {
 
   onSelectChange = async (value, name) => {
     let details = { ...this.state.details };
+    let state = {...this.state}
 
     if (name === "connectingCompany") {
       if (value.toLowerCase() === "none") {
@@ -1346,10 +1347,14 @@ class CreateParcel extends React.Component {
       details.discount = discount;
       details.additionNote = additionNote;
 
-      const { total, discountFee } = this.getDiscount(value)
-      details.totalShippingCost.value = total;
+      console.info('discount', value)
+      if(value.toLowerCase() !== 'none'){
+        const { total, discountFee } = this.getDiscount(value)
+        state.discountFee = Number(discountFee).toFixed(2)
+        details.totalShippingCost.value = total;
+      }
 
-      this.setState({ discountFee: Number(discountFee).toFixed(2), details }, () => {
+      this.setState({ ...state, details }, () => {
         switch (UserProfile.getBusCompanyTag()) {
           case 'dltb':
           case 'five-star':

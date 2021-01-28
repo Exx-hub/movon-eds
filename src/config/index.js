@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(88)'
+        build: '1.5.1(89)'
     },
-    changeLogs: `DP511, DP513`
+    changeLogs: `DP-517`
 }
 
 export const ERROR_CODES = {
