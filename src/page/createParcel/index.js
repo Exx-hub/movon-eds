@@ -695,6 +695,7 @@ class CreateParcel extends React.Component {
 
     if (
       name === "declaredValue" ||
+      name === "length" ||
       name === "quantity" ||
       name === "packageWeight" ||
       name === "sticker_quantity"
@@ -1575,8 +1576,8 @@ class CreateParcel extends React.Component {
                   onSelectChange={(value, name) =>
                     this.onSelectChange(value, name)
                   }
-                  onChange={(e) =>
-                    this.onInputChange(e.target.name, e.target.value)
+                  onChange={(val,name) => 
+                    this.onInputChange(name, val)
                   }
                 />
                 <StepControllerView

@@ -32,7 +32,7 @@ function InputBox(props) {
         showError={props.showError}
         prefix={props.prefix}
         type={props.type}
-        onChange={props.onChange}
+        onChange={(e=>props.onChange(e,name))}
       />
     </div>
   );
@@ -420,6 +420,7 @@ function BicolIsarogForm(props) {
               <Col span={8} className="gutter-row">
                 <InputBox
                   type="number"
+                  min={0}
                   onBlur={() => props.onBlur(length.name)}
                   detail={length}
                   onChange={props.onChange}
