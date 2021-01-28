@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(90)'
+        build: '1.5.1(91)'
     },
-    changeLogs: `fix BI quantity multiply also declared value fee`
+    changeLogs: `allow 0 to input box`
 }
 
 export const ERROR_CODES = {
