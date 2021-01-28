@@ -927,30 +927,15 @@ class CreateParcel extends React.Component {
           let _declaredValueFee = Number(declaredValueFee);
           let total = Number(data.computeTotalShippingCost);
           let _basePrice = Number(basePrice);
-          let qty = Number(d.quantity.value || 1)
-
-          console.log('quantity',qty)
-
-          let quantity = qty < 1 ? 1 : qty;
+          let quantity = Number(d.quantity.value || 1)
 
           if (quantity > 1) {
-
-            total -= _systemFee;
-            total = total * quantity;
-            total += _systemFee;
-            
-            if(_basePrice > 0){
-              _basePrice = _basePrice * quantity;
-            }
-
-            if(_declaredValueFee > 0){
-              _declaredValueFee = _declaredValueFee * quantity;
-            }
-
-            console.log('_declaredValueFee',_declaredValueFee)
-
+            _declaredValueFee = _declaredValueFee * quantity;
+            _basePrice = _basePrice * quantity;
           }
-          total += additionalFee
+
+          total = _basePrice + _declaredValueFee;
+          total += additionalFee + _systemFee
 
           d.totalShippingCost.value = total;
           d.systemFee.value = systemFee;
