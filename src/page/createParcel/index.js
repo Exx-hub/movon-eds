@@ -1365,7 +1365,7 @@ class CreateParcel extends React.Component {
       details.sticker_quantity.value = 1;
       details.totalShippingCost.value = 0
       details.additionNote.value = ""
-      details.systemFee.value = undefined;
+      details.systemFee.value = 0;
       details.discount.value = undefined;
 
       details.packageInsurance.value = undefined;
