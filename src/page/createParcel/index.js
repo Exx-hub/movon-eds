@@ -852,9 +852,8 @@ class CreateParcel extends React.Component {
     }
 
     const { destination, declaredValue, paxs, packageWeight, type, length } = this.state.details;
-    console.info('>>>>length', length)
 
-    if (destination.value && packageWeight.value && length.value !== undefined && declaredValue.value) {
+    if (destination.value && packageWeight.value && length.value && declaredValue.value) {
       const busCompanyId = this.userProfileObject.getBusCompanyId();
       const startStation = this.userProfileObject.getAssignedStationId();
       const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];

@@ -7,6 +7,10 @@ function InputView(props) {
     let accepted = Boolean(props.accepted, false)
     let hasError = Boolean(isRequired && !accepted)
 
+    if(props.name === 'length'){
+        console.info('inputView', props)
+    }
+
     return (
     <div className="component-input">
         <>

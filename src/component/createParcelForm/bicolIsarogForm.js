@@ -11,7 +11,7 @@ function InputBox(props) {
   const isRequired = (props.detail && props.detail.isRequired) || false;
   const name = (props.detail && props.detail.name) || null;
   const accepted = (props.detail && props.detail.accepted) || false;
-  const value = props.value || (props.detail && props.detail.value) || "";
+  const value = (props.detail && ( (props.detail.value === undefined) ? "" : props.detail.value))
 
   return (
     <div style={{ marginBottom: ".4rem", minHeight: "55px" }}>
@@ -85,6 +85,8 @@ function BicolIsarogForm(props) {
     declaredValueFee,
     isFixedPrice
   } = props.priceDetails
+
+  console.info('form props',length)
 
   const enableInterConnection = props.enableInterConnection;
   const _temList = destination.options.map((e) => e.name);
@@ -418,16 +420,15 @@ function BicolIsarogForm(props) {
               </Col>
 
               <Col span={8} className="gutter-row">
-                <InputBox
-                  type="number"
-                  min={0}
-                  onBlur={() => props.onBlur(length.name)}
-                  detail={length}
-                  onChange={props.onChange}
-                  placeholder="Length (meter)"
-                  errorMessage={length.errorMessage}
-                  title="Length"
-                />
+              {<InputBox
+                type="number"
+                onBlur={() => props.onBlur(length.name)}
+                detail={length}
+                onChange={props.onChange}
+                placeholder="Length (meter)"
+                errorMessage={length.errorMessage}
+                title="Length"
+              />}
               </Col>
             </Row>
 
