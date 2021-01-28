@@ -1052,10 +1052,9 @@ class CreateParcel extends React.Component {
         case "dltb":
           if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
             if(name === 'declaredValue' || name === "sticker_quantity") {
-              let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
-              if (option && Number(option.price) === 0) {
-                this.dltbFixPriceComputation()
-              }
+              //let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
+              //console.info('option',option)
+              this.dltbFixPriceComputation()
               return;
             }
           }

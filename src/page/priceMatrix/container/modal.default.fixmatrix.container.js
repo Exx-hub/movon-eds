@@ -33,6 +33,8 @@ function AddFixMatrixModalContent(props) {
         wrapperCol: { offset: 8, span: 16 },
     };
 
+    const names = props.data.names.filter(e=> e.name !== props.data.name).map(e=>(e.name))
+
     return (
         <>
             <Form
@@ -54,7 +56,7 @@ function AddFixMatrixModalContent(props) {
                     rules={[{ required: true, message: 'This is required field!' },
                     ({ getFieldValue }) => ({
                         validator(rule, value) {
-                            if (props.type !== 'delete' && props.data && props.data.names.map(e=>(e.name)).includes(value.toLowerCase().trim())) {
+                            if (props.type !== 'delete' && names.includes(value.toLowerCase().trim())) {
                                 return Promise.reject('Name is already assigned');
                             }
                             return Promise.resolve()
