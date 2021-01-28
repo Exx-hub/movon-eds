@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(91)'
+        build: '1.5.1(92)'
     },
     changeLogs: `allow 0 to input box`
 }

@@ -921,17 +921,20 @@ class CreateParcel extends React.Component {
             basePrice
           } = data
 
-          const _systemFee = Number(data.systemFee);
-          const additionalFee = Number(d.additionalFee.value);
-          let _declaredValueFee = Number(declaredValueFee);
-          let total = Number(data.computeTotalShippingCost);
-          let _basePrice = Number(basePrice);
+          const _systemFee = Number(data.systemFee || 0);
+          const additionalFee = Number(d.additionalFee.value || 0);
+          let _declaredValueFee = Number(declaredValueFee || 0);
+          let total = Number(data.computeTotalShippingCost || 0);
+          let _basePrice = Number(basePrice || 0);
           let quantity = Number(d.quantity.value || 1)
 
           if (quantity > 1) {
             _declaredValueFee = _declaredValueFee * quantity;
             _basePrice = _basePrice * quantity;
           }
+
+          console.info('_basePrice',_basePrice)
+          console.info('_basePrice',_basePrice)
 
           total = _basePrice + _declaredValueFee;
           total += additionalFee + _systemFee
@@ -1513,7 +1516,7 @@ class CreateParcel extends React.Component {
     let view = null;
 
     switch (step) {
-      case 1:
+      case 0:
 
         switch (UserProfile.getBusCompanyTag()) {
 
@@ -1566,7 +1569,7 @@ class CreateParcel extends React.Component {
             break;
         }
         break;
-      case 0:
+      case 1:
         view = (
           <>
             <div style={{ background: '#fff', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem' }}>
