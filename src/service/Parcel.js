@@ -49,7 +49,8 @@ const ParcelService = {
             lengthFee,
             declaredvalueFee,
             basePrice,
-            discountFee
+            discountFee,
+            insuranceFee
         }=state;
 
         const {
@@ -134,26 +135,37 @@ const ParcelService = {
         bodyFormData.set('driverFullName',driverFullName.value)
         bodyFormData.set('conductorFullName',conductorFullName.value)
         bodyFormData.set('associateORNumber', associateORNumber.value)
+
+        switch (UserProfile.getBusCompanyTag()) {
+            case 'dltb':
+                bodyFormData.append("paymentBreakdown",{
+                    'weightFee': weightFee,
+                    'additionalFee': additionalFee.value,
+                    'insuranceFee': insuranceFee,
+                    'handlingFee': handlingFee,
+                    'handlingFee': handlingFee,
+                    'declaredvalueFee':declaredvalueFee,
+                    'basePrice': basePrice,
+                });
+                break;
+            case 'five-star':
+                bodyFormData.append("paymentBreakdown",{
+                    'weightFee': weightFee,
+                    'lengthFee': lengthFee,
+                    'declaredvalueFee': declaredvalueFee,
+                    'basePrice': basePrice,
+                });
+                break;
         
-        if(UserProfile.getBusCompanyTag() === 'dltb'){
-            bodyFormData.set('additionalFee', additionalFee.value)
-            bodyFormData.set('handlingFee', handlingFee)
-            bodyFormData.set('basePrice', handlingFee)
-        }
-
-        if(UserProfile.getBusCompanyTag() === 'isarog-liner'){
-            bodyFormData.set('portersFee', portersFee)
-            bodyFormData.set('lengthFee', lengthFee)
-            bodyFormData.set('declaredvalueFee', declaredvalueFee)
-            bodyFormData.set('discountFee', discountFee)
-        }
-
-        if(UserProfile.getBusCompanyTag() === 'five-star'){
-            bodyFormData.set('weightFee', weightFee)
-            bodyFormData.set('lengthFee', lengthFee)
-            bodyFormData.set('declaredvalueFee', declaredvalueFee)
-            bodyFormData.set('basePrice', basePrice) 
-            bodyFormData.set('discountFee', discountFee)
+            default:
+                bodyFormData.append("paymentBreakdown",{
+                    'portersFee': portersFee,
+                    'lengthFee': lengthFee,
+                    'discountFee': discountFee,
+                    'declaredvalueFee':declaredvalueFee,
+                    'basePrice': basePrice,
+                });
+                break;
         }
 
         return axios({

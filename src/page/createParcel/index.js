@@ -1950,22 +1950,19 @@ class CreateParcel extends React.Component {
       let declaredValue = Number(currentDetails.declaredValue.value);
       let basePrice = Number(option.price);
       let fixPriceDvRate = Number(option.declaredValue);
-      let declaredValueFee = 0;
+      let declaredValueFee = fixPriceDvRate ? declaredValue * (fixPriceDvRate / 100) : 0;
       let total = basePrice;
 
       if(quantity > 1){
         basePrice = basePrice * quantity;
-        total = basePrice;
+        declaredValueFee = declaredValueFee * quantity;
       }
+
+      total = basePrice + declaredValueFee;mag
 
       if(discount) {
         discountFee = total * (Number(discount.rate) / 100);
         total -= discountFee;
-      }
-
-      if(fixPriceDvRate > 0 ){
-        declaredValueFee = declaredValue * (fixPriceDvRate / 100);
-        total += declaredValueFee;
       }
 
       if (total < 500) {
@@ -1988,6 +1985,7 @@ class CreateParcel extends React.Component {
     } else {
       //compute for matrix;
       this.computePrice((e) => {
+        console.info('computePrice',e)
         if (e) {
           let basePrice = Number(e.totalCost);
           const declaredValueFee = Number(e.declaredRate);
