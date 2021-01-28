@@ -122,7 +122,7 @@ const getReviewDetails = (state) => {
     convenienceFee: state.details.systemFee.value,
     lengthFee: state.lengthFee,
     portersFee: state.portersFee,
-    weightFee: state.portersFee,
+    weightFee: state.weightFee,
     handlingFee: state.handlingFee,
     declaredValueFee: state.declaredValueFee,
     insuranceFee: state.insuranceFee,
