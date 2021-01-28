@@ -760,7 +760,7 @@ class CreateParcel extends React.Component {
 
         let tempDetails = { ...details };
         Object.keys(tempDetails).forEach((e) => {
-          if (tempDetails[e].isRequired && isNull(tempDetails[e].value)) {
+          if (!tempDetails[e].disabled && tempDetails[e].isRequired && isNull(tempDetails[e].value)) {
             const item = { ...tempDetails[e], ...{ accepted: false } };
             tempDetails = { ...tempDetails, ...{ [e]: item } };
           }
