@@ -899,6 +899,7 @@ class CreateParcel extends React.Component {
   }
 
   dltbFixPriceComputation = () => {
+    console.info("dltbFixPriceComputation=======>>")
 
     let d = { ...this.state.details }
     const options = {
@@ -922,17 +923,31 @@ class CreateParcel extends React.Component {
 
           const _systemFee = Number(data.systemFee);
           const additionalFee = Number(d.additionalFee.value);
+          let _declaredValueFee = Number(declaredValueFee);
           let total = Number(data.computeTotalShippingCost);
           let _basePrice = Number(basePrice);
           let qty = Number(d.quantity.value || 1)
+
           console.log('quantity',qty)
+
           let quantity = qty < 1 ? 1 : qty;
 
           if (quantity > 1) {
+
             total -= _systemFee;
             total = total * quantity;
             total += _systemFee;
-            _basePrice = _basePrice * quantity;
+            
+            if(_basePrice > 0){
+              _basePrice = _basePrice * quantity;
+            }
+
+            if(_declaredValueFee > 0){
+              _declaredValueFee = _declaredValueFee * quantity;
+            }
+
+            console.log('_declaredValueFee',_declaredValueFee)
+
           }
           total += additionalFee
 
@@ -940,8 +955,8 @@ class CreateParcel extends React.Component {
           d.systemFee.value = systemFee;
 
           this.setState({
+            declaredValueFee: _declaredValueFee.toFixed(2),
             isFixedPrice: true,
-            declaredValueFee,
             basePrice:_basePrice.toFixed(2),
             details: d
           })
@@ -965,60 +980,18 @@ class CreateParcel extends React.Component {
 
   onInputChange = (name, value) => {
 
+    console.info('onInputChange', name, value)
+
     let details = { ...this.state.details };
     let state = {...this.state}
 
-    if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
-
-      if(name === "quantity" || name === "additionalFee"){
-        
-        let detail = {...this.state.details};
-        let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
-        let quantity = name === "quantity" ? Number(value) : Number(details.quantity.value);
-        let additionalFee = name === "additionalFee" ? Number(value) : Number(details.additionalFee.value);
-        let basePrice = Number(option.price);
-        let systemFee = Number(details.systemFee.value)
-        let declaredValueFee = Number(this.state.declaredValueFee);
-        let total = 0;
-
-        const fixPriceDvRate = Number(option.declaredValue) 
-        if(Number(basePrice) === 0 && fixPriceDvRate > 0){
-          declaredValueFee = declaredValueFee * quantity;
-          total += declaredValueFee;
-        }else{
-          basePrice = basePrice * quantity;
-          total += basePrice
-        }
-
-        total += (additionalFee + systemFee)
-        detail.totalShippingCost.value = Number(total).toFixed(2)
-        detail[name].value = value;
-
-        this.setState({
-          declaredValueFee: Number(declaredValueFee).toFixed(2),
-          basePrice:Number(basePrice).toFixed(2),
-          detail
-        })
-        return;
-      }
-    }
-
-    if (name === "sticker_quantity" || name === "quantity") {
-      const isValid = Number(value) > -1;
-      let item = {
-        ...details[name],
-        ...{
-          errorMessage: isValid ? "" : "Invalid number",
-          value: Number(value),
-          accepted: isValid,
-        },
-      };
-      details = { ...details, ...{ [name]: item } };
-    }
-
     if (name === "declaredValue") {
       switch (UserProfile.getBusCompanyTag()) {
-        case 'isarog-liner':
+          case 'dltb':
+          case 'five-star':
+          break;
+
+        default:
           const packageInsurance = { ...details.packageInsurance };
           if (details.fixMatrix.value && details.fixMatrix.value !== "none") {
             let option = details.fixMatrix.options.find(
@@ -1034,9 +1007,6 @@ class CreateParcel extends React.Component {
           }
           details = { ...details, ...{ packageInsurance } };
           break;
-
-        default:
-          break;
       }
     }
 
@@ -1047,6 +1017,7 @@ class CreateParcel extends React.Component {
 
     this.setState({...state, details: { ...details, ...{ [name]: item } } }, () => {
 
+      
       switch (UserProfile.getBusCompanyTag()) {
         case 'isarog-liner':
           if (name === 'declaredValue' || name === "sticker_quantity" || name === "length" || name === "quantity" || name === "packageWeight") {
@@ -1057,9 +1028,11 @@ class CreateParcel extends React.Component {
         case "five-star":
         case "dltb":
           if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
-            if(name === 'declaredValue' || name === "sticker_quantity") {
+            if( name === "additionalFee" || name ==="quantity" ||  name === 'declaredValue' || name === "sticker_quantity") {
               //let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
               //console.info('option',option)
+              console.info('passs this====>>')
+
               this.dltbFixPriceComputation()
               return;
             }
