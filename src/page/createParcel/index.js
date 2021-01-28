@@ -1516,7 +1516,7 @@ class CreateParcel extends React.Component {
     let view = null;
 
     switch (step) {
-      case 0:
+      case 1:
 
         switch (UserProfile.getBusCompanyTag()) {
 
@@ -1569,7 +1569,7 @@ class CreateParcel extends React.Component {
             break;
         }
         break;
-      case 1:
+      case 0:
         view = (
           <>
             <div style={{ background: '#fff', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem' }}>
