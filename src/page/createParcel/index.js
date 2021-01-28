@@ -612,7 +612,7 @@ class CreateParcel extends React.Component {
 
     for (let i = 0; i < Object.keys(_details).length; i++) {
       let name = Object.keys(_details)[i];
-      if (_details[name].isRequired && isNull(_details[name].value)) {
+      if (!_details[name].disabled && _details[name].isRequired && isNull(_details[name].value)) {
         hasError = true;
         break;
       }
