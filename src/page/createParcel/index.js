@@ -923,14 +923,16 @@ class CreateParcel extends React.Component {
           const _systemFee = Number(data.systemFee);
           const additionalFee = Number(d.additionalFee.value);
           let total = Number(data.computeTotalShippingCost);
-
+          let _basePrice = Number(basePrice);
           let qty = Number(d.quantity.value || 1)
+          console.log('quantity',qty)
           let quantity = qty < 1 ? 1 : qty;
 
           if (quantity > 1) {
             total -= _systemFee;
             total = total * quantity;
-            total += _systemFee
+            total += _systemFee;
+            _basePrice = _basePrice * quantity;
           }
           total += additionalFee
 
@@ -940,7 +942,7 @@ class CreateParcel extends React.Component {
           this.setState({
             isFixedPrice: true,
             declaredValueFee,
-            basePrice,
+            basePrice:_basePrice.toFixed(2),
             details: d
           })
         } else {
