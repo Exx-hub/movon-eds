@@ -1341,7 +1341,8 @@ class CreateParcel extends React.Component {
       let discountFee = 0; 
       let weightFee = Number(state.weightFee || 0);
       let lengthFee = Number(state.lengthFee || 0);
-      let total = basePrice + declaredValueFee + systemFee + weightFee + lengthFee;
+      let portersFee = Number(state.portersFee || 0) 
+      let total = basePrice + declaredValueFee + systemFee + weightFee + lengthFee + portersFee;
 
       //discount === "ex: Senior Citizen"
       if(value.toLowerCase() !== 'none'){
