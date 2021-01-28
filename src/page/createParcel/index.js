@@ -1958,7 +1958,7 @@ class CreateParcel extends React.Component {
         declaredValueFee = declaredValueFee * quantity;
       }
 
-      total = basePrice + declaredValueFee;mag
+      total = basePrice + declaredValueFee;
 
       if(discount) {
         discountFee = total * (Number(discount.rate) / 100);
