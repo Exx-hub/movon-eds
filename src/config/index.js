@@ -1,6 +1,6 @@
 export const config = {
-    BASE_URL:"http://localhost:9000",
-    //BASE_URL:"https://www.cargomovon.com/server",
+    //BASE_URL:"http://localhost:9000",
+    BASE_URL:"https://www.cargomovon.com/server",
     //BASE_URL:'https://movon.com.ph/server',
     parcelStatus:{
         1:'created',
@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(93)'
+        build: '1.5.1(94)'
     },
-    changeLogs: `allow 0 to input box`
+    changeLogs: `fetch payment breakdown`
 }
 
 export const ERROR_CODES = {
