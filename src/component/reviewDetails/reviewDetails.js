@@ -185,11 +185,11 @@ function FeeSection(props){
                 <NumberContainer label="Length Fee" value={lengthFee} />
                 <NumberContainer label="Weight Fee" value={weightFee} />
                 <NumberContainer label="Discount" value={discountFee}/>
-                <NumberContainer label="Insurance Fee" value={declaredValueFee} />
+                <NumberContainer label="Declared Value Fee" value={declaredValueFee} />
             </>)
             break;
-
-        case 'isarog-liner':
+    
+        default:
             inputSection = (<TextContainer label="Length" value={length} />)
             feesSection = (<>
                 <NumberContainer label="Porter's Fee" value={portersFee}/>
@@ -197,9 +197,6 @@ function FeeSection(props){
                 <NumberContainer label="Discount" value={discountFee}/>
                 <NumberContainer label="Insurance Fee" value={declaredValueFee} />
             </>)
-            break;
-    
-        default:
             break;
     }
 

@@ -731,7 +731,6 @@ class CreateParcel extends React.Component {
       details,
       packageImagePreview,
       selectedTrip,
-      billOfLading,
     } = this.state;
 
     if (verifiedSteps >= 4) {

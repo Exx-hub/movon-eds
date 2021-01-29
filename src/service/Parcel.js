@@ -103,9 +103,9 @@ const ParcelService = {
         bodyFormData.set('recipientEmail', receiverEmail.value || "")
         bodyFormData.set('recipientPhoneCountryCode', COUNTRY_CODE)
         bodyFormData.set('recipientPhoneNumber',receiverMobile.value)
-        bodyFormData.set('packageName', description.value)
-        bodyFormData.set('packageWeight',packageWeight.value)
-        bodyFormData.set('estimatedValue', declaredValue.value)
+        bodyFormData.set('packageName', description.value )
+        bodyFormData.set('packageWeight',packageWeight.value || 0)
+        bodyFormData.set('estimatedValue', declaredValue.value||0)
         bodyFormData.set('accompanied', type.value !== CARGO_PADALA)
         bodyFormData.set('packageInsurance', PACKAGE_INSURANCE)
         bodyFormData.set('sticker_quantity', sticker_quantity.value || 0)
@@ -138,33 +138,33 @@ const ParcelService = {
 
         switch (UserProfile.getBusCompanyTag()) {
             case 'dltb':
-                bodyFormData.append("paymentBreakdown",{
-                    'weightFee': weightFee,
-                    'additionalFee': additionalFee.value,
-                    'insuranceFee': insuranceFee,
-                    'handlingFee': handlingFee,
-                    'handlingFee': handlingFee,
-                    'declaredvalueFee':declaredvalueFee,
-                    'basePrice': basePrice,
-                });
+                bodyFormData.set("paymentBreakdown",JSON.stringify({
+                    'weightFee': Number(weightFee||0),
+                    'additionalFee': Number(additionalFee.value||0),
+                    'insuranceFee': Number(insuranceFee||0),
+                    'handlingFee': Number(handlingFee||0),
+                    'declaredvalueFee':Number(declaredvalueFee||0),
+                    'basePrice': Number(basePrice||0),
+                }));
                 break;
             case 'five-star':
-                bodyFormData.append("paymentBreakdown",{
-                    'weightFee': weightFee,
-                    'lengthFee': lengthFee,
-                    'declaredvalueFee': declaredvalueFee,
-                    'basePrice': basePrice,
-                });
+                bodyFormData.set("paymentBreakdown",JSON.stringify({
+                    'weightFee': Number(weightFee ||0),
+                    'lengthFee': Number(lengthFee ||0),
+                    'declaredvalueFee':Number(declaredvalueFee||0),
+                    'basePrice': Number(basePrice||0),
+                    'discountFee': Number(discountFee||0),
+                }));
                 break;
         
             default:
-                bodyFormData.append("paymentBreakdown",{
-                    'portersFee': portersFee,
-                    'lengthFee': lengthFee,
-                    'discountFee': discountFee,
-                    'declaredvalueFee':declaredvalueFee,
-                    'basePrice': basePrice,
-                });
+                bodyFormData.set("paymentBreakdown",JSON.stringify({
+                    'portersFee': Number(portersFee||0),
+                    'lengthFee': Number(lengthFee ||0),
+                    'discountFee': Number(discountFee||0),
+                    'declaredvalueFee':Number(declaredvalueFee||0),
+                    'basePrice': Number(basePrice||0),
+                }));
                 break;
         }
 

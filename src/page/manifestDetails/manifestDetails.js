@@ -358,6 +358,44 @@ class ManifestDetails extends React.Component {
   };
 
   getReviewDetails = (data) => {
+    console.info('manifest-details data',data)
+    
+    const breakdown = data.paymentBreakdown
+    let paymentBreakdown={}
+
+    switch (UserProfile.getBusCompanyTag()) {
+      case 'dltb':
+        paymentBreakdown={
+          weightFee: Number(breakdown.weightFee||0).toFixed(2),
+          declaredValueFee: Number(breakdown.declaredvalueFee||0).toFixed(2),
+          additionalFee:  Number(breakdown.additionalFee||0).toFixed(2),
+          handlingFee: Number(breakdown.handlingFee||0).toFixed(2),
+          basePrice: Number(breakdown.basePrice||0).toFixed(2)
+        }
+        break;
+
+      case "five-star":
+        paymentBreakdown={
+          lengthFee: Number(breakdown.lengthFee||0).toFixed(2),
+          weightFee: Number(breakdown.weightFee||0).toFixed(2),
+          declaredValueFee: Number(breakdown.declaredvalueFee||0).toFixed(2),
+          discountFee: Number(breakdown.discountFee||0).toFixed(2),
+          basePrice: Number(breakdown.basePrice||0).toFixed(2)
+        }
+        break;
+    
+      default:
+        paymentBreakdown={
+          lengthFee: Number(breakdown.lengthFee||0).toFixed(2),
+          portersFee: Number(breakdown.portersFee||0).toFixed(2),
+          declaredValueFee: Number(breakdown.declaredvalueFee||0).toFixed(2),
+          discountFee: Number(breakdown.discountFee||0).toFixed(2),
+          basePrice: Number(breakdown.basePrice||0).toFixed(2)
+        }
+        break;
+    }
+
+
     return {
       noOfSticker: this.userProfileObject.getStickerCount(),
       packageName: data.packageInfo.packageName,
@@ -385,12 +423,9 @@ class ManifestDetails extends React.Component {
       scanCode: data.scanCode,
       createdAt: data.createdAt,
       subParcels: data.subParcels,
-      lengthFee: data.priceDetails.lengthFee,
       length:data.packageInfo.length,
-      weightFee: data.priceDetails.weightFee,
-      portersFee: data.priceDetails.portersFee,
       declaredValue: data.packageInfo.estimatedValue,
-      additionalFee: data.priceDetails.additionalFee
+      ...paymentBreakdown
     };
   };
 
