@@ -164,14 +164,6 @@ class SalesReport extends React.Component {
   };
 
   getParcel = () => {
-    console.info('CURRENT start TIME:', new Date(moment(this.state.startDay).format('YYYY-MM-DD hh:mm:ss')))
-    console.info('CURRENT end TIME:', new Date(moment(this.state.endDay).format('YYYY-MM-DD hh:mm:ss')))
-    console.info('CURRENT TIME:', new Date())
-
-    console.info('AFTER SUBTRACTION OF 8 HRS start TIME:', new Date(moment(this.state.startDay).format()))
-    console.info('AFTER SUBTRACTION OF 8 HRS end TIME:', new Date(moment(this.state.endDay).format()))
-
-
     let startStationId =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
         ? this.state.originId
@@ -194,14 +186,13 @@ class SalesReport extends React.Component {
   };
 
   parseParcel = (dataResult) => {
+    console.info('parseParcel data', dataResult)
     const { data, pagination, totalPrice, errorCode } = dataResult.data;
     if (errorCode) {
       this.setState({ fetching: false });
       this.handleErrorNotification(errorCode);
       return;
     }
-
-    console.log(" dataResult.data;", dataResult.data);
 
     const records = data.map((e, i) => {
       return {
@@ -212,12 +203,12 @@ class SalesReport extends React.Component {
         associatedOrigin: e.associatedOrigin,
         associatedTariffRate: e.associatedTariffRate,
         billOfLading: e.billOfLading,
-        declaredValue: e.declaredValue,
+        declaredValue: `₱ ${Number(e.declaredValue || 0).toFixed(2)}`,
         destination: e.destination,
         origin: e.origin,
         packageName: e.packageName,
-        packageWeight: e.packageWeight,
-        price: (e.price && Number(e.price).toFixed(2)) || "0.00",
+        packageWeight: `${e.packageWeight} kg`,
+        price: `₱ ${Number(e.price || 0).toFixed(2)}`,
         quantity: e.quantity,
         recipient: e.recipient,
         scanCode: e.scanCode,
@@ -226,7 +217,8 @@ class SalesReport extends React.Component {
         status: e.status,
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,
-        remarks: e.remarks === "undefined" ? "" : e.remarks,
+        systemFee: `₱ ${Number(e.systemFee || 0).toFixed(2)}`,
+        remarks: e.remarks ? (e.remarks !== 'undefined' ? e.remarks : "*******") : "*******",
       };
     });
     const { totalRecords } = pagination;

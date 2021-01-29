@@ -5,7 +5,7 @@ export const config = {
     parcelStatus:{
         1:'created',
         2:'intransit',
-        3:'received',
+        3:'received', 
         4:'claimed',
         5:'delivered',
         6:'void',
@@ -33,9 +33,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(70)'
+        build: '1.5.1(97)'
     },
-    changeLogs: `fix dltb quantity computation issue`
+    changeLogs: `fetch payment breakdown`
 }
 
 export const ERROR_CODES = {

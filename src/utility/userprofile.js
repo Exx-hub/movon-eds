@@ -11,6 +11,7 @@ class UserProfileClass{
     const _credential = localStorage.getItem('credential')
       if(_credential && _credential !== 'null'){
         this.credential = JSON.parse(localStorage.getItem('credential'));
+        console.info('this.credential',this.credential)
         this.token = this.credential.token;
         this.user = this.credential.user;
       }
@@ -95,6 +96,16 @@ class UserProfileClass{
     return undefined;
   }
 
+  getBusCompanyLogo(){
+    let result = undefined
+    if(this.getBusCompany()){
+      result = this.getBusCompany().logo 
+    }
+    return result;
+  }
+
+
+
   getBusCompanyDiscount(){
     if(this.getBusCompany()){
       let discount = this.getBusCompany().discount || [] 
@@ -115,6 +126,14 @@ class UserProfileClass{
     const defaultValue = undefined
     if(this.getPersonalInfo()){
       return this.user.personalInfo.fullName || defaultValue
+    }
+    return defaultValue;
+  }
+
+  getPersonAddress(){
+    let defaultValue = undefined
+    if(this.getPersonalInfo()){
+      defaultValue = this.user.personalInfo.address 
     }
     return defaultValue;
   }

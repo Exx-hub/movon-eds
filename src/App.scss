@@ -22,3 +22,13 @@ html body{
     color: white;
     border-radius: 15px;
 }
+
+.no-internet-connection{
+    z-index: 1000000;
+    height: 100vh;
+    background: url("./assets/no_internet_connection.jpg") no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover; 
+}

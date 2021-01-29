@@ -8,7 +8,7 @@ function MatrixModal(props){
     <Modal 
       closable={false}
       destroyOnClose={true}
-      width={800}
+      width={props.width || 800}
       title={props.title || "title"} 
       visible={props.visible} 
       footer={null}>
