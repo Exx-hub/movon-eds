@@ -127,6 +127,49 @@
 
 }
 
+.bill-of-lading-modal-section{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+
+  .message{
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 200;
+  }
+
+  .input-section{
+    margin-top: 1rem;
+  }
+
+  .button-section{
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+    width: 100%;
+
+    .button{
+      font-size: 16px !important;
+      height: 35px;
+      min-width: 120px;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .button-cancel{
+      @extend .button;
+      margin-right: .2rem;
+      background: rgba($color: gray, $alpha: .5) !important;
+    }
+
+    .button-update{
+      @extend .button;
+      margin-left: .2rem;
+      background: rgb(127, 202, 21) !important;
+    }
+  }
+}
+
 
 
 

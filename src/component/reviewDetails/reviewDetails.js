@@ -126,7 +126,7 @@ function PackageInformationSection(props){
     const billOfLading = data.billOfLading || ""
 
     return(<div className="vertical-layout" style={{...props.style}}>
-        <div className="text-list-container">
+        <div className="text-list-container" style={{padding:'2rem'}}>
             <TextContainer label="Destination" value={destination} />
             <TextContainer label="Description" value={props.value.packageName || ''}/>
             <TextContainer label="Bill of Lading" value={billOfLading}/>
@@ -149,7 +149,7 @@ function FeeSection(props){
     let feesSection=undefined;
 
     const data = props.value;
-    const length = (data.lengthFee || 0) + " m";
+    const length = (data.length || 0) + " m";
     const weight = (data.packageWeight || 0) + " kg";
     const stickerCount = (data.subParcels ? data.subParcels.length : data.stickerCount) || 0;
     const packageQty = data.packageQty || 0;
@@ -184,8 +184,8 @@ function FeeSection(props){
             feesSection = (<>
                 <NumberContainer label="Length Fee" value={lengthFee} />
                 <NumberContainer label="Weight Fee" value={weightFee} />
-                <NumberContainer label="Discount" value={discountFee}/>
                 <NumberContainer label="Declared Value Fee" value={declaredValueFee} />
+                <NumberContainer label="Discount" value={discountFee}/>
             </>)
             break;
     
@@ -194,25 +194,25 @@ function FeeSection(props){
             feesSection = (<>
                 <NumberContainer label="Porter's Fee" value={portersFee}/>
                 <NumberContainer label="Length Fee" value={lengthFee}/>
-                <NumberContainer label="Discount" value={discountFee}/>
                 <NumberContainer label="Insurance Fee" value={declaredValueFee} />
+                <NumberContainer label="Discount" value={discountFee}/>
             </>)
             break;
     }
 
-    return(<div className="vertical-layout" style={{...props.style}}>
-        <div className="horizontal-layout" style={{padding:'1rem'}}>
-            
-            <div className="vertical-layout" style={{width:'50%'}}> 
+    return(<div className="feeSection" style={{...props.style}}>
+        <div className="horizontal-layout">
+            <div className="feeSection-left"> 
+                <TextContainer label="Declared Value" value={declaredValue} />
                 <TextContainer label="Package Count" value={stickerCount}/>
                 <TextContainer label="Quantity" value={packageQty } />
                 <TextContainer label="Weight" value={weight} />
-                <TextContainer label="Declared Value" value={declaredValue} />
-                <TextContainer label="Base Price" value={basePrice} />
                 {inputSection}
             </div>
 
-            <div className="vertical-layout" style={{width:'50%'}}> 
+            <div className="feeSection-right"> 
+                <p className="paymentBreakdownText">Payment Breakdown</p>
+                <NumberContainer label="Base Price" value={basePrice} />
                 {feesSection}
                 <NumberContainer label="System Fee" value={convenienceFee} />
                 <NumberContainer label="Total Shipping Cost" value={totalPrice} />
@@ -225,14 +225,14 @@ function FeeSection(props){
 function TextContainer(props){
     return(<div className="text-section">
         <div className="label"><label>{props.label}</label></div>
-        :<div className="label-value"><label>{props.value}</label></div>
+        :<div className="label-value" style={{fontWeight:'bold'}}><label>{props.value}</label></div>
     </div>)
 }
 
 function NumberContainer(props){
-    return(<div className="number-section">
+    return(<div className="number-section" style={{borderBottom:"1px solid rgba(56,546,56,0.3)"}}>
         <div className="label"><label>{props.label}</label></div>
-        :<div className="label-value"><label>{props.value}</label></div>
+        <div className="label-value" style={{fontWeight:'bold'}}><label>{props.value}</label></div>
     </div>)
 }
 

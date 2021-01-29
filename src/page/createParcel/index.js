@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import "./create.scss";
-import {
-  BicolIsarogForm,
-  CreateParcelForm,
-} from "../../component/createParcelForm";
+import {CreateForm} from "../../component/createParcelForm";
 import StepsView from "../../component/steps";
 import WebCam from "../../component/webcam";
 import ScheduledTrips from "../../component/scheduledTrips";
@@ -21,6 +18,8 @@ import {
   UserProfile,
   alterPath
 } from "../../utility";
+
+import {CustomModal} from '../../component/modal'
 
 const { Content, Sider, Header } = Layout;
 
@@ -438,7 +437,12 @@ class CreateParcel extends React.Component {
       insuranceFee: Number(0).toFixed(2),
       isFixedPrice: false,
       discountFee: Number(0).toFixed(2),
-      stopStep:false
+      stopStep:false,
+      createModal:{
+        visible:false,
+        data:{},
+        title:"Bill of Lading Exist!"
+      }
     };
     this.userProfileObject = UserProfile;
     this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
@@ -582,11 +586,6 @@ class CreateParcel extends React.Component {
   };
 
   createParcel = () => {
-    showNotification({
-      title: "Create Parcel",
-      type: "info",
-      message: "The System is processing the parcel. Please wait for a while!",
-    });
     this.setState({ isLoading: true });
     ParcelService.create(this.state).then((e) => {
       this.setState({ isLoading: false });
@@ -597,11 +596,17 @@ class CreateParcel extends React.Component {
           type: "success",
           message: "Your parcel is successfully created!",
         });
-        this.setState({ createParcelResponseData: data }, () =>
+        this.setState({ stopStep:true, createParcelResponseData: data }, () =>
           this.gotoNextStep()
         );
       } else {
-        this.handleErrorNotification(errorCode);
+        if(Number(errorCode) === 4012){
+          let createModal = {...this.state.createModal}
+          createModal.visible=true;
+          this.setState({createModal})
+        }else{
+          this.handleErrorNotification(errorCode);
+        }
       }
     });
   };
@@ -735,6 +740,7 @@ class CreateParcel extends React.Component {
 
     if (verifiedSteps >= 4) {
       console.log("already created.. no more modification");
+      this.setState({stopStep:true})
       return false;
     }
 
@@ -1520,7 +1526,7 @@ class CreateParcel extends React.Component {
           default:
             view = (
               <>
-                <BicolIsarogForm
+                <CreateForm
                   enableInterConnection={this.state.enalbeBicolIsarogWays}
                   onBlur={(name) => {
                     let item = this.onBlurValidation(name);
@@ -2080,6 +2086,71 @@ class CreateParcel extends React.Component {
             </div>
           </Content>
         </Layout>
+
+        <CustomModal 
+          width={500} 
+          visible={this.state.createModal.visible} 
+          title={this.state.createModal.title}>
+
+          <section className="bill-of-lading-modal-section">
+          <p className="message">
+            You have entered an existing bill of lading.
+            Please replace it and continue.
+          </p>
+
+          <Form 
+            onFinish={(value)=>{
+              let details = {...this.state.details}
+              let billOfLading = {...details.billOfLading};
+               billOfLading.value = value.billOfLading;
+               billOfLading.accepted = true;
+               details.billOfLading = billOfLading;
+
+               let createModal ={ ...this.state.createModal}
+               createModal.visible = false;
+
+               this.setState({details, createModal},()=>{
+                this.createParcel()
+               });
+            }}
+            name="modal-form">
+            <section className="input-section">
+              <Form.Item 
+                name="billOfLading"
+                label="Bill of Lading"
+                rules={[{ required: true, message: 'Bill of lading is required field' }, 
+                ((field)=>({
+                  validator(rule, value){
+                    if(value && value.trim().indexOf(' ') > -1){
+                      return Promise.reject('White space is not allowed!');
+                    }
+                    return Promise.resolve()
+                  }
+                }))]}>
+                  <Input 
+                    size="large" 
+                    placeholder="Bill of Lading"/>
+              </Form.Item>
+            </section>
+          <section className='button-section'>
+              <Button 
+                onClick={()=>{
+                  let createModal = {...this.state.createModal};
+                  createModal.visible = false;
+                  this.setState({createModal})
+                }}
+                shape="round" 
+                className="button-cancel">Cancel</Button>
+              <Button 
+                htmlType="submit"
+                shape="round" 
+                className="button-update">Validate</Button>
+          </section>
+
+          </Form>
+            
+          </section>
+        </CustomModal>
       </Layout>
     );
   }
