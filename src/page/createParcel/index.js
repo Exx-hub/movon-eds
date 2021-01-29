@@ -439,7 +439,7 @@ class CreateParcel extends React.Component {
       discountFee: Number(0).toFixed(2),
       stopStep:false,
       createModal:{
-        visible:false,
+        visible:true,
         data:{},
         title:"Bill of Lading Exist!"
       }

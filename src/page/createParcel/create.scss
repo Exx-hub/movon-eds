@@ -152,20 +152,21 @@
       font-size: 16px !important;
       height: 35px;
       min-width: 120px;
-      font-weight: bold;
+      font-weight: 200;
       color: white;
+      background: teal !important;
+
     }
     
     .button-cancel{
       @extend .button;
       margin-right: .2rem;
-      background: rgba($color: gray, $alpha: .5) !important;
+      background: rgb(110, 114, 114) !important;
     }
 
     .button-update{
       @extend .button;
       margin-left: .2rem;
-      background: rgb(127, 202, 21) !important;
     }
   }
 }
