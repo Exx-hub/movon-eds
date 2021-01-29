@@ -36,6 +36,8 @@ const ParcelService = {
 
     create : (state) => {
 
+        console.info('create', state)
+
         const{
             details,
             checkIn,
@@ -47,7 +49,7 @@ const ParcelService = {
             weightFee,
             handlingFee,
             lengthFee,
-            declaredvalueFee,
+            declaredValueFee,
             basePrice,
             discountFee,
             insuranceFee
@@ -143,18 +145,19 @@ const ParcelService = {
                     'additionalFee': Number(additionalFee.value||0),
                     'insuranceFee': Number(insuranceFee||0),
                     'handlingFee': Number(handlingFee||0),
-                    'declaredvalueFee':Number(declaredvalueFee||0),
+                    'declaredvalueFee': Number(state.declaredValueFee||0),
                     'basePrice': Number(basePrice||0),
                 }));
                 break;
             case 'five-star':
-                bodyFormData.set("paymentBreakdown",JSON.stringify({
+                const payload = {
                     'weightFee': Number(weightFee ||0),
                     'lengthFee': Number(lengthFee ||0),
-                    'declaredvalueFee':Number(declaredvalueFee||0),
+                    'declaredvalueFee':Number(declaredValueFee || 0),
                     'basePrice': Number(basePrice||0),
                     'discountFee': Number(discountFee||0),
-                }));
+                }
+                bodyFormData.set("paymentBreakdown",JSON.stringify(payload));
                 break;
         
             default:
@@ -162,7 +165,7 @@ const ParcelService = {
                     'portersFee': Number(portersFee||0),
                     'lengthFee': Number(lengthFee ||0),
                     'discountFee': Number(discountFee||0),
-                    'declaredvalueFee':Number(declaredvalueFee||0),
+                    'declaredvalueFee':Number(declaredValueFee||0),
                     'basePrice': Number(basePrice||0),
                 }));
                 break;
