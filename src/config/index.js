@@ -35,7 +35,7 @@ export const config = {
         environment:"",
         build: '1.5.1(97)'
     },
-    changeLogs: `fetch payment breakdown`
+    changeLogs: `deployment to production build`
 }
 
 export const ERROR_CODES = {
