@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.1(96)'
+        build: '1.5.1(97)'
     },
     changeLogs: `fetch payment breakdown`
 }

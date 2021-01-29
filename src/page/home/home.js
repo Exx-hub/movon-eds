@@ -38,6 +38,7 @@ import { config } from "../../config";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
+
 const tableSourceVliBitsi = [
   {
     title: "DATE",
@@ -92,10 +93,16 @@ const tableSourceVliBitsi = [
   },
   {
     title: "AMOUNT",
+    dataIndex: "systemFee",
+    key: "systemFee",
+  },
+  {
+    title: "AMOUNT",
     dataIndex: "price",
     key: "price",
   },
 ];
+
 const tableSourceBitsi = [
   {
     title: "BL NO.",
@@ -145,11 +152,6 @@ const tableSourceBitsi = [
     key: "packageWeight",
   },
   {
-    title: "DECLARED VALUE",
-    dataIndex: "declaredValue",
-    key: "declaredValue",
-  },
-  {
     title: "DESCRIPTION",
     dataIndex: "packageName",
     key: "packageName",
@@ -160,9 +162,22 @@ const tableSourceBitsi = [
     key: "remarks",
   },
   {
+    title: "DECLARED VALUE",
+    dataIndex: "declaredValue",
+    key: "declaredValue",
+    align: "right"
+  },
+  {
+    title: "SYSTEM FEE",
+    dataIndex: "systemFee",
+    key: "systemFee",
+    align: "right"
+  },
+  {
     title: "AMOUNT",
     dataIndex: "price",
-    key: "price"
+    key: "price",
+    align: "right"
   },
 ];
 
