@@ -722,8 +722,6 @@ function ShowDltbBreakDown(props){
       additionalFee,
       isFixedPrice
     }=props.data;
-
-    console.info("ShowDltbBreakDown",props.data)
   
     if(isShortHaul || isFixedPrice){
       view = (<>

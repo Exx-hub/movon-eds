@@ -852,7 +852,7 @@ class CreateParcel extends React.Component {
 
     const { destination, declaredValue, paxs, packageWeight, type, length } = this.state.details;
 
-    if (destination.value && packageWeight.value && length.value && declaredValue.value) {
+    if (destination.value && packageWeight.value && Number(length.value || 0) > -1 && declaredValue.value) {
       const busCompanyId = this.userProfileObject.getBusCompanyId();
       const startStation = this.userProfileObject.getAssignedStationId();
       const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
@@ -922,9 +922,6 @@ class CreateParcel extends React.Component {
 
           const _systemFee = Number(data.systemFee || 0);
           const additionalFee = Number(d.additionalFee.value || 0);
-          
-          console.info('d.additionalFee.value',d.additionalFee) 
-          console.info('additionalFee',additionalFee)
 
           let _declaredValueFee = Number(declaredValueFee || 0);
           let total = Number(data.computeTotalShippingCost || 0);
@@ -935,9 +932,6 @@ class CreateParcel extends React.Component {
             _declaredValueFee = _declaredValueFee * quantity;
             _basePrice = _basePrice * quantity;
           }
-
-          console.info('_basePrice',_basePrice)
-          console.info('_basePrice',_basePrice)
 
           total = _basePrice + _declaredValueFee;
           total += additionalFee + _systemFee
