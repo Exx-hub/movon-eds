@@ -922,6 +922,10 @@ class CreateParcel extends React.Component {
 
           const _systemFee = Number(data.systemFee || 0);
           const additionalFee = Number(d.additionalFee.value || 0);
+          
+          console.info('d.additionalFee.value',d.additionalFee) 
+          console.info('additionalFee',additionalFee)
+
           let _declaredValueFee = Number(declaredValueFee || 0);
           let total = Number(data.computeTotalShippingCost || 0);
           let _basePrice = Number(basePrice || 0);

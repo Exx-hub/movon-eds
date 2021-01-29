@@ -634,10 +634,16 @@ function BicolIsarogForm(props) {
   );
 }
 
+const translateNumber = (val)=>{
+  if(!val || val === undefined || val === 'NaN' || val === null){
+    return  Number(0).toFixed(2)
+  }
+  return val;
+}
+
 function ShowBicolIsarogBreakDown(props){
   let view = undefined;
     const{
-      weightFee,
       basePrice,
       declaredValueFee,
       systemFee,
@@ -649,25 +655,26 @@ function ShowBicolIsarogBreakDown(props){
 
     if(isFixedPrice){
       view=(<>
-        <TextContainer title="Base Price" value={basePrice} /> 
-        <TextContainer title="Porters Fee" value={portersFee} /> 
-        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
-        <TextContainer title="System Fee" value={systemFee} />
-        <TextDiscountContainer title="Discount" value={discountFee} /> 
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
+        <TextContainer title="Porters Fee" value={translateNumber(portersFee)} /> 
+        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+        <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
       </>)
     }else{
       view=(<>
-          <TextContainer title="Base Price" value={basePrice} /> 
-          <TextContainer title="Porters Fee" value={portersFee} /> 
-          <TextContainer title="Length Fee" value={lengthFee} />
-          <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
-          <TextContainer title="System Fee" value={systemFee} />
-          <TextDiscountContainer title="Discount" value={discountFee} /> 
+          <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
+          <TextContainer title="Porters Fee" value={translateNumber(portersFee)} /> 
+          <TextContainer title="Length Fee" value={translateNumber(lengthFee)} />
+          <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
+          <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+          <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
       </>)
     }
 
     return(view)
 }
+
 
 function ShowFiveStarBreakDown(props){
   let view = undefined;
@@ -683,18 +690,18 @@ function ShowFiveStarBreakDown(props){
 
     if(isFixedPrice){
       view=(<>
-        <TextContainer title="Base Price" value={basePrice} /> 
-        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
-        <TextContainer title="System Fee" value={systemFee} />
-        <TextDiscountContainer title="Discount" value={discountFee} /> 
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
+        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+        <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
       </>)
     }else{
       view=(<>
-        <TextContainer title="Weight Fee" value={weightFee} /> 
-        <TextContainer title="Length Fee" value={lengthFee} />
-        <TextContainer title="Declared Value Fee" value={declaredValueFee} />
-        <TextContainer title="System Fee" value={systemFee} />
-        <TextDiscountContainer title="Discount" value={discountFee} /> 
+        <TextContainer title="Weight Fee" value={translateNumber(weightFee)} /> 
+        <TextContainer title="Length Fee" value={translateNumber(lengthFee)} />
+        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} />
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+        <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
       </>)
     }
 
@@ -715,23 +722,24 @@ function ShowDltbBreakDown(props){
       additionalFee,
       isFixedPrice
     }=props.data;
-    
 
+    console.info("ShowDltbBreakDown",props.data)
+  
     if(isShortHaul || isFixedPrice){
       view = (<>
-        <TextContainer title="Base Price" value={basePrice} /> 
-        <TextContainer title="Additional Fee" value={additionalFee} />
-        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
-        <TextContainer title="System Fee" value={systemFee} />
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
+        <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} />
+        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
       </>)
     }else{
       view = (<>
-        <TextContainer title="Weight Fee" value={weightFee} /> 
-        <TextContainer title="Additional Fee" value={additionalFee} /> 
-        <TextContainer title="Handling Fee" value={Number(handlingFee).toFixed(2)} /> 
-        <TextContainer title="Insurance Fee" value={insuranceFee} />
-        <TextContainer title="Declared Value Fee" value={declaredValueFee} /> 
-        <TextContainer title="System Fee" value={systemFee} />
+        <TextContainer title="Weight Fee" value={translateNumber(weightFee)} /> 
+        <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} /> 
+        <TextContainer title="Handling Fee" value={translateNumber(handlingFee)} /> 
+        <TextContainer title="Insurance Fee" value={translateNumber(insuranceFee)} />
+        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
       </>)
     }
 
