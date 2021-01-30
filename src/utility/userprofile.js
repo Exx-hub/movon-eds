@@ -11,7 +11,6 @@ class UserProfileClass{
     const _credential = localStorage.getItem('credential')
       if(_credential && _credential !== 'null'){
         this.credential = JSON.parse(localStorage.getItem('credential'));
-        console.info('this.credential',this.credential)
         this.token = this.credential.token;
         this.user = this.credential.user;
       }

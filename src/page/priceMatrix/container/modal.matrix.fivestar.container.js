@@ -6,12 +6,6 @@ import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/i
 function FiveStarMatrixModalContent(props) {
 
     const onFinish = values => {
-        // let _data = {...props.data};
-        // delete _data.destination
-        // delete _data.destinationId
-        // delete _data.originId
-        // delete _data.fixMatrix
-        // delete values.destination
         props.onSubmit(values, null)
     };
 
@@ -20,7 +14,20 @@ function FiveStarMatrixModalContent(props) {
     };
 
     useEffect(()=>{
-        console.log('matrix props',props)
+        const origin = props.data.originId;
+        const destination = props.data.destinationId;
+       
+        const toPrint = `
+
+        destination: ${props.data.destination}
+        
+        db.getCollection('price_matrices').find({
+            busCompanyId:ObjectId("5f067b8032334d1ff7431a62"),
+            origin:ObjectId("${origin}"),
+            destination:ObjectId("${destination}"),
+        })`
+
+        console.info('toPrint', toPrint)
     })
 
     const layout = {
