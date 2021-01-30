@@ -1,5 +1,5 @@
 export const config = {
-    BASE_URL: process.env.BASE_URL, 
+    BASE_URL: process.env.REACT_APP_BASE_URL, 
     parcelStatus:{
         1:'created',
         2:'intransit',
@@ -35,6 +35,11 @@ export const config = {
     },
     changeLogs: `deployment to production build`
 }
+
+console.info('url', process.env.REACT_APP_BASE_URL)
+console.info('url', process.env.REACT_APP_BASE_URL)
+console.info('url', process.env.REACT_APP_BASE_URL)
+console.info('url', process.env.REACT_APP_BASE_URL)
 
 export const ERROR_CODES = {
     7002:{
