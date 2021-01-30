@@ -358,8 +358,6 @@ class ManifestDetails extends React.Component {
   };
 
   getReviewDetails = (data) => {
-    console.info('manifest-details data',data)
-    
     const breakdown = data.paymentBreakdown || {}
     let paymentBreakdown={}
 

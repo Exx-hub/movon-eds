@@ -10,13 +10,6 @@ const { Content, Sider, Header } = Layout;
 const { TextArea } = Input;
 
 function CreateParcel(props) {
-
-    const [breadCrum,setBredCrum] = useState({})
-
-    useEffect(()=>{
-        console.info('props',props)
-    },[])
-
     return (
         <Layout className="parcel-creator-page">
 
