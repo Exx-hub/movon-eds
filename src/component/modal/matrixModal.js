@@ -6,7 +6,8 @@ function MatrixModal(props){
   
   return(
     <Modal 
-      closable={false}
+      closable={true}
+      onCancel={props.onCancel}
       destroyOnClose={true}
       width={props.width || 800}
       title={props.title || "title"} 

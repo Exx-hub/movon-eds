@@ -399,13 +399,15 @@ function DltbMatrix(props){
             </Collapse>
             </div>
 
-            <MatrixModal 
+            <MatrixModal
+                onCancel={()=>setFixPriceModal(e=>({...e,visible:false, data:undefined}))}
                 visible={fixPriceModal.visible} 
                 title={fixPriceModal.title}>
                 <FixMatrixModalContainer {...props}/>
             </MatrixModal>
 
             <MatrixModal 
+                onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
                 visible={matrixModal.visible} 
                 title={matrixModal.title}>
 
@@ -414,6 +416,7 @@ function DltbMatrix(props){
             </MatrixModal>
 
             <MatrixModal 
+                onCancel={()=>setFiveStarLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
                 width={500}
                 visible={fiveStarLenghtRangeModal.visible} 
                 title={fiveStarLenghtRangeModal.title}>
@@ -428,6 +431,7 @@ function DltbMatrix(props){
 
             <MatrixModal 
                 width={500}
+                onCancel={()=>setFiveStarWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
                 visible={fiveStarWeightRangeModal.visible} 
                 title={fiveStarWeightRangeModal.title}>
                     <FiveStarMatrixModalWeightRange 

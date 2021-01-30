@@ -1941,7 +1941,7 @@ class CreateParcel extends React.Component {
       let basePrice = Number(option.price);
       let fixPriceDvRate = Number(option.declaredValue);
       let declaredValueFee = fixPriceDvRate ? declaredValue * (fixPriceDvRate / 100) : 0;
-      let total = basePrice;
+      let total = 0;
 
       if(quantity > 1){
         basePrice = basePrice * quantity;
@@ -1950,16 +1950,16 @@ class CreateParcel extends React.Component {
 
       total = basePrice + declaredValueFee;
 
-      if(discount) {
+      if(discount && discount.rate) {
         discountFee = total * (Number(discount.rate) / 100);
         total -= discountFee;
       }
 
       if (total < 500) {
         systemFee = 10;
-        total += systemFee;
       }
 
+      total += systemFee;
       total += portersFee;
 
       currentDetails.systemFee.value = systemFee;
@@ -1980,26 +1980,31 @@ class CreateParcel extends React.Component {
           let basePrice = Number(e.totalCost);
           const declaredValueFee = Number(e.declaredRate);
           const lengthFee = Number(e.lengthRate);
-          total = basePrice + declaredValueFee + lengthFee;
+          let total = 0;
 
           if(quantity > 1){
-            total = total * quantity;
+            declaredValueFee = declaredValueFee * quantity;
             basePrice = basePrice * quantity;
+            lengthFee = lengthFee * quantity;
           }
+
+          total = basePrice + declaredValueFee + lengthFee;
 
           if (discount) {
             discountFee = total * (Number(discount.rate) / 100);
             total -= discountFee;
           }
-          total += portersFee;
-
+          
           if (total < 500) {
             systemFee = 10;
-            total += systemFee;
           }
+
+          total += systemFee;
+          total += portersFee;
 
           currentDetails.systemFee.value = systemFee;
           currentDetails.totalShippingCost.value = Number(total).toFixed(2)
+
           this.setState({
             discountFee: discountFee.toFixed(2),
             basePrice: basePrice.toFixed(2),
