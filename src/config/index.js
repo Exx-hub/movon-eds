@@ -36,11 +36,6 @@ export const config = {
     changeLogs: `deployment to production build`
 }
 
-console.info('url', process.env.REACT_APP_BASE_URL)
-console.info('url', process.env.REACT_APP_BASE_URL)
-console.info('url', process.env.REACT_APP_BASE_URL)
-console.info('url', process.env.REACT_APP_BASE_URL)
-
 export const ERROR_CODES = {
     7002:{
         module:'LOGIN',
