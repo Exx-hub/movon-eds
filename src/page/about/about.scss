@@ -2,11 +2,19 @@
 .about-main {
   display: flex;
   overflow: scroll;
+  height: 100vh;
 
-  .back-button-header{
-    font-size: 20px;
-    color: white;
-  }
+  .home-nav-link{
+    color: white !important;
+    font-weight: bold !important;
+}
+  .header-nav{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  float: right;
+}
 
 
   
