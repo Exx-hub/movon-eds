@@ -10,24 +10,13 @@ function FiveStarMatrixModalContent(props) {
     };
 
     const onFinishFailed = errorInfo => {
-        console.info('Failed:', errorInfo);
+        //console.info('Failed:', errorInfo);
     };
 
     useEffect(()=>{
-        const origin = props.data.originId;
-        const destination = props.data.destinationId;
-       
-        const toPrint = `
-
-        destination: ${props.data.destination}
-        
-        db.getCollection('price_matrices').find({
-            busCompanyId:ObjectId("5f067b8032334d1ff7431a62"),
-            origin:ObjectId("${origin}"),
-            destination:ObjectId("${destination}"),
-        })`
-
-        console.info('toPrint', toPrint)
+        //const origin = props.data.originId;
+        //const destination = props.data.destinationId;
+        //const destinationName = props.data.destination
     })
 
     const layout = {

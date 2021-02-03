@@ -455,8 +455,6 @@ class CreateParcel extends React.Component {
 
   componentDidMount() {
 
-    console.info('online',this.props)
-
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
@@ -889,7 +887,6 @@ class CreateParcel extends React.Component {
           parcel_length
         )
           .then((e) => {
-            console.info('BicolIsarog compute', e)
             callback()
 
             const { data, success, errorCode } = e.data;
@@ -904,8 +901,6 @@ class CreateParcel extends React.Component {
   }
 
   dltbFixPriceComputation = () => {
-    console.info("dltbFixPriceComputation=======>>")
-
     let d = { ...this.state.details }
     const options = {
       origin: UserProfile.getAssignedStationId(),
@@ -916,7 +911,6 @@ class CreateParcel extends React.Component {
     }
     ParcelService.getDltbFixMatrixComputation(options)
       .then(e => {
-        console.info('getDltbFixMatrixComputation',e)
         const { data, errorCode } = e.data;
         if (!errorCode) {
 
@@ -971,8 +965,6 @@ class CreateParcel extends React.Component {
 
   onInputChange = (name, value) => {
 
-    console.info('onInputChange', name, value)
-
     let details = { ...this.state.details };
     let state = {...this.state}
 
@@ -1020,10 +1012,6 @@ class CreateParcel extends React.Component {
         case "dltb":
           if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
             if( name === "additionalFee" || name ==="quantity" ||  name === 'declaredValue' || name === "sticker_quantity") {
-              //let option = details.fixMatrix.options.find((e) => e.name === details.fixMatrix.value);
-              //console.info('option',option)
-              console.info('passs this====>>')
-
               this.dltbFixPriceComputation()
               return;
             }
@@ -1435,7 +1423,6 @@ class CreateParcel extends React.Component {
             break;
 
           default:
-            console.info('BI option',option)
             this.setState({ ...state, basePrice: price, isFixedPrice: true, details }, () => {
               if (option && Number(option.declaredValue) > 0) {
                 return;
@@ -1789,7 +1776,6 @@ class CreateParcel extends React.Component {
       .then(e => {
         const { data, errorCode } = e.data;
     ParcelService.getDltbComputation(option)
-        console.info("getDltbComputation e",e)
         if (!errorCode) {
           const {
             totalShippingCost,
@@ -1915,7 +1901,6 @@ class CreateParcel extends React.Component {
   }
 
   updateTotalShippingCost = () => {
-    console.info("updateTotalShippingCost>>>>>>>>>>>>>>>>>>>>>>")
     let currentDetails = { ...this.state.details };
     let discount = undefined;
 
@@ -1941,7 +1926,7 @@ class CreateParcel extends React.Component {
       let basePrice = Number(option.price);
       let fixPriceDvRate = Number(option.declaredValue);
       let declaredValueFee = fixPriceDvRate ? declaredValue * (fixPriceDvRate / 100) : 0;
-      let total = basePrice;
+      let total = 0;
 
       if(quantity > 1){
         basePrice = basePrice * quantity;
@@ -1950,16 +1935,16 @@ class CreateParcel extends React.Component {
 
       total = basePrice + declaredValueFee;
 
-      if(discount) {
+      if(discount && discount.rate) {
         discountFee = total * (Number(discount.rate) / 100);
         total -= discountFee;
       }
 
       if (total < 500) {
         systemFee = 10;
-        total += systemFee;
       }
 
+      total += systemFee;
       total += portersFee;
 
       currentDetails.systemFee.value = systemFee;
@@ -1975,17 +1960,19 @@ class CreateParcel extends React.Component {
     } else {
       //compute for matrix;
       this.computePrice((e) => {
-        console.info('computePrice',e)
         if (e) {
           let basePrice = Number(e.totalCost);
           const declaredValueFee = Number(e.declaredRate);
           const lengthFee = Number(e.lengthRate);
-          total = basePrice + declaredValueFee + lengthFee;
+          let total = 0;
 
           if(quantity > 1){
-            total = total * quantity;
+            declaredValueFee = declaredValueFee * quantity;
             basePrice = basePrice * quantity;
+            lengthFee = lengthFee * quantity;
           }
+
+          total = basePrice + declaredValueFee + lengthFee;
 
           if (discount) {
             discountFee = total * (Number(discount.rate) / 100);
@@ -1994,13 +1981,14 @@ class CreateParcel extends React.Component {
           
           if (total < 500) {
             systemFee = 10;
-            total += systemFee;
           }
 
+          total += systemFee;
           total += portersFee;
 
           currentDetails.systemFee.value = systemFee;
           currentDetails.totalShippingCost.value = Number(total).toFixed(2)
+
           this.setState({
             discountFee: discountFee.toFixed(2),
             basePrice: basePrice.toFixed(2),
@@ -2008,9 +1996,6 @@ class CreateParcel extends React.Component {
             declaredValueFee: declaredValueFee.toFixed(2),
             portersFee: Number(portersFee).toFixed(2),
             details: currentDetails
-          }, ()=>{
-            const state = this.state;
-            console.info('state',state)
           });
         }
       });
