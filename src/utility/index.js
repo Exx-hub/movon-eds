@@ -63,7 +63,7 @@ const alterPath = (path, props) =>{
   //return process.env.NODE_ENV === 'development' ? '/staging' + path : path;
   return path //"/cargo"+path;
 }
-ßßß
+
 const modifyName = fullName =>{
   fullName = fullName.toLowerCase();
   const i = fullName.split(" ")
