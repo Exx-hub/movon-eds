@@ -31,9 +31,9 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.2(99)'
+        build: '1.5.2(100)'
     },
-    changeLogs: `deployment to production build`
+    changeLogs: `fixed sticker name length issue`
 }
 
 export const ERROR_CODES = {
