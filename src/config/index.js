@@ -33,7 +33,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.4.0(61)'
+        build: '1.5.2(100)'
     },
     changeLogs: `fixed sticker name length issue`
 }
