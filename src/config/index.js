@@ -31,7 +31,7 @@ export const config = {
     },
     version: {
         environment:"",
-        build: '1.5.2(99)'
+        build: '1.5.2(101)'
     },
     changeLogs: `deployment to production build`
 }
