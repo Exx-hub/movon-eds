@@ -127,7 +127,9 @@ const getReviewDetails = (state) => {
     insuranceFee: state.insuranceFee || 0,
     additionalFee: state.details.additionalFee.value || 0,
     discountFee: state.discountFee || 0,
-    basePrice: state.basePrice || 0
+    basePrice: state.basePrice || 0,
+
+    type:'create'
   };
 };
 
@@ -482,10 +484,19 @@ class CreateParcel extends React.Component {
     ];
     details.discount = discount;
 
-    if (UserProfile.getBusCompanyTag() === 'dltb') {
-      details.length.disabled = true
-      details.length.isRequired = false
-      details.discount.disabled = true
+    switch (UserProfile.getBusCompanyTag()) {
+      case "dltb":
+        details.length.disabled = true
+        details.length.isRequired = false
+        details.discount.disabled = true
+        break;
+
+      case "isarog-liner":
+        details.billOfLading.disabled = true
+        break;
+    
+      default:
+        break;
     }
 
     this.setState({
