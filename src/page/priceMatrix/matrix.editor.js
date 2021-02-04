@@ -24,6 +24,8 @@ const SHOW_LOG = true;
 
 function DltbMatrix(props){
 
+    console.info('matrix', props)
+
     const [state, setState] = useState({
         startName:"",
         fixMatrixOriginId:"",

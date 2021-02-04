@@ -1,5 +1,6 @@
+
 export const config = {
-    BASE_URL: process.env.REACT_APP_BASE_URL, 
+    BASE_URL:process.env.REACT_APP_BASE_URL, 
     parcelStatus:{
         1:'created',
         2:'intransit',
@@ -33,6 +34,7 @@ export const config = {
         environment:"",
         build: '1.5.2(101)'
     },
+    environment:"staging",
     changeLogs: `implement auto generation of bill of lading`
 }
 
