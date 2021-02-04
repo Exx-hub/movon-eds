@@ -10,7 +10,7 @@ export const config = {
         7:'modified'
     },
     voidType:{
-        1:"void",
+        1:"void", 
         2:"modified"
     },
     voidStatus:{
@@ -28,12 +28,12 @@ export const config = {
     header: {
         deviceId: '1',
         deviceType: '3'
-    },
+    }, 
     version: {
         environment:"",
         build: '1.5.2(101)'
     },
-    changeLogs: `fixed sticker name length issue`
+    changeLogs: `implement auto generation of bill of lading`
 }
 
 export const ERROR_CODES = {
