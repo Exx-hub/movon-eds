@@ -371,9 +371,9 @@ function Home(props) {
                 title="Matrix"
               >
                 <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
-                  {userProfileObject.getBusCompany().name}
+                  {UserProfile.getBusCompany() && UserProfile.getBusCompany().name}
                 </Menu.Item>
-                {Boolean(userProfileObject.isIsarogLiners()) && (
+                {Boolean(UserProfile.isIsarogLiners()) && (
                   <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
                     Victory Liners
                   </Menu.Item>
