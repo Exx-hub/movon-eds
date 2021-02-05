@@ -291,7 +291,7 @@ class CreateParcel extends React.Component {
         },
         sticker_quantity: {
           name: "sticker_quantity",
-          value: 1,
+          value: 0,
           isRequired: true,
           accepted: true,
         },
@@ -1368,7 +1368,7 @@ class CreateParcel extends React.Component {
       details.additionalFee.enabled = false
       details.quantity.value = 1;
       details.additionalFee.value = undefined;
-      details.sticker_quantity.value = 1;
+      details.sticker_quantity.value = 0;
       details.totalShippingCost.value = 0
       details.additionNote.value = ""
       details.systemFee.value = 0;
