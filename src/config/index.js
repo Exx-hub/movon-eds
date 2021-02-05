@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.5.2(101)'
+        build: '1.5.2(102)'
     },
     environment:"staging",
-    changeLogs: `implement auto generation of bill of lading`
+    changeLogs: `sticker count reset to 0`
 }
 
 export const ERROR_CODES = {
