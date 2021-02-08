@@ -24,6 +24,8 @@ const SHOW_LOG = true;
 
 function DltbMatrix(props){
 
+    console.info('matrix', props)
+
     const [state, setState] = useState({
         startName:"",
         fixMatrixOriginId:"",
@@ -128,11 +130,7 @@ function DltbMatrix(props){
 
     const updateFixPriceFiveStartMatrix = (values, data) =>{
 
-        console.info(' values',values)
-        console.info(' data', data)
-
         let _fixMatrix = undefined;
-
         switch (data.type) {
             case 'add':
                 _fixMatrix = [...state.tempFixMatrixObject.fixMatrix]
@@ -172,7 +170,6 @@ function DltbMatrix(props){
         switch(name){
             case "startName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
-                console.info('test0',response)
                 busPartner.parseMatrixDataSource(response)
                 setState(e=>{
                     return{
@@ -185,7 +182,6 @@ function DltbMatrix(props){
 
             case "fixMatrixOriginName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
-                console.info('test1',response)
                 setState(e=>({...e,
                     fixMatrixOriginId:val,
                     fixMatrixOriginName: getListName(val, props.data.originList),
@@ -197,7 +193,6 @@ function DltbMatrix(props){
             case "fixMatrixDestinationName" :   
                 const result = await props.data.getMatrix(state.fixMatrixOriginId, val)
                 const tempFixMatrixObject = parsePriceMatrix(result);
-                console.info('test2',tempFixMatrixObject)
                 busPartner.setPriceMatrix(tempFixMatrixObject)
                 setState(e=>({
                     ...e,
@@ -212,8 +207,6 @@ function DltbMatrix(props){
     }
 
     const broadcastListener = (e)=>{
-        console.info('broadcastListener event',e)
-
         const{ data, action, index } = e
         switch (action) {
             
@@ -399,13 +392,15 @@ function DltbMatrix(props){
             </Collapse>
             </div>
 
-            <MatrixModal 
+            <MatrixModal
+                onCancel={()=>setFixPriceModal(e=>({...e,visible:false, data:undefined}))}
                 visible={fixPriceModal.visible} 
                 title={fixPriceModal.title}>
                 <FixMatrixModalContainer {...props}/>
             </MatrixModal>
 
             <MatrixModal 
+                onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
                 visible={matrixModal.visible} 
                 title={matrixModal.title}>
 
@@ -414,6 +409,7 @@ function DltbMatrix(props){
             </MatrixModal>
 
             <MatrixModal 
+                onCancel={()=>setFiveStarLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
                 width={500}
                 visible={fiveStarLenghtRangeModal.visible} 
                 title={fiveStarLenghtRangeModal.title}>
@@ -422,12 +418,13 @@ function DltbMatrix(props){
                         cancelText="Ok"
                         data={fiveStarLenghtRangeModal.data}
                         onCancel={()=>setFiveStarLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
-                        onSubmit={(val,data)=>{console.info('update matrix')}}/>
+                        onSubmit={(val,data)=>{}}/>
 
             </MatrixModal>
 
             <MatrixModal 
                 width={500}
+                onCancel={()=>setFiveStarWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
                 visible={fiveStarWeightRangeModal.visible} 
                 title={fiveStarWeightRangeModal.title}>
                     <FiveStarMatrixModalWeightRange 
@@ -435,7 +432,7 @@ function DltbMatrix(props){
                         cancelText="Ok"
                         data={fiveStarWeightRangeModal.data}
                         onCancel={()=>setFiveStarWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
-                        onSubmit={(val,data)=>{console.info('update matrix')}}/>
+                        onSubmit={(val,data)=>{}}/>
             </MatrixModal>
 
         </div> 

@@ -186,7 +186,6 @@ class SalesReport extends React.Component {
   };
 
   parseParcel = (dataResult) => {
-    console.info('parseParcel data', dataResult)
     const { data, pagination, totalPrice, errorCode } = dataResult.data;
     if (errorCode) {
       this.setState({ fetching: false });

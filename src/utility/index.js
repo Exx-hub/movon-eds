@@ -61,7 +61,7 @@ const debounce = (func, wait) => {
 
 const alterPath = (path, props) =>{
   //return process.env.NODE_ENV === 'development' ? '/staging' + path : path;
-  return path;
+  return path //"/cargo"+path;
 }
 
 const modifyName = fullName =>{

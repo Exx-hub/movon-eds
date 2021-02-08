@@ -22,10 +22,6 @@ function App() {
     setInternetConnection(navigator.onLine)
   },[])
 
-  React.useEffect(() => { 
-    console.info('internet-connection',internetConnection) 
-  },[internetConnection]);
-
   const ProtectedRoute = (params) => {
     return UserProfile.getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
   }

@@ -11,6 +11,7 @@ import {
   EditUserProfileModule,
   ViewUserProfileModule,
 } from "../userProfileModule";
+import About from "../about";
 import { PromptModal } from "../../component/modal";
 
 import moment from "moment";
@@ -257,11 +258,11 @@ function Home(props) {
             setVisibleLogout(true);
           },
         },
-        {
-          key: "about",
-          destination: alterPath("/about"),
-          action: () => {},
-        },
+        // {
+        //   key: "about",
+        //   destination: alterPath("/about"),
+        //   action: () => {},
+        // },
       ]);
     }
   }, [menuData, userProfileObject]);
@@ -301,7 +302,7 @@ function Home(props) {
     <Layout className="home-page-container">
       <Header className="home-header-view">
         <div>
-          <img src={movonLogo} style={{ height: "50px" }} alt="logo" />
+          <a href="home.js"><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></a>
         </div>
         <div>
           {userProfileObject.getUser() && (
@@ -370,9 +371,9 @@ function Home(props) {
                 title="Matrix"
               >
                 <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
-                  {userProfileObject.getBusCompany().name}
+                  {UserProfile.getBusCompany() && UserProfile.getBusCompany().name}
                 </Menu.Item>
-                {Boolean(userProfileObject.isIsarogLiners()) && (
+                {Boolean(UserProfile.isIsarogLiners()) && (
                   <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
                     Victory Liners
                   </Menu.Item>
@@ -417,6 +418,10 @@ function Home(props) {
 
               <Route exact={true} path={alterPath("/user-profile")}>
                 <ViewUserProfileModule {...props} />
+              </Route>
+
+              <Route exact={true} path={alterPath("/about")}>
+                <About {...props} />
               </Route>
 
               <Route exact={true} path={alterPath("/user-profile/edit")}>

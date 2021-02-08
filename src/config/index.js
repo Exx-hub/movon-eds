@@ -1,7 +1,6 @@
+
 export const config = {
-    //BASE_URL:"http://localhost:9000",
-    //BASE_URL:"https://www.cargomovon.com/server",
-    BASE_URL:'https://movon.com.ph/server',
+    BASE_URL: process.env.REACT_APP_BASE_URL, 
     parcelStatus:{
         1:'created',
         2:'intransit',
@@ -12,7 +11,7 @@ export const config = {
         7:'modified'
     },
     voidType:{
-        1:"void",
+        1:"void", 
         2:"modified"
     },
     voidStatus:{
@@ -30,12 +29,13 @@ export const config = {
     header: {
         deviceId: '1',
         deviceType: '3'
-    },
+    }, 
     version: {
         environment:"",
-        build: '1.5.2(99)'
+        build: '1.5.2(102)'
     },
-    changeLogs: `deployment to production build`
+    environment:"staging",
+    changeLogs: `sticker count reset to 0`
 }
 
 export const ERROR_CODES = {

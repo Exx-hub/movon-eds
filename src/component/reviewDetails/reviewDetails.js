@@ -100,8 +100,6 @@ const sReviewDetails = (props) =>{
 
 export function ReviewDetails(props){
 
-    console.info('ReviewDetails', props)
-
     return(<div className="preview-details">
         <Container title="Package Information">
             <div className="horizontal-layout">
@@ -124,26 +122,35 @@ function PackageInformationSection(props){
     const data = props.value;
     const destination = data.startStationName ? data.startStationName : data.destination;
     const billOfLading = data.billOfLading || ""
+    const type = data.type || 'preview';
 
     return(<div className="vertical-layout" style={{...props.style}}>
         <div className="text-list-container" style={{padding:'2rem'}}>
             <TextContainer label="Destination" value={destination} />
             <TextContainer label="Description" value={props.value.packageName || ''}/>
-            <TextContainer label="Bill of Lading" value={billOfLading}/>
+            {
+                type === 'create' && UserProfile.getBusCompanyTag() !== 'isarog-liner' &&
+                <TextContainer label="Bill of Lading" value={billOfLading}/>
+            }
+            {
+                type === 'preview' && 
+                <TextContainer label="Bill of Lading" value={billOfLading}/>
+            }         
+            
             <br />
             <TextContainer label="Sender Name" value={props.value.senderName || 'senderName'} />
             <TextContainer label="Sender Phone No" value={props.value.senderPhone || 'senderPhone'} />
             {props.value.senderEmail && <TextContainer label="Sender Email" value={props.value.senderEmail || ''} />}
             <br/>
             <TextContainer label="Receiver Name" value={props.value.recipientName || 'recipientName'} />
-                <TextContainer label="Receiver Phone No" value={props.value.recipientPhone || 'recipientPhone'} />
-                { props.value.recipientEmail && <TextContainer label="Receiver Email" value={props.value.recipientEmail || ''} />}
+            <TextContainer label="Receiver Phone No" value={props.value.recipientPhone || 'recipientPhone'} />
+            { props.value.recipientEmail && <TextContainer label="Receiver Email" value={props.value.recipientEmail || ''} />}
             <br/>
         </div>
     </div>)
 }
 
-function FeeSection(props){
+function FeeSection(props){  
 
     let inputSection=undefined;
     let feesSection=undefined;
