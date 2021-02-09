@@ -48,7 +48,7 @@ const STEPS_LIST = [
   },
 ];
 
-const isNull = (value) => value === null || value === undefined || value === "";
+const isNull = (value) => value === null || value === undefined || value === "" || value === 0;
 
 const showNotification = (props) => {
   notification[props.type]({
@@ -367,8 +367,8 @@ class CreateParcel extends React.Component {
         },
         length: {
           name: "length",
-          value: undefined,
-          isRequired: true,
+          value: 0,
+          isRequired: false,
           accepted: true,
           errorMessage: "Length is required!"
         },
@@ -494,6 +494,7 @@ class CreateParcel extends React.Component {
 
       case "isarog-liner":
         details.billOfLading.disabled = true
+        details.length.required = false;
         break;
     
       default:
