@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.5.2(102)'
+        build: '1.5.2(103)'
     },
     environment:"staging",
-    changeLogs: `sticker count reset to 0`
+    changeLogs: `length issue`
 }
 
 export const ERROR_CODES = {
