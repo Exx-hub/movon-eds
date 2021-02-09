@@ -89,7 +89,7 @@ export default class EditUserProfileModule extends React.Component {
         showNotification({
           title: "Input Fields Validation",
           type: "error",
-          message: "No spaces allowed"
+          message: "No spaces allowed in Password Field"
         })
         return false;
       }
@@ -101,8 +101,17 @@ export default class EditUserProfileModule extends React.Component {
         });
         return false;
       }
+       else if(this.state['username'].match(/[ ]/)){
+          showNotification({
+            title: "Input Fields Validation",
+            type: "error",
+            message: "Username should not contain spaces."
+          });
+          return false;
+        }
     return true;
     }
+
   }
 
   onUpdateUserProfile = () =>{
