@@ -9,7 +9,6 @@ import {
   Dropdown
 } from "antd";
 import User from "../../service/User";
-import { useHistory } from "react-router-dom";
 import {
   openNotificationWithIcon,
   alterPath,
@@ -28,7 +27,7 @@ import TextWrapper from './textWrapper'
 import UserProfileHeader from './header'
 const { Header, Content, Footer } = Layout;
 const initState = {};
-const isNull = (value) => value === null || value === undefined || value === "";
+const isNull = (value) => value === null || value === undefined || value === "" || value === 0;
 
 const showNotification = (props) => {
   notification[props.type]({
@@ -36,10 +35,7 @@ const showNotification = (props) => {
     description: props.message || "message",
   });
 };
-// function routeChange(props) {
-//   var path = (alterPath("/user-profile"));
-//   props.history.push(path);
-// }
+
 function EditUserProfileModule(props) {
 
   class EditUserProfile extends React.Component {
@@ -51,8 +47,7 @@ function EditUserProfileModule(props) {
         password:"",
         confirmPassword:""
        };
-      //  this.routeChange = this.routeChange.bind(this);
-      }
+}
   
     componentDidMount() {
       const{displayId}=UserProfile.getUser()
@@ -101,12 +96,20 @@ function EditUserProfileModule(props) {
         });
         return false;
       }
+      if ((this.state['username'].match(/[ ]/))) {
+        showNotification({
+          title: "Input Fields Validation",
+          type: "error",
+          message: "Username should not contain spaces.",
+        });
+        return false;
+      }
       if(name === 'password' || name === 'confirmPassword'){
         if(this.state[name].match(/[ ]/)){
           showNotification({
             title: "Input Fields Validation",
             type: "error",
-            message: "No spaces allowed"
+            message: "No spaces allowed in password fields"
           })
           return false;
         }
@@ -144,7 +147,7 @@ function EditUserProfileModule(props) {
                 duration:0,
                 onClose:()=>{
                   UserProfile.clearData();
-                  props.history.push(alterPath("/login"))
+                  props.history.push(alterPath("/"))
                 }
               });
             }
