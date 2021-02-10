@@ -85,10 +85,9 @@ const TicketDetails = (props) => {
               display:'flex', 
               width:'30%', 
               paddingLeft:'8px', 
-              paddingBottom:'5px',
+              marginTop:'1rem',
               flexDirection:'column', 
-              justifyContent:'flex-end',
-              height:'100%'}}>
+              justifyContent:'flex-end'}}>
               <div style={{fontSize:10, borderTop:"1px solid black"}}>I hereby agree with the Terms and</div>
               <div style={{fontSize:10}}>Conditions of Bicol Isarog TSI.</div>
             </div>
