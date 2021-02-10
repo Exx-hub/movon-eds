@@ -11,6 +11,7 @@ import Home from './page/home'
 import 'antd/dist/antd.css';
 import './App.scss';
 import InternetStatus from './assets/no_internet_connection.jpg'
+import { EditUserProfileModule, ViewUserProfileModule } from './page/userProfileModule';
 
 function App() {
   const [internetConnection, setInternetConnection] = React.useState(false)
@@ -31,6 +32,8 @@ function App() {
     {!internetConnection && <div className="no-internet-connection"/>}
     <Router>
       <Switch>
+      <Route exact={true} path={alterPath("/user-profile/edit")} render={props=> <EditUserProfileModule {...props} />} />
+      <Route exact={true} path={alterPath("/user-profile")} render={props=> <ViewUserProfileModule {...props} />} />
       <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
       <ProtectedRoute exact={true} path={alterPath("/about")} component={About}/>
       <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={ManifestDetails}/>
