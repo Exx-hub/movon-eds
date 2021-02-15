@@ -4,6 +4,7 @@ import moment from "moment-timezone";
 import { config } from "../../config";
 import Parcel from "../../service/Parcel";
 import { PromptModal } from '../../component/modal';
+import {DefaultMatrixModal} from '../../component/modal'
 import {
   openNotificationWithIcon,
   debounce,
@@ -11,7 +12,7 @@ import {
   alterPath,
   modifyName,
 } from "../../utility";
-import { notification, Table } from "antd";
+import { notification, Space, Table } from "antd";
 import {Layout,Button,Row,Input,Skeleton,
   Pagination
 } from "antd";
@@ -44,6 +45,10 @@ class SearchModule extends React.Component {
       page: 1,
       totalRecords: 0,
       limit: 10,
+      checkInModal:{
+        visible:true,
+        data:undefined
+      }
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -101,11 +106,16 @@ class SearchModule extends React.Component {
           title: "Action",
           key: "action",
           render: (text, record) => (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent:'space-around'}}>
               <Button disabled={!Boolean(record.travelStatus === 1)} type="danger" size="small" style={{fontSize: '0.65rem'}} onClick={() => {
                   this.setState({remarks:"", selectedRecord: record, visibleVoid:true})
                 }}>
                   Void
+              </Button>
+              <Button disabled={!Boolean(record.travelStatus === 1)} size="small" style={{fontSize: '0.65rem', background:`${record.travelStatus === 1 ? 'teal' : ""}`, color:`${record.travelStatus === 1 ? 'white' : ""}`}} onClick={() => {
+                  this.setState({remarks:"", selectedRecord: record, visibleVoid:true})
+                }}>
+                  Check-In
               </Button>
             </div>
           ),
@@ -143,7 +153,7 @@ class SearchModule extends React.Component {
   };
 
   doSearch = (el) => {
-    console.log('doSearch',el)
+    console.info('doSearch',el)
     const toSearch = el.toLowerCase();
     this.setState({ page:1, searchValue: toSearch, fetching: true }, () =>
       this.fetchParcelList()
@@ -153,6 +163,7 @@ class SearchModule extends React.Component {
   fetchParcelList = () => {
     Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue)
     .then((e) => {
+      console.info('fetchParcelList',e)
       const { data, errorCode } = e.data;
       if (errorCode) {
         this.setState({fetching:false})
@@ -209,6 +220,16 @@ class SearchModule extends React.Component {
         ()=>this.fetchParcelList());
   }
 
+  onNegativeCheckIn = () =>{
+    const checkInModal = {...this.state.checkInModal}
+    checkInModal.visible = false;
+    this.setState({checkInModal})
+  }
+
+  onPositiveCheckIn = ()=>{
+
+  }
+
   render() {
     return (
       <Layout className="SearchModule">
@@ -263,6 +284,18 @@ class SearchModule extends React.Component {
           remarks={this.state.remarks}
           disabled={!this.state.remarks}
           onRemarksChange={(e)=>this.setState({remarks:e.target.value})}/>
+
+          <DefaultMatrixModal 
+            visible={this.state.checkInModal.visible} 
+            title="Check In" 
+            width={500}
+            onNegativeEvent={()=>this.onNegativeCheckIn()}
+            onPositiveEvent={()=>this.onPositiveCheckIn()}
+            >
+            <Space direction="vertical">
+              <span>Are you sure you want to check-in the parcel?</span>
+            </Space>
+          </DefaultMatrixModal>
       </Layout>
     );
   }

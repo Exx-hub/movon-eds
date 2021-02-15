@@ -117,6 +117,18 @@ const ManifestService = {
             }
         })
     },
+    checkInByParcel: (parcelId) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/board-parcel/by-id`,
+            headers: {
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
+            },
+            data:{ parcelId }
+        })
+    }
 }
 
 export default ManifestService;
