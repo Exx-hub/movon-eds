@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import {
   notification,
   Input,
@@ -13,7 +14,7 @@ import {
   openNotificationWithIcon,
   alterPath,
   UserProfile,
-  debounce
+  debounce,
 } from "../../utility";
 import { PromptModal } from "../../component/modal";
 import "./changePassword.scss";
@@ -26,7 +27,7 @@ import UserProfileHeader from './header'
 import TextWrapper from './textWrapper'
 const { Header, Content, Footer } = Layout;
 const initState = {};
-const isNull = (value) => value === null || value === undefined || value === "";
+const isNull = (value) => value === null || value === undefined || value === "" || value === 0;
 
 const showNotification = (props) => {
   notification[props.type]({
@@ -90,7 +91,7 @@ function EditUserProfileModule(props){
         showNotification({
           title: "Input Fields Validation",
           type: "error",
-          message: "Username and Password should contain at least 6 characters",
+          message: "Username should not contain spaces.",
         });
         return false;
       }
@@ -150,7 +151,6 @@ function EditUserProfileModule(props){
               });
             }
           }));
-
         }else{
           showNotification({
             title: "Input Fields Validation",
