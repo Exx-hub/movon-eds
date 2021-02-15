@@ -286,7 +286,7 @@ class CreateParcel extends React.Component {
         quantity: {
           name: "quantity",
           value: 1,
-          isRequired: true,
+          isRequired: false,
           accepted: true,
           disabled: true,
         },
