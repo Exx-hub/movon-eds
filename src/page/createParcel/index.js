@@ -1927,6 +1927,7 @@ class CreateParcel extends React.Component {
     let quantity = Number(currentDetails.quantity.value)
     let total = 0;
     let discountFee = 0;
+    let isFree = false;
 
     if (currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== 'none') {
       discount = currentDetails.discount.options.find((e) => e.name === currentDetails.discount.value);
@@ -1947,14 +1948,17 @@ class CreateParcel extends React.Component {
 
       if(quantity > 1){
         basePrice = basePrice * quantity;
-        declaredValueFee = declaredValueFee * quantity;
+        //declaredValueFee = declaredValueFee * quantity;
       }
 
       total = basePrice + declaredValueFee;
 
       if(discount && discount.rate) {
+        isFree = Boolean(Number(discount.rate) === 100)
         discountFee = total * (Number(discount.rate) / 100);
-        total -= discountFee;
+        if(!isFree){
+          total -= discountFee;
+        }
       }
 
       if (total < 500) {
@@ -1963,6 +1967,11 @@ class CreateParcel extends React.Component {
 
       total += systemFee;
       total += portersFee;
+
+      if(isFree){
+        discountFee = total;
+        total = 0;
+      }
 
       currentDetails.systemFee.value = systemFee;
       currentDetails.totalShippingCost.value = Number(total).toFixed(2)
@@ -1974,6 +1983,7 @@ class CreateParcel extends React.Component {
         portersFee: Number(portersFee).toFixed(2),
         details: currentDetails
       });
+
     } else {
       //compute for matrix;
       this.computePrice((e) => {
@@ -1984,7 +1994,7 @@ class CreateParcel extends React.Component {
           let total = 0;
 
           if(quantity > 1){
-            declaredValueFee = declaredValueFee * quantity;
+            //declaredValueFee = declaredValueFee * quantity;
             basePrice = basePrice * quantity;
             lengthFee = lengthFee * quantity;
           }
@@ -1992,8 +2002,11 @@ class CreateParcel extends React.Component {
           total = basePrice + declaredValueFee + lengthFee;
 
           if (discount) {
+            isFree = Boolean(Number(discount.rate) === 100)
             discountFee = total * (Number(discount.rate) / 100);
-            total -= discountFee;
+            if(!isFree){
+              total -= discountFee;
+            }
           }
           
           if (total < 500) {
@@ -2002,6 +2015,11 @@ class CreateParcel extends React.Component {
 
           total += systemFee;
           total += portersFee;
+
+          if(isFree){
+            discountFee = total;
+            total = 0;
+          }
 
           currentDetails.systemFee.value = systemFee;
           currentDetails.totalShippingCost.value = Number(total).toFixed(2)
