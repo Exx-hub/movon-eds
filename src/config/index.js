@@ -35,7 +35,7 @@ export const config = {
         build: '1.6.0(107)'
     },
     environment:"production",
-    changeLogs: `DP-541`
+    changeLogs: `DP-541,DP-542`
 }
 
 export const ERROR_CODES = {
