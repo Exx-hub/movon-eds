@@ -415,19 +415,7 @@ function Home(props) {
                   title="SUMMARY OF CARGO SALES"
                 />
               </Route>
-
-              <Route exact={true} path={alterPath("/user-profile")}>
-                <ViewUserProfileModule {...props} />
-              </Route>
-
-              <Route exact={true} path={alterPath("/about")}>
-                <About {...props} />
-              </Route>
-
-              <Route exact={true} path={alterPath("/user-profile/edit")}>
-                <EditUserProfileModule {...props} />
-              </Route>
-
+              
               <Route path={alterPath("/search-parcel")}>
                 <SearchModule {...props} />
               </Route>
