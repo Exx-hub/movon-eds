@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.6.0(104)'
+        build: '1.6.0(105)'
     },
     environment:"staging",
-    changeLogs: `DP-534, DP-526`
+    changeLogs: `DP-538, DP-540`
 }
 
 export const ERROR_CODES = {
