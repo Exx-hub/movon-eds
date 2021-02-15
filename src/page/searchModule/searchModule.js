@@ -13,10 +13,9 @@ import {
   modifyName,
 } from "../../utility";
 import { notification, Space, Table } from "antd";
-import {Layout,Button,Row,Input,Skeleton,
-  Pagination
-} from "antd";
+import {Layout,Button,Row,Input,Skeleton,Pagination} from "antd";
 import TransactionService from '../../service/VoidTransaction'
+import ManifestService from '../../service/Manifest'
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -227,7 +226,8 @@ class SearchModule extends React.Component {
   }
 
   onPositiveCheckIn = ()=>{
-
+    const parcelId = "";
+    ManifestService.checkInByParcel(parcelId)
   }
 
   render() {
