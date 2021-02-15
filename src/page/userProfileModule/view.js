@@ -1,27 +1,15 @@
 import React from "react";
 import {
-  Dropdown,
-  Menu,
   Layout,
-  Col,
-  Avatar,
-  Button,
-  Divider,
 } from "antd";
 import { RoundedButton } from "../../component/button";
 import movon from "../../assets/movon3.png";
 import movonLogo from "../../assets/movoncargo.png";
-import { PromptModal } from "../../component/modal";
 import User from "../../service/User";
-import { config } from "../../config";
-import {
-  getCredential,
-  setCredential,
-  clearCredential,
-  openNotificationWithIcon,
-  alterPath,
-  UserProfile
-} from "../../utility";
+import "./../about/about.scss"
+import { Dropdown, Menu, Button } from "antd";
+import { UserProfile, alterPath } from "../../utility";
+import { PromptModal } from "../../component/modal";
 import {
   UserOutlined,
   PoweroffOutlined,

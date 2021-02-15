@@ -68,6 +68,7 @@ const StepControllerView = (props) => {
       {!props.disablePreviousButton && (
         <Button
           className="create-btn btn-prev"
+          style={{ display: `${props.display}`}} 
           onClick={() => {
             props.onPreviousStep();
           }}
@@ -1604,6 +1605,7 @@ class CreateParcel extends React.Component {
               }
             />
             <StepControllerView
+            display="none"
               width={this.state.width}
               onPreviousStep={() => this.onPreviousStep()}
               onNextStep={() => {
