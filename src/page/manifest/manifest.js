@@ -195,8 +195,8 @@ class Manifest extends React.Component {
       return {
         key: i,
         tripId: e._id,
-        date: moment(e.tripStartDateTime).format("MMM DD, YYYY"),
-        date2: moment(e.tripEndDateTime).format("MMM DD, YYYY"),
+        date: moment.tz(e.tripStartDateTime,"Asia/Manila").subtract(8,'hours').format('MMM DD, YYYY'), //moment(e.tripStartDateTime).format("MMM DD, YYYY"),
+        date2: moment.tz(e.tripEndDateTime,"Asia/Manila").subtract(8,'hours').format('MMM DD, YYYY'), //moment(e.tripEndDateTime).format("MMM DD, YYYY"),
         count: e.count,
         startStationName: e.startStationName,
         cluster: e.cluster,
