@@ -1438,9 +1438,9 @@ class CreateParcel extends React.Component {
 
           default:
             this.setState({ ...state, basePrice: price, isFixedPrice: true, details }, () => {
-              if (option && Number(option.declaredValue) > 0) {
-                return;
-              }
+              // if (option && Number(option.declaredValue) > 0) {
+              //   return;
+              // }
               this.updateTotalShippingCost();
             });
             break;
@@ -1939,10 +1939,10 @@ class CreateParcel extends React.Component {
     //computation for fix matrix (BI)
     if (currentDetails.fixMatrix.value && currentDetails.fixMatrix.value.toLowerCase() !== 'none') {
       let option = currentDetails.fixMatrix.options.find((e) => e.name === currentDetails.fixMatrix.value);
-      let declaredValue = Number(currentDetails.declaredValue.value);
-      let basePrice = Number(option.price);
-      let fixPriceDvRate = Number(option.declaredValue);
-      let declaredValueFee = fixPriceDvRate ? declaredValue * (fixPriceDvRate / 100) : 0;
+      let declaredValue = Number(currentDetails.declaredValue.value || 0);
+      let basePrice = Number(option.price || 0);
+      let fixPriceDvRate = Number(option.declaredValue || 0);
+      let declaredValueFee =  declaredValue ? (declaredValue * (fixPriceDvRate / 100)) : 0;
       let total = 0;
 
       if(quantity > 1){
