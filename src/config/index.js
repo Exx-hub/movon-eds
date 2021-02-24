@@ -80,5 +80,19 @@ export const ERROR_CODES = {
         code: 'USER_NAME_EXIST',
         message: "Username has already been taken",
         description: "Please choose another username."
+    },
+    "DUPLICATE_STAFF_PASSWORD":{
+        module:'EDIT',
+        code: "INCORRECT_OLD_PASSWORD",
+        message: "Correct the following error(s) to go on.",
+        description: "Old Password appears to be incorrect."
+        
+    },
+    "newpass_confirmpass":{
+        module:'EDIT',
+        code: "SAME_OLD_PASSWORD",
+        message: "Same Old Password",
+        description: "New password cannot be the same as your old password"
+        
     }
 }
