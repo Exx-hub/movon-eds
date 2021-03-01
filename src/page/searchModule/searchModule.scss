@@ -83,6 +83,9 @@
             border-color: teal !important;
             box-shadow: 0 0 5px teal !important;
         }
+        @media screen and (max-width: 700px){
+            width: 330px;
+        }
     }
 
     .manifest-details-select{
