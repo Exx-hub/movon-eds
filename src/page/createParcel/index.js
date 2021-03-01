@@ -326,12 +326,12 @@ class CreateParcel extends React.Component {
             {
               value: 1,
               name: "Excess AC",
-              disabled: true,
+              disabled: false,
             },
             {
               value: 2,
               name: "Excess Non AC",
-              disabled: true,
+              disabled: false,
             },
             {
               value: 3,
@@ -870,48 +870,49 @@ class CreateParcel extends React.Component {
 
     const { destination, declaredValue, paxs, packageWeight, type, length } = this.state.details;
 
-    if (destination.value && packageWeight.value && Number(length.value || 0) > -1 && declaredValue.value) {
-      const busCompanyId = this.userProfileObject.getBusCompanyId();
-      const startStation = this.userProfileObject.getAssignedStationId();
-      const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
-      const endStation = selectedOption.endStation || undefined;
-      const decValue = declaredValue.value
-        ? parseFloat(declaredValue.value).toFixed(2)
-        : undefined;
-      const pax = paxs.value || 0;
-      const parcel_length = length.value || 0;
-      const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined;
+    const busCompanyId = this.userProfileObject.getBusCompanyId();
+    const startStation = this.userProfileObject.getAssignedStationId();
+    const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
+    const endStation = selectedOption.endStation || undefined;
+    const parcel_length = length.value || 0;
+    const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined;
+    const pax = paxs.value || 0;
+    let decValue =  Number(declaredValue.value || 0) 
 
-      if (
-        !isNull(busCompanyId) &&
-        !isNull(startStation) &&
-        !isNull(endStation) &&
-        !isNull(weight) &&
-        !isNull(decValue)
-      ) {
-
-        ParcelService.getDynamicPrice(
-          busCompanyId,
-          decValue,
-          endStation,
-          type.value,
-          pax,
-          startStation,
-          weight,
-          parcel_length
-        )
-          .then((e) => {
-            callback()
-
-            const { data, success, errorCode } = e.data;
-            if (errorCode) {
-              this.handleErrorNotification(errorCode);
-              return;
-            }
-            callback(data);
-          });
+    if((Number(type.value) === 3)){
+      console.info('passsss=====>>>>33333')
+      if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight) || isNull(decValue)) {
+        return
+      }
+    }else{
+      console.info('passsss=====>>>>444444')
+      if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight)) {
+        return
       }
     }
+
+    console.info('passsss=====>>>>')
+
+    ParcelService.getDynamicPrice(
+      busCompanyId,
+      decValue,
+      endStation,
+      type.value,
+      pax,
+      startStation,
+      weight,
+      parcel_length
+    )
+      .then((e) => {
+        console.info('computation',e)
+        const { data, success, errorCode } = e.data;
+        if (errorCode) {
+          this.handleErrorNotification(errorCode);
+          return;
+        }
+        callback(data);
+      });
+
   }
 
   dltbFixPriceComputation = () => {
@@ -1018,6 +1019,7 @@ class CreateParcel extends React.Component {
       switch (UserProfile.getBusCompanyTag()) {
         case 'isarog-liner':
           if (name === 'declaredValue' || name === "sticker_quantity" || name === "length" || name === "quantity" || name === "packageWeight") {
+            console.info('passss=====>>>...11111')
             this.updateTotalShippingCost();
           }
           break;
@@ -1483,32 +1485,16 @@ class CreateParcel extends React.Component {
 
   onTypeChange = (value) => {
     const details = { ...this.state.details };
-    const type = { ...details.type, ...{ value } };
-    const paxs = {
-      ...details.paxs,
-      ...{ value: 0, isRequired: value !== 3, disabled: value === 3 },
-    };
-    const quantity = { ...details.quantity, ...{ value: 0 } };
-    const sticker_quantity = { ...details.sticker_quantity, ...{ value: 0 } };
-    const packageWeight = { ...details.packageWeight, ...{ value: 0 } };
-    const systemFee = { ...details.systemFee, ...{ value: 0 } };
-    const totalShippingCost = { ...details.totalShippingCost, ...{ value: 0 } };
-    const shippingCost = { ...details.shippingCost, ...{ value: 0 } };
+    const declaredValue = {...details.declaredValue}
+    declaredValue.disabled = Number(value) !== 3;
+    declaredValue.value = 0;
+    details.declaredValue = declaredValue;
 
+    const type = { ...details.type, ...{ value } }
+    details.type = type
+   
     this.setState({
-      details: {
-        ...details,
-        ...{
-          systemFee,
-          totalShippingCost,
-          type,
-          shippingCost,
-          paxs,
-          quantity,
-          sticker_quantity,
-          packageWeight,
-        },
-      },
+      details
     });
   };
 
@@ -1875,46 +1861,46 @@ class CreateParcel extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
 
-    const {
-      destination,
-      packageWeight,
-      declaredValue,
-      paxs,
-      length,
-      sticker_quantity,
-      fixMatrix,
-      additionalFee
-    } = prevState.details;
+    // const {
+    //   destination,
+    //   packageWeight,
+    //   declaredValue,
+    //   paxs,
+    //   length,
+    //   sticker_quantity,
+    //   fixMatrix,
+    //   additionalFee
+    // } = prevState.details;
 
-    const currentDetails = { ...this.state.details };
-    const oldConnectingRoutes = prevState.details.connectingRoutes.value;
-    const oldConnectingCompany = prevState.details.connectingCompany.value;
+    // const currentDetails = { ...this.state.details };
+    // const oldConnectingRoutes = prevState.details.connectingRoutes.value;
+    // const oldConnectingCompany = prevState.details.connectingCompany.value;
 
-    const hasFreshData =
-      currentDetails.destination.value !== destination.value ||
-      currentDetails.packageWeight.value !== packageWeight.value ||
-      currentDetails.declaredValue.value !== declaredValue.value ||
-      currentDetails.length.value !== length.value ||
-      currentDetails.fixMatrix.value !== fixMatrix.value ||
-      currentDetails.additionalFee.value !== additionalFee.value ||
-      currentDetails.sticker_quantity.value !== sticker_quantity.value ||
-      oldConnectingRoutes !== currentDetails.connectingRoutes.value ||
-      oldConnectingCompany !== currentDetails.connectingCompany.value;
+    // const hasFreshData =
+    //   currentDetails.destination.value !== destination.value ||
+    //   currentDetails.packageWeight.value !== packageWeight.value ||
+    //   currentDetails.declaredValue.value !== declaredValue.value ||
+    //   currentDetails.length.value !== length.value ||
+    //   currentDetails.fixMatrix.value !== fixMatrix.value ||
+    //   currentDetails.additionalFee.value !== additionalFee.value ||
+    //   currentDetails.sticker_quantity.value !== sticker_quantity.value ||
+    //   oldConnectingRoutes !== currentDetails.connectingRoutes.value ||
+    //   oldConnectingCompany !== currentDetails.connectingCompany.value;
 
-    if (hasFreshData) {
-      if (currentDetails.packageWeight.value !== undefined && currentDetails.declaredValue.value !== undefined) {
-        this.computeForConnectinRoutes();
+    // if (hasFreshData) {
+    //   if (currentDetails.packageWeight.value !== undefined && currentDetails.declaredValue.value !== undefined) {
+    //     this.computeForConnectinRoutes();
 
-        if (currentDetails.destination.value !== undefined) {
-          if (
-            currentDetails.type.value !== 3 &&
-            currentDetails.paxs.value === paxs.value
-          ) {
-            return;
-          }
-        }
-      }
-    }
+    //     if (currentDetails.destination.value !== undefined) {
+    //       if (
+    //         currentDetails.type.value !== 3 &&
+    //         currentDetails.paxs.value === paxs.value
+    //       ) {
+    //         return;
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   updateTotalShippingCost = () => {
@@ -1985,6 +1971,7 @@ class CreateParcel extends React.Component {
       });
 
     } else {
+      console.info('passssssst222222222')
       //compute for matrix;
       this.computePrice((e) => {
         if (e) {

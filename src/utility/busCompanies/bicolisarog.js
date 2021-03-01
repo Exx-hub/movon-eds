@@ -2,10 +2,10 @@ import React from "react";
 import {Table, Button, Space} from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 
-class FiveStar{
+class BicolIsarog{
 
     constructor(){
-        this.name = "five-star";
+        this.name = "isarog-liner";
         this.dataSource = [];
         this.priceMatrix = {matrix:[], fixMatrix:[]}
         this.message={
@@ -40,20 +40,42 @@ class FiveStar{
     }
 
     parseMatrixDataSource(dataSource){
+        
         const result = dataSource.map(e=>{
-            let _value = []
+            let _value = undefined
             let fixMatrix = [{}]
             if(e.stringValue){
                 const temp = JSON.parse(e.stringValue)
                 
                 if(temp.matrix && temp.matrix.length > 0){
                     _value = temp.matrix[0]
+                    if(!_value.lengthRange && _value.maxAllowedLength && _value.maxAllowedLengthRate){
+                        let lengthRange = []
+                        _value.maxAllowedLength.forEach(e => {
+                            lengthRange.push({meter:e})
+                        })
+                        _value.maxAllowedLengthRate.forEach((e,index) => {
+                            lengthRange[index] = {...lengthRange[index],...{percentage:e}}
+                        });
+                        _value = {..._value, lengthRange}
+                    }
+                    if(!_value.weightRange && _value.maxAllowedWeight && _value.exceededPerKilo){
+                        let weightRange = [{kilo:_value.maxAllowedWeight, excessRate:_value.exceededPerKilo}]
+                        _value = {..._value, weightRange}
+                    }
+                    if(!_value.accompaniedBaggage){
+                        _value.accompaniedBaggage = 0;
+                    }
+                    if(!_value.accompaniedBaggageFee){
+                        _value.accompaniedBaggageFee = 0
+                    }
                 }
 
                 if(temp.fixMatrix && temp.fixMatrix.length > 0){
                     fixMatrix = temp.fixMatrix
                 }
             }
+           
             return{
                 ..._value,
                 fixMatrix,
@@ -110,15 +132,20 @@ class FiveStar{
                 dataIndex: 'destination',
                 key: 'destination'
             },
-            // {
-            //     title: 'Base Price',
-            //     dataIndex: 'price',
-            //     key: 'price'
-            // },
             {
                 title: 'Declared Value Rate %',
                 dataIndex: 'declaredValueRate',
                 key: 'declaredValueRate'
+            },
+            {
+                title: 'Accompanied Baggage',
+                dataIndex: 'accompaniedBaggage',
+                key: 'accompaniedBaggage'
+            },
+            {
+                title: 'Accompanied Baggage Fee',
+                dataIndex: 'accompaniedBaggageFee',
+                key: 'accompaniedBaggageFee'
             },
             {
                 title: 'Weight Range',
@@ -155,6 +182,11 @@ class FiveStar{
                     style={{background:'orange'}}>
                         <span style={{color:"white", fontWeight:'bold', fontSize:'11px'}}>Show Details</span>
                     </Button>)
+            },
+            {
+                title: 'Base Price',
+                dataIndex: 'price',
+                key: 'price'
             },
             {
                 title: 'Action',
@@ -281,4 +313,4 @@ class FiveStar{
     }
 }
 
-export default FiveStar;
+export default BicolIsarog;

@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "NODE_ENV=develop react-scripts start",
+    "dev": "HTTS=true PORT=8002 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
