@@ -1,6 +1,7 @@
 import { UserProfile } from '..';
 import Dltb from './dltb'
 import FiveStar from './fivestar'
+import BicolIsarog from './bicolisarog'
 
 const getBusPartner = () =>{
     let busCompany = undefined
@@ -13,6 +14,9 @@ const getBusPartner = () =>{
         case 'five-star':
             busCompany = new FiveStar()
             break
+        
+        case 'isarog-liner':
+            busCompany = new BicolIsarog()
     
         default:
             break;
