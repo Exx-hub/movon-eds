@@ -174,15 +174,11 @@ function PriceMatrix(props){
     },[])
 
     const getContainer = () =>{
-        let  view = undefined;
+        let  view = <DefaultMatrix {...props} />;
         switch(UserProfile.getBusCompanyTag()){
-          case "five-star" : 
-          case "dltb" : 
-          view = <MatrixEditor data={{...state}} {...props} />
-              break;
-            default: 
-              view = <DefaultMatrix {...props} />
-            break
+          default: 
+            view = <MatrixEditor data={{...state}} {...props} />
+          break
         }
         return view
     }

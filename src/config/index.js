@@ -34,7 +34,7 @@ export const config = {
         environment:"",
         build: '1.6.0(107)'
     },
-    environment:"production",
+    environment:"staging",
     changeLogs: `DP-541,DP-542`
 }
 

@@ -304,12 +304,12 @@ class CreateParcel extends React.Component {
             {
               value: 1,
               name: "Excess AC",
-              disabled: true,
+              disabled: false,
             },
             {
               value: 2,
               name: "Excess Non AC",
-              disabled: true,
+              disabled: false,
             },
             {
               value: 3,
@@ -1136,6 +1136,7 @@ class CreateParcel extends React.Component {
   };
 
   onSelectChange = async (value, name) => {
+    console.info('onSelectChange',value, name)
     let details = { ...this.state.details };
 
     if (name === "connectingCompany") {
@@ -1417,34 +1418,13 @@ class CreateParcel extends React.Component {
   };
 
   onTypeChange = (value) => {
+    console.info('ooasssssss=====>>>>.')
     const details = { ...this.state.details };
-    const type = { ...details.type, ...{ value } };
-    const paxs = {
-      ...details.paxs,
-      ...{ value: 0, isRequired: value !== 3, disabled: value === 3 },
-    };
-    const quantity = { ...details.quantity, ...{ value: 0 } };
-    const sticker_quantity = { ...details.sticker_quantity, ...{ value: 0 } };
-    const packageWeight = { ...details.packageWeight, ...{ value: 0 } };
-    const systemFee = { ...details.systemFee, ...{ value: 0 } };
-    const totalShippingCost = { ...details.totalShippingCost, ...{ value: 0 } };
-    const shippingCost = { ...details.shippingCost, ...{ value: 0 } };
-
-    this.setState({
-      details: {
-        ...details,
-        ...{
-          systemFee,
-          totalShippingCost,
-          type,
-          shippingCost,
-          paxs,
-          quantity,
-          sticker_quantity,
-          packageWeight,
-        },
-      },
-    });
+    const type = { ...details.type };
+    console.info("value",value)
+    type.value = value;
+    details.type = type;
+    this.setState({details});
   };
 
   onCreateNewParcel = () => {
@@ -1470,7 +1450,12 @@ class CreateParcel extends React.Component {
                 }}
                 lengthRate={this.state.lengthRate}
                 details={this.state.details}
-                onTypeChange={(e) => this.onTypeChange(e.target.value)}
+                onTypeChange={(e) => {
+                  console.info('------onTypeChange------')
+                  console.info('------onTypeChange------')
+                  console.info('------onTypeChange------')
+                  this.onTypeChange(e.target.value)
+                }}
                 onSelectChange={(value, name) =>
                   this.onSelectChange(value, name)
                 }

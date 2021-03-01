@@ -5,9 +5,12 @@ import AddFixMatrixModalContent from  './container/modal.fixmatrix.container'
 import DefaultFixMatrixModalContent from  './container/modal.default.fixmatrix.container'
 import MatrixModalContent from  './container/modal.matrix.default.container'
 
+
+import BicolIsarogMatrixModalContent from  './container/modal.matrix.bicolisarog.container'
 import FiveStarMatrixModalContent from  './container/modal.matrix.fivestar.container'
 import FiveStarMatrixModalLenghtRange from  './container/modal.matrix.fivestar.lenghtRange'
 import FiveStarMatrixModalWeightRange from  './container/modal.matrix.fivestar.weightRange'
+import BicolIsarogMatrixModalWeightRange from  './container/modal.matrix.bicolisarog.weightRange'
 
 import {getBusPartner} from '../../utility/busCompanies'
 
@@ -24,7 +27,7 @@ const SHOW_LOG = true;
 
 function DltbMatrix(props){
 
-    console.info('matrix', props)
+    
 
     const [state, setState] = useState({
         startName:"",
@@ -32,9 +35,15 @@ function DltbMatrix(props){
         fixMatrixDestinationId:"",
         fixMatrixOriginName:"",
         fixMatrixDestinationName:"",
+        destination:"",
         destinationList:[],
+        tempDestinationList:[],
         matrixList:[],
         tempMatrixObject:[],
+        tempOriginList:[],
+        tempDestination:[],
+        originMatrix:[],
+        fixPriceOriginList:[],
         tempFixMatrixObject:{matrix:[],fixMatrix:[]},
     })
 
@@ -53,19 +62,29 @@ function DltbMatrix(props){
         type:undefined
     })
 
-    const [fiveStarLenghtRangeModal, setFiveStarLenghtRangeModal] = useState({
+    const [lenghtRangeModal, setLenghtRangeModal] = useState({
         title:"Lenght Range Details",
         visible:false,
         data:undefined,
         type:undefined
     })
 
-    const [fiveStarWeightRangeModal, setFiveStarWeightRangeModal] = useState({
+    const [weightRangeModal, setWeightRangeModal] = useState({
         title:"Weight Range Details",
         visible:false,
         data:undefined,
         type:undefined
     })
+
+    useEffect(()=>{
+        console.info('matrix', props)
+        const originList = [...props.data.originList]
+        setState(e=>({...e, 
+            tempOriginList: originList, 
+            fixPriceOriginList: originList
+        }))
+    },[props.data.originList])
+  
 
     const getListName = (id, data) =>{
         const result = data.find(e=> e.stationId === id);
@@ -74,6 +93,7 @@ function DltbMatrix(props){
 
     const parsePriceMatrix = (result) =>{
         const{success, data, errorCode}=result.data;
+        console.info('result',result)
         if(!errorCode){
             let fixMatrix = [];
             let matrix = []
@@ -170,29 +190,34 @@ function DltbMatrix(props){
         switch(name){
             case "startName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
+                console.info('tempDestination',response)
                 busPartner.parseMatrixDataSource(response)
                 setState(e=>{
                     return{
                         ...e,
                         startName: getListName(val, props.data.originList),
-                        tempMatrixObject: response
+                        originMatrix:response,
+                        tempDestination: response
                     }
                 });
                 break;
 
             case "fixMatrixOriginName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
+                console.info('fixMatrixOriginName',response)
                 setState(e=>({...e,
                     fixMatrixOriginId:val,
                     fixMatrixOriginName: getListName(val, props.data.originList),
                     fixMatrixDestinationName:"",
                     fixMatrixDestinationId:"",
+                    tempDestinationList:props.data.getEndStations(val, response),
                     destinationList: props.data.getEndStations(val, response)}));
                 break;
 
             case "fixMatrixDestinationName" :   
                 const result = await props.data.getMatrix(state.fixMatrixOriginId, val)
                 const tempFixMatrixObject = parsePriceMatrix(result);
+                console.info("tempFixMatrixObject", tempFixMatrixObject)
                 busPartner.setPriceMatrix(tempFixMatrixObject)
                 setState(e=>({
                     ...e,
@@ -200,6 +225,32 @@ function DltbMatrix(props){
                     fixMatrixDestinationId:val,
                     fixMatrixDestinationName: getListName(val, state.destinationList)
                 }));
+                break;
+
+            case 'origin-search':
+                const toSearch = val.toLowerCase();
+                let tempOriginList = props.data.originList
+                .filter((e) => e.stationName.toLowerCase().includes(toSearch))
+                setState(e=>({...e,tempOriginList, startName:toSearch}))
+                break;
+
+            case 'destination-search':
+                let tempDestination = state.originMatrix
+                .filter((e) => e.endStationName.toLowerCase().includes(val.toLowerCase()))
+                busPartner.parseMatrixDataSource(tempDestination)
+                setState(e=>({...e,tempDestination, destination:val.toLowerCase()}))
+                break;
+
+            case "search-fixMatrixOriginStation":
+                let fixPriceOriginList = props.data.originList
+                .filter((e) => e.stationName.toLowerCase().includes(val.toLowerCase()))
+                setState(e=>({...e,fixPriceOriginList, fixMatrixOriginName:val.toLowerCase()}))
+                break;
+
+            case "search-fixMatrixDestinationStation":
+                let tempDestinationList = state.destinationList
+                .filter((e) => e.stationName.toLowerCase().includes(val.toLowerCase()))
+                setState(e=>({...e, tempDestinationList, fixMatrixDestinationName:val.toLowerCase()}))
                 break;
 
             default: break;
@@ -210,30 +261,33 @@ function DltbMatrix(props){
         const{ data, action, index } = e
         switch (action) {
             
-            case "five-star-view-lenght-click":
-                setFiveStarLenghtRangeModal(e=>({...e, visible:true, data, index}))
+            case "isarog-liner-view-length-click":
+            case "five-star-view-length-click":
+                setLenghtRangeModal(e=>({...e, visible:true, data, index}))
                 break;
-            
+
+            case "isarog-liner-view-weight-click":
             case "five-star-view-weight-click":
-            setFiveStarWeightRangeModal(e=>({...e, visible:true, data, index}))
-            break; 
+                setWeightRangeModal(e=>({...e, visible:true, data, index}))
+                break; 
         
+            case "isarog-liner-update-click":
             case "five-star-update-click":
-            setMatrixModal(e=>({...e, 
-                visible:true, 
-                data:{
-                    ...data,
-                    index
-                }, 
-                matrixInfo:{
-                    destination: data.destination,
-                    destinationId: data.destinationId,
-                    originId: data.originId,
-                    fixMatrix: data.fixMatrix,
-                    index
-                } 
-            }))
-            break; 
+                setMatrixModal(e=>({...e, 
+                    visible:true, 
+                    data:{
+                        ...data,
+                        index
+                    }, 
+                    matrixInfo:{
+                        destination: data.destination,
+                        destinationId: data.destinationId,
+                        originId: data.originId,
+                        fixMatrix: data.fixMatrix,
+                        index
+                    } 
+                }))
+                break; 
         
             case "dltb-edit-fixmatrix-click":
             case "five-star-edit-fixmatrix-click":
@@ -242,7 +296,7 @@ function DltbMatrix(props){
                     index,
                     names:state.tempFixMatrixObject.fixMatrix
                 }}))
-            break;
+                break;
         
             case "dltb-del-fixmatrix-click":
             case "five-star-del-fixmatrix-click":
@@ -250,7 +304,7 @@ function DltbMatrix(props){
                     ...data,
                     index
                 }}))
-            break;
+                break;
         
             case "dltb-add-fixmatrix-click":
             case "five-star-add-fixmatrix-click":
@@ -298,11 +352,65 @@ function DltbMatrix(props){
                     onSubmit={(val)=>updateMatrix(val)}/>
 )
                 break;
+
+            case "isarog-liner":
+                view = (<BicolIsarogMatrixModalContent 
+                    {...props}
+                    okText="Update" 
+                    cancelText="Cancel"
+                    data={matrixModal.data}
+                    onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
+                    onSubmit={(val)=>updateMatrix(val)}/>
+)
+                break;
+            
         
             default:
                 break;
         }
         return view;
+    }
+
+    const MatrixModalWeightRange = () =>{
+        let view = undefined;
+        switch (busPartner.getName()) {
+
+            case "isarog-liner":
+                view = (<BicolIsarogMatrixModalWeightRange 
+                    {...props}
+                    cancelText="Ok"
+                    data={weightRangeModal.data}
+                    onCancel={()=>setWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
+                    onSubmit={(val,data)=>{}}/>
+)
+                break;
+            
+        
+            default:
+                view = <FiveStarMatrixModalWeightRange 
+                {...props}
+                cancelText="Ok"
+                data={weightRangeModal.data}
+                onCancel={()=>setWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
+                onSubmit={(val,data)=>{}}/>
+                break;
+        }
+        return view;
+    }
+
+    const MatrixModalLenghtRange = () =>{
+        let view = undefined;
+        switch (busPartner.getName()) {
+            default:
+            view = <FiveStarMatrixModalLenghtRange 
+                {...props}
+                cancelText="Ok"
+                data={lenghtRangeModal.data}
+                onCancel={()=>setLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
+                onSubmit={(val,data)=>{}}/>
+            break;
+        }
+       return view;
     }
 
     const FixMatrixModalContainer = (props)=>{
@@ -351,12 +459,28 @@ function DltbMatrix(props){
             <div style={{padding:'1rem'}}>
                 <Collapse defaultActiveKey={['1']}>
                     <Panel header="Price Matrix" key="1">
-                        <div style={{width:610, display:'flex', flexDirection:'row'}}>
-                            <AutoComplete value={state.startName} placeholder="Origin" style={{ width: 300, marginBottom:'1rem' }} onSelect={(e)=>onSelect("startName",e)}>
-                                {
-                                    props.data.originList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
-                                }
-                            </AutoComplete>
+                    <div style={{width:610, display:'flex', flexDirection:'row',justifyContent:"space-around"}}>
+                            <Space direction="vertical">
+                                <label>Origin Station:</label>
+                                <AutoComplete 
+                                    value={state.startName} 
+                                    placeholder="Origin Station" 
+                                    style={{ width: 300, marginBottom:'1rem' }} 
+                                    onSearch={(e)=>onSelect('origin-search',e)}
+                                    onSelect={(e)=>onSelect("startName",e)}>
+                                    {
+                                        state.tempOriginList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
+                                    }
+                                </AutoComplete>
+                            </Space>
+                            <Space direction="vertical" style={{marginLeft:'1rem'}}>
+                                <label>End Destination:</label>
+                                <AutoComplete 
+                                    value={state.destination} 
+                                    placeholder="End Station" 
+                                    style={{ width: 300, marginBottom:'1rem' }} 
+                                    onSearch={(e)=>onSelect('destination-search',e)} />
+                            </Space>
                         </div>
                         {
                             <>{ busPartner.getMatrixTable((c)=>broadcastListener(c))} </>
@@ -366,24 +490,34 @@ function DltbMatrix(props){
                 <Collapse>
                 <Panel header="Fix Price Matrix" key="1">
                     <div style={{width:610, display:'flex', flexDirection:'row',justifyContent:"space-around"}}>
-                        <Select 
-                            value={state.fixMatrixOriginName} 
-                            placeholder="Origin" 
-                            style={{ width: 300, marginBottom:'1rem' }} 
-                            onSelect={(e)=>onSelect("fixMatrixOriginName",e)}>
-                        {
-                            props.data.originList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
-                        }
-                        </Select>
-                        <Select 
-                            value={state.fixMatrixDestinationName} 
-                            placeholder="Destination" 
-                            style={{width: 300, marginBottom:'1rem'}}
-                            onSelect={(e)=>onSelect("fixMatrixDestinationName",e)}>
-                        {
-                            state.destinationList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
-                        }
-                        </Select>
+                        <Space direction="vertical">
+                            <label>Origin Station:</label>
+                            <AutoComplete 
+                                value={state.fixMatrixOriginName} 
+                                placeholder="Origin" 
+                                style={{ width: 300, marginBottom:'1rem' }} 
+                                onSearch={(e)=>onSelect("search-fixMatrixOriginStation",e)}
+                                onSelect={(e)=>onSelect("fixMatrixOriginName",e)}>
+                            {
+                                state.fixPriceOriginList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
+                            }
+                            </AutoComplete>
+                        </Space>
+                        <Space direction="vertical">
+                            <label>End Destination:</label>
+                            <AutoComplete 
+                                value={state.fixMatrixDestinationName} 
+                                placeholder="Destination" 
+                                style={{width: 300, marginBottom:'1rem'}}
+                                onSearch={(e)=>onSelect("search-fixMatrixDestinationStation",e)}
+                                onSelect={(e)=>onSelect("fixMatrixDestinationName",e)}>
+                            {
+                                state.tempDestinationList.map(e=>(<Option value={e.stationId}>{e.stationName}</Option>))
+                            }
+                            </AutoComplete>
+                        </Space>
+                       
+                        
                     </div>
                     {
                         <>{busPartner.getFixPriceTableComponent((c)=>broadcastListener(c))}</>
@@ -403,36 +537,23 @@ function DltbMatrix(props){
                 onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
                 visible={matrixModal.visible} 
                 title={matrixModal.title}>
-
                     <MatrixModalContainer {...props} />
-
             </MatrixModal>
 
             <MatrixModal 
-                onCancel={()=>setFiveStarLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
+                onCancel={()=>setLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
                 width={500}
-                visible={fiveStarLenghtRangeModal.visible} 
-                title={fiveStarLenghtRangeModal.title}>
-                    <FiveStarMatrixModalLenghtRange 
-                        {...props}
-                        cancelText="Ok"
-                        data={fiveStarLenghtRangeModal.data}
-                        onCancel={()=>setFiveStarLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
-                        onSubmit={(val,data)=>{}}/>
-
+                visible={lenghtRangeModal.visible} 
+                title={lenghtRangeModal.title}>
+                   <MatrixModalLenghtRange {...props} />
             </MatrixModal>
 
             <MatrixModal 
                 width={500}
-                onCancel={()=>setFiveStarWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
-                visible={fiveStarWeightRangeModal.visible} 
-                title={fiveStarWeightRangeModal.title}>
-                    <FiveStarMatrixModalWeightRange 
-                        {...props}
-                        cancelText="Ok"
-                        data={fiveStarWeightRangeModal.data}
-                        onCancel={()=>setFiveStarWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
-                        onSubmit={(val,data)=>{}}/>
+                onCancel={()=>setWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
+                visible={weightRangeModal.visible} 
+                title={weightRangeModal.title}>
+                    <MatrixModalWeightRange {...props}/>
             </MatrixModal>
 
         </div> 
