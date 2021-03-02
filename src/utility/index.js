@@ -2,6 +2,10 @@ import {notification} from 'antd';
 import { ERROR_CODES} from '../config'
 import UserProfileClass from './userprofile'
 import FiveStar from './busCompanies/fivestar'
+import MovonLogo from '../assets/movoncargo.png'
+import IsarogLogo from '../assets/bicol-isarog-png.png'
+import FiveStarLogo from '../assets/five-star-png.png'
+import DltbLogo from '../assets/dltb-png.png'
 
 const UserProfile = new UserProfileClass();
 
@@ -72,6 +76,64 @@ const modifyName = fullName =>{
   })
 }
 
+const getHeaderColor = ()=>{
+  let color = undefined;
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'isarog-liner':
+      color = "#1d7ab2"
+      break;
+
+    case 'five-star':
+      color = "#fff"
+      break;
+
+    case 'dltb':
+      color = "#fff"
+      break;
+
+    default:
+      color = 'teal'
+      break;
+  }
+  return color
+}
+
+const getHeaderLogo = () =>{
+  let logo = undefined;
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'isarog-liner':
+      logo = IsarogLogo
+      break;
+
+    case 'five-star':
+      logo = FiveStarLogo
+      break;
+
+    case 'dltb':
+      logo = DltbLogo
+      break;
+  
+    default:
+      logo = MovonLogo
+      break;
+  }
+  return logo
+}
+
+const getCashierTextColor = () =>{
+  let color = undefined;
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'isarog-liner':
+      color = "#fff"
+      break;
+
+    default:
+      color = 'gray'
+      break;
+  }
+  return color
+}
+
 export{
   modifyName, 
   alterPath, 
@@ -81,6 +143,9 @@ export{
   openNotificationWithIcon,
   UserProfile, 
   dataURLtoFile,
-  FiveStar
+  FiveStar,
+  getHeaderColor,
+  getHeaderLogo,
+  getCashierTextColor
 }
   

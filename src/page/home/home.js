@@ -1,8 +1,9 @@
 import React from "react";
 import Manifest from "../manifest";
 import User from "../../service/User";
-import movonLogo from "../../assets/movoncargo.png";
-import { UserProfile, alterPath } from "../../utility";
+//import movonLogo from "../../assets/movoncargo.png";
+import movonLogo from "../../assets/bicol-isarog-png.png";
+import { UserProfile, alterPath, getHeaderColor, getHeaderLogo, getCashierTextColor } from "../../utility";
 import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
@@ -300,21 +301,21 @@ function Home(props) {
 
   return (
     <Layout className="home-page-container">
-      <Header className="home-header-view">
+      <Header className="home-header-view" style={{background:getHeaderColor()}}>
         <div>
-          <a href="home.js"><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></a>
+          <a href="home.js"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></a>
         </div>
         <div>
           {userProfileObject.getUser() && (
-            <div className={"header-nav"}>
+            <div className={"header-nav"} style={{color:'black'}}>
               <Dropdown overlay={menu} trigger={["click"]}>
                 <Button
                   className={"home-nav-link"}
                   type="link"
                   onClick={(e) => e.preventDefault()}
                 >
-                  Hi {userProfileObject.getUser().personalInfo.firstName}!
-                  <UserOutlined style={{ fontSize: "24px" }} />
+                  <span style={{color:getCashierTextColor()}}>Hi {userProfileObject.getUser().personalInfo.firstName}!</span>
+                  <UserOutlined style={{ fontSize: "24px", color:getCashierTextColor() }} />
                 </Button>
               </Dropdown>
             </div>

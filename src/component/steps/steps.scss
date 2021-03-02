@@ -1,13 +1,9 @@
 .component-steps{
     width: 100%;
-    overflow: scroll;
-    padding:1rem;
+    //overflow: scroll;
+    //padding:1rem;
     padding-top:1.5rem;
     background: white;
-
-    .component-steps{
-        overflow: scroll;
-    }
 
     .ant-steps-item-description{
         font-size: 12px !important;
