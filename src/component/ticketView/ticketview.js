@@ -52,14 +52,14 @@ const TicketDetails = (props) => {
             {Boolean(props.spCopy) ? (
               <span className="package-indicator-sp">{props.parcelCount}</span>
             ) : (
-              <div style={{display:'flex',flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
-                <span className="package-indicator">
-                  {packageQty} <span className="pkg-text">pkg.</span>
-                </span>
-                <span className="customer-copy-text">{copy}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                  <span className="package-indicator">
+                    {packageQty} <span className="pkg-text">pkg.</span>
+                  </span>
+                  <span className="customer-copy-text">{copy}</span>
 
-              </div>
-            )}
+                </div>
+              )}
           </Row>
         </Col>
         <Col span={17} style={{ paddingLeft: ".5rem" }}>
@@ -67,42 +67,45 @@ const TicketDetails = (props) => {
             <img src={movon} className="movon-logo" alt="movon" />
             <img src={busCompanyLogo} className="partner-logo" alt="partner" />
           </Row>
-          {parcelInfo.map((e,i) => (
+          {parcelInfo.map((e, i) => (
             <TextItem key={i} title={e.title} value={e.value} />
           ))}
+          <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {UserProfile.user.displayId}</div>
         </Col>
       </Row>
-      { !Boolean(props.spCopy) && UserProfile.getBusCompanyTag() === 'isarog-liner' ? 
-        <Row style={{ 
-            height:'100%', 
-            width:'100%',
-            borderTop: "1px dashed gray", 
-            display:'flex', 
-            flexDirection:'row', 
-            justifyContent:'space-between',
-            alignItems:'center' }}>
-            <div style={{
-              display:'flex', 
-              width:'30%', 
-              paddingLeft:'8px', 
-              marginTop:'1rem',
-              flexDirection:'column', 
-              justifyContent:'flex-end'}}>
-              <div style={{fontSize:10, borderTop:"1px solid black"}}>I hereby agree with the Terms and</div>
-              <div style={{fontSize:10}}>Conditions of Bicol Isarog TSI.</div>
-            </div>
-            <div style={{ display:'flex', flexDirection:'column', justifyContent:'center', paddingRight:'5px'}}>
-              <span style={{textAlign:'center'}} className="bottom-destination-text">{endStationName}</span>
-              <span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
-            </div>
-        </Row>:
-         <Row style={{ height:'100%', borderTop: "1px dashed gray", display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center' }}>
-         <div style={{width:'100%', textAlign:'center'}}>
-           <span className="bottom-destination-text">{endStationName}</span>
-         </div>  
-         <div style={{width:'100%', textAlign:'center'}}><span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
-         </div>
-     </Row>
+      { !Boolean(props.spCopy) && UserProfile.getBusCompanyTag() === 'isarog-liner' ?
+        <Row style={{
+          height: '100%',
+          width: '100%',
+          borderTop: "1px dashed gray",
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div style={{
+            display: 'flex',
+            width: '30%',
+            paddingLeft: '8px',
+            marginTop: '1rem',
+            flexDirection: 'column',
+            justifyContent: 'flex-end'
+          }}>
+            <div style={{ fontSize: 10, borderTop: "1px solid black" }}>I hereby agree with the Terms and</div>
+            <div style={{ fontSize: 10 }}>Conditions of Bicol Isarog TSI.</div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: '5px' }}>
+            <span style={{ textAlign: 'center' }} className="bottom-destination-text">{endStationName}</span>
+            <span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
+          </div>
+        </Row> :
+        <Row style={{ height: '100%', borderTop: "1px dashed gray", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ width: '100%', textAlign: 'center' }}>
+            <span className="bottom-destination-text">{endStationName}</span>
+          </div>
+          <div style={{ width: '100%', textAlign: 'center' }}><span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
+          </div>
+        </Row>
       }
     </div>
   );
@@ -127,7 +130,7 @@ const PCopy = (props) => {
       { title: "Receiver", value: modifyName(recipientName) },
       { title: "Mobile No.", value: recipientPhone },
       { title: "Origin", value: startStationName },
-      { title: "Price", value: Number(totalPrice||0).toFixed(2) },
+      { title: "Price", value: Number(totalPrice || 0).toFixed(2) },
     ];
 
     let _view = [];
@@ -136,7 +139,7 @@ const PCopy = (props) => {
         <TicketDetails
           copy="Customer's Copy"
           parcelInfo={parcelInfo}
-          key={"p-"+i}
+          key={"p-" + i}
           {...props}
           code={scanCode}
         />
@@ -163,23 +166,23 @@ const MCopy = (props) => {
           noOfSticker,
           scanCode
         } = props.value;
-    
+
         const parcelInfo = [
           { title: "Sender", value: modifyName(senderName) },
           { title: "Mobile No.", value: senderPhone },
           { title: "Receiver", value: modifyName(recipientName) },
           { title: "Mobile No.", value: recipientPhone },
           { title: "Origin", value: startStationName },
-          { title: "Price", value: Number(totalPrice || 0).toFixed(2)},
+          { title: "Price", value: Number(totalPrice || 0).toFixed(2) },
         ];
-    
+
         let _view = [];
         for (let i = 0; i < noOfSticker; i++) {
           _view.push(
             <TicketDetails
               copy="Merchant's Copy"
               parcelInfo={parcelInfo}
-              key={"p-"+i}
+              key={"p-" + i}
               {...props}
               code={scanCode}
             />
@@ -188,7 +191,7 @@ const MCopy = (props) => {
         view = _view;
       }
       break;
-  
+
     default:
       view = null
       break;
@@ -219,7 +222,7 @@ const SpCopy = (props) => {
       ];
       _view.push(
         <TicketDetails
-          key={"sp-"+i}
+          key={"sp-" + i}
           spCopy={true}
           parcelInfo={parcelInfo}
           {...props}
