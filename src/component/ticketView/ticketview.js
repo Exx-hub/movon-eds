@@ -70,8 +70,8 @@ const TicketDetails = (props) => {
           {parcelInfo.map((e, i) => (
             <TextItem key={i} title={e.title} value={e.value} />
           ))}
-          { !Boolean(props.spCopy) && UserProfile.getBusCompanyTag() === 'dltb' &&
-          <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {UserProfile.getUser().personalInfo.firstName + " " + UserProfile.getUser().personalInfo.lastName}</div> }
+          {UserProfile.getBusCompanyTag() === 'dltb' &&
+            <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {UserProfile.getUser().personalInfo.firstName} {UserProfile.getUser().personalInfo.lastName}</div>}
         </Col>
       </Row>
       { !Boolean(props.spCopy) && UserProfile.getBusCompanyTag() === 'isarog-liner' ?
