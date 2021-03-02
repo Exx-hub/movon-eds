@@ -3,6 +3,7 @@ import {Collapse,Table,Space,Button,Select, AutoComplete, Modal, notification, T
 import {MatrixModal} from '../../component/modal'
 import AddFixMatrixModalContent from  './container/modal.fixmatrix.container'
 import DefaultFixMatrixModalContent from  './container/modal.default.fixmatrix.container'
+import IsarogLinerFixMatrixModalContent from  './container/modal.isarog.fixmatrix.container'
 import MatrixModalContent from  './container/modal.matrix.default.container'
 
 
@@ -26,8 +27,6 @@ const SHOW_LOG = true;
 
 
 function DltbMatrix(props){
-
-    
 
     const [state, setState] = useState({
         startName:"",
@@ -261,18 +260,15 @@ function DltbMatrix(props){
         const{ data, action, index } = e
         switch (action) {
             
-            case "isarog-liner-view-length-click":
-            case "five-star-view-length-click":
+            case "view-length-click":
                 setLenghtRangeModal(e=>({...e, visible:true, data, index}))
                 break;
 
-            case "isarog-liner-view-weight-click":
-            case "five-star-view-weight-click":
+            case "view-weight-click":
                 setWeightRangeModal(e=>({...e, visible:true, data, index}))
                 break; 
         
-            case "isarog-liner-update-click":
-            case "five-star-update-click":
+            case "update-click":
                 setMatrixModal(e=>({...e, 
                     visible:true, 
                     data:{
@@ -289,8 +285,7 @@ function DltbMatrix(props){
                 }))
                 break; 
         
-            case "dltb-edit-fixmatrix-click":
-            case "five-star-edit-fixmatrix-click":
+            case "edit-fixmatrix-click":
                 setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"edit", data:{
                     ...data,
                     index,
@@ -298,16 +293,14 @@ function DltbMatrix(props){
                 }}))
                 break;
         
-            case "dltb-del-fixmatrix-click":
-            case "five-star-del-fixmatrix-click":
+            case "del-fixmatrix-click":
                 setFixPriceModal(e=>({...e, title:"Edit Fix Price", visible:true, type:"delete", data:{
                     ...data,
                     index
                 }}))
                 break;
         
-            case "dltb-add-fixmatrix-click":
-            case "five-star-add-fixmatrix-click":
+            case "add-fixmatrix-click":
                 setFixPriceModal(e=>({
                     ...e, 
                     title:"Add Fix Price", 
@@ -319,7 +312,7 @@ function DltbMatrix(props){
                 }))
                 break;
             
-            case "dltb-update-click":
+            case "update-click":
                 setMatrixModal(e=>({...e, visible:true, data:{...data, index}}))
                 break;
             
@@ -426,6 +419,17 @@ function DltbMatrix(props){
                 onCancel={()=>setFixPriceModal(e=>({...e, visible:false, data:undefined}))}
                 onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
             break;
+
+            case "isarog-liner":
+                View = (<IsarogLinerFixMatrixModalContent 
+                    {...props}
+                    type={fixPriceModal.type}
+                    okText={fixPriceModal.type === 'delete' ? fixPriceModal.type : "Save" } 
+                    cancelText="Cancel"
+                    data={fixPriceModal.data}
+                    onCancel={()=>setFixPriceModal(e=>({...e, visible:false, data:undefined}))}
+                    onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
+                break;
         
             default:
                 View = (<DefaultFixMatrixModalContent 
@@ -446,13 +450,13 @@ function DltbMatrix(props){
             <div style={{
                     padding:'1rem',
                     display:'flex', 
-                    justifyContent:'center',
-                    alignItems:'center',
+                    justifyContent:'flex-start',
+                    alignItems:'flex-start',
                     flexDirection:'column', 
                     width:'100%'}}>
 
-                <span style={{fontSize:'1.5rem', fontWeight:100}}>Price Matrix</span>
-                <span style={{fontSize:'1.2rem', fontWeight:100 }}>{UserProfile.getBusCompanyName()}</span>
+                <span style={{fontSize:'1.5rem', fontWeight:400}}>Price Matrix</span>
+                <span style={{fontSize:'1.2rem', fontWeight:300 }}>{UserProfile.getBusCompanyName()}</span>
 
             </div>
 

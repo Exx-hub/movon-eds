@@ -21,6 +21,7 @@ import {
 
 import {CustomModal} from '../../component/modal'
 import { config } from "../../config";
+import { convertToObject } from "typescript";
 
 const { Content, Sider, Header } = Layout;
 
@@ -916,49 +917,57 @@ class CreateParcel extends React.Component {
   }
 
   dltbFixPriceComputation = () => {
+    console.info("dltbFixPriceComputation ===++>>")
+    console.info("dltbFixPriceComputation ===++>>")
+    console.info("dltbFixPriceComputation ===++>>")
     let d = { ...this.state.details }
     const options = {
       origin: UserProfile.getAssignedStationId(),
       destination: d.destination.value,
       declaredValue: d.declaredValue.value || 0,
       parcelCount: d.sticker_quantity.value,
-      fixMatrixItemName: d.fixMatrix.value
+      fixMatrixItemName: d.fixMatrix.value,
+      quantity: d.quantity.value
     }
-    ParcelService.getDltbFixMatrixComputation(options)
+    ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
+        console.info("ParcelService.getDefaultFixMatrixComputation",e)
         const { data, errorCode } = e.data;
         if (!errorCode) {
 
           const {
             declaredValueFee,
             systemFee,
-            basePrice
+            basePrice,
+            portersFee,
+            computeTotalShippingCost
           } = data
 
-          const _systemFee = Number(data.systemFee || 0);
-          const additionalFee = Number(d.additionalFee.value || 0);
+          // const _systemFee = Number(data.systemFee || 0);
+          // const additionalFee = Number(d.additionalFee.value || 0);
 
-          let _declaredValueFee = Number(declaredValueFee || 0);
-          let total = Number(data.computeTotalShippingCost || 0);
-          let _basePrice = Number(basePrice || 0);
-          let quantity = Number(d.quantity.value || 1)
+          // let _declaredValueFee = Number(declaredValueFee || 0);
+          // let total = Number(data.computeTotalShippingCost || 0);
+          // let _basePrice = Number(basePrice || 0);
+          // let quantity = Number(d.quantity.value || 1)
 
-          if (quantity > 1) {
-            _declaredValueFee = _declaredValueFee * quantity;
-            _basePrice = _basePrice * quantity;
-          }
+          // if (quantity > 1) {
+          //   _declaredValueFee = _declaredValueFee * quantity;
+          //   _basePrice = _basePrice * quantity;
+          // }
 
-          total = _basePrice + _declaredValueFee;
-          total += additionalFee + _systemFee
+          //total = _basePrice + _declaredValueFee;
+          //total += additionalFee + _systemFee
 
-          d.totalShippingCost.value = total;
+          d.totalShippingCost.value = computeTotalShippingCost;
           d.systemFee.value = systemFee;
 
           this.setState({
-            declaredValueFee: _declaredValueFee.toFixed(2),
+            declaredValueFee,
             isFixedPrice: true,
-            basePrice:_basePrice.toFixed(2),
-            details: d
+            basePrice,
+            details: d,
+            portersFee
           })
         } else {
           this.handleErrorNotification(errorCode);
@@ -1017,13 +1026,14 @@ class CreateParcel extends React.Component {
 
       
       switch (UserProfile.getBusCompanyTag()) {
-        case 'isarog-liner':
-          if (name === 'declaredValue' || name === "sticker_quantity" || name === "length" || name === "quantity" || name === "packageWeight") {
-            console.info('passss=====>>>...11111')
-            this.updateTotalShippingCost();
-          }
-          break;
+        // case 'isarog-liner':
+        //   if (name === 'declaredValue' || name === "sticker_quantity" || name === "length" || name === "quantity" || name === "packageWeight") {
+        //     console.info('passss=====>>>...11111')
+        //     this.updateTotalShippingCost();
+        //   }
+        //   break;
 
+        case "isarog-liner": 
         case "five-star":
         case "dltb":
           if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
@@ -1276,14 +1286,12 @@ class CreateParcel extends React.Component {
             };
             this.setState({ details }, () => {
               switch (UserProfile.getBusCompanyTag()) {
-                case 'dltb':
-                case 'five-star':
-                  this.computeV2();
-                  break;
-              
+                //case 'isarog-liner':
+                  //this.updateTotalShippingCost()
+                //break;
                 default:
-                  this.updateTotalShippingCost()
-                  break;
+                  this.computeV2();
+                break;
               }
              
             });
@@ -1421,6 +1429,7 @@ class CreateParcel extends React.Component {
         details.description.value = option.name;
 
         switch (UserProfile.getBusCompanyTag()) {
+          case 'isarog-liner':
           case 'five-star':
             this.setState({ ...state, isFixedPrice: true, details }, () => {
               if (option && Number(option.price) === 0) {
@@ -1439,12 +1448,12 @@ class CreateParcel extends React.Component {
             break;
 
           default:
-            this.setState({ ...state, basePrice: price, isFixedPrice: true, details }, () => {
+            //this.setState({ ...state, basePrice: price, isFixedPrice: true, details }, () => {
               // if (option && Number(option.declaredValue) > 0) {
               //   return;
               // }
-              this.updateTotalShippingCost();
-            });
+              //this.updateTotalShippingCost();
+            //});
             break;
         }
       } else {
@@ -1775,10 +1784,10 @@ class CreateParcel extends React.Component {
       length: Number(length.value)
     }
 
-    ParcelService.getDltbComputation(option)
+    ParcelService.getDefaultComputation(option)
       .then(e => {
         const { data, errorCode } = e.data;
-    ParcelService.getDltbComputation(option)
+        console.info(" ParcelService.getDefaultComputation",e)
         if (!errorCode) {
           const {
             totalShippingCost,
@@ -1835,6 +1844,10 @@ class CreateParcel extends React.Component {
   }
 
   computeV2 = () => {
+    console.info('computeV2 passs========>>>')
+    console.info('computeV2 passs========>>>')
+    console.info('computeV2 passs========>>>')
+    console.info('computeV2 passs========>>>')
     const { declaredValue, packageWeight, sticker_quantity, length, destination, fixMatrix } = this.state.details;
 
     switch (UserProfile.getBusCompanyTag()) {
@@ -1844,7 +1857,8 @@ class CreateParcel extends React.Component {
         }
         break;
 
-      case "five-star":
+        case "five-star":
+        case "isarog-liner":
         if (!fixMatrix.value || fixMatrix.value === "none") {
           if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value && length.value !== undefined) {
             this.requestComputation()

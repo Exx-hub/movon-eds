@@ -9,13 +9,13 @@ class BicolIsarog{
         this.dataSource = [];
         this.priceMatrix = {matrix:[], fixMatrix:[]}
         this.message={
-            BUTTON_UPDATE_CLICK:`${this.name}-update-click`,
-            BUTTON_DEL_CLICK:`${this.name}-del-click`,
-            BUTTON_VIEW_LENGHT_DETAILS:`${this.name}-view-length-click`,
-            BUTTON_VIEW_WEIGHT_DETAILS:`${this.name}-view-weight-click`,
-            BUTTON_EDIT_FIXMATRIX:`${this.name}-edit-fixmatrix-click`,
-            BUTTON_DEL_FIXMATRIX:`${this.name}-del-fixmatrix-click`,
-            BUTTON_ADD_FIXMATRIX:`${this.name}-add-fixmatrix-click`
+            BUTTON_UPDATE_CLICK:`update-click`,
+            BUTTON_DEL_CLICK:`del-click`,
+            BUTTON_VIEW_LENGHT_DETAILS:`view-length-click`,
+            BUTTON_VIEW_WEIGHT_DETAILS:`view-weight-click`,
+            BUTTON_EDIT_FIXMATRIX:`edit-fixmatrix-click`,
+            BUTTON_DEL_FIXMATRIX:`del-fixmatrix-click`,
+            BUTTON_ADD_FIXMATRIX:`add-fixmatrix-click`
         };    
     }
 
@@ -227,25 +227,26 @@ class BicolIsarog{
             title: 'Description',
             dataIndex: 'name',
             key: 'description',
-            width:250
         },
         {
             title: 'Declared Value Rate',
             dataIndex: 'declaredValue',
             key: 'declaredValue',
-            width:150
         },
         {
             title: 'Price',
             dataIndex: 'price',
             key: "price",
-            width:150
+        },
+        {
+            title: 'Enable Porters Fee',
+            dataIndex: 'price',
+            key: "price",
         },
         {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width:150,
             render: (t,row,index)=>{
                 return(<Space>
                     <Button 
@@ -282,14 +283,14 @@ class BicolIsarog{
         return(<>
             <Table 
                 scroll={{x:true}}
-                style={{width:700}} 
+                style={{minWidth:900}} 
                 bordered={true} 
                 pagination={false} 
                 columns={this.getFixMatrixTableColumn((c)=>callback(c))} 
                 dataSource={this.getFixMatrix()}
                 />
             { this.getFixMatrix() && <Button  
-                style={{width:700, marginTop:'1rem'}} 
+                style={{marginTop:'1rem'}} 
                 block={true} 
                 type="dashed" 
                 onClick={() => callback({

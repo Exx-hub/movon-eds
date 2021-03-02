@@ -27,6 +27,7 @@ const getMatrix = async(originId,destinationId) =>{
         origin:originId,
         destination: destinationId,
     })
+    console.info('getMatrix',result)
     return result;
 }
 

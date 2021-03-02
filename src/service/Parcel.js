@@ -419,7 +419,7 @@ const ParcelService = {
         })
     },
     
-    getDltbComputation: ({
+    getDefaultComputation: ({
         origin,
         destination,
         declaredValue,
@@ -446,12 +446,13 @@ const ParcelService = {
         })
     },
     
-    getDltbFixMatrixComputation: ({
+    getDefaultFixMatrixComputation: ({
         origin,
         destination,
         declaredValue,
         parcelCount,
-        fixMatrixItemName
+        fixMatrixItemName,
+        quantity
     }) => {
         return axios({
             method: 'post',
@@ -466,7 +467,8 @@ const ParcelService = {
                 destination,
                 declaredValue,
                 parcelCount,
-                fixMatrixItemName
+                fixMatrixItemName,
+                quantity
             }
         })
     }

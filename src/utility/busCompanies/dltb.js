@@ -9,13 +9,13 @@ class Dltb{
         this.dataSource = [];
         this.priceMatrix = {matrix:[], fixMatrix:[]}
         this.message={
-            BUTTON_UPDATE_CLICK:`${this.name}-update-click`,
-            BUTTON_DEL_CLICK:`${this.name}-del-click`,
-            BUTTON_VIEW_LENGHT_DETAILS:`${this.name}-view-lenght-click`,
-            BUTTON_VIEW_WEIGHT_DETAILS:`${this.name}-view-weight-click`,
-            BUTTON_EDIT_FIXMATRIX:`${this.name}-edit-fixmatrix-click`,
-            BUTTON_DEL_FIXMATRIX:`${this.name}-del-fixmatrix-click`,
-            BUTTON_ADD_FIXMATRIX:`${this.name}-add-fixmatrix-click`
+            BUTTON_UPDATE_CLICK:`update-click`,
+            BUTTON_DEL_CLICK:`del-click`,
+            BUTTON_VIEW_LENGHT_DETAILS:`view-lenght-click`,
+            BUTTON_VIEW_WEIGHT_DETAILS:`view-weight-click`,
+            BUTTON_EDIT_FIXMATRIX:`edit-fixmatrix-click`,
+            BUTTON_DEL_FIXMATRIX:`del-fixmatrix-click`,
+            BUTTON_ADD_FIXMATRIX:`add-fixmatrix-click`
         };    
     }
 

@@ -650,24 +650,26 @@ function ShowBicolIsarogBreakDown(props){
       isFixedPrice,
       lengthFee,
       discountFee,
-      portersFee
+      portersFee,
+      weightFee,
     }=props.data;
 
     if(isFixedPrice){
       view=(<>
         <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
-        <TextContainer title="Porters Fee" value={translateNumber(portersFee)} /> 
         <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
-        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
         <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+        <TextContainer title="Porters Fee" value={translateNumber(portersFee)} /> 
       </>)
     }else{
       view=(<>
           <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
-          <TextContainer title="Porters Fee" value={translateNumber(portersFee)} /> 
+          <TextContainer title="Weight Fee" value={translateNumber(weightFee)} />
           <TextContainer title="Length Fee" value={translateNumber(lengthFee)} />
           <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
           <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+          <TextContainer title="Porters Fee" value={translateNumber(portersFee)} />
           <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
       </>)
     }
