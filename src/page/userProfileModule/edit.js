@@ -15,6 +15,8 @@ import {
   alterPath,
   UserProfile,
   debounce,
+  getHeaderLogo,
+  getCashierTextColor,
 } from "../../utility";
 import { PromptModal } from "../../component/modal";
 import "./changePassword.scss";
@@ -25,6 +27,7 @@ import {
 } from "@ant-design/icons";
 import UserProfileHeader from './header'
 import TextWrapper from './textWrapper'
+import { NavLink } from "react-router-dom";
 const { Header, Content, Footer } = Layout;
 const initState = {};
 const isNull = (value) => value === null || value === undefined || value === "" || value === 0;
@@ -359,7 +362,7 @@ function EditUserProfileModule(props){
     <Layout className="about-main">
       <Header className="home-header-view">
         <div>
-          <a href="home.js"><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></a>
+          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
         </div>
         <div>
           {userProfileObject.getUser() && (
@@ -370,8 +373,10 @@ function EditUserProfileModule(props){
                   type="link"
                   onClick={(e) => e.preventDefault()}
                 >
+                  <div style={{color:getCashierTextColor()}}>
                   Hi {userProfileObject.getUser().personalInfo.firstName}!
                 <UserOutlined style={{ fontSize: "24px" }} />
+                </div>
                 </Button>
               </Dropdown>
             </div>

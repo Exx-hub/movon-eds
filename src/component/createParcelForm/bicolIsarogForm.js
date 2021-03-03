@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Row, Col, Radio, Select, AutoComplete, Space, Divider } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
-import { UserProfile } from "../../utility";
+import { getHeaderColor, UserProfile } from "../../utility";
 
 const { Option } = Select;
 
@@ -104,8 +104,8 @@ function BicolIsarogForm(props) {
 
   return (
     <div className="create-parcel-form">
-      <div style={{background: '#fff', width:'100%', display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1rem' }}>
-        <img style={{maxHeight:'170px', maxWidth:'250px'}} src={UserProfile.getBusCompanyLogo()} />
+      {/* <div style={{background: '#fff', width:'100%', display:'flex', justifyContent:'flex-end', alignItems:'center', marginBottom:'1rem' }}>
+        <img style={{display:'none', maxHeight:'170px', maxWidth:'250px'}} src={UserProfile.getBusCompanyLogo()} />
         <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-end', marginTop:'1rem', padding:'1rem'}}>
           <Space direction="vertical">
               <Space>
@@ -122,7 +122,7 @@ function BicolIsarogForm(props) {
               </Space>
           </Space>
         </div>
-      </div>
+      </div> */}
       <div className="input-container-border" style={{ padding: 0, boxShadow: "2px 5px 12px", marginBottom: '2rem' }}>
         <HeaderContainer title="Customers Information" />
         <div style={{ padding: '1rem' }}>
@@ -378,7 +378,7 @@ function BicolIsarogForm(props) {
       </div>
 
       <div className="calculator-container-border" style={{ padding: 0, boxShadow: "2px 5px 12px" }}>
-        <HeaderContainer title="Price Matrix" />
+        <HeaderContainer title="Price Matrix" color="#1d7ab2" />
 
         <div style={{ display: 'flex', flexDirection: 'row', width: '100%', padding: '1rem' }}>
           <div style={{ width: '65%' }}>
@@ -761,7 +761,17 @@ function TextDiscountContainer(props) {
 }
 
 function HeaderContainer(props) {
-  return (<div style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', background: 'rgb(204, 39, 40)', display: 'flex', width: '100%', padding: '.5rem' }}>{props.title}</div>)
+  let color = getHeaderColor();
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'isarog-liner':
+      color = "#1d7ab2"
+      break;
+  
+    default:
+      color = 'rgb(204, 39, 40)'
+      break;
+  }
+  return (<div style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', background: color, display: 'flex', width: '100%', padding: '.5rem' }}>{props.title}</div>)
 }
 
 

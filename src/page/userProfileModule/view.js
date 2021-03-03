@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import {
   Layout,
 } from "antd";
@@ -9,7 +9,7 @@ import movonLogo from "../../assets/movoncargo.png";
 import User from "../../service/User";
 import "./../about/about.scss"
 import { Dropdown, Menu, Button } from "antd";
-import { UserProfile, alterPath } from "../../utility";
+import { UserProfile, alterPath, getCashierTextColor, getHeaderColor, getHeaderLogo } from "../../utility";
 import { PromptModal } from "../../component/modal";
 import {
   UserOutlined,
@@ -95,9 +95,9 @@ function ViewUserProfileModule(props) {
   };
   return (
     <Layout className="about-main">
-      <Header className="home-header-view">
+      <Header className="home-header-view" style={{background:getHeaderColor()}}>
         <div>
-          <a href="home.js"><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></a>
+          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
         </div>
         <div>
           {userProfileObject.getUser() && (
@@ -108,8 +108,10 @@ function ViewUserProfileModule(props) {
                   type="link"
                   onClick={(e) => e.preventDefault()}
                 >
+                  <div style={{color:getCashierTextColor()}}>
                   Hi {userProfileObject.getUser().personalInfo.firstName}!
                 <UserOutlined style={{ fontSize: "24px" }} />
+                </div>
                 </Button>
               </Dropdown>
             </div>

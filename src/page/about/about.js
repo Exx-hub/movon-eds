@@ -5,9 +5,9 @@ import { config } from "../../config";
 import User from "../../service/User";
 import { Layout, Dropdown, Menu, Button } from "antd";
 import movonLogo from "../../assets/movoncargo.png";
-import { UserProfile, alterPath } from "../../utility";
+import { UserProfile, alterPath, getHeaderLogo, getHeaderColor } from "../../utility";
 import { PromptModal } from "../../component/modal";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, NavLink } from "react-router-dom";
 import {
   UserOutlined,
   PoweroffOutlined,
@@ -91,9 +91,9 @@ function About(props) {
   };
   return (
     <Layout className="about-main">
-      <Header className="home-header-view">
+      <Header className="home-header-view" style={{background:getHeaderColor()}}>
         <div>
-          <a href="home.js"><img src={movonLogo} style={{ height: "50px" }} alt="logo" /></a>
+          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "150px" }} alt="logo" /></NavLink>
         </div>
         <div>
           {userProfileObject.getUser() && (

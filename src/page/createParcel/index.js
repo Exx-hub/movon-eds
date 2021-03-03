@@ -8,7 +8,7 @@ import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
 import { Button, notification, Layout, Checkbox, Input, Form, Space, Divider } from "antd";
 import ReactToPrint from "react-to-print";
-import { ArrowLeftOutlined, CodeOutlined, NumberOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
 import ManifestService from "../../service/Manifest";
@@ -16,12 +16,16 @@ import {
   openNotificationWithIcon,
   debounce,
   UserProfile,
-  alterPath
+  alterPath,
+  getHeaderColor,
+  getHeaderLogo,
+  getCashierTextColor
 } from "../../utility";
 
 import {CustomModal} from '../../component/modal'
 import { config } from "../../config";
 import { convertToObject } from "typescript";
+import { NavLink } from "react-router-dom";
 
 const { Content, Sider, Header } = Layout;
 
@@ -1571,8 +1575,8 @@ class CreateParcel extends React.Component {
       case 0:
         view = (
           <>
-            <div style={{ background: '#fff', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem' }}>
-              <img style={{ maxHeight: '170px', maxWidth: '250px' }} src={UserProfile.getBusCompanyLogo()} />
+            {/* <div style={{ display:'none', background: '#fff', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem' }}>
+              <img style={{ display:'none', maxHeight: '170px', maxWidth: '250px' }} src={UserProfile.getBusCompanyLogo()} />
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', marginTop: '1rem', padding: '1rem' }}>
                 <Space direction="vertical">
                   <Space>
@@ -1589,8 +1593,10 @@ class CreateParcel extends React.Component {
                   </Space>
                 </Space>
               </div>
-            </div>
+            </div> 
             <Divider />
+            */}
+            <div style={{marginTop:'3rem'}}>
             <WebCam
               image={
                 this.state.packageImagePreview 
@@ -1599,6 +1605,8 @@ class CreateParcel extends React.Component {
                 this.setState({ packageImagePreview })
               }
             />
+            </div>
+            
             <StepControllerView
             display="none"
               width={this.state.width}
@@ -2079,15 +2087,13 @@ class CreateParcel extends React.Component {
   render() {
     return (
       <Layout className="create-parcelview-parent-container" style={{ background: 'white' }}>
-        {<Header className="home-header-view" style={{ padding: 0 }}>
-          <div style={{ float: "left" }}>
-            <Button
-              type="link"
-              onClick={() => this.props.history.push(alterPath("/"))}
-            >
-              <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
-              <span style={{ fontSize: "20px", color: "#fff" }}>Home</span>
-            </Button>
+        {<Header className="home-header-view" style={{ background: getHeaderColor(),  padding: 0 }}>
+          <div style={{ width:'100%', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between' }}>
+           <NavLink to="/"><img src={getHeaderLogo()} style={{height:'120px'}} /></NavLink>
+           <div style={{color: getCashierTextColor(), marginRight:'2rem'}}>
+            <span style={{fontWeight:'bold', fontSize:'14px', marginRight:'0.3rem'}}>{ UserProfile.getPersonFullName()} </span>
+            <span style={{ fontSize:'14px'}}><UserOutlined style={{ fontSize: "24px" }} /></span>
+           </div>
           </div>
         </Header>}
         <Layout>
