@@ -17,6 +17,7 @@ import {
   debounce,
   getHeaderLogo,
   getCashierTextColor,
+  getHeaderColor
 } from "../../utility";
 import { PromptModal } from "../../component/modal";
 import "./changePassword.scss";
@@ -360,7 +361,7 @@ function EditUserProfileModule(props){
   };
   return (
     <Layout className="about-main">
-      <Header className="home-header-view">
+      <Header className="home-header-view" style={{background:getHeaderColor()}}>
         <div>
           <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
         </div>
