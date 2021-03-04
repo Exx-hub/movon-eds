@@ -5,6 +5,8 @@ import { Row, Col } from "antd";
 import movon from "../../assets/movon3.png";
 import moment from "moment";
 import { modifyName, UserProfile } from "../../utility";
+import DltbLogo from '../../assets/dltb-png.png';
+import DltbLogobw from '../../assets/dltb-bw-png.png';
 
 function TextItem(props) {
   return (
@@ -23,7 +25,7 @@ const TicketDetails = (props) => {
   const {
     billOfLading,
     packageQty,
-    busCompanyLogo,
+    totalPrice,
     endStationName,
     createdAt,
   } = props.value;
@@ -46,16 +48,18 @@ const TicketDetails = (props) => {
             />
           </Row>
           <Row justify="center" className="scan-code-text">{code}</Row>
-          <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
+          {/* <span>{(totalPrice || 0).toFixed(2)}</span> */}
+          {/* <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row> */}
 
           <Row justify="center">
             {Boolean(props.spCopy) ? (
               <span className="package-indicator-sp">{props.parcelCount}</span>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <div className= "right-text" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <span className="package-indicator">
                     {packageQty} <span className="pkg-text">pkg.</span>
                   </span>
+                  <Row justify="center" className="price-text"> Price:&nbsp;<b>{totalPrice}</b></Row>
                   <span className="customer-copy-text">{copy}</span>
 
                 </div>
@@ -64,8 +68,8 @@ const TicketDetails = (props) => {
         </Col>
         <Col span={17} style={{ paddingLeft: ".5rem" }}>
           <Row justify="space-between" className="image-logo-container">
-            <img src={movon} className="movon-logo" alt="movon" />
-            <img src={busCompanyLogo} className="partner-logo" alt="partner" />
+            <img src={DltbLogobw} className="movon-logo" alt="DltbLogo" />
+            <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
           </Row>
           {parcelInfo.map((e, i) => (
             <TextItem key={i} title={e.title} value={e.value} />
@@ -131,7 +135,7 @@ const PCopy = (props) => {
       { title: "Receiver", value: modifyName(recipientName) },
       { title: "Mobile No.", value: recipientPhone },
       { title: "Origin", value: startStationName },
-      { title: "Price", value: Number(totalPrice || 0).toFixed(2) },
+      // { title: "Price", value: Number(totalPrice || 0).toFixed(2) },
     ];
 
     let _view = [];
@@ -174,7 +178,7 @@ const MCopy = (props) => {
           { title: "Receiver", value: modifyName(recipientName) },
           { title: "Mobile No.", value: recipientPhone },
           { title: "Origin", value: startStationName },
-          { title: "Price", value: Number(totalPrice || 0).toFixed(2) },
+          // { title: "Price", value: Number(totalPrice || 0).toFixed(2) },
         ];
 
         let _view = [];
