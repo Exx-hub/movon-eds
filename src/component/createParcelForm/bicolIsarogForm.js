@@ -385,7 +385,7 @@ function BicolIsarogForm(props) {
             <div style={{ padding: '.5rem', display: 'flex', flexDirection: 'column',}}>
               <Radio.Group value={type.value} onChange={(e)=>props.onTypeChange(e)} style={{ alignSelf: 'center' }}>
                 {type.options.map((e) => (
-                  <Radio key={e.value} value={e.value}>
+                  <Radio key={e.value} disabled={e.disabled} value={e.value}>
                     {e.name}
                   </Radio>
                 ))}

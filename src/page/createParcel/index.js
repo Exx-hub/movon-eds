@@ -331,12 +331,12 @@ class CreateParcel extends React.Component {
             {
               value: 1,
               name: "Excess AC",
-              disabled: false,
+              disabled: true,
             },
             {
               value: 2,
               name: "Excess Non AC",
-              disabled: false,
+              disabled: true,
             },
             {
               value: 3,
