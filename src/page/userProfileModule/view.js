@@ -130,7 +130,7 @@ function ViewUserProfileModule(props) {
         </div>
 
         <div className="main-creds">
-          <div className="profile-text">User Information</div>
+          <div className="profile-text">User Profile</div>
           <div className="creds">
             <TextWrapper title="Full Name" value={fullName} />
             <TextWrapper title="Phone Number" value={phone.number} />

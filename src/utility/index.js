@@ -123,9 +123,9 @@ const getHeaderLogo = () =>{
 const getCashierTextColor = () =>{
   let color = undefined;
   switch (UserProfile.getBusCompanyTag()) {
-    case 'isarog-liner':
-      color = "#fff"
-      break;
+    // case 'isarog-liner':
+    //   color = "#fff"
+    //   break;
 
     default:
       color = 'gray'
