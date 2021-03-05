@@ -6,6 +6,10 @@ import MovonLogo from '../assets/movoncargo.png'
 import IsarogLogo from '../assets/bicol-isarog-png.png'
 import FiveStarLogo from '../assets/five-star-png.png'
 import DltbLogo from '../assets/dltb-png.png'
+import IsarogLogobw from '../assets/bicol-isarog-bw-png.png'
+import FiveStarLogobw from '../assets/five-star-bw-png.png'
+import DltbLogobw from '../assets/dltb-bw-png.png';
+
 
 const UserProfile = new UserProfileClass();
 
@@ -97,6 +101,27 @@ const getHeaderColor = ()=>{
   }
   return color
 }
+const getStickerLogoBw = () =>{
+  let logo = undefined;
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'isarog-liner':
+      logo = IsarogLogobw
+      break;
+
+    case 'five-star':
+      logo = FiveStarLogobw
+      break;
+
+    case 'dltb':
+      logo = DltbLogobw
+      break;
+  
+    default:
+      logo = MovonLogo
+      break;
+  }
+  return logo
+}
 
 const getHeaderLogo = () =>{
   let logo = undefined;
@@ -146,6 +171,7 @@ export{
   FiveStar,
   getHeaderColor,
   getHeaderLogo,
-  getCashierTextColor
+  getCashierTextColor,
+  getStickerLogoBw
 }
   
