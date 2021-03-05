@@ -1,7 +1,11 @@
 import {notification} from 'antd';
 import { ERROR_CODES} from '../config'
 import UserProfileClass from './userprofile'
+import MovonLogo from '../assets/movoncargo.png'
 import FiveStar from './busCompanies/fivestar'
+import IsarogLogobw from '../assets/bicol-isarog-bw-png.png'
+import FiveStarLogobw from '../assets/five-star-bw-png.png'
+import DltbLogobw from '../assets/dltb-bw-png.png';
 
 const UserProfile = new UserProfileClass();
 
@@ -71,6 +75,27 @@ const modifyName = fullName =>{
       return name.charAt(0).toUpperCase() + name.slice(1) + " "
   })
 }
+const getStickerLogoBw = () =>{
+  let logo = undefined;
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'isarog-liner':
+      logo = IsarogLogobw
+      break;
+
+    case 'five-star':
+      logo = FiveStarLogobw
+      break;
+
+    case 'dltb':
+      logo = DltbLogobw
+      break;
+  
+    default:
+      logo = MovonLogo
+      break;
+  }
+  return logo
+}
 
 export{
   modifyName, 
@@ -81,6 +106,7 @@ export{
   openNotificationWithIcon,
   UserProfile, 
   dataURLtoFile,
-  FiveStar
+  FiveStar,
+  getStickerLogoBw
 }
   
