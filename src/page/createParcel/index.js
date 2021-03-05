@@ -1808,7 +1808,8 @@ class CreateParcel extends React.Component {
             lengthFee,
             basePrice,
             isShortHaul,
-            insuranceFee
+            insuranceFee,
+            portersFee
           } = data;
 
           const _lengthFee = Number(lengthFee || 0)
@@ -1837,6 +1838,7 @@ class CreateParcel extends React.Component {
           _data.shippingCost.value = _shippingCost;
 
           this.setState({
+            portersFee,
             insuranceFee,
             declaredValueFee,
             handlingFee: _handlingFee,
