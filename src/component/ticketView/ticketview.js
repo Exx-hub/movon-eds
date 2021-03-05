@@ -5,6 +5,7 @@ import { Row, Col } from "antd";
 import movon from "../../assets/movon3.png";
 import moment from "moment";
 import { modifyName, UserProfile,getStickerLogoBw } from "../../utility";
+import { PrintContextConsumer } from "react-to-print";
 
 function TextItem(props) {
   return (
@@ -58,7 +59,7 @@ const TicketDetails = (props) => {
                   <span className="package-indicator">
                     {packageQty} <span className="pkg-text">pkg.</span>
                   </span>
-                  <Row justify="center" className="price-text"> Price:&nbsp;<b>{totalPrice}</b></Row>
+                  <Row justify="center" className="price-text"> Price:&nbsp;<b>{totalPrice.toFixed(2)}</b></Row>
                   <span className="customer-copy-text">{copy}</span>
 
                 </div>
