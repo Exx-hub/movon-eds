@@ -5,7 +5,7 @@ import { config } from "../../config";
 import User from "../../service/User";
 import { Layout, Dropdown, Menu, Button } from "antd";
 import movonLogo from "../../assets/movoncargo.png";
-import { UserProfile, alterPath, getHeaderLogo, getHeaderColor } from "../../utility";
+import { UserProfile, alterPath, getHeaderLogo, getHeaderColor,getCashierTextColor } from "../../utility";
 import { PromptModal } from "../../component/modal";
 import { Switch, Route, Redirect, NavLink } from "react-router-dom";
 import {
@@ -93,7 +93,7 @@ function About(props) {
     <Layout className="about-main">
       <Header className="home-header-view" style={{background:getHeaderColor()}}>
         <div>
-          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "150px" }} alt="logo" /></NavLink>
+          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
         </div>
         <div>
           {userProfileObject.getUser() && (
@@ -104,8 +104,8 @@ function About(props) {
                   type="link"
                   onClick={(e) => e.preventDefault()}
                 >
-                  Hi {userProfileObject.getUser().personalInfo.firstName}!
-                  <UserOutlined style={{ fontSize: "24px" }} />
+                  <span style={{color:getCashierTextColor()}}>Hi {userProfileObject.getUser().personalInfo.firstName}!</span>
+                  <UserOutlined style={{ fontSize: "24px", color:getCashierTextColor()  }} />
                 </Button>
               </Dropdown>
             </div>
@@ -125,7 +125,7 @@ function About(props) {
             </div>
           </div>
           <div className="about-text">
-            <p className="title">About Us</p>
+            <p className="title">About</p>
             <p>
               MOVON EDS MovOn Express Delivery System (EDS) is software technology
               which aims to provide bus companies a more systematic and smarter way of handling their cargo service.
