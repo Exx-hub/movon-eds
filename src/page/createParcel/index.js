@@ -176,6 +176,7 @@ const parceResponseData = (data) => {
     scanCode: data.scanCode,
     createdAt: data.createdAt,
     subParcels: data.subParcels,
+    cashier: UserProfile.credential.user.personalInfo.fullName,
   };
 };
 
