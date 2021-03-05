@@ -27,6 +27,7 @@ const TicketDetails = (props) => {
     busCompanyLogo,
     endStationName,
     createdAt,
+    cashier,
     totalPrice
   } = props.value;
 
@@ -75,7 +76,7 @@ const TicketDetails = (props) => {
             <TextItem key={i} title={e.title} value={e.value} />
           ))}
           {UserProfile.getBusCompanyTag() === 'dltb' &&
-            <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {UserProfile.getUser().personalInfo.firstName} {UserProfile.getUser().personalInfo.lastName}</div>}
+            <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {cashier.deliveryPersonName}</div>}
         </Col>
       </Row>
       { !Boolean(props.spCopy) && UserProfile.getBusCompanyTag() === 'isarog-liner' ?
@@ -102,7 +103,7 @@ const TicketDetails = (props) => {
             </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: '5px' }}>
             <span style={{ textAlign: 'center' }} className="bottom-destination-text">{endStationName}</span>
-            <span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
+            <span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
           </div>
           <div></div>
           </div>
@@ -111,7 +112,7 @@ const TicketDetails = (props) => {
           <div style={{ width: '100%', textAlign: 'center' }}>
             <span className="bottom-destination-text">{endStationName}</span>
           </div>
-          <div style={{ width: '100%', textAlign: 'center' }}><span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
+          <div style={{ width: '100%', textAlign: 'center' }}><span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
           </div>
         </Row>
       }

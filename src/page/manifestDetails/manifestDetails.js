@@ -279,6 +279,7 @@ class ManifestDetails extends React.Component {
         const departureTime = date; //moment(date).format("MMM-DD-YYYY");
         const arrivalTime = date; //moment(date).format("MMM-DD-YYYY");
         const movonBillOfLading = data[0].displayId;
+        const cashier = data[0].deliveryPersonInfo;
         const coyBillOfLading = data[0].billOfLading;
         const routes1 = data[0].trips.startStationName;
         const routes2 = data[0].trips.endStationName;
@@ -292,6 +293,7 @@ class ManifestDetails extends React.Component {
           departureTime,
           arrivalTime,
           movonBillOfLading,
+          cashier,
           coyBillOfLading,
           routes: _routes,
           fetching: false,
@@ -420,6 +422,7 @@ class ManifestDetails extends React.Component {
       tripDate: data.trips.tripStartDateTime,
       scanCode: data.scanCode,
       createdAt: data.createdAt,
+      cashier: data.deliveryPersonInfo,
       subParcels: data.subParcels,
       length:data.packageInfo.length,
       declaredValue: data.packageInfo.estimatedValue,
