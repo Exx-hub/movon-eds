@@ -80,7 +80,7 @@ const getHeaderColor = ()=>{
   let color = undefined;
   switch (UserProfile.getBusCompanyTag()) {
     case 'isarog-liner':
-      color = "#1d7ab2"
+      color = "#fff" //"#1d7ab2"
       break;
 
     case 'five-star':
