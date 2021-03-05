@@ -540,6 +540,7 @@ function DltbMatrix(props){
             <MatrixModal 
                 onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
                 visible={matrixModal.visible} 
+                width={900}
                 title={matrixModal.title}>
                     <MatrixModalContainer {...props} />
             </MatrixModal>

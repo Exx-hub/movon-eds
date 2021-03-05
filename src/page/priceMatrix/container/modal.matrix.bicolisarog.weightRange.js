@@ -18,9 +18,12 @@ function MatrixModalContent(props) {
                             <div style={{display:'flex'}}>
                                 <div style={{ marginRight:'2rem', display:'flex', flexDirection:'column', minWidth:'50px', alignItems:'center', justifyContent:'center'}}>
                                    
-                                    <span style={{ color:'orange', fontSize: 17, fontWeight: 'bold',  }}>{e.kilo} kg</span> 
+                                   <Space direction="horizontal">
+                                        <span style={{ color:'orange', fontSize: 17, fontWeight: 'bold',  }}>{e.weight1} - </span> 
+                                        <span style={{ color:'orange', fontSize: 17, fontWeight: 'bold',  }}>{e.weight2}</span>
+                                        <span style={{ color:'orange', fontSize: 14, fontWeight: 'bold',  }}> kg</span>
+                                   </Space>
                                     <span style={{ fontSize: 8, fontWeight: 'bold' }}>Allowable Weight</span> 
-                                    
                                 </div>
                             </div>
                             <div style={{display:'flex'}}>

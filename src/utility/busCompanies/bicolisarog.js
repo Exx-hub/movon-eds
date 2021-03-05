@@ -60,7 +60,10 @@ class BicolIsarog{
                         _value = {..._value, lengthRange}
                     }
                     if(!_value.weightRange && _value.maxAllowedWeight && _value.exceededPerKilo){
-                        let weightRange = [{kilo:_value.maxAllowedWeight, excessRate:_value.exceededPerKilo}]
+                        let weightRange = [
+                            {weight1:1, weight2:_value.maxAllowedWeight, amount:_value.price, kiloRate:0},
+                            {weight1: Number(_value.maxAllowedWeight)+1, weight2:999, amount:0, kiloRate:_value.exceededPerKilo}
+                        ]
                         _value = {..._value, weightRange}
                     }
                     if(!_value.accompaniedBaggage){

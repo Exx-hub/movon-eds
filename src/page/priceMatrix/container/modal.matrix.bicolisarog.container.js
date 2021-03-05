@@ -128,7 +128,17 @@ function BicolIsarogMatrixModalContent(props) {
                                         {...{wrapperCol:1}}
                                         style={{marginBottom:7, marginRight:5}}
                                         {...field}
-                                        name={[field.name, 'kilo']}
+                                        name={[field.name, 'weight1']}
+                                        fieldKey={[field.fieldKey, 'weight1']}
+                                        rules={[{ required: true, message: 'required field' },validate]}>
+                                        <Input type="number" addonAfter="kg(s)" min={0} placeholder="Weight(kg)" />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        {...{wrapperCol:1}}
+                                        style={{marginBottom:7, marginRight:5}}
+                                        {...field}
+                                        name={[field.name, 'weight2']}
                                         fieldKey={[field.fieldKey, 'weight2']}
                                         rules={[{ required: true, message: 'required field' },validate]}>
                                         <Input type="number" addonAfter="kg(s)" min={0} placeholder="Weight(kg)" />
@@ -138,7 +148,18 @@ function BicolIsarogMatrixModalContent(props) {
                                         style={{marginBottom:7, marginRight:5}}
                                         {...{wrapperCol:1}}
                                         {...field}
-                                        name={[field.name, 'excessRate']}
+                                        name={[field.name, 'amount']}
+                                        fieldKey={[field.fieldKey, 'amount']}
+                                        rules={[{ required: true, message: 'required field' },validateAmount]}>
+                                        <Input addonBefore="₱"  min={0} placeholder="Amount" />
+                                    </Form.Item>
+
+
+                                    <Form.Item
+                                        style={{marginBottom:7, marginRight:5}}
+                                        {...{wrapperCol:1}}
+                                        {...field}
+                                        name={[field.name, 'kiloRate']}
                                         fieldKey={[field.fieldKey, 'kiloRate']}
                                         rules={[{ required: true, message: 'required field' },validateAmount]}>
                                         <Input addonBefore="₱"  min={0} placeholder="Kilo Rate(Php)" />
