@@ -10,10 +10,7 @@
         margin:.5rem;
     }
   
-    .date-created{
-        font-size: 1.5em;
-        margin-right: 2rem;
-    }
+    
   
     .scan-code-text{
         margin-top: 0.2rem;
@@ -62,16 +59,19 @@
         margin-top: .5rem;
         margin-left: .5rem;
         margin-bottom: 1rem;
-        margin-right: .5rem;
+        margin-right: 2rem;
   
         .movon-logo{
             height: 100%;
             width: 200px;
-            margin-right: 3rem;
+            // margin-right: 3rem;
             // margin-top: .5rem;
             // margin-left: .5rem;
         }
-  
+        .date-created{
+            font-size: 1.5em;
+            margin-right: 2rem;
+        }
         .partner-logo{
             height: 110%;
             width: 110px;
