@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.7.0(114)'
+        build: '1.7.0(115)'
     },
     environment:"staging",
     changeLogs: `DP-556`
