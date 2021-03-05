@@ -241,7 +241,7 @@ function EditUserProfileModule(props){
           </div>
 
           <div className="main-creds">
-            <div className="profile-text">User Information</div>
+            <div className="profile-text">Change Password</div>
             {/* <div className="item-wrapper">
           <span className="title item-wrapper-custom-text-title">
             Full Name
