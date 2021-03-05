@@ -4,9 +4,9 @@ import { QRCode } from "react-qr-svg";
 import { Row, Col } from "antd";
 import movon from "../../assets/movon3.png";
 import moment from "moment";
-import { modifyName, UserProfile } from "../../utility";
+import { modifyName, UserProfile, getStickerLogoBw } from "../../utility";
 import DltbLogo from '../../assets/dltb-png.png';
-import DltbLogobw from '../../assets/dltb-bw-png.png';
+
 
 function TextItem(props) {
   return (
@@ -68,7 +68,7 @@ const TicketDetails = (props) => {
         </Col>
         <Col span={17} style={{ paddingLeft: ".5rem" }}>
           <Row justify="space-between" className="image-logo-container">
-            <img src={DltbLogobw} className="movon-logo" alt="DltbLogo" />
+            <img src={getStickerLogoBw()} className="movon-logo" alt="Logo" />
             <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
           </Row>
           {parcelInfo.map((e, i) => (
@@ -90,18 +90,21 @@ const TicketDetails = (props) => {
         }}>
           <div style={{
             display: 'flex',
-            width: '30%',
+            width: '100%',
             paddingLeft: '8px',
             marginTop: '1rem',
-            flexDirection: 'column',
-            justifyContent: 'flex-end'
+            flexDirection: 'row',
+            justifyContent: 'space-between'
           }}>
+            <div style={{display:"flex",flexDirection:'column',marginTop:'2rem'}}>
             <div style={{ fontSize: 10, borderTop: "1px solid black" }}>I hereby agree with the Terms and</div>
             <div style={{ fontSize: 10 }}>Conditions of Bicol Isarog TSI.</div>
-          </div>
+            </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: '5px' }}>
             <span style={{ textAlign: 'center' }} className="bottom-destination-text">{endStationName}</span>
             <span className="bottom-blNo-text">BL# <span class="bottom-blNo-num">{billOfLading}</span></span>
+          </div>
+          <div></div>
           </div>
         </Row> :
         <Row style={{ height: '100%', borderTop: "1px dashed gray", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
