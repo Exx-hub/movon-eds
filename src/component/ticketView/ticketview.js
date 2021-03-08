@@ -4,7 +4,7 @@ import { QRCode } from "react-qr-svg";
 import { Row, Col } from "antd";
 import movon from "../../assets/movon3.png";
 import moment from "moment";
-import { modifyName, UserProfile,getStickerLogoBw } from "../../utility";
+import { modifyName, UserProfile, getStickerLogoBw } from "../../utility";
 import { PrintContextConsumer } from "react-to-print";
 
 function TextItem(props) {
@@ -56,7 +56,7 @@ const TicketDetails = (props) => {
             {Boolean(props.spCopy) ? (
               <span className="package-indicator-sp">{props.parcelCount}</span>
             ) : (
-                <div className= "right-text" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <div className="right-text" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <span className="package-indicator">
                     {packageQty} <span className="pkg-text">pkg.</span>
                   </span>
@@ -97,22 +97,24 @@ const TicketDetails = (props) => {
             flexDirection: 'row',
             justifyContent: 'space-between'
           }}>
-            <div style={{display:"flex",flexDirection:'column',marginTop:'2rem'}}>
-            <div style={{ fontSize: 10, borderTop: "1px solid black" }}>I hereby agree with the Terms and</div>
-            <div style={{ fontSize: 10 }}>Conditions of Bicol Isarog TSI.</div>
+            <div style={{ display: "flex", flexDirection: 'column', marginTop: '2rem' }}>
+              <div style={{ fontSize: 10, borderTop: "1px solid black" }}>I hereby agree with the Terms and</div>
+              <div style={{ fontSize: 10 }}>Conditions of Bicol Isarog TSI.</div>
             </div>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: '5px' }}>
-            <span style={{ textAlign: 'center' }} className="bottom-destination-text">{endStationName}</span>
-            <span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
-          </div>
-          <div></div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: '5px' }}>
+              <span style={{ textAlign: 'center' }} className="bottom-destination-text">{endStationName}</span>
+              <span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
+            </div>
+            <div></div>
           </div>
         </Row> :
         <Row style={{ height: '100%', borderTop: "1px dashed gray", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ width: '100%', textAlign: 'center' }}>
-            <span className="bottom-destination-BL-text">{endStationName}</span>
-          </div>
-          <div style={{ width: '100%', textAlign: 'center' }}><span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
+          <div style={{ height:'100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',border:'red 1px solid' }}>
+            <div style={{ width: '100%', textAlign: 'center' }}>
+              <span className="bottom-destination-BL-text">{endStationName}</span>
+            </div>
+            <div style={{ width: '100%', textAlign: 'center' }}><span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
+            </div>
           </div>
         </Row>
       }
@@ -139,7 +141,7 @@ const PCopy = (props) => {
       { title: "Receiver", value: modifyName(recipientName) },
       { title: "Mobile No.", value: recipientPhone },
       { title: "Origin", value: startStationName },
-    
+
     ];
 
     let _view = [];
@@ -182,7 +184,7 @@ const MCopy = (props) => {
           { title: "Receiver", value: modifyName(recipientName) },
           { title: "Mobile No.", value: recipientPhone },
           { title: "Origin", value: startStationName },
-          
+
         ];
 
         let _view = [];
