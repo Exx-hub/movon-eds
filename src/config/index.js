@@ -31,8 +31,8 @@ export const config = {
         deviceType: '3'
     }, 
     version: {
-        environment:"",
-        build: '1.7.0(115)'
+        environment:"staging",
+        build: '1.7.0(116)'
     },
     environment:"staging",
     changeLogs: `DP-556`
