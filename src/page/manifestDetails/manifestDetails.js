@@ -13,6 +13,8 @@ import {
   alterPath,
   modifyName,
   UserProfile,
+  getHeaderColor,
+  getHeaderLogo,
 } from "../../utility";
 import { notification } from "antd";
 
@@ -35,6 +37,7 @@ import {
   Skeleton,
   Space,
 } from "antd";
+import { Link } from "react-router-dom";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -279,6 +282,7 @@ class ManifestDetails extends React.Component {
         const departureTime = date; //moment(date).format("MMM-DD-YYYY");
         const arrivalTime = date; //moment(date).format("MMM-DD-YYYY");
         const movonBillOfLading = data[0].displayId;
+        const cashier = data[0].deliveryPersonInfo;
         const coyBillOfLading = data[0].billOfLading;
         const routes1 = data[0].trips.startStationName;
         const routes2 = data[0].trips.endStationName;
@@ -292,6 +296,7 @@ class ManifestDetails extends React.Component {
           departureTime,
           arrivalTime,
           movonBillOfLading,
+          cashier,
           coyBillOfLading,
           routes: _routes,
           fetching: false,
@@ -420,6 +425,7 @@ class ManifestDetails extends React.Component {
       tripDate: data.trips.tripStartDateTime,
       scanCode: data.scanCode,
       createdAt: data.createdAt,
+      cashier: data.deliveryPersonInfo,
       subParcels: data.subParcels,
       length:data.packageInfo.length,
       declaredValue: data.packageInfo.estimatedValue,
@@ -599,18 +605,8 @@ class ManifestDetails extends React.Component {
   render() {
     return (
       <Layout className="manifest-details-page">
-        <Header className="home-header-view">
-          <Button
-            type="link"
-            onClick={() => {
-              this.props.history.push(alterPath("/manifest/list"));
-            }}
-          >
-            <ArrowLeftOutlined style={{ fontSize: "20px", color: "#fff" }} />
-            <span style={{ fontSize: "20px", color: "#fff" }}>
-              Manifest Details
-            </span>
-          </Button>
+        <Header className="home-header-view" style={{background:getHeaderColor()}}>
+          <Link to="/manifest/list"><img tag="logo" src={getHeaderLogo()} style={{height:120}} /></Link>
 
           {this.state.currentView !== TICKET &&
             this.state.currentView !== PREVIEW && (
