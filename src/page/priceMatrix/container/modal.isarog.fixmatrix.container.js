@@ -50,6 +50,7 @@ function AddFixMatrixModalContent(props) {
                     'declaredValue': (props.data && props.data.declaredValue) || 0,
                     'price': (props.data && props.data.price) || 0,
                     'name': (props.data && props.data.name) || "no-data",
+                    'enablePortersFee': (props.data && props.data.enablePortersFee) || true,
                 }}
             >
 
