@@ -49,6 +49,9 @@ class BicolIsarog{
                 
                 if(temp.matrix && temp.matrix.length > 0){
                     _value = temp.matrix[0]
+
+                    console.log("_value",_value)
+
                     if(!_value.lengthRange && _value.maxAllowedLength && _value.maxAllowedLengthRate){
                         let lengthRange = []
                         _value.maxAllowedLength.forEach(e => {
@@ -71,6 +74,9 @@ class BicolIsarog{
                     }
                     if(!_value.accompaniedBaggageFee){
                         _value.accompaniedBaggageFee = 0
+                    }
+                    if(!_value.portersFee){
+                        _value.portersFee = 30
                     }
                 }
 
@@ -241,11 +247,11 @@ class BicolIsarog{
             dataIndex: 'price',
             key: "price",
         },
-        {
-            title: 'Enable Porters Fee',
-            dataIndex: 'price',
-            key: "price",
-        },
+        // {
+        //     title: 'Enable Porters Fee',
+        //     dataIndex: 'price',
+        //     key: "price",
+        // },
         {
             title: 'Action',
             dataIndex: 'action',
@@ -286,7 +292,7 @@ class BicolIsarog{
         return(<>
             <Table 
                 scroll={{x:true}}
-                style={{minWidth:900}} 
+                style={{width:800}} 
                 bordered={true} 
                 pagination={false} 
                 columns={this.getFixMatrixTableColumn((c)=>callback(c))} 
@@ -307,12 +313,7 @@ class BicolIsarog{
     }
 
     processMatrixObject(val){
-        const matrix = [{
-            declaredValueRate: val.declaredValueRate,
-            lengthRange: val.lengthRange,
-            price: val.price,
-            weightRange: val.weightRange
-        }]
+        const matrix = [{...val}]
         return matrix;
     }
 }

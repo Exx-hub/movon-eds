@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {Collapse,Table,Space,Button,Select, AutoComplete, Modal, notification, Tag} from "antd";
+import {Collapse,Space,Select, AutoComplete, notification} from "antd";
 import {MatrixModal} from '../../component/modal'
 import AddFixMatrixModalContent from  './container/modal.fixmatrix.container'
 import DefaultFixMatrixModalContent from  './container/modal.default.fixmatrix.container'
-import IsarogLinerFixMatrixModalContent from  './container/modal.isarog.fixmatrix.container'
 import MatrixModalContent from  './container/modal.matrix.default.container'
 
 
@@ -18,12 +17,9 @@ import {getBusPartner} from '../../utility/busCompanies'
 import { UserProfile } from "../../utility";
 import MatrixService from "../../service/Matrix";
 import "./priceMatrix.css"
-import { PlusOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 const { Option } = Select;
-const { Column, ColumnGroup } = Table;
-const SHOW_LOG = true;
 
 
 function DltbMatrix(props){
@@ -131,6 +127,9 @@ function DltbMatrix(props){
     }
 
     const updateMatrix = async(val) =>{
+
+        console.log('updateMatrix val',val)
+
         const matrix = busPartner.processMatrixObject(val)
         const index = matrixModal.data.index
         let dataSource = [...busPartner.getMatrixDataSource()];
@@ -420,16 +419,16 @@ function DltbMatrix(props){
                 onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
             break;
 
-            case "isarog-liner":
-                View = (<IsarogLinerFixMatrixModalContent 
-                    {...props}
-                    type={fixPriceModal.type}
-                    okText={fixPriceModal.type === 'delete' ? fixPriceModal.type : "Save" } 
-                    cancelText="Cancel"
-                    data={fixPriceModal.data}
-                    onCancel={()=>setFixPriceModal(e=>({...e, visible:false, data:undefined}))}
-                    onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
-                break;
+            // case "isarog-liner":
+            //     View = (<IsarogLinerFixMatrixModalContent 
+            //         {...props}
+            //         type={fixPriceModal.type}
+            //         okText={fixPriceModal.type === 'delete' ? fixPriceModal.type : "Save" } 
+            //         cancelText="Cancel"
+            //         data={fixPriceModal.data}
+            //         onCancel={()=>setFixPriceModal(e=>({...e, visible:false, data:undefined}))}
+            //         onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
+            //     break;
         
             default:
                 View = (<DefaultFixMatrixModalContent 
@@ -530,6 +529,7 @@ function DltbMatrix(props){
             </Collapse>
             </div>
 
+            {/* Fix Price Matrix Modal */}
             <MatrixModal
                 onCancel={()=>setFixPriceModal(e=>({...e,visible:false, data:undefined}))}
                 visible={fixPriceModal.visible} 
@@ -537,6 +537,7 @@ function DltbMatrix(props){
                 <FixMatrixModalContainer {...props}/>
             </MatrixModal>
 
+            {/* Matrix Modal */}
             <MatrixModal 
                 onCancel={()=>setMatrixModal(e=>({...e, visible:false, data:undefined}))}
                 visible={matrixModal.visible} 
@@ -545,6 +546,7 @@ function DltbMatrix(props){
                     <MatrixModalContainer {...props} />
             </MatrixModal>
 
+            {/* Lenght Ragne Modal */}
             <MatrixModal 
                 onCancel={()=>setLenghtRangeModal(e=>({...e, visible:false, data:undefined}))}
                 width={500}
@@ -553,6 +555,7 @@ function DltbMatrix(props){
                    <MatrixModalLenghtRange {...props} />
             </MatrixModal>
 
+            {/* Weight Ragne Modal */}
             <MatrixModal 
                 width={500}
                 onCancel={()=>setWeightRangeModal(e=>({...e, visible:false, data:undefined}))}
