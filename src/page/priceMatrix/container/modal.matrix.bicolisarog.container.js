@@ -69,8 +69,7 @@ function BicolIsarogMatrixModalContent(props) {
                     accompaniedBaggage : props.data.accompaniedBaggage || 0,
                     accompaniedBaggageFee : props.data.accompaniedBaggageFee || 0,
                     declaredValueRate : props.data.declaredValueRate || 0,
-                    price : props.data.price || 0,
-                    portersFee: props.data.portersFee || 0
+                    price : props.data.price || 0
                 }}
             >
 
@@ -105,13 +104,6 @@ function BicolIsarogMatrixModalContent(props) {
                 <Form.Item
                     label="Accompanied Baggage Fee"
                     name="accompaniedBaggageFee"
-                    rules={[{ required: true, message: 'This is required field!' }]}>
-                    <InputNumber style={{width:'100%'}} min={0}/>
-                </Form.Item>
-
-                <Form.Item
-                    label="Porters Fee"
-                    name="portersFee"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber style={{width:'100%'}} min={0}/>
                 </Form.Item>

@@ -50,8 +50,6 @@ class BicolIsarog{
                 if(temp.matrix && temp.matrix.length > 0){
                     _value = temp.matrix[0]
 
-                    console.log("_value",_value)
-
                     if(!_value.lengthRange && _value.maxAllowedLength && _value.maxAllowedLengthRate){
                         let lengthRange = []
                         _value.maxAllowedLength.forEach(e => {
@@ -74,9 +72,6 @@ class BicolIsarog{
                     }
                     if(!_value.accompaniedBaggageFee){
                         _value.accompaniedBaggageFee = 0
-                    }
-                    if(!_value.portersFee){
-                        _value.portersFee = 30
                     }
                 }
 
@@ -247,11 +242,11 @@ class BicolIsarog{
             dataIndex: 'price',
             key: "price",
         },
-        // {
-        //     title: 'Enable Porters Fee',
-        //     dataIndex: 'price',
-        //     key: "price",
-        // },
+        {
+            title: 'Enable Porters Fee',
+            dataIndex: 'price',
+            key: "price",
+        },
         {
             title: 'Action',
             dataIndex: 'action',

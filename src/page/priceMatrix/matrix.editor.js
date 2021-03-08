@@ -3,6 +3,7 @@ import {Collapse,Space,Select, AutoComplete, notification} from "antd";
 import {MatrixModal} from '../../component/modal'
 import AddFixMatrixModalContent from  './container/modal.fixmatrix.container'
 import DefaultFixMatrixModalContent from  './container/modal.default.fixmatrix.container'
+import IsarogLinerFixMatrixModalContent from './container/modal.isarog.fixmatrix.container'
 import MatrixModalContent from  './container/modal.matrix.default.container'
 
 
@@ -419,16 +420,16 @@ function DltbMatrix(props){
                 onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
             break;
 
-            // case "isarog-liner":
-            //     View = (<IsarogLinerFixMatrixModalContent 
-            //         {...props}
-            //         type={fixPriceModal.type}
-            //         okText={fixPriceModal.type === 'delete' ? fixPriceModal.type : "Save" } 
-            //         cancelText="Cancel"
-            //         data={fixPriceModal.data}
-            //         onCancel={()=>setFixPriceModal(e=>({...e, visible:false, data:undefined}))}
-            //         onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
-            //     break;
+            case "isarog-liner":
+                View = (<IsarogLinerFixMatrixModalContent 
+                    {...props}
+                    type={fixPriceModal.type}
+                    okText={fixPriceModal.type === 'delete' ? fixPriceModal.type : "Save" } 
+                    cancelText="Cancel"
+                    data={fixPriceModal.data}
+                    onCancel={()=>setFixPriceModal(e=>({...e, visible:false, data:undefined}))}
+                    onSubmit={(val,data)=>updateFixPriceFiveStartMatrix(val,data)}/>)
+                break;
         
             default:
                 View = (<DefaultFixMatrixModalContent 
