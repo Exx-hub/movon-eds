@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, Button, Space} from "antd";
+import {Table, Button, Space, Tag} from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 
 class BicolIsarog{
@@ -32,8 +32,15 @@ class BicolIsarog{
     }
 
     setFixMatrix(fixMatrix){
-        console.info('fixMatrix',fixMatrix)
-        this.fixMatrix = fixMatrix;
+       
+        let _fixMatrix = fixMatrix.map(e=>{
+            const enablePortersFee = e.enablePortersFee !== undefined ? Boolean(e.enablePortersFee) : Boolean(true) 
+            return {
+                ...e,
+                enablePortersFee
+            }
+        })
+        this.fixMatrix = _fixMatrix;
     }
 
     setMatrixDataSource(dataSource){
@@ -247,9 +254,8 @@ class BicolIsarog{
             title: 'Enable Porters Fee',
             dataIndex: 'enablePortersFee',
             key: "enablePortersFee",
-            render: (t)=>{
-                console.info('enablePortersFee',t)
-                return <span>{t}</span>
+            render: (val)=>{
+                return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Enabled" : "Disabled") : "Disabled" }`}</Tag>)
             }
         },
         {
