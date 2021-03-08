@@ -109,7 +109,7 @@ const TicketDetails = (props) => {
           </div>
         </Row> :
         <Row style={{ height: '100%', borderTop: "1px dashed gray", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ height:'100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',border:'red 1px solid' }}>
+          <div style={{ height:'100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
             <div style={{ width: '100%', textAlign: 'center' }}>
               <span className="bottom-destination-BL-text">{endStationName}</span>
             </div>
