@@ -32,6 +32,7 @@ class BicolIsarog{
     }
 
     setFixMatrix(fixMatrix){
+        console.info('fixMatrix',fixMatrix)
         this.fixMatrix = fixMatrix;
     }
 
@@ -244,8 +245,12 @@ class BicolIsarog{
         },
         {
             title: 'Enable Porters Fee',
-            dataIndex: 'price',
-            key: "price",
+            dataIndex: 'enablePortersFee',
+            key: "enablePortersFee",
+            render: (t)=>{
+                console.info('enablePortersFee',t)
+                return <span>{t}</span>
+            }
         },
         {
             title: 'Action',

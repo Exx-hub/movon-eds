@@ -149,6 +149,8 @@ function DltbMatrix(props){
 
     const updateFixPriceFiveStartMatrix = (values, data) =>{
 
+        console.info("updateFixPriceFiveStartMatrix", values)
+
         let _fixMatrix = undefined;
         switch (data.type) {
             case 'add':
