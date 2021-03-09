@@ -886,18 +886,14 @@ class CreateParcel extends React.Component {
     let decValue =  Number(declaredValue.value || 0) 
 
     if((Number(type.value) === 3)){
-      console.info('passsss=====>>>>33333')
       if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight) || isNull(decValue)) {
         return
       }
     }else{
-      console.info('passsss=====>>>>444444')
       if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight)) {
         return
       }
     }
-
-    console.info('passsss=====>>>>')
 
     ParcelService.getDynamicPrice(
       busCompanyId,
@@ -910,7 +906,6 @@ class CreateParcel extends React.Component {
       parcel_length
     )
       .then((e) => {
-        console.info('computation',e)
         const { data, success, errorCode } = e.data;
         if (errorCode) {
           this.handleErrorNotification(errorCode);
@@ -922,9 +917,6 @@ class CreateParcel extends React.Component {
   }
 
   dltbFixPriceComputation = () => {
-    console.info("dltbFixPriceComputation ===++>>")
-    console.info("dltbFixPriceComputation ===++>>")
-    console.info("dltbFixPriceComputation ===++>>")
     let d = { ...this.state.details }
     const options = {
       origin: UserProfile.getAssignedStationId(),
@@ -937,7 +929,6 @@ class CreateParcel extends React.Component {
     }
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
-        console.info("ParcelService.getDefaultFixMatrixComputation",e)
         const { data, errorCode } = e.data;
         if (!errorCode) {
 
@@ -978,9 +969,6 @@ class CreateParcel extends React.Component {
   }
 
   onInputChange = (name, value) => {
-
-    console.info('onInputChange', name, value)
-
     let details = { ...this.state.details };
     let state = {...this.state}
 
@@ -1308,6 +1296,7 @@ class CreateParcel extends React.Component {
       details.additionNote = additionNote;
 
       switch (UserProfile.getBusCompanyTag()) {
+        case "isarog-liner":
         case "dltb":
         case "five-star":
           let isFixMatrix = details.fixMatrix.value && details.fixMatrix.value !== 'none';
@@ -1321,6 +1310,9 @@ class CreateParcel extends React.Component {
           let total = basePrice + declaredValueFee + weightFee + lengthFee 
 
           //discount === "ex: Senior Citizen"
+          if(value.toLowerCase() === 'none') {
+            this.requestComputation()
+          }
           if(value.toLowerCase() !== 'none'){
             let option = details.discount.options.find((e) => e.name === value);
             const rate = Number(option.rate) / 100;
@@ -1334,6 +1326,7 @@ class CreateParcel extends React.Component {
           }
 
           total += systemFee; 
+          total += Number(this.state.portersFee);
 
           details.totalShippingCost.value = Number(total).toFixed(2);
           state.discountFee = Number(discountFee).toFixed(2)
@@ -1342,8 +1335,7 @@ class CreateParcel extends React.Component {
           break;
       
         default:
-          this.setState({ ...state, details },()=>this.updateTotalShippingCost());
-          break;
+          return
       }
       return;
     }
@@ -1783,7 +1775,6 @@ class CreateParcel extends React.Component {
     ParcelService.getDefaultComputation(option)
       .then(e => {
         const { data, errorCode } = e.data;
-        console.info(" ParcelService.getDefaultComputation",e)
         if (!errorCode) {
           const {
             totalShippingCost,
@@ -1842,10 +1833,6 @@ class CreateParcel extends React.Component {
   }
 
   computeV2 = () => {
-    console.info('computeV2 passs========>>>')
-    console.info('computeV2 passs========>>>')
-    console.info('computeV2 passs========>>>')
-    console.info('computeV2 passs========>>>')
     const { declaredValue, packageWeight, sticker_quantity, length, destination, fixMatrix } = this.state.details;
 
     switch (UserProfile.getBusCompanyTag()) {
@@ -1955,6 +1942,7 @@ class CreateParcel extends React.Component {
         isFree = Boolean(Number(discount.rate) === 100)
         discountFee = total * (Number(discount.rate) / 100);
         if(!isFree){
+          alert('pasok')
           total -= discountFee;
         }
       }
@@ -1983,13 +1971,13 @@ class CreateParcel extends React.Component {
       });
 
     } else {
-      console.info('passssssst222222222')
       //compute for matrix;
       this.computePrice((e) => {
         if (e) {
           let basePrice = Number(e.totalCost);
           const declaredValueFee = Number(e.declaredRate);
           const lengthFee = Number(e.lengthRate);
+          const weightFee = Number(e.weightFee)
           let total = 0;
 
           if(quantity > 1){
@@ -1998,7 +1986,7 @@ class CreateParcel extends React.Component {
             lengthFee = lengthFee * quantity;
           }
 
-          total = basePrice + declaredValueFee + lengthFee;
+          total = weightFee + declaredValueFee + lengthFee;
 
           if (discount) {
             isFree = Boolean(Number(discount.rate) === 100)

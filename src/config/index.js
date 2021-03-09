@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.7.1(118)'
+        build: '1.7.2(119)'
     },
     environment:"",
-    changeLogs: `DP-556`
+    changeLogs: `Hotfix for BI prod discount issue`
 }
 
 export const ERROR_CODES = {
