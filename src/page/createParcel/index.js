@@ -932,7 +932,8 @@ class CreateParcel extends React.Component {
       declaredValue: d.declaredValue.value || 0,
       parcelCount: d.sticker_quantity.value,
       fixMatrixItemName: d.fixMatrix.value,
-      quantity: d.quantity.value
+      quantity: d.quantity.value,
+      additionalFee: d.additionalFee.value
     }
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
@@ -947,22 +948,6 @@ class CreateParcel extends React.Component {
             portersFee,
             computeTotalShippingCost
           } = data
-
-          // const _systemFee = Number(data.systemFee || 0);
-          // const additionalFee = Number(d.additionalFee.value || 0);
-
-          // let _declaredValueFee = Number(declaredValueFee || 0);
-          // let total = Number(data.computeTotalShippingCost || 0);
-          // let _basePrice = Number(basePrice || 0);
-          // let quantity = Number(d.quantity.value || 1)
-
-          // if (quantity > 1) {
-          //   _declaredValueFee = _declaredValueFee * quantity;
-          //   _basePrice = _basePrice * quantity;
-          // }
-
-          //total = _basePrice + _declaredValueFee;
-          //total += additionalFee + _systemFee
 
           d.totalShippingCost.value = computeTotalShippingCost;
           d.systemFee.value = systemFee;
@@ -993,6 +978,8 @@ class CreateParcel extends React.Component {
   }
 
   onInputChange = (name, value) => {
+
+    console.info('onInputChange', name, value)
 
     let details = { ...this.state.details };
     let state = {...this.state}
