@@ -734,6 +734,7 @@ function ShowDltbBreakDown(props){
       </>)
     }else{
       view = (<>
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
         <TextContainer title="Weight Fee" value={translateNumber(weightFee)} /> 
         <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} /> 
         <TextContainer title="Handling Fee" value={translateNumber(handlingFee)} /> 

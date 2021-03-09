@@ -1802,7 +1802,6 @@ class CreateParcel extends React.Component {
 
           const _lengthFee = Number(lengthFee || 0)
           const _weightFee = Number(weightFee || 0)
-          const _handlingFee = Number(handlingFee || 0)
           const _additionFee = Number(additionalFee || 0)
           const _systemFee = Number(systemFee || 0)
           const _declaredValueFee = Number(declaredValueFee || 0)
@@ -1829,7 +1828,7 @@ class CreateParcel extends React.Component {
             portersFee,
             insuranceFee,
             declaredValueFee,
-            handlingFee: _handlingFee,
+            handlingFee,
             lengthFee: _lengthFee.toFixed(2),
             weightFee:_weightFee.toFixed(2),
             details: _data,
