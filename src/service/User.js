@@ -57,6 +57,18 @@ const User = {
                 staffId, newPassword
             }
         })
+    },
+    updateCredential : ({staffId, newPassword, firstName, lastName, phoneNumber}) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/home/update/update-credential`,
+            headers: {
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : UserProfile.getToken()
+            },
+            data:{staffId, newPassword, firstName, lastName, phoneNumber}
+        })
     }
 }
 

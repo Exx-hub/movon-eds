@@ -95,7 +95,7 @@ function ViewUserProfileModule(props) {
   };
   return (
     <Layout className="about-main">
-      <Header className="home-header-view" style={{background:getHeaderColor()}}>
+      <Header className="home-header-view" style={{ background: getHeaderColor() }}>
         <div>
           <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
         </div>
@@ -108,10 +108,10 @@ function ViewUserProfileModule(props) {
                   type="link"
                   onClick={(e) => e.preventDefault()}
                 >
-                  <div style={{color:getCashierTextColor()}}>
-                  Hi {userProfileObject.getUser().personalInfo.firstName}!
+                  <div style={{ color: getCashierTextColor() }}>
+                    Hi {userProfileObject.getUser().personalInfo.firstName}!
                 <UserOutlined style={{ fontSize: "24px" }} />
-                </div>
+                  </div>
                 </Button>
               </Dropdown>
             </div>
@@ -136,27 +136,32 @@ function ViewUserProfileModule(props) {
             <TextWrapper title="Phone Number" value={phone.number} />
           </div>
           <div className="creds">
-            <TextWrapper title="User Name" value={displayId} />
-            <TextWrapper title="Password" value=
-            {
-              <div className="change-pass">
-                 <div>********</div>
-                <div>{displayPassword}</div>
-                <Link to="/user-profile/edit">Change Password</Link>
+            <TextWrapper title="User Name" value=
+              {<div className="username-edit">
+              <div>{displayId}</div>
+                <div className="button-wrapper-view">
+                  <Button className="button-edit"
+                    type="primary"
+                    shape="square"
+                    size="large"
+                    onClick={() => props.history.push(alterPath('/user-profile/UserEdit'))}>
+                    Edit
+                  </Button>
+                </div>
               </div>
-            } 
+              } />
+            <TextWrapper title="Password" value=
+              {
+                <div className="change-pass">
+                  <div>********</div>
+                  <div>{displayPassword}</div>
+                  <Link to="/user-profile/edit">Change Password</Link>
+                </div>
+              }
             />
-             
+
           </div>
-          {/* <div className="button-wrapper-view">
-          <Button className="button-edit"
-            type="primary"
-            shape="round"
-            size="large"
-            onClick={()=>props.history.push(alterPath('/user-profile/edit'))}>
-            Edit
-          </Button>
-        </div> */}
+
 
         </div>
 
