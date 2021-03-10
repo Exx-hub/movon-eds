@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.7.1(119)'
+        build: '1.7.1(120)'
     },
-    environment:"",
-    changeLogs: `Hotfix for BI prod discount issue`
+    environment:"staging",
+    changeLogs: `updated cashier name in create parcel page`
 }
 
 export const ERROR_CODES = {
