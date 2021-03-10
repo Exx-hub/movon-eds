@@ -34,8 +34,8 @@ export const config = {
         environment:"staging",
         build: '1.7.1(119)'
     },
-    environment:"staging",
-    changeLogs: `DP-556`
+    environment:"",
+    changeLogs: `Hotfix for BI prod discount issue`
 }
 
 export const ERROR_CODES = {
