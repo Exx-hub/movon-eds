@@ -128,10 +128,9 @@ function DltbMatrix(props){
     }
 
     const updateMatrix = async(val) =>{
-
-        console.log('updateMatrix val',val)
-
         const matrix = busPartner.processMatrixObject(val)
+        console.log('matrix',matrix)
+
         const index = matrixModal.data.index
         let dataSource = [...busPartner.getMatrixDataSource()];
         let item = dataSource[index];
