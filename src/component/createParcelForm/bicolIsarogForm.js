@@ -87,7 +87,9 @@ function BicolIsarogForm(props) {
   } = props.priceDetails
 
 
-  const enableInterConnection = props.enableInterConnection;
+  //temporary disble this features
+  const enableInterConnection = false //props.enableInterConnection;
+  
   const _temList = destination.options.map((e) => e.name);
   const [tempList, setTempList] = React.useState(_temList);
 

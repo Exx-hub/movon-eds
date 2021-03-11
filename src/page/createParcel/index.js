@@ -931,6 +931,7 @@ class CreateParcel extends React.Component {
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
         const { data, errorCode } = e.data;
+        console.info('getDefaultFixMatrixComputation',e)
         if (!errorCode) {
 
           const {
@@ -939,6 +940,7 @@ class CreateParcel extends React.Component {
             basePrice,
             portersFee,
             additionalFee,
+            discountFee,
             computeTotalShippingCost
           } = data
 
@@ -946,6 +948,7 @@ class CreateParcel extends React.Component {
           d.systemFee.value = systemFee;
 
           this.setState({
+            discountFee,
             declaredValueFee,
             isFixedPrice: true,
             basePrice,
@@ -975,31 +978,6 @@ class CreateParcel extends React.Component {
     let details = { ...this.state.details };
     let state = {...this.state}
 
-    // if (name === "declaredValue") {
-    //   switch (UserProfile.getBusCompanyTag()) {
-    //       case 'dltb':
-    //       case 'five-star':
-    //       break;
-
-    //     default:
-    //       const packageInsurance = { ...details.packageInsurance };
-    //       if (details.fixMatrix.value && details.fixMatrix.value !== "none") {
-    //         let option = details.fixMatrix.options.find(
-    //           (e) => e.name === details.fixMatrix.value
-    //         );
-    //         if (option) {
-    //           let declaredValue = Number(option.declaredValue);
-    //           let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
-    //           packageInsurance.value = Number(newVal).toFixed(2);
-    //         }
-    //       } else {
-    //         packageInsurance.value = 0;
-    //       }
-    //       details = { ...details, ...{ packageInsurance } };
-    //       break;
-    //   }
-    // }
-
     let item = {
       ...details[name],
       ...{ value, accepted: true, hasError: false },
@@ -1009,13 +987,6 @@ class CreateParcel extends React.Component {
 
       
       switch (UserProfile.getBusCompanyTag()) {
-        // case 'isarog-liner':
-        //   if (name === 'declaredValue' || name === "sticker_quantity" || name === "length" || name === "quantity" || name === "packageWeight") {
-        //     console.info('passss=====>>>...11111')
-        //     this.updateTotalShippingCost();
-        //   }
-        //   break;
-
         case "isarog-liner": 
         case "five-star":
         case "dltb":
@@ -1302,49 +1273,6 @@ class CreateParcel extends React.Component {
           this.fixPriceComputation()
         }
       });
-
-      // switch (UserProfile.getBusCompanyTag()) {
-      //   case "isarog-liner":
-      //   case "dltb":
-      //   case "five-star":
-      //     let isFixMatrix = details.fixMatrix.value && details.fixMatrix.value !== 'none';
-      //     let basePrice = Number(state.basePrice || 0);
-      //     let systemFee = Number(details.systemFee.value || 0)
-      //     let declaredValueFee = Number(state.declaredValueFee || 0)
-      //     let weightFee = Number(state.weightFee || 0);
-      //     let lengthFee = Number(state.lengthFee || 0);
-      //     let discountFee = 0; 
-          
-      //     let total = basePrice + declaredValueFee + weightFee + lengthFee 
-
-      //     //discount === "ex: Senior Citizen"
-      //     if(value.toLowerCase() === 'none') {
-      //       this.requestComputation()
-      //     }
-      //     if(value.toLowerCase() !== 'none'){
-      //       let option = details.discount.options.find((e) => e.name === value);
-      //       const rate = Number(option.rate) / 100;
-      //       if(Boolean(isFixMatrix)){
-      //         discountFee = basePrice * rate
-      //         total = basePrice - discountFee;
-      //       }else{
-      //         discountFee = total * rate
-      //         total -= discountFee;
-      //       }
-      //     }
-
-      //     total += systemFee; 
-      //     total += Number(this.state.portersFee);
-
-      //     details.totalShippingCost.value = Number(total).toFixed(2);
-      //     state.discountFee = Number(discountFee).toFixed(2)
-      //     this.setState({ ...state, details });
-
-      //     break;
-      
-      //   default:
-      //     return
-      // }
       return;
     }
 
