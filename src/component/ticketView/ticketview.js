@@ -75,7 +75,7 @@ const TicketDetails = (props) => {
             <TextItem key={i} title={e.title} value={e.value} />
           ))}
           {UserProfile.getBusCompanyTag() === 'dltb' &&
-            <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {cashier.deliveryPersonName}</div>}
+            <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {cashier}</div>}
         </Col>
       </Row>
       { !Boolean(props.spCopy) && UserProfile.getBusCompanyTag() === 'isarog-liner' ?

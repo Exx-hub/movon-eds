@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.7.1(121)'
+        build: '1.7.3(122)'
     },
     environment:"staging",
     changeLogs: `updated cashier name in create parcel page`
