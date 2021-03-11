@@ -926,7 +926,7 @@ class CreateParcel extends React.Component {
       fixMatrixItemName: d.fixMatrix.value,
       quantity: d.quantity.value,
       additionalFee: d.additionalFee.value,
-      discountName: d.discount.value
+      discountName : (d.discount.value && d.discount.value.toLowerCase()) || 'none'
     }
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
@@ -1683,7 +1683,7 @@ class CreateParcel extends React.Component {
     const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
     const endStation = selectedOption.endStation || undefined;
     const startStation = this.userProfileObject.getAssignedStationId();
-    const discountName = discount.value
+    const discountName = (discount.value && discount.value.toLowerCase()) || 'none'
 
     if (!endStation || !startStation)
       return
