@@ -425,7 +425,7 @@ class ManifestDetails extends React.Component {
       tripDate: data.trips.tripStartDateTime,
       scanCode: data.scanCode,
       createdAt: data.createdAt,
-      cashier: data.deliveryPersonInfo,
+      cashier: data.deliveryPersonInfo.deliveryPersonName,
       subParcels: data.subParcels,
       length:data.packageInfo.length,
       declaredValue: data.packageInfo.estimatedValue,
