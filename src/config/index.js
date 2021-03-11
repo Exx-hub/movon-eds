@@ -31,10 +31,10 @@ export const config = {
         deviceType: '3'
     }, 
     version: {
-        environment:"staging",
+        environment:"",
         build: '1.7.3(122)'
     },
-    environment:"staging",
+    environment:"",
     changeLogs: `updated cashier name in create parcel page`
 }
 
