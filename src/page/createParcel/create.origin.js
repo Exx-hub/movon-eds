@@ -113,6 +113,7 @@ const getReviewDetails = (state) => {
     additionalNote: state.details.additionNote.value,
     billOfLading: state.billOfLading,
     checkIn: state.checkIn,
+    cashier:"ronnie"
   };
 };
 

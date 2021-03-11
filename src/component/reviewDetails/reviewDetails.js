@@ -16,89 +16,9 @@ const InputBox = (props) =>{
     </div>
 }
 
-const sReviewDetails = (props) =>{
-
-    const{
-        packageName,
-        packageWeight,
-        packageQty,
-        packageImages,
-        recipientName,
-        recipientEmail,
-        recipientPhone,
-        senderName,
-        senderEmail,
-        senderPhone,
-        convenienceFee,
-        insuranceFee,
-        totalPrice,
-        additionalNote,
-        billOfLading
-    }=props.value
-
-    return <div className="component-review-details">
-         <div className="parcel-image-container">
-             {
-                 packageImages.map((e,i)=>(<img key={i} className="img-parcel" src={e} alt="img-parcel"/>))
-             }
-        </div>
-
-        <div className="container-border-box">
-            <Row>
-                <Col span={12}>
-                    <div style={{marginRight:'.5rem'}}>
-                        <InputBox title="Package Name:" value={packageName}/>
-                        <InputBox title="Parcel Count:" value={packageQty}/>
-                        <InputBox title="Weight" value={packageWeight}/>
-                        <InputBox title="System Fee" value={convenienceFee}/>
-                    </div>
-                </Col>
-                <Col span={12}>
-                    <div style={{marginLeft:'.5rem'}}>
-                        <InputBox title="Insurance Fee" value={insuranceFee}/>
-                        <InputBox title="Total Shipping Cost" value={totalPrice} />
-                        <InputBox title="Additional Note:" value={additionalNote}/>
-                        {
-                            !props.viewMode && billOfLading ?
-                            <>
-                                <span>Bill of Lading*</span>
-                                <InputView 
-                                    onChange={props.onChange}
-                                    value={billOfLading.value}
-                                    name={billOfLading.name}
-                                    accepted={billOfLading.accepted}
-                                    isRequired={billOfLading.isRequired}
-                                    errorMessage="Bill of Lading is required!"
-                                />
-                            </> :
-                            <InputBox title="Bill of Lading:" value={billOfLading}/>
-                        }
-                    </div>
-                </Col>
-            </Row>
-        </div>
-
-        <Row>
-            <Col span={12}>
-                <div className="container-border-box sender">
-                    <InputBox title="Sender Name:" value={senderName}/>
-                    <InputBox title="Sender Number:" value={senderPhone}/>
-                    <InputBox title="Sender Email" value={senderEmail}/>
-                </div>
-            </Col>
-            <Col span={12}>
-                <div className="container-border-box receiver">
-                    <InputBox title="Receiver Name:" value={recipientName}/>
-                    <InputBox title="Receiver Number:" value={recipientPhone}/>
-                    <InputBox title="Receiver Email" value={recipientEmail}/>
-                </div>
-            </Col>
-        </Row>
-
-    </div>
-}
-
 export function ReviewDetails(props){
+
+    console.log('ReviewDetails------>>>',props)
 
     return(<div className="preview-details">
         <Container title="Package Information">
@@ -146,6 +66,7 @@ function PackageInformationSection(props){
             <TextContainer label="Receiver Phone No" value={props.value.recipientPhone || 'recipientPhone'} />
             { props.value.recipientEmail && <TextContainer label="Receiver Email" value={props.value.recipientEmail || ''} />}
             <br/>
+            <TextContainer label="Cashier" value={props.value.cashier || 'no assigned cashier'} />
         </div>
     </div>)
 }

@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.7.2(119)'
+        build: '1.7.3(120)'
     },
     environment:"",
     changeLogs: `Hotfix for BI prod discount issue`

@@ -135,7 +135,7 @@ const getReviewDetails = (state) => {
     additionalFee: state.details.additionalFee.value || 0,
     discountFee: state.discountFee || 0,
     basePrice: state.basePrice || 0,
-
+    cashier:UserProfile.getPersonFullName(),
     type:'create'
   };
 };
@@ -181,7 +181,7 @@ const parceResponseData = (data) => {
     scanCode: data.scanCode,
     createdAt: data.createdAt,
     subParcels: data.subParcels,
-    cashier: UserProfile.credential.user.personalInfo.fullName,
+    cashier: data.deliveryPersonInfo.deliveryPersonName,
   };
 };
 
