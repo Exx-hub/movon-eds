@@ -931,7 +931,6 @@ class CreateParcel extends React.Component {
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
         const { data, errorCode } = e.data;
-        console.info('getDefaultFixMatrixComputation',e)
         if (!errorCode) {
 
           const {
@@ -1701,7 +1700,6 @@ class CreateParcel extends React.Component {
     ParcelService.getDefaultComputation(option)
       .then(e => {
         const { data, errorCode } = e.data;
-        console.info("getDefaultComputation",e)
         if (!errorCode) {
           const {
             totalShippingCost,

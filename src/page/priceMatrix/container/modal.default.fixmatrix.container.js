@@ -4,8 +4,6 @@ import FooterModal from './modal.footer'
 
 function AddFixMatrixModalContent(props) {
 
-    console.log('props xxxx', props)
-
     const onFinish = values => {
         let index = -1
         try {

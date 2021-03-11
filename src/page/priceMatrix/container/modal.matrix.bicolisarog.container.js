@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input, InputNumber, Space } from "antd";
+import { Button, Form, Input, InputNumber } from "antd";
 import FooterModal from './modal.footer'
-import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { prettyDOM } from "@testing-library/react";
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function BicolIsarogMatrixModalContent(props) {
-
-    console.info('BicolIsarogMatrixModalContent', props)
 
     const onFinish = values => {
         props.onSubmit(values, null)

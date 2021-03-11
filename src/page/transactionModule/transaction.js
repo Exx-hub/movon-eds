@@ -107,7 +107,6 @@ class Transaction extends React.Component {
       }
     }) 
     .catch(e=>{
-      console.log('[transaction module] error: ',e);
       this.setState({fetching:false})
     })
   }

@@ -133,7 +133,6 @@ class SearchModule extends React.Component {
     if (remarks) {
       TransactionService.voidParcel(record._id, remarks)
         .then(e => {
-          console.log("handleVoid e", e)
           const { errorCode } = e.data;
           if (errorCode) {
             this.handleErrorNotification(errorCode);
@@ -155,7 +154,6 @@ class SearchModule extends React.Component {
   };
 
   doSearch = (el) => {
-    console.info('doSearch', el)
     const toSearch = el.toLowerCase();
     this.setState({ page: 1, searchValue: toSearch, fetching: true }, () =>
       this.fetchParcelList()
@@ -165,7 +163,6 @@ class SearchModule extends React.Component {
   fetchParcelList = () => {
     Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue)
       .then((e) => {
-        console.info('fetchParcelList', e)
         const { data, errorCode } = e.data;
         if (errorCode) {
           this.setState({ fetching: false })
@@ -193,7 +190,6 @@ class SearchModule extends React.Component {
         this.setState({ fetching: false, parcelList, totalRecords: data.pagination.totalRecords });
       })
       .catch(e => {
-        console.log('[search module] error: ', e);
         this.setState({ fetching: false })
       })
   };
@@ -230,13 +226,11 @@ class SearchModule extends React.Component {
   }
 
   onPositiveCheckIn = () => {
-    console.info('selectedRecord', this.state.checkInModal)
     const data = this.state.checkInModal.data
     const parcelId = data._id;
     ManifestService.checkInByParcel(parcelId)
       .then(e => {
         const { data } = e.data
-        console.info('checkInByParcel',e)
         let parcelList = [...this.state.parcelList]
         if (data) {
           let index = parcelList.findIndex(e => e._id === data._id)

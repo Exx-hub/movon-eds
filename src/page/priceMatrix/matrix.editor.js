@@ -73,7 +73,6 @@ function DltbMatrix(props){
     })
 
     useEffect(()=>{
-        console.info('matrix', props)
         const originList = [...props.data.originList]
         setState(e=>({...e, 
             tempOriginList: originList, 
@@ -89,7 +88,6 @@ function DltbMatrix(props){
 
     const parsePriceMatrix = (result) =>{
         const{success, data, errorCode}=result.data;
-        console.info('result',result)
         if(!errorCode){
             let fixMatrix = [];
             let matrix = []
@@ -128,9 +126,6 @@ function DltbMatrix(props){
     }
 
     const updateMatrix = async(val) =>{
-
-        console.log('updateMatrix val',val)
-
         const matrix = busPartner.processMatrixObject(val)
         const index = matrixModal.data.index
         let dataSource = [...busPartner.getMatrixDataSource()];
@@ -148,9 +143,6 @@ function DltbMatrix(props){
     }
 
     const updateFixPriceFiveStartMatrix = (values, data) =>{
-
-        console.info("updateFixPriceFiveStartMatrix", data,  values)
-
         let _fixMatrix = undefined;
         switch (data.type) {
             case 'add':
@@ -191,7 +183,6 @@ function DltbMatrix(props){
         switch(name){
             case "startName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
-                console.info('tempDestination',response)
                 busPartner.parseMatrixDataSource(response)
                 setState(e=>{
                     return{
@@ -205,7 +196,6 @@ function DltbMatrix(props){
 
             case "fixMatrixOriginName" :   
                 response = await props.data.getAllRoutesByOrigin(val);
-                console.info('fixMatrixOriginName',response)
                 setState(e=>({...e,
                     fixMatrixOriginId:val,
                     fixMatrixOriginName: getListName(val, props.data.originList),
@@ -218,7 +208,6 @@ function DltbMatrix(props){
             case "fixMatrixDestinationName" :   
                 const result = await props.data.getMatrix(state.fixMatrixOriginId, val)
                 const tempFixMatrixObject = parsePriceMatrix(result);
-                console.info("tempFixMatrixObject", tempFixMatrixObject)
                 busPartner.setPriceMatrix(tempFixMatrixObject)
                 setState(e=>({
                     ...e,

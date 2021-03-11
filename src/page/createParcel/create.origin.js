@@ -1137,7 +1137,6 @@ class CreateParcel extends React.Component {
   };
 
   onSelectChange = async (value, name) => {
-    console.info('onSelectChange',value, name)
     let details = { ...this.state.details };
 
     if (name === "connectingCompany") {
@@ -1419,10 +1418,8 @@ class CreateParcel extends React.Component {
   };
 
   onTypeChange = (value) => {
-    console.info('ooasssssss=====>>>>.')
     const details = { ...this.state.details };
     const type = { ...details.type };
-    console.info("value",value)
     type.value = value;
     details.type = type;
     this.setState({details});
@@ -1452,9 +1449,6 @@ class CreateParcel extends React.Component {
                 lengthRate={this.state.lengthRate}
                 details={this.state.details}
                 onTypeChange={(e) => {
-                  console.info('------onTypeChange------')
-                  console.info('------onTypeChange------')
-                  console.info('------onTypeChange------')
                   this.onTypeChange(e.target.value)
                 }}
                 onSelectChange={(value, name) =>

@@ -13,9 +13,6 @@ function MatrixModalContent(props){
         console.log('Failed:', errorInfo);
       };
 
-    //   useEffect(()=>{
-    //       console.log('matrix props',props)
-    //   })
 
       const layout = {
         labelCol: { span: 8 },

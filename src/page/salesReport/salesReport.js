@@ -180,7 +180,6 @@ class SalesReport extends React.Component {
     )
       .then((e) => this.parseParcel(e))
       .catch((e) => {
-        console.log("[sales report module] error: ", e);
         this.setState({ fetching: false });
       });
   };

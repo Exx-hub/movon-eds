@@ -5,8 +5,6 @@ import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/i
 
 function MatrixModalContent(props) {
 
-    console.log("MatrixModalContent",props)
-
     return (<div>
         <List
             size="small"
