@@ -60,3 +60,7 @@
 .select-padding{
     padding-left: 1rem;
 }
+
+.ant-collapse-header{
+    color: #fff !important;
+}
