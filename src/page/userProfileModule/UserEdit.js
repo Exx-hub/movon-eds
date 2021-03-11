@@ -47,6 +47,7 @@ function UserEditProfileModule(props) {
       super(props);
       this.state = {
         staffId: "",
+        newStaffId: "",
         firstName: "",
         lastName: "",
         phoneNumber: ""
@@ -139,53 +140,52 @@ function UserEditProfileModule(props) {
     }
 
     onUpdateUserProfile = () => {
-      // if (!this.firstName || !this.lastName || !this.phoneNumber || !this.staffId) {
-      //   showNotification({
-      //     title: "Input Validation",
-      //     type: "error",
-      //     message: "Please fill up missing fields"});
-      // } else {
-      const { firstName, lastName, phoneNumber, staffId } = this.state
-      const option = { staffId, firstName, lastName, phoneNumber }
+      const { firstName, lastName, phoneNumber, newStaffId, staffId } = this.state
+      const option = { staffId: newStaffId, firstName, lastName, phoneNumber }
+      console.log(option)
       User.updateCredential(option)
         .then(e => {
           const { errorCode } = e.data;
-          const { ERROR_CODES } = e.data;
-          // if (!this.firstName || !this.lastName || !this.phoneNumber || !this.staffId) {
-          //   showNotification({
-          //     title: "Input Validation",
-          //     type: "error",
-          //     message: "Please fill up missing fields"
-          //   });
-          // }
-          if (ERROR_CODES == "2604") {
-            openNotificationWithIcon("error", 'USER_NAME_EXIST');
-            this.props.history.push(alterPath("/user-profile"));
-
-          } else {
-            if (errorCode) {
-              // console.log(errorCode)
-              this.handleErrorNotification(errorCode)
-              props.history.push(alterPath("/user-profile/UserEdit"));
-            }
-            else {
-              notification.open({
-                title: "User Profile Updated!",
-                type: "success",
-                message: "You need to re-login your account and continue",
-                duration: 0,
-                onClose: () => {
-                  UserProfile.clearData();
-                  props.history.push(alterPath("/"))
-                }
-              });
-            }
+          if (firstName === '' || lastName === '' || phoneNumber === '' || newStaffId === '') {
+            showNotification({
+              title: "Input Validation",
+              type: "error",
+              message: "Please fill up missing fields"
+            });
+          }
+          else if (staffId === newStaffId) {
+            showNotification({
+              title: "Input Validation",
+              type: "error",
+              message: "Username cannot be the same as old username."
+            });
+            props.history.push(alterPath("/user-profile/UserEdit"));
+          }
+          else if (newStaffId.includes(' ')) {
+            showNotification({
+              title: "Input Validation",
+              type: "error",
+              message: "Username should not contain spaces."
+            });
+            props.history.push(alterPath("/user-profile/UserEdit"));
+          }
+          else {
+            notification.open({
+              title: "User Profile Updated!",
+              type: "success",
+              message: "You need to re-login your account and continue",
+              duration: 0,
+              onClose: () => {
+                UserProfile.clearData();
+                props.history.push(alterPath("/"))
+              }
+            });
           }
         });
       // }
 
       return;
-      
+
     }
 
     render() {
@@ -232,7 +232,7 @@ function UserEditProfileModule(props) {
 
             <div className="item-wrapper">
               <span className="title item-wrapper-custom-text-title">Username</span>
-              <Input type="text" placeholder="" onChange={e => this.setState({ staffId: e.target.value })} />
+              <Input type="text" placeholder="" onChange={e => this.setState({ newStaffId: e.target.value })} />
             </div>
             <div className="button-wrapper-edit">
               <Button className="button-cancel"
@@ -249,8 +249,9 @@ function UserEditProfileModule(props) {
                 shape="square"
                 size="large"
                 onClick={() => {
-                console.log("e");
-                this.onUpdateUserProfile()}}>
+                  console.log(this.state);
+                  this.onUpdateUserProfile()
+                }}>
                 Update
         </Button>
             </div>
@@ -304,7 +305,7 @@ function UserEditProfileModule(props) {
           key: "drop-down-logout",
           name: "Logout",
           type: "menu",
-          destination: alterPath("/user-profile/edit"),
+          destination: alterPath("/user-profile/UserEdit"),
           icon: () => <PoweroffOutlined />,
           action: () => {
             setVisibleLogout(true);
@@ -374,7 +375,6 @@ function UserEditProfileModule(props) {
         visible={visibleLogout}
         title="Are you sure you want to log out?"
         message="Changes you made may not be saved."
-
         buttonType="danger"
         action="Logout"
         handleCancel={() => setVisibleLogout(false)}
