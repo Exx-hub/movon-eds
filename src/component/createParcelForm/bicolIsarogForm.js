@@ -83,7 +83,7 @@ function BicolIsarogForm(props) {
     basePrice,
     isShortHaul,
     declaredValueFee,
-    isFixedPrice
+    isFixedPrice,
   } = props.priceDetails
 
 
