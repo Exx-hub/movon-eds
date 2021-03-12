@@ -40,16 +40,18 @@ const showNotification = (props) => {
   });
 };
 
-function EditUserProfileModule(props) {
-  class EditUserProfile extends React.Component {
+function UserEditProfileModule(props) {
+  const [updateModal, setUpdateModal] = React.useState(false);
+  class UserEditProfile extends React.Component {
 
     constructor(props) {
       super(props);
       this.state = {
-        username: "",
-        oldPassword: "",
-        password: "",
-        confirmPassword: ""
+        staffId: "",
+        newStaffId: "",
+        firstName: "",
+        lastName: "",
+        phoneNumber: ""
       };
     }
 
@@ -57,7 +59,7 @@ function EditUserProfileModule(props) {
       const { displayId } = UserProfile.getUser()
       const { password } = UserProfile.getPersonalInfo()
       this.setState({
-        username: displayId,
+        staffId: displayId,
         oldPassword: password
       })
     }
@@ -92,7 +94,7 @@ function EditUserProfileModule(props) {
 
       if (code === 2604) {
         openNotificationWithIcon("error", code);
-        this.props.history.push(alterPath("/user-profile"));
+        props.history.push(alterPath("/user-profile"));
         return
       }
 
@@ -100,7 +102,7 @@ function EditUserProfileModule(props) {
     };
 
     onValidation = (name) => {
-      if ((this.state['username'].length < 6)) {
+      if ((this.state['staffId'].length < 6)) {
         showNotification({
           title: "Input Fields Validation",
           type: "error",
@@ -125,7 +127,7 @@ function EditUserProfileModule(props) {
           });
           return false;
         }
-        else if (this.state['username'].match(/[ ]/)) {
+        else if (this.state['staffId'].match(/[ ]/)) {
           showNotification({
             title: "Input Fields Validation",
             type: "error",
@@ -139,82 +141,53 @@ function EditUserProfileModule(props) {
     }
 
     onUpdateUserProfile = () => {
-      if (this.state.oldPassword && this.state.password && this.state.confirmPassword) {
-
-        if (!this.onValidation("password") || !this.onValidation('confirmPassword')) {
-          return;
-        }
-
-        if (this.state.password === this.state.confirmPassword) {
-
-          this.setState({ fetching: true }, () => User.updateUserPassword(this.state.username, this.state.oldPassword)
-            .then(e => {
-
-              const { error_code } = e.data;
-              if (error_code == "DUPLICATE_STAFF_PASSWORD") {
-
-                this.setState({ fetching: true }, () => User.updateUserPassword(this.state.username, this.state.password)
-                  .then(e => {
-                    const { errorCode } = e.data;
-                    const { error_code } = e.data;
-                    if (error_code == "DUPLICATE_STAFF_PASSWORD") {
-                      openNotificationWithIcon("error", "newpass_confirmpass");
-                      props.history.push(alterPath("/user-profile/edit"));
-                    } else {
-                      if (errorCode) {
-                        this.handleErrorNotification(errorCode)
-                      }
-                      else {
-                        notification.open({
-                          title: "User Profile Updated!",
-                          type: "success",
-                          message: "You need to re-login your account and continue",
-                          duration: 0,
-                          onClose: () => {
-                            UserProfile.clearData();
-                            props.history.push(alterPath("/"))
-                          }
-                        });
-                      }
-                    }
-                  }));
-                return;
-              } else {
-                openNotificationWithIcon("error", "DUPLICATE_STAFF_PASSWORD");
-                props.history.push(alterPath("/user-profile/edit"));
-                // this.userProfileObject.clearData();
-              }
-              // else if (errorCode) {
-              //   this.handleErrorNotification(errorCode)
-              // } 
-              // else {
-              //   notification.open({
-              //     title: "User Profile Updated!",
-              //     type: "success",
-              //     message: "You need to re-login your account and continue",
-              //     duration: 0,
-              //     onClose: () => {
-              //       UserProfile.clearData();
-              //       props.history.push(alterPath("/"))
-              //     }
-              //   });
-              // }
-            }));
-        }
-        else {
-          showNotification({
-            title: "Input Fields Validation",
-            type: "error",
-            message: "Passwords do not match",
-          });
-        }
-      } else {
-        showNotification({
-          title: "Input Validation",
-          type: "error",
-          message: "Please fill up missing fields",
+      const { firstName, lastName, phoneNumber, newStaffId, staffId } = this.state
+      const option = { staffId: newStaffId, firstName, lastName, phoneNumber }
+      console.log(option)
+      User.updateCredential(option)
+        .then(e => {
+          const { errorCode } = e.data;
+          if (firstName === '' || lastName === '' || phoneNumber === '' || newStaffId === '') {
+            showNotification({
+              title: "Input Validation",
+              type: "error",
+              message: "Please fill up missing fields"
+            });
+          }
+          else if (staffId === newStaffId) {
+            showNotification({
+              title: "Input Validation",
+              type: "error",
+              message: "Username cannot be the same as old username."
+            });
+            props.history.push(alterPath("/user-profile/UserEdit"));
+          }
+          else if (newStaffId.includes(' ')) {
+            showNotification({
+              title: "Input Validation",
+              type: "error",
+              message: "Username should not contain spaces."
+            });
+            props.history.push(alterPath("/user-profile/UserEdit"));
+          }
+          else {
+            props.history.push((setUpdateModal(true)));
+            // notification.open({
+            //   title: "User Profile Updated!",
+            //   type: "success",
+            //   message: "You need to re-login your account and continue",
+            //   duration: 0,
+            //   onClose: () => {
+            //     UserProfile.clearData();
+            //     props.history.push(alterPath("/"))
+            //   }
+            // });
+          }
         });
-      }
+      // }
+
+      return;
+
     }
 
     render() {
@@ -235,7 +208,7 @@ function EditUserProfileModule(props) {
           </div>
 
           <div className="main-creds">
-            <div className="profile-text">Change Password</div>
+            <div className="profile-text">Edit User Profile</div>
             {/* <div className="item-wrapper">
           <span className="title item-wrapper-custom-text-title">
             Full Name
@@ -246,18 +219,22 @@ function EditUserProfileModule(props) {
         </div> */}
 
             <div className="item-wrapper">
-              <span className="title item-wrapper-custom-text-title">Current Password</span>
-              <Input type="password" placeholder="" onChange={e => this.setState({ ...this.state, ... { oldPassword: e.target.value } })} />
+              <span className="title item-wrapper-custom-text-title">First Name</span>
+              <Input type="text" placeholder="" onChange={e => this.setState({ ...this.state, ... { firstName: e.target.value } })} />
+            </div>
+            <div className="item-wrapper">
+              <span className="title item-wrapper-custom-text-title">Last Name</span>
+              <Input type="text" placeholder="" onChange={e => this.setState({ ...this.state, ... { lastName: e.target.value } })} />
             </div>
 
             <div className="item-wrapper">
-              <span className="title item-wrapper-custom-text-title">New Password</span>
-              <Input type="password" placeholder="" onChange={e => this.setState({ ...this.state, ...{ password: e.target.value } })} />
+              <span className="title item-wrapper-custom-text-title">Phone Number</span>
+              <Input type="number" pattern="[0-9]{10}" placeholder="" onChange={e => this.setState({ ...this.state, ...{ phoneNumber: e.target.value } })} />
             </div>
 
             <div className="item-wrapper">
-              <span className="title item-wrapper-custom-text-title">Confirm New Password</span>
-              <Input type="password" placeholder="" onChange={e => this.setState({ confirmPassword: e.target.value })} />
+              <span className="title item-wrapper-custom-text-title">Username</span>
+              <Input type="text" placeholder="" onChange={e => this.setState({ newStaffId: e.target.value })} />
             </div>
             <div className="button-wrapper-edit">
               <Button className="button-cancel"
@@ -273,11 +250,26 @@ function EditUserProfileModule(props) {
                 type="primary"
                 shape="square"
                 size="large"
-                onClick={() => this.onUpdateUserProfile()}>
+                onClick={() => {
+                  console.log(this.state);
+                  this.onUpdateUserProfile()
+                }}>
                 Update
         </Button>
             </div>
           </div>
+          <PromptModal
+        visible={updateModal}
+        title="Are you sure you want to save your changes?"
+        message="Your account will be logged out after saving your changes."
+        buttonType="submit"
+        action="Update"
+        handleCancel={() => setUpdateModal(false)}
+        handleOk={() => {
+          userProfileObject.logout(User);
+          props.history.push(alterPath("/"));
+        }}
+      />
         </div>
 
       );
@@ -313,7 +305,7 @@ function EditUserProfileModule(props) {
           key: "drop-down-logout",
           name: "Logout",
           type: "menu",
-          destination: alterPath("/user-profile/edit"),
+          destination: alterPath("/user-profile/UserEdit"),
           icon: () => <PoweroffOutlined />,
           action: () => {
             setVisibleLogout(true);
@@ -378,12 +370,11 @@ function EditUserProfileModule(props) {
           )}
         </div>
       </Header>
-      <EditUserProfile />
+      <UserEditProfile />
       <PromptModal
         visible={visibleLogout}
         title="Are you sure you want to log out?"
         message="Changes you made may not be saved."
-
         buttonType="danger"
         action="Logout"
         handleCancel={() => setVisibleLogout(false)}
@@ -394,4 +385,5 @@ function EditUserProfileModule(props) {
       />
     </Layout>
   );
-} export default EditUserProfileModule;
+
+} export default UserEditProfileModule;
