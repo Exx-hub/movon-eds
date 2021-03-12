@@ -9,6 +9,7 @@ function BicolIsarogMatrixModalContent(props) {
     console.info('BicolIsarogMatrixModalContent', props)
 
     const onFinish = values => {
+        console.info('values',values)
         props.onSubmit(values, null)
     };
 

@@ -452,7 +452,8 @@ class CreateParcel extends React.Component {
         visible:false,
         data:{},
         title:"Bill of Lading Exist!"
-      }
+      },
+      enabledExcessCargo:false
     };
     this.userProfileObject = UserProfile;
     this.fixPriceComputation = debounce(this.fixPriceComputation, 500)
@@ -1195,7 +1196,35 @@ class CreateParcel extends React.Component {
         lengthRate: Number(0).toFixed(2),
         discountFee: Number(0).toFixed(2),
       }
-      this.setState({ ...state, details, selectedDestination });
+      this.setState({ ...state, details, selectedDestination },()=>{
+        ParcelService.getExcessBaggageStatus({destination:value, origin: UserProfile.getAssignedStationId()})
+        .then(e=>{
+          console.info("getExcessBaggageStatus",e)
+          const{data,status,errorCode}=e.data;
+          if(errorCode){
+            this.handleErrorNotification(errorCode);
+            return
+          }
+          let enabledExcessCargo =  data.enabledExcessCargo || false
+          if(typeof enabledExcessCargo === 'string'){
+            enabledExcessCargo = Boolean(enabledExcessCargo === "true")
+          }
+
+          const _type = details.type = {...details.type};
+          const options = _type.options.map(e=>{
+            let disabled = false;
+            if(e.name != 'Cargo Padala'){
+              disabled = !enabledExcessCargo;
+            }
+            return {...e, disabled}
+          })
+          _type.options = options;
+          console.info('_types',_type)
+
+          this.setState({enabledExcessCargo, details})
+          
+        })
+      });
 
 
       MatrixService.getMatrix({
@@ -1452,7 +1481,8 @@ class CreateParcel extends React.Component {
                     declaredValueFee: this.state.declaredValueFee,
                     insuranceFee: this.state.insuranceFee,
                     isFixedPrice: this.state.isFixedPrice,
-                    discountFee: this.state.discountFee
+                    discountFee: this.state.discountFee,
+                    enabledExcessCargo: this.state.enabledExcessCargo
                   }}
                   details={this.state.details}
                   onTypeChange={(e) => this.onTypeChange(e.target.value)}
@@ -1679,7 +1709,7 @@ class CreateParcel extends React.Component {
   };
 
   requestComputation = () => {
-    const { declaredValue, packageWeight, sticker_quantity, destination, length, discount } = this.state.details;
+    const { declaredValue, packageWeight, sticker_quantity, destination, length, discount, type } = this.state.details;
     const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
     const endStation = selectedOption.endStation || undefined;
     const startStation = this.userProfileObject.getAssignedStationId();
@@ -1695,7 +1725,8 @@ class CreateParcel extends React.Component {
       weight: Number(packageWeight.value),
       parcelCount: Number(sticker_quantity.value),
       length: Number(length.value),
-      discountName
+      discountName,
+      cargoType: type.value || 3
     }
 
     ParcelService.getDefaultComputation(option)

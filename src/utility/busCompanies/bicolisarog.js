@@ -322,6 +322,7 @@ class BicolIsarog{
         const matrix = [{...val}]
         return matrix;
     }
+
 }
 
 export default BicolIsarog;
