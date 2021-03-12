@@ -135,7 +135,7 @@ const getReviewDetails = (state) => {
     additionalFee: state.details.additionalFee.value || 0,
     discountFee: state.discountFee || 0,
     basePrice: state.basePrice || 0,
-
+    cashier:UserProfile.getPersonFullName(),
     type:'create'
   };
 };
@@ -181,7 +181,7 @@ const parceResponseData = (data) => {
     scanCode: data.scanCode,
     createdAt: data.createdAt,
     subParcels: data.subParcels,
-    cashier: UserProfile.credential.user.personalInfo.fullName,
+    cashier: data.deliveryPersonInfo.deliveryPersonName,
   };
 };
 
@@ -455,7 +455,7 @@ class CreateParcel extends React.Component {
       }
     };
     this.userProfileObject = UserProfile;
-    this.dltbFixPriceComputation = debounce(this.dltbFixPriceComputation, 500)
+    this.fixPriceComputation = debounce(this.fixPriceComputation, 500)
     this.printEl = React.createRef();
     
   }
@@ -830,101 +830,93 @@ class CreateParcel extends React.Component {
     return true;
   };
 
-  getConvinienceFee = (qty, declaredValue) => {
-    if (Boolean(this.userProfileObject.isIsarogLiners())) {
-      ParcelService.getConvenienceFee(qty, declaredValue).then((res) => {
-        this.parseSystemFeeResponse(res);
-      });
-      return;
-    }
+  // getConvinienceFee = (qty, declaredValue) => {
+  //   if (Boolean(this.userProfileObject.isIsarogLiners())) {
+  //     ParcelService.getConvenienceFee(qty, declaredValue).then((res) => {
+  //       this.parseSystemFeeResponse(res);
+  //     });
+  //     return;
+  //   }
 
-    // if (!qty) {
-    //   let details = { ...this.state.details };
-    //   let systemFee = { ...details.systemFee };
-    //   systemFee.value = 0;
-    //   details.systemFee = systemFee;
-    //   this.setState({ details });
-    //   return;
-    // }
+  //   // if (!qty) {
+  //   //   let details = { ...this.state.details };
+  //   //   let systemFee = { ...details.systemFee };
+  //   //   systemFee.value = 0;
+  //   //   details.systemFee = systemFee;
+  //   //   this.setState({ details });
+  //   //   return;
+  //   // }
 
-    if (this.userProfileObject.isFiveStar()) {
-      ParcelService.getFiveStarConvenienceFee(qty, 0).then((res) => this.parseSystemFeeResponse(res));
-      return;
-    }
-  };
+  //   if (this.userProfileObject.isFiveStar()) {
+  //     ParcelService.getFiveStarConvenienceFee(qty, 0).then((res) => this.parseSystemFeeResponse(res));
+  //     return;
+  //   }
+  // };
 
-  parseSystemFeeResponse = (res) => {
-    const { success, data, errorCode } = res.data;
-    if (!success) {
-      this.handleErrorNotification(errorCode);
-    }
-    let details = { ...this.state.details };
-    let systemFee = { ...this.state.details.systemFee };
-    systemFee = Object.assign({}, systemFee, { value: data.convenienceFee });
-    this.setState({ details: Object.assign(details, { systemFee }) }, () =>
-      this.updateTotalShippingCost()
-    );
-  };
+  // parseSystemFeeResponse = (res) => {
+  //   const { success, data, errorCode } = res.data;
+  //   if (!success) {
+  //     this.handleErrorNotification(errorCode);
+  //   }
+  //   let details = { ...this.state.details };
+  //   let systemFee = { ...this.state.details.systemFee };
+  //   systemFee = Object.assign({}, systemFee, { value: data.convenienceFee });
+  //   this.setState({ details: Object.assign(details, { systemFee }) }, () =>
+  //     this.updateTotalShippingCost()
+  //   );
+  // };
 
-  computePrice = (callback) => {
-    if (
-      this.state.details.fixMatrix.value &&
-      this.state.details.fixMatrix.value !== "none"
-    ) {
-      return;
-    }
+  // computePrice = (callback) => {
+  //   if (
+  //     this.state.details.fixMatrix.value &&
+  //     this.state.details.fixMatrix.value !== "none"
+  //   ) {
+  //     return;
+  //   }
 
-    const { destination, declaredValue, paxs, packageWeight, type, length } = this.state.details;
+  //   const { destination, declaredValue, paxs, packageWeight, type, length } = this.state.details;
 
-    const busCompanyId = this.userProfileObject.getBusCompanyId();
-    const startStation = this.userProfileObject.getAssignedStationId();
-    const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
-    const endStation = selectedOption.endStation || undefined;
-    const parcel_length = length.value || 0;
-    const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined;
-    const pax = paxs.value || 0;
-    let decValue =  Number(declaredValue.value || 0) 
+  //   const busCompanyId = this.userProfileObject.getBusCompanyId();
+  //   const startStation = this.userProfileObject.getAssignedStationId();
+  //   const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
+  //   const endStation = selectedOption.endStation || undefined;
+  //   const parcel_length = length.value || 0;
+  //   const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined;
+  //   const pax = paxs.value || 0;
+  //   let decValue =  Number(declaredValue.value || 0) 
 
-    if((Number(type.value) === 3)){
-      console.info('passsss=====>>>>33333')
-      if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight) || isNull(decValue)) {
-        return
-      }
-    }else{
-      console.info('passsss=====>>>>444444')
-      if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight)) {
-        return
-      }
-    }
+  //   if((Number(type.value) === 3)){
+  //     if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight) || isNull(decValue)) {
+  //       return
+  //     }
+  //   }else{
+  //     if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight)) {
+  //       return
+  //     }
+  //   }
 
-    console.info('passsss=====>>>>')
+  //   ParcelService.getDynamicPrice(
+  //     busCompanyId,
+  //     decValue,
+  //     endStation,
+  //     type.value,
+  //     pax,
+  //     startStation,
+  //     weight,
+  //     parcel_length
+  //   )
+  //     .then((e) => {
+  //       const { data, success, errorCode } = e.data;
+  //       if (errorCode) {
+  //         this.handleErrorNotification(errorCode);
+  //         return;
+  //       }
+  //       callback(data);
+  //     });
 
-    ParcelService.getDynamicPrice(
-      busCompanyId,
-      decValue,
-      endStation,
-      type.value,
-      pax,
-      startStation,
-      weight,
-      parcel_length
-    )
-      .then((e) => {
-        console.info('computation',e)
-        const { data, success, errorCode } = e.data;
-        if (errorCode) {
-          this.handleErrorNotification(errorCode);
-          return;
-        }
-        callback(data);
-      });
+  // }
 
-  }
-
-  dltbFixPriceComputation = () => {
-    console.info("dltbFixPriceComputation ===++>>")
-    console.info("dltbFixPriceComputation ===++>>")
-    console.info("dltbFixPriceComputation ===++>>")
+  fixPriceComputation = () => {
     let d = { ...this.state.details }
     const options = {
       origin: UserProfile.getAssignedStationId(),
@@ -933,12 +925,13 @@ class CreateParcel extends React.Component {
       parcelCount: d.sticker_quantity.value,
       fixMatrixItemName: d.fixMatrix.value,
       quantity: d.quantity.value,
-      additionalFee: d.additionalFee.value
+      additionalFee: d.additionalFee.value,
+      discountName : (d.discount.value && d.discount.value.toLowerCase()) || 'none'
     }
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
-        console.info("ParcelService.getDefaultFixMatrixComputation",e)
         const { data, errorCode } = e.data;
+        console.info('getDefaultFixMatrixComputation',e)
         if (!errorCode) {
 
           const {
@@ -946,6 +939,8 @@ class CreateParcel extends React.Component {
             systemFee,
             basePrice,
             portersFee,
+            additionalFee,
+            discountFee,
             computeTotalShippingCost
           } = data
 
@@ -953,11 +948,13 @@ class CreateParcel extends React.Component {
           d.systemFee.value = systemFee;
 
           this.setState({
+            discountFee,
             declaredValueFee,
             isFixedPrice: true,
             basePrice,
             details: d,
-            portersFee
+            portersFee,
+            additionalFee
           })
         } else {
           this.handleErrorNotification(errorCode);
@@ -965,49 +962,21 @@ class CreateParcel extends React.Component {
       })
   }
 
-  addFixMatrixFee = (_qty, addrate) => {
-    let d = { ...this.state.details }
-    let total = (Number(d.packageInsurance.value || 0) + Number(d.shippingCost.value || 0))
-    let qty = Number(_qty || 0)
-    let quantity = qty < 1 ? 1 : qty;
-    total = total * quantity;
-    total += Number(d.systemFee.value || 0)
-    total += addrate
-    d.totalShippingCost.value = total
-    return total;
-  }
+  // addFixMatrixFee = (_qty, addrate) => {
+  //   let d = { ...this.state.details }
+  //   let total = (Number(d.packageInsurance.value || 0) + Number(d.shippingCost.value || 0))
+  //   let qty = Number(_qty || 0)
+  //   let quantity = qty < 1 ? 1 : qty;
+  //   total = total * quantity;
+  //   total += Number(d.systemFee.value || 0)
+  //   total += addrate
+  //   d.totalShippingCost.value = total
+  //   return total;
+  // }
 
   onInputChange = (name, value) => {
-
-    console.info('onInputChange', name, value)
-
     let details = { ...this.state.details };
     let state = {...this.state}
-
-    if (name === "declaredValue") {
-      switch (UserProfile.getBusCompanyTag()) {
-          case 'dltb':
-          case 'five-star':
-          break;
-
-        default:
-          const packageInsurance = { ...details.packageInsurance };
-          if (details.fixMatrix.value && details.fixMatrix.value !== "none") {
-            let option = details.fixMatrix.options.find(
-              (e) => e.name === details.fixMatrix.value
-            );
-            if (option) {
-              let declaredValue = Number(option.declaredValue);
-              let newVal = declaredValue > 0 ? Number(value) * (declaredValue / 100) : 0;
-              packageInsurance.value = Number(newVal).toFixed(2);
-            }
-          } else {
-            packageInsurance.value = 0;
-          }
-          details = { ...details, ...{ packageInsurance } };
-          break;
-      }
-    }
 
     let item = {
       ...details[name],
@@ -1018,19 +987,12 @@ class CreateParcel extends React.Component {
 
       
       switch (UserProfile.getBusCompanyTag()) {
-        // case 'isarog-liner':
-        //   if (name === 'declaredValue' || name === "sticker_quantity" || name === "length" || name === "quantity" || name === "packageWeight") {
-        //     console.info('passss=====>>>...11111')
-        //     this.updateTotalShippingCost();
-        //   }
-        //   break;
-
         case "isarog-liner": 
         case "five-star":
         case "dltb":
           if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
             if( name === "additionalFee" || name ==="quantity" ||  name === 'declaredValue' || name === "sticker_quantity") {
-              this.dltbFixPriceComputation()
+              this.fixPriceComputation()
               return;
             }
           }
@@ -1098,8 +1060,7 @@ class CreateParcel extends React.Component {
               {
                 connectingCompanyComputation: data.total,
                 tariffRate: e.tariffRate,
-              },
-              () => this.updateTotalShippingCost()
+              }
             );
           }
         }
@@ -1128,9 +1089,7 @@ class CreateParcel extends React.Component {
         details.associateFixPrice = associateFixPrice;
         details.connectingCompany = connectingCompany;
 
-        this.setState({ details, connectingCompanyComputation: 0 }, () =>
-          this.updateTotalShippingCost()
-        );
+        this.setState({ details, connectingCompanyComputation: 0 });
         return;
       }
 
@@ -1295,7 +1254,7 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "discount") {
-
+     
       let additionNote = { ...details.additionNote };
       additionNote.value = value.toLowerCase() === "none" ? undefined : value
       additionNote.accepted = true;
@@ -1307,44 +1266,13 @@ class CreateParcel extends React.Component {
       details.discount = discount;
       details.additionNote = additionNote;
 
-      switch (UserProfile.getBusCompanyTag()) {
-        case "dltb":
-        case "five-star":
-          let isFixMatrix = details.fixMatrix.value && details.fixMatrix.value !== 'none';
-          let basePrice = Number(state.basePrice || 0);
-          let systemFee = Number(details.systemFee.value || 0)
-          let declaredValueFee = Number(state.declaredValueFee || 0)
-          let weightFee = Number(state.weightFee || 0);
-          let lengthFee = Number(state.lengthFee || 0);
-          let discountFee = 0; 
-          
-          let total = basePrice + declaredValueFee + weightFee + lengthFee 
-
-          //discount === "ex: Senior Citizen"
-          if(value.toLowerCase() !== 'none'){
-            let option = details.discount.options.find((e) => e.name === value);
-            const rate = Number(option.rate) / 100;
-            if(Boolean(isFixMatrix)){
-              discountFee = basePrice * rate
-              total = basePrice - discountFee;
-            }else{
-              discountFee = total * rate
-              total -= discountFee;
-            }
-          }
-
-          total += systemFee; 
-
-          details.totalShippingCost.value = Number(total).toFixed(2);
-          state.discountFee = Number(discountFee).toFixed(2)
-          this.setState({ ...state, details });
-
-          break;
-      
-        default:
-          this.setState({ ...state, details },()=>this.updateTotalShippingCost());
-          break;
-      }
+      this.setState({ ...state, details },()=>{
+        if(details.fixMatrix.value === undefined || details.fixMatrix.value.toLowerCase() === 'none'){
+          this.requestComputation()
+        }else{
+          this.fixPriceComputation()
+        }
+      });
       return;
     }
 
@@ -1362,7 +1290,7 @@ class CreateParcel extends React.Component {
         { connectingCompanyComputation: Number(price), details },
         () => {
           this.computeForConnectinRoutes();
-          this.updateTotalShippingCost();
+          //this.updateTotalShippingCost();
         }
       );
     }
@@ -1427,7 +1355,7 @@ class CreateParcel extends React.Component {
               if (option && Number(option.price) === 0) {
                 return;
               }
-              this.dltbFixPriceComputation()
+              this.fixPriceComputation()
             });
             break;
           case "dltb":
@@ -1435,7 +1363,7 @@ class CreateParcel extends React.Component {
               if (option && Number(option.price) === 0 && Number(option.declaredValue) !== 0) {
                 return;
               }
-              this.dltbFixPriceComputation()
+              this.fixPriceComputation()
             });
             break;
 
@@ -1469,17 +1397,7 @@ class CreateParcel extends React.Component {
         details.quantity.disabled = true;
         details.quantity.value = 1;
 
-        this.setState({ ...state, details }, () => {
-          switch (UserProfile.getBusCompanyTag()) {
-            case 'bicol-isarog':
-            case 'dltb':
-            break;
-
-            default:
-              this.updateTotalShippingCost();
-              break;
-          }
-        });
+        this.setState({ ...state, details });
       }
     }
   };
@@ -1725,9 +1643,7 @@ class CreateParcel extends React.Component {
           {
             connectingCompanyComputation: Number(price),
             tariffRate: 47.5,
-          },
-          () => this.updateTotalShippingCost()
-        );
+          });
         return;
       }
 
@@ -1763,10 +1679,11 @@ class CreateParcel extends React.Component {
   };
 
   requestComputation = () => {
-    const { declaredValue, packageWeight, sticker_quantity, destination, length } = this.state.details;
+    const { declaredValue, packageWeight, sticker_quantity, destination, length, discount } = this.state.details;
     const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
     const endStation = selectedOption.endStation || undefined;
     const startStation = this.userProfileObject.getAssignedStationId();
+    const discountName = (discount.value && discount.value.toLowerCase()) || 'none'
 
     if (!endStation || !startStation)
       return
@@ -1777,13 +1694,14 @@ class CreateParcel extends React.Component {
       declaredValue: Number(declaredValue.value),
       weight: Number(packageWeight.value),
       parcelCount: Number(sticker_quantity.value),
-      length: Number(length.value)
+      length: Number(length.value),
+      discountName
     }
 
     ParcelService.getDefaultComputation(option)
       .then(e => {
         const { data, errorCode } = e.data;
-        console.info(" ParcelService.getDefaultComputation",e)
+        console.info("getDefaultComputation",e)
         if (!errorCode) {
           const {
             totalShippingCost,
@@ -1797,12 +1715,12 @@ class CreateParcel extends React.Component {
             basePrice,
             isShortHaul,
             insuranceFee,
-            portersFee
+            portersFee,
+            discountFee
           } = data;
 
           const _lengthFee = Number(lengthFee || 0)
           const _weightFee = Number(weightFee || 0)
-          const _handlingFee = Number(handlingFee || 0)
           const _additionFee = Number(additionalFee || 0)
           const _systemFee = Number(systemFee || 0)
           const _declaredValueFee = Number(declaredValueFee || 0)
@@ -1826,10 +1744,11 @@ class CreateParcel extends React.Component {
           _data.shippingCost.value = _shippingCost;
 
           this.setState({
+            discountFee,
             portersFee,
             insuranceFee,
             declaredValueFee,
-            handlingFee: _handlingFee,
+            handlingFee,
             lengthFee: _lengthFee.toFixed(2),
             weightFee:_weightFee.toFixed(2),
             details: _data,
@@ -1842,10 +1761,6 @@ class CreateParcel extends React.Component {
   }
 
   computeV2 = () => {
-    console.info('computeV2 passs========>>>')
-    console.info('computeV2 passs========>>>')
-    console.info('computeV2 passs========>>>')
-    console.info('computeV2 passs========>>>')
     const { declaredValue, packageWeight, sticker_quantity, length, destination, fixMatrix } = this.state.details;
 
     switch (UserProfile.getBusCompanyTag()) {
@@ -1862,7 +1777,7 @@ class CreateParcel extends React.Component {
             this.requestComputation()
           }
         } else {
-          this.dltbFixPriceComputation()
+          this.fixPriceComputation()
         }
         break;
 
@@ -1870,171 +1785,6 @@ class CreateParcel extends React.Component {
         break;
     }
   }
-
-  componentDidUpdate(prevProps, prevState) {
-
-    // const {
-    //   destination,
-    //   packageWeight,
-    //   declaredValue,
-    //   paxs,
-    //   length,
-    //   sticker_quantity,
-    //   fixMatrix,
-    //   additionalFee
-    // } = prevState.details;
-
-    // const currentDetails = { ...this.state.details };
-    // const oldConnectingRoutes = prevState.details.connectingRoutes.value;
-    // const oldConnectingCompany = prevState.details.connectingCompany.value;
-
-    // const hasFreshData =
-    //   currentDetails.destination.value !== destination.value ||
-    //   currentDetails.packageWeight.value !== packageWeight.value ||
-    //   currentDetails.declaredValue.value !== declaredValue.value ||
-    //   currentDetails.length.value !== length.value ||
-    //   currentDetails.fixMatrix.value !== fixMatrix.value ||
-    //   currentDetails.additionalFee.value !== additionalFee.value ||
-    //   currentDetails.sticker_quantity.value !== sticker_quantity.value ||
-    //   oldConnectingRoutes !== currentDetails.connectingRoutes.value ||
-    //   oldConnectingCompany !== currentDetails.connectingCompany.value;
-
-    // if (hasFreshData) {
-    //   if (currentDetails.packageWeight.value !== undefined && currentDetails.declaredValue.value !== undefined) {
-    //     this.computeForConnectinRoutes();
-
-    //     if (currentDetails.destination.value !== undefined) {
-    //       if (
-    //         currentDetails.type.value !== 3 &&
-    //         currentDetails.paxs.value === paxs.value
-    //       ) {
-    //         return;
-    //       }
-    //     }
-    //   }
-    // }
-  }
-
-  updateTotalShippingCost = () => {
-    let currentDetails = { ...this.state.details };
-    let discount = undefined;
-
-    let systemFee = 0;
-    let portersFee = 30;
-
-    let quantity = Number(currentDetails.quantity.value)
-    let total = 0;
-    let discountFee = 0;
-    let isFree = false;
-
-    if (currentDetails.discount.value && currentDetails.discount.value.toLowerCase() !== 'none') {
-      discount = currentDetails.discount.options.find((e) => e.name === currentDetails.discount.value);
-    }
-
-    if (currentDetails.fixMatrix.value && currentDetails.fixMatrix.value.toLowerCase() === "envelope") {
-      portersFee = 0;
-    }
-
-    //computation for fix matrix (BI)
-    if (currentDetails.fixMatrix.value && currentDetails.fixMatrix.value.toLowerCase() !== 'none') {
-      let option = currentDetails.fixMatrix.options.find((e) => e.name === currentDetails.fixMatrix.value);
-      let declaredValue = Number(currentDetails.declaredValue.value || 0);
-      let basePrice = Number(option.price || 0);
-      let fixPriceDvRate = Number(option.declaredValue || 0);
-      let declaredValueFee =  declaredValue ? (declaredValue * (fixPriceDvRate / 100)) : 0;
-      let total = 0;
-
-      if(quantity > 1){
-        basePrice = basePrice * quantity;
-        //declaredValueFee = declaredValueFee * quantity;
-      }
-
-      total = basePrice + declaredValueFee;
-
-      if(discount && discount.rate) {
-        isFree = Boolean(Number(discount.rate) === 100)
-        discountFee = total * (Number(discount.rate) / 100);
-        if(!isFree){
-          total -= discountFee;
-        }
-      }
-
-      if (total < 500) {
-        systemFee = 10;
-      }
-
-      total += systemFee;
-      total += portersFee;
-
-      if(isFree){
-        discountFee = total;
-        total = 0;
-      }
-
-      currentDetails.systemFee.value = systemFee;
-      currentDetails.totalShippingCost.value = Number(total).toFixed(2)
-
-      this.setState({
-        discountFee: discountFee.toFixed(2),
-        basePrice: basePrice.toFixed(2),
-        declaredValueFee: Number(declaredValueFee).toFixed(2),
-        portersFee: Number(portersFee).toFixed(2),
-        details: currentDetails
-      });
-
-    } else {
-      console.info('passssssst222222222')
-      //compute for matrix;
-      this.computePrice((e) => {
-        if (e) {
-          let basePrice = Number(e.totalCost);
-          const declaredValueFee = Number(e.declaredRate);
-          const lengthFee = Number(e.lengthRate);
-          let total = 0;
-
-          if(quantity > 1){
-            //declaredValueFee = declaredValueFee * quantity;
-            basePrice = basePrice * quantity;
-            lengthFee = lengthFee * quantity;
-          }
-
-          total = basePrice + declaredValueFee + lengthFee;
-
-          if (discount) {
-            isFree = Boolean(Number(discount.rate) === 100)
-            discountFee = total * (Number(discount.rate) / 100);
-            if(!isFree){
-              total -= discountFee;
-            }
-          }
-          
-          if (total < 500) {
-            systemFee = 10;
-          }
-
-          total += systemFee;
-          total += portersFee;
-
-          if(isFree){
-            discountFee = total;
-            total = 0;
-          }
-
-          currentDetails.systemFee.value = systemFee;
-          currentDetails.totalShippingCost.value = Number(total).toFixed(2)
-
-          this.setState({
-            discountFee: discountFee.toFixed(2),
-            basePrice: basePrice.toFixed(2),
-            lengthFee: lengthFee.toFixed(2),
-            declaredValueFee: declaredValueFee.toFixed(2),
-            portersFee: Number(portersFee).toFixed(2),
-            details: currentDetails
-          });
-        }
-      });
-    }
-  };
 
   getMatrixFare = ({ weight, declaredValue, length }) => {
     const { details, selectedDestination } = this.state;

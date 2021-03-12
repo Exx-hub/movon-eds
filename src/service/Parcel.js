@@ -425,7 +425,8 @@ const ParcelService = {
         declaredValue,
         weight,
         parcelCount,
-        length
+        length,
+        discountName
     }) => {
         return axios({
             method: 'post',
@@ -441,7 +442,8 @@ const ParcelService = {
                 declaredValue,
                 weight,
                 parcelCount,
-                length
+                length,
+                discountName
             }
         })
     },
@@ -453,7 +455,8 @@ const ParcelService = {
         parcelCount,
         fixMatrixItemName,
         quantity,
-        additionalFee
+        additionalFee,
+        discountName
     }) => {
         return axios({
             method: 'post',
@@ -470,7 +473,8 @@ const ParcelService = {
                 parcelCount,
                 fixMatrixItemName,
                 quantity,
-                additionalFee
+                additionalFee,
+                discountName
             }
         })
     }

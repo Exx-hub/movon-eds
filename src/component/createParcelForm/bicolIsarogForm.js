@@ -87,7 +87,9 @@ function BicolIsarogForm(props) {
   } = props.priceDetails
 
 
-  const enableInterConnection = props.enableInterConnection;
+  //temporary disble this features
+  const enableInterConnection = false //props.enableInterConnection;
+  
   const _temList = destination.options.map((e) => e.name);
   const [tempList, setTempList] = React.useState(_temList);
 
@@ -734,6 +736,7 @@ function ShowDltbBreakDown(props){
       </>)
     }else{
       view = (<>
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
         <TextContainer title="Weight Fee" value={translateNumber(weightFee)} /> 
         <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} /> 
         <TextContainer title="Handling Fee" value={translateNumber(handlingFee)} /> 
