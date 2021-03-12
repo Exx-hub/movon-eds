@@ -139,15 +139,7 @@ function ViewUserProfileModule(props) {
             <TextWrapper title="User Name" value=
               {<div className="username-edit">
               <div>{displayId}</div>
-                <div className="button-wrapper-view">
-                  <Button className="button-edit"
-                    type="primary"
-                    shape="square"
-                    size="large"
-                    onClick={() => props.history.push(alterPath('/user-profile/UserEdit'))}>
-                    Edit
-                  </Button>
-                </div>
+              <Link to="/user-profile/UserEdit">Edit User Profile</Link>
               </div>
               } />
             <TextWrapper title="Password" value=

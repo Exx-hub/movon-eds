@@ -41,6 +41,7 @@ const showNotification = (props) => {
 };
 
 function UserEditProfileModule(props) {
+  const [updateModal, setUpdateModal] = React.useState(false);
   class UserEditProfile extends React.Component {
 
     constructor(props) {
@@ -170,16 +171,17 @@ function UserEditProfileModule(props) {
             props.history.push(alterPath("/user-profile/UserEdit"));
           }
           else {
-            notification.open({
-              title: "User Profile Updated!",
-              type: "success",
-              message: "You need to re-login your account and continue",
-              duration: 0,
-              onClose: () => {
-                UserProfile.clearData();
-                props.history.push(alterPath("/"))
-              }
-            });
+            props.history.push((setUpdateModal(true)));
+            // notification.open({
+            //   title: "User Profile Updated!",
+            //   type: "success",
+            //   message: "You need to re-login your account and continue",
+            //   duration: 0,
+            //   onClose: () => {
+            //     UserProfile.clearData();
+            //     props.history.push(alterPath("/"))
+            //   }
+            // });
           }
         });
       // }
@@ -227,7 +229,7 @@ function UserEditProfileModule(props) {
 
             <div className="item-wrapper">
               <span className="title item-wrapper-custom-text-title">Phone Number</span>
-              <Input type="text" placeholder="" onChange={e => this.setState({ ...this.state, ...{ phoneNumber: e.target.value } })} />
+              <Input type="number" pattern="[0-9]{10}" placeholder="" onChange={e => this.setState({ ...this.state, ...{ phoneNumber: e.target.value } })} />
             </div>
 
             <div className="item-wrapper">
@@ -257,19 +259,17 @@ function UserEditProfileModule(props) {
             </div>
           </div>
           <PromptModal
-            title="Password successfully changed."
-            message="You can now use your new password instead of the old one."
-            visible={false}
-            buttonType="primary"
-            okHtmlType="submit"
-            action="OK"
-            displayCancel="none"
-            displayExtra="none"
-            handleOk={() => {
-              userProfileObject.logout(User);
-              // history.push(alterPath("/"));
-              window.location.reload(false);
-            }} />
+        visible={updateModal}
+        title="Are you sure you want to save your changes?"
+        message="Your account will be logged out after saving your changes."
+        buttonType="submit"
+        action="Update"
+        handleCancel={() => setUpdateModal(false)}
+        handleOk={() => {
+          userProfileObject.logout(User);
+          props.history.push(alterPath("/"));
+        }}
+      />
         </div>
 
       );
