@@ -35,7 +35,7 @@ export const config = {
         build: '1.7.3(122)'
     },
     environment:"staging",
-    changeLogs: `updated cashier name in create parcel page`
+    changeLogs: `updated about page`
 }
 
 export const ERROR_CODES = {
