@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, notification, Input, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { RoundedButton } from '../../component/button'
-import movoncargo from '../../assets/movoncargo.png';
+import movoncargo from '../../assets/MovonEds.png';
 import User from '../../service/User';
 import { openNotificationWithIcon, alterPath } from '../../utility'
 import './login.scss'
