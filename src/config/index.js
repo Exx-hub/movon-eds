@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.7.3(123)'
+        build: '1.7.3(124)'
     },
     environment:"staging",
     changeLogs: `updated eds logo in login`
