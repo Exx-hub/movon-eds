@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.7.3(122)'
+        build: '1.7.3(123)'
     },
     environment:"staging",
-    changeLogs: `updated cashier name in create parcel page`
+    changeLogs: `updated textColor switch case in header`
 }
 
 export const ERROR_CODES = {
