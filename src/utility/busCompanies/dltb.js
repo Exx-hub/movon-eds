@@ -121,7 +121,7 @@ class Dltb{
                 key: 'minDeclaredValue'
             },
             {
-                title: 'Max Declared Value',
+                title: 'Max Declared Value Add Rate Threshold',
                 dataIndex: 'maxDeclaredValue',
                 key: 'maxDeclaredValue'
             },
