@@ -100,8 +100,20 @@ const modifyName = fullName => {
 //   }
 //   return logo
 // }
-
-const getHeaderColor = () => {
+const getHeaderContainer= ()=>{
+  let color = getHeaderColor();
+  switch (UserProfile.getBusCompanyTag()) {
+    case 'isarog-liner':
+      color = "#1d7ab2"
+      break;
+  
+    default:
+      color = 'rgb(204, 39, 40)'
+      break;
+  }
+  return color
+}
+const getHeaderColor = ()=>{
   let color = undefined;
   switch (UserProfile.getBusCompanyTag()) {
     case 'isarog-liner':
@@ -195,5 +207,6 @@ export {
   getStickerLogoBw,
   getHeaderLogo,
   getCashierTextColor,
-  getHeaderColor
+  getHeaderColor,
+  getHeaderContainer
 }
