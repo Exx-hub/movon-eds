@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Collapse, Table, Space, Button, Select, Switch, Form, Input, InputNumber } from "antd";
+import React from "react";
+import {  Switch, Form, Input, InputNumber } from "antd";
 import FooterModal from './modal.footer'
 
 function AddFixMatrixModalContent(props) {
-
-    console.log('props xxxx', props)
 
     const onFinish = values => {
         let index = -1
@@ -51,6 +49,7 @@ function AddFixMatrixModalContent(props) {
                     'price': (props.data && props.data.price) || 0,
                     'name': (props.data && props.data.name) || "no-data",
                     'enablePortersFee': (props.data && props.data.enablePortersFee) || true,
+                    'enabledAccompaniedBaggage': (props.data && props.data.enabledAccompaniedBaggage) || false,
                 }}
             >
 
@@ -88,6 +87,13 @@ function AddFixMatrixModalContent(props) {
                     name="enablePortersFee"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <Switch defaultChecked={props.data.enablePortersFee === undefined ? true : props.data.enablePortersFee} /> 
+                </Form.Item> 
+
+                <Form.Item
+                    label="Enable Accompanied Baggage"
+                    name="enabledAccompaniedBaggage"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <Switch defaultChecked={props.data.enabledAccompaniedBaggage === undefined ? false : props.data.enabledAccompaniedBaggage} /> 
                 </Form.Item> 
 
                 <Form.Item {...tailLayout}>

@@ -259,6 +259,14 @@ class BicolIsarog{
             }
         },
         {
+            title: 'Enabled Accompanied Baggage',
+            dataIndex: 'enabledAccompaniedBaggage',
+            key: "enabledAccompaniedBaggage",
+            render: (val)=>{
+                return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Enabled" : "Disabled") : "Disabled" }`}</Tag>)
+            }
+        },
+        {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',

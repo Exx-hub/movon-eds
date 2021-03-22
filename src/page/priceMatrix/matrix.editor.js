@@ -483,7 +483,7 @@ function DltbMatrix(props) {
                                     onSearch={(e) => onSelect('origin-search', e)}
                                     onSelect={(e) => onSelect("startName", e)}>
                                     {
-                                        state.tempOriginList.map(e => (<Option value={e.stationId}>{e.stationName}</Option>))
+                                        state.tempOriginList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
                                 </AutoComplete>
                             </Space>
@@ -513,7 +513,7 @@ function DltbMatrix(props) {
                                     onSearch={(e) => onSelect("search-fixMatrixOriginStation", e)}
                                     onSelect={(e) => onSelect("fixMatrixOriginName", e)}>
                                     {
-                                        state.fixPriceOriginList.map(e => (<Option value={e.stationId}>{e.stationName}</Option>))
+                                        state.fixPriceOriginList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
                                 </AutoComplete>
                             </Space>
@@ -526,7 +526,7 @@ function DltbMatrix(props) {
                                     onSearch={(e) => onSelect("search-fixMatrixDestinationStation", e)}
                                     onSelect={(e) => onSelect("fixMatrixDestinationName", e)}>
                                     {
-                                        state.tempDestinationList.map(e => (<Option value={e.stationId}>{e.stationName}</Option>))
+                                        state.tempDestinationList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
                                 </AutoComplete>
                             </Space>
