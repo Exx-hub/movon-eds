@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.7.3(123)'
+        build: '1.7.3(124)'
     },
     environment:"staging",
-    changeLogs: `updated about page`
+    changeLogs: `updated change password`
 }
 
 export const ERROR_CODES = {
