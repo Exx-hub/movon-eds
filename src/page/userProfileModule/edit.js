@@ -41,23 +41,25 @@ const showNotification = (props) => {
 };
 
 function EditUserProfileModule(props) {
+  const [updateModal, setUpdateModal] = React.useState(false);
   class EditUserProfile extends React.Component {
 
     constructor(props) {
       super(props);
       this.state = {
-        username: "",
+        phoneNumber: "",
         oldPassword: "",
-        password: "",
+        password:"",
+        newPassword: "",
         confirmPassword: ""
       };
     }
 
     componentDidMount() {
-      const { displayId } = UserProfile.getUser()
+      const { number } = UserProfile.getPersonalInfo().phone
       const { password } = UserProfile.getPersonalInfo()
       this.setState({
-        username: displayId,
+        phoneNumber: number,
         oldPassword: password
       })
     }
@@ -75,7 +77,7 @@ function EditUserProfileModule(props) {
         });
         return;
       }
-      if (code === "DUPLICATE_STAFF_PASSWORD") {
+      if (code === 2605) {
 
         openNotificationWithIcon("error", code);
         this.props.history.push(alterPath("/"));
@@ -83,6 +85,13 @@ function EditUserProfileModule(props) {
         return;
       }
 
+      if (code === 2606) {
+
+        openNotificationWithIcon("error", code);
+        props.history.push(alterPath("/user-profile/edit"));
+        return;
+      }
+      
       if (code === 1000) {
         openNotificationWithIcon("error", code);
         this.props.history.push(alterPath("/"));
@@ -100,7 +109,7 @@ function EditUserProfileModule(props) {
     };
 
     onValidation = (name) => {
-      if ((this.state['username'].length < 6)) {
+      if ((this.state['staffId'].length < 6)) {
         showNotification({
           title: "Input Fields Validation",
           type: "error",
@@ -108,7 +117,7 @@ function EditUserProfileModule(props) {
         });
         return false;
       }
-      if (name === 'password' || name === 'confirmPassword') {
+      if (name === 'newPassword' || name === 'confirmPassword') {
         if (this.state[name].match(/[ ]/)) {
           showNotification({
             title: "Input Fields Validation",
@@ -125,7 +134,7 @@ function EditUserProfileModule(props) {
           });
           return false;
         }
-        else if (this.state['username'].match(/[ ]/)) {
+        else if (this.state['staffId'].match(/[ ]/)) {
           showNotification({
             title: "Input Fields Validation",
             type: "error",
@@ -138,87 +147,78 @@ function EditUserProfileModule(props) {
 
     }
 
-    onUpdateUserProfile = () => {
-      if (this.state.oldPassword && this.state.password && this.state.confirmPassword) {
-
-        if (!this.onValidation("password") || !this.onValidation('confirmPassword')) {
-          return;
-        }
-
-        if (this.state.password === this.state.confirmPassword) {
-
-          this.setState({ fetching: true }, () => User.updateUserPassword(this.state.username, this.state.oldPassword)
-            .then(e => {
-
-              const { error_code } = e.data;
-              if (error_code == "DUPLICATE_STAFF_PASSWORD") {
-
-                this.setState({ fetching: true }, () => User.updateUserPassword(this.state.username, this.state.password)
-                  .then(e => {
-                    const { errorCode } = e.data;
-                    const { error_code } = e.data;
-                    if (error_code == "DUPLICATE_STAFF_PASSWORD") {
-                      openNotificationWithIcon("error", "newpass_confirmpass");
-                      props.history.push(alterPath("/user-profile/edit"));
-                    } else {
-                      if (errorCode) {
-                        this.handleErrorNotification(errorCode)
-                      }
-                      else {
-                        notification.open({
-                          title: "User Profile Updated!",
-                          type: "success",
-                          message: "You need to re-login your account and continue",
-                          duration: 0,
-                          onClose: () => {
-                            UserProfile.clearData();
-                            props.history.push(alterPath("/"))
-                          }
-                        });
-                      }
-                    }
-                  }));
-                return;
-              } else {
-                openNotificationWithIcon("error", "DUPLICATE_STAFF_PASSWORD");
-                props.history.push(alterPath("/user-profile/edit"));
-                // this.userProfileObject.clearData();
-              }
-              // else if (errorCode) {
-              //   this.handleErrorNotification(errorCode)
-              // } 
-              // else {
-              //   notification.open({
-              //     title: "User Profile Updated!",
-              //     type: "success",
-              //     message: "You need to re-login your account and continue",
-              //     duration: 0,
-              //     onClose: () => {
-              //       UserProfile.clearData();
-              //       props.history.push(alterPath("/"))
-              //     }
-              //   });
-              // }
-            }));
-        }
-        else {
-          showNotification({
-            title: "Input Fields Validation",
-            type: "error",
-            message: "Passwords do not match",
-          });
-        }
-      } else {
-        showNotification({
-          title: "Input Validation",
-          type: "error",
-          message: "Please fill up missing fields",
-        });
-      }
+  onUpdateUserProfile = () => {
+      const { oldPassword, newPassword, confirmPassword, phoneNumber } = this.state
+      const option = {phoneNumber: phoneNumber, oldPassword: oldPassword }
+      console.log(option)
+      this.setState({ fetching: true }, () => User.updateCredential(option)
+        .then(e => {
+          const { error_code } = e.data;
+          const { errorCode } = e.data;
+            if (error_code === 2606) {
+              props.history.push(alterPath("/user-profile/edit"));
+            }
+            else if (oldPassword === "" || oldPassword === undefined || newPassword === "" || confirmPassword === "") {
+              showNotification({
+                title: "Input Validation",
+                type: "error",
+                message: "Please fill up missing fields."
+              });
+              props.history.push(alterPath("/user-profile/edit"));
+            }
+            else if (error_code === 2605 || oldPassword === newPassword || oldPassword === confirmPassword) {
+              showNotification({
+                title: "Same Old Password",
+                type: "error",
+                message: "New password cannot be the same as your current password"
+              });
+              props.history.push(alterPath("/user-profile/edit"));
+            }
+           
+            else if ( newPassword.length < 6 || confirmPassword.length <6) {
+              showNotification({
+                title: "Input Validation",
+                type: "error",
+                message: "Password should have atleast 6 characters."
+              });
+              props.history.push(alterPath("/user-profile/edit"));
+            }
+            else if (newPassword.includes(' ') || confirmPassword.includes(' ')) {
+              showNotification({
+                title: "Input Validation",
+                type: "error",
+                message: "Password should not contain spaces."
+              });
+              props.history.push(alterPath("/user-profile/edit"));
+            }
+            else if (newPassword != confirmPassword) {
+              showNotification({
+                title: "Input Validation",
+                type: "error",
+                message: "Password Mismatch."
+              });
+              props.history.push(alterPath("/user-profile/edit"));
+            }
+            else {
+              const { oldPassword, newPassword, confirmPassword, phoneNumber } = this.state
+              const option = { newPassword: newPassword, oldPassword,phoneNumber: phoneNumber }
+              console.log(option)
+              this.setState({ fetching: true }, () => User.updateCredential(option)
+                .then(e => {
+                  const { success } = e.data;               
+                  if (success != false) {
+                    props.history.push((setUpdateModal(true)));
+                  }
+                  else {
+                    this.handleErrorNotification(errorCode)
+                  }
+              }));
+            }
+        }));
+      return;
     }
-
+  
     render() {
-
       const { fullName } = UserProfile.getPersonalInfo()
       const { name, logo } = UserProfile.getBusCompany()
       const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name
@@ -252,7 +252,7 @@ function EditUserProfileModule(props) {
 
             <div className="item-wrapper">
               <span className="title item-wrapper-custom-text-title">New Password</span>
-              <Input type="password" placeholder="" onChange={e => this.setState({ ...this.state, ...{ password: e.target.value } })} />
+              <Input type="password" placeholder="" onChange={e => this.setState({ ...this.state, ...{ newPassword: e.target.value } })} />
             </div>
 
             <div className="item-wrapper">
@@ -278,15 +278,23 @@ function EditUserProfileModule(props) {
         </Button>
             </div>
           </div>
+          <PromptModal
+            visible={updateModal}
+            title="Are you sure you want to save your changes?"
+            message="Your account will be logged out after saving your changes."
+            buttonType="submit"
+            action="Update"
+            handleCancel={() => setUpdateModal(false)}
+            handleOk={() => {
+              userProfileObject.logout(User);
+              props.history.push(alterPath("/"));
+            }}
+          />
         </div>
 
       );
     }
   }
-  const { fullName, phone } = UserProfile.getPersonalInfo()
-  const { displayId } = UserProfile.getUser()
-  const { name, logo } = UserProfile.getBusCompany()
-  const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name
   const [menuData, setMenuData] = React.useState([]);
   const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
