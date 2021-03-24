@@ -475,7 +475,7 @@ class SalesReport extends React.Component {
               }
 
               <div style={{ display:'flex', flexDirection:'row', justifyContent:'flex-end'}}>
-              <Dropdown overlay={this.menu}>
+              <Dropdown disabled = {(!this.state.data.length)} overlay={this.menu}>
                 <Button>
                   <DownOutlined />  Download
                 </Button>
