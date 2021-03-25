@@ -6,10 +6,7 @@ import { prettyDOM } from "@testing-library/react";
 
 function BicolIsarogMatrixModalContent(props) {
 
-    console.info('BicolIsarogMatrixModalContent', props)
-
     const onFinish = values => {
-        console.info('values',values)
         props.onSubmit(values, null)
     };
 

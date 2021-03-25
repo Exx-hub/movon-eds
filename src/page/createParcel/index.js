@@ -6,7 +6,7 @@ import WebCam from "../../component/webcam";
 import ScheduledTrips from "../../component/scheduledTrips";
 import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
-import { Button, notification, Layout, Checkbox, Input, Form, Space, Divider } from "antd";
+import { Button, notification, Layout, Checkbox, Input, Form } from "antd";
 import ReactToPrint from "react-to-print";
 import { UserOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
@@ -23,11 +23,15 @@ import {
 } from "../../utility";
 
 import {CustomModal} from '../../component/modal'
-import { config } from "../../config";
-import { convertToObject } from "typescript";
 import { NavLink } from "react-router-dom";
 
 const { Content, Sider, Header } = Layout;
+
+const CARGO_TYPES={
+  CARGO_PADALA:3,
+  EXCESS_NON_AC:2,
+  EXCESS_AC:1
+}
 
 const MIN_WIDTH = 800;
 const STEPS_LIST = [
@@ -919,6 +923,18 @@ class CreateParcel extends React.Component {
 
   fixPriceComputation = () => {
     let d = { ...this.state.details }
+    const{ fixMatrix, packageWeight, sticker_quantity, declaredValue, type}=d
+
+    if(Number(type.value || 0) !== CARGO_TYPES.CARGO_PADALA){
+      const option = fixMatrix.options.find(e=>e.name === fixMatrix.value);
+      if(Number(option.declaredValue) !== 0 && Number(declaredValue.value || 0) === 0){
+        return
+      }
+      if(Number(packageWeight.value || 0) === 0 || Number(sticker_quantity.value || 0) === 0){
+        return
+      }
+    }
+
     const options = {
       origin: UserProfile.getAssignedStationId(),
       destination: d.destination.value,
@@ -927,8 +943,10 @@ class CreateParcel extends React.Component {
       fixMatrixItemName: d.fixMatrix.value,
       quantity: d.quantity.value,
       additionalFee: d.additionalFee.value,
-      discountName : (d.discount.value && d.discount.value.toLowerCase()) || 'none'
+      discountName : (d.discount.value && d.discount.value.toLowerCase()) || 'none',
+      cargoType: d.type.value || 3
     }
+    
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
         const { data, errorCode } = e.data;
@@ -986,9 +1004,24 @@ class CreateParcel extends React.Component {
 
     this.setState({...state, details: { ...details, ...{ [name]: item } } }, () => {
 
-      
       switch (UserProfile.getBusCompanyTag()) {
         case "isarog-liner": 
+        const{fixMatrix}=this.state.details;
+
+        if (fixMatrix.value && fixMatrix.value.toLowerCase() !== 'none') {
+
+          if( name === "additionalFee" || name ==="quantity" ||  name === 'declaredValue' || name === "sticker_quantity") {
+            this.fixPriceComputation()
+            return;
+          }
+         
+        }else{
+          if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
+            this.computeV2()
+          }
+        }
+       
+        break;
         case "five-star":
         case "dltb":
           if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
@@ -1069,7 +1102,56 @@ class CreateParcel extends React.Component {
     });
   };
 
+  fetchFixMatrix = ()=>{
+
+    let details = {...this.state.details};
+
+    const options={
+      destination: details.destination.value, 
+      origin: UserProfile.getAssignedStationId(),
+      cargoType: details.type.value
+    }
+
+    ParcelService.getExcessBaggageStatus(options)
+        .then(e=>{
+          console.info("getExcessBaggageStatus",e)
+          const{data,status,errorCode}=e.data;
+
+          if(errorCode){
+            this.handleErrorNotification(errorCode);
+            return
+          }
+
+          let enabledExcessCargo =  data.enabledExcessCargo || false
+         
+          const accepted = true;
+          const options =  [...[{ name: "none", price: 0, declaredValue: 0 }], ...data.fixMatrix || []];
+          const fixMatrix = {...details.fixMatrix, accepted, options};
+
+          details.fixMatrix = fixMatrix;
+
+          if(typeof enabledExcessCargo === 'string'){
+            enabledExcessCargo = Boolean(enabledExcessCargo === "true")
+          }
+
+          const typeOptions = details.type.options.map(e=>{
+            let disabled = false;
+            if(e.name != 'Cargo Padala'){
+              disabled = !enabledExcessCargo;
+            }
+            return {...e, disabled}
+          })
+          details.type = {...details.type, ...{options:typeOptions}}
+
+          this.setState({enabledExcessCargo, details}, ()=>{
+            this.releasePaymentBreakDownValue();
+          })
+          
+        })
+  }
+
   onSelectChange = async (value, name) => {
+
     let details = { ...this.state.details };
     let state = {...this.state}
 
@@ -1170,7 +1252,7 @@ class CreateParcel extends React.Component {
       };
 
       let fixMatrix = { ...details.fixMatrix }
-      fixMatrix.value = undefined;
+      fixMatrix.value = "";
       fixMatrix.options = []
       details.fixMatrix = fixMatrix;
 
@@ -1196,90 +1278,65 @@ class CreateParcel extends React.Component {
         lengthRate: Number(0).toFixed(2),
         discountFee: Number(0).toFixed(2),
       }
-      this.setState({ ...state, details, selectedDestination },()=>{
-        ParcelService.getExcessBaggageStatus({destination:value, origin: UserProfile.getAssignedStationId()})
-        .then(e=>{
-          console.info("getExcessBaggageStatus",e)
-          const{data,status,errorCode}=e.data;
-          if(errorCode){
-            this.handleErrorNotification(errorCode);
-            return
-          }
-          let enabledExcessCargo =  data.enabledExcessCargo || false
-          if(typeof enabledExcessCargo === 'string'){
-            enabledExcessCargo = Boolean(enabledExcessCargo === "true")
-          }
 
-          const _type = details.type = {...details.type};
-          const options = _type.options.map(e=>{
-            let disabled = false;
-            if(e.name != 'Cargo Padala'){
-              disabled = !enabledExcessCargo;
-            }
-            return {...e, disabled}
-          })
-          _type.options = options;
-          console.info('_types',_type)
-
-          this.setState({enabledExcessCargo, details})
-          
-        })
+      this.setState({ ...state, details, selectedDestination, details },()=>{
+        this.fetchFixMatrix()
       });
 
 
-      MatrixService.getMatrix({
-        busCompanyId: this.userProfileObject.getBusCompanyId(),
-        origin: this.userProfileObject.getAssignedStationId(),
-        destination: value,
-      }).then((e) => {
-        const { data, success, errorCode } = e.data;
-        if (success) {
-          let result = (data &&
-            data.stringValues &&
-            JSON.parse(data.stringValues)) || { matrix: [], fixMatrix: [] };
-          let details = { ...this.state.details };
+      // MatrixService.getMatrix({
+      //   busCompanyId: this.userProfileObject.getBusCompanyId(),
+      //   origin: this.userProfileObject.getAssignedStationId(),
+      //   destination: value,
+      // }).then((e) => {
+      //   const { data, success, errorCode } = e.data;
+      //   if (success) {
+      //     let result = (data &&
+      //       data.stringValues &&
+      //       JSON.parse(data.stringValues)) || { matrix: [], fixMatrix: [] };
+      //     let details = { ...this.state.details };
 
-          if (!result.fixMatrix) {
-            result.fixMatrix = []
-          }
+      //     if (!result.fixMatrix) {
+      //       result.fixMatrix = []
+      //     }
 
-          if (Array.isArray(result)) {
-            details.fixMatrix = {
-              ...details.fixMatrix,
-              ...{
-                options: [
-                  ...[{ name: "none", price: 0, declaredValue: 0 }],
-                  ...result,
-                ],
-              },
-            };
-            this.setState({ details });
-          } else {
-            details.fixMatrix = {
-              ...details.fixMatrix,
-              ...{
-                options: [
-                  ...[{ name: "none", price: 0, declaredValue: 0 }],
-                  ...result.fixMatrix,
-                ],
-              },
-            };
-            this.setState({ details }, () => {
-              switch (UserProfile.getBusCompanyTag()) {
-                //case 'isarog-liner':
-                  //this.updateTotalShippingCost()
-                //break;
-                default:
-                  this.computeV2();
-                break;
-              }
+      //     if (Array.isArray(result)) {
+      //       details.fixMatrix = {
+      //         ...details.fixMatrix,
+      //         ...{
+      //           options: [
+      //             ...[{ name: "none", price: 0, declaredValue: 0 }],
+      //             ...result,
+      //           ],
+      //         },
+      //       };
+      //       this.setState({ details });
+      //     } else {
+      //       details.fixMatrix = {
+      //         ...details.fixMatrix,
+      //         ...{
+      //           options: [
+      //             ...[{ name: "none", price: 0, declaredValue: 0 }],
+      //             ...result.fixMatrix,
+      //           ],
+      //         },
+      //       };
+      //       this.setState({ details }, () => {
+      //         switch (UserProfile.getBusCompanyTag()) {
+      //           //case 'isarog-liner':
+      //             //this.updateTotalShippingCost()
+      //           //break;
+      //           default:
+      //             this.computeV2();
+      //           break;
+      //         }
              
-            });
-          }
-        } else {
-          this.handleErrorNotification(errorCode);
-        }
-      });
+      //       });
+      //     }
+      //   } else {
+      //     this.handleErrorNotification(errorCode);
+      //   }
+      // });
     }
 
     if (name === "discount") {
@@ -1356,6 +1413,8 @@ class CreateParcel extends React.Component {
       }
 
       if (value !== "none") {
+        let postponeComputation = false;
+        const isCargoPadala = CARGO_TYPES.CARGO_PADALA === Number(details.type.value || 3);
         let option = details.fixMatrix.options.find((e) => e.name === value);
         let price = Number(option.price).toFixed(2);
         let declaredValue = Number(option.declaredValue);
@@ -1369,24 +1428,35 @@ class CreateParcel extends React.Component {
           details.declaredValue.disabled = true;
         }
 
-        details.packageWeight.disabled = true;
-        details.packageWeight.value = undefined;
-        details.length.disabled = true;
-        details.length.value = undefined;
+        //details.length.value = undefined;
+        //details.quantity.value = 1;
+        //details.packageWeight.value = undefined;
+        //details.description.value = option.name;
         details.quantity.disabled = false;
-        details.quantity.value = 1;
-        details.description.value = option.name;
+
+        if(isCargoPadala){
+          details.packageWeight.disabled = true;
+          details.length.disabled = true;
+          postponeComputation = option && Number(option.price) === 0
+          postponeComputation = postponeComputation || (Number(details.sticker_quantity.value) === 0)
+
+        }else{
+          details.length.disabled = true
+          postponeComputation = option && option.declaredValue > 0;
+          postponeComputation = postponeComputation && (Number(details.packageWeight.value || 0) === 0)
+          
+        }
 
         switch (UserProfile.getBusCompanyTag()) {
           case 'isarog-liner':
-          case 'five-star':
             this.setState({ ...state, isFixedPrice: true, details }, () => {
-              if (option && Number(option.price) === 0) {
+              if (postponeComputation) {
                 return;
               }
               this.fixPriceComputation()
             });
             break;
+          case 'five-star':
           case "dltb":
             this.setState({ ...state, isFixedPrice: true, details }, () => {
               if (option && Number(option.price) === 0 && Number(option.declaredValue) !== 0) {
@@ -1433,18 +1503,24 @@ class CreateParcel extends React.Component {
 
   onTypeChange = (value) => {
     const details = { ...this.state.details };
-    const declaredValue = {...details.declaredValue}
-    declaredValue.disabled = Number(value) !== 3;
-    declaredValue.value = 0;
-    details.declaredValue = declaredValue;
+    details.type = {...details.type, value}
+    details.packageWeight.disabled = false;
 
-    const type = { ...details.type, ...{ value } }
-    details.type = type
+    details.declaredValue = {...details.declaredValue, ...{value:undefined, disabled:false }};
+    details.fixMatrix = {...details.fixMatrix, ...{value:""}}
    
-    this.setState({
-      details
+    this.setState({details},()=>{
+        this.fetchFixMatrix()
+        // if(fixMatrix.value)
+        //   this.fixPriceComputation()
     });
   };
+
+  releasePaymentBreakDownValue = () =>{
+    let details = {...this.state.details}
+    details.totalShippingCost.value = 0;
+    this.setState({ details, basePrice:0, declaredValueFee:0, discountFee:0, systemFee:0, portersFee:0, lengthFee:0, weight:0 })
+  }
 
   onCreateNewParcel = () => {
     window.location.reload(true);

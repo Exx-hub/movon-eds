@@ -426,7 +426,8 @@ const ParcelService = {
         weight,
         parcelCount,
         length,
-        discountName
+        discountName,
+        cargoType
     }) => {
         return axios({
             method: 'post',
@@ -443,7 +444,8 @@ const ParcelService = {
                 weight,
                 parcelCount,
                 length,
-                discountName
+                discountName,
+                cargoType
             }
         })
     },
@@ -479,7 +481,7 @@ const ParcelService = {
         })
     },
 
-    getExcessBaggageStatus: ({origin,destination})=>{
+    getExcessBaggageStatus: ({origin, destination, cargoType})=>{
         
         return axios({
             method: 'post',
@@ -491,7 +493,8 @@ const ParcelService = {
             },
             data: {
                 origin,
-                destination
+                destination,
+                cargoType
             }
         })
     }
