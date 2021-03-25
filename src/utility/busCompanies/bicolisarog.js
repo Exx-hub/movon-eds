@@ -147,17 +147,30 @@ class BicolIsarog{
             {
                 title: 'Declared Value Rate %',
                 dataIndex: 'declaredValueRate',
-                key: 'declaredValueRate'
+                key: 'declaredValueRate',
+                align:'center',
+                render: (text)=>(<span>{Number(text || 0)} %</span>)
             },
             {
-                title: 'Accompanied Baggage',
+                title: 'Min Accompanied Baggage',
                 dataIndex: 'accompaniedBaggage',
-                key: 'accompaniedBaggage'
+                key: 'accompaniedBaggage',
+                align:'center',
+                render: (text)=>(<span>{Number(text || 0)} kg.</span>)
             },
             {
                 title: 'Accompanied Baggage Fee',
                 dataIndex: 'accompaniedBaggageFee',
-                key: 'accompaniedBaggageFee'
+                key: 'accompaniedBaggageFee',
+                align: 'right',
+                render: (text)=>(<span>₱ {Number(text).toFixed(2)}</span>)
+            },
+            {
+                title: 'Base Price',
+                dataIndex: 'price',
+                key: 'price',
+                align:'right',
+                render: (text)=>(<span>₱ {Number(text).toFixed(2)}</span>)
             },
             {
                 title: 'Weight Range',
@@ -194,11 +207,6 @@ class BicolIsarog{
                     style={{background:'orange'}}>
                         <span style={{color:"white", fontWeight:'bold', fontSize:'11px'}}>Show Details</span>
                     </Button>)
-            },
-            {
-                title: 'Base Price',
-                dataIndex: 'price',
-                key: 'price'
             },
             {
                 title: 'Action',
@@ -254,6 +262,14 @@ class BicolIsarog{
             title: 'Enable Porters Fee',
             dataIndex: 'enablePortersFee',
             key: "enablePortersFee",
+            render: (val)=>{
+                return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Enabled" : "Disabled") : "Disabled" }`}</Tag>)
+            }
+        },
+        {
+            title: 'Enabled Accompanied Baggage',
+            dataIndex: 'enabledAccompaniedBaggage',
+            key: "enabledAccompaniedBaggage",
             render: (val)=>{
                 return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Enabled" : "Disabled") : "Disabled" }`}</Tag>)
             }

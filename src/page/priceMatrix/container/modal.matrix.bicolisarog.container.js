@@ -6,10 +6,7 @@ import { prettyDOM } from "@testing-library/react";
 
 function BicolIsarogMatrixModalContent(props) {
 
-    console.info('BicolIsarogMatrixModalContent', props)
-
     const onFinish = values => {
-        console.info('values',values)
         props.onSubmit(values, null)
     };
 
@@ -96,14 +93,14 @@ function BicolIsarogMatrixModalContent(props) {
                 </Form.Item>
 
                 <Form.Item
-                    label="Accompanied Baggage"
+                    label="Min Accompanied Baggage (Kg)"
                     name="accompaniedBaggage"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber style={{width:'100%'}} min={0}/>
                 </Form.Item>
 
                 <Form.Item
-                    label="Accompanied Baggage Fee"
+                    label="Accompanied Baggage Fee (Php)"
                     name="accompaniedBaggageFee"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber style={{width:'100%'}} min={0}/>

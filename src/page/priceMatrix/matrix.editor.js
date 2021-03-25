@@ -73,7 +73,6 @@ function DltbMatrix(props) {
     })
 
     useEffect(() => {
-        console.info('matrix', props)
         const originList = [...props.data.originList]
         setState(e => ({
             ...e,
@@ -90,7 +89,6 @@ function DltbMatrix(props) {
 
     const parsePriceMatrix = (result) => {
         const { success, data, errorCode } = result.data;
-        console.info('result', result)
         if (!errorCode) {
             let fixMatrix = [];
             let matrix = []
@@ -149,8 +147,6 @@ function DltbMatrix(props) {
 
     const updateFixPriceFiveStartMatrix = (values, data) => {
 
-        console.info("updateFixPriceFiveStartMatrix", data, values)
-
         let _fixMatrix = undefined;
         switch (data.type) {
             case 'add':
@@ -191,7 +187,6 @@ function DltbMatrix(props) {
         switch (name) {
             case "startName":
                 response = await props.data.getAllRoutesByOrigin(val);
-                console.info('tempDestination', response)
                 busPartner.parseMatrixDataSource(response)
                 setState(e => {
                     return {
@@ -205,7 +200,6 @@ function DltbMatrix(props) {
 
             case "fixMatrixOriginName":
                 response = await props.data.getAllRoutesByOrigin(val);
-                console.info('fixMatrixOriginName', response)
                 setState(e => ({
                     ...e,
                     fixMatrixOriginId: val,
@@ -220,7 +214,6 @@ function DltbMatrix(props) {
             case "fixMatrixDestinationName":
                 const result = await props.data.getMatrix(state.fixMatrixOriginId, val)
                 const tempFixMatrixObject = parsePriceMatrix(result);
-                console.info("tempFixMatrixObject", tempFixMatrixObject)
                 busPartner.setPriceMatrix(tempFixMatrixObject)
                 setState(e => ({
                     ...e,
@@ -483,7 +476,7 @@ function DltbMatrix(props) {
                                     onSearch={(e) => onSelect('origin-search', e)}
                                     onSelect={(e) => onSelect("startName", e)}>
                                     {
-                                        state.tempOriginList.map(e => (<Option value={e.stationId}>{e.stationName}</Option>))
+                                        state.tempOriginList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
                                 </AutoComplete>
                             </Space>
@@ -513,7 +506,7 @@ function DltbMatrix(props) {
                                     onSearch={(e) => onSelect("search-fixMatrixOriginStation", e)}
                                     onSelect={(e) => onSelect("fixMatrixOriginName", e)}>
                                     {
-                                        state.fixPriceOriginList.map(e => (<Option value={e.stationId}>{e.stationName}</Option>))
+                                        state.fixPriceOriginList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
                                 </AutoComplete>
                             </Space>
@@ -526,7 +519,7 @@ function DltbMatrix(props) {
                                     onSearch={(e) => onSelect("search-fixMatrixDestinationStation", e)}
                                     onSelect={(e) => onSelect("fixMatrixDestinationName", e)}>
                                     {
-                                        state.tempDestinationList.map(e => (<Option value={e.stationId}>{e.stationName}</Option>))
+                                        state.tempDestinationList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
                                 </AutoComplete>
                             </Space>
