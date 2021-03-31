@@ -191,8 +191,8 @@ function UserEditProfileModule(props) {
     }
 
     render() {
-
-      const { fullName } = UserProfile.getPersonalInfo()
+      
+      const { firstName,lastName,phone} = UserProfile.getPersonalInfo()
       const { name, logo } = UserProfile.getBusCompany()
       const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name
 
@@ -220,21 +220,21 @@ function UserEditProfileModule(props) {
 
             <div className="item-wrapper">
               <span className="title item-wrapper-custom-text-title">First Name</span>
-              <Input type="text" placeholder="" onChange={e => this.setState({ ...this.state, ... { firstName: e.target.value } })} />
+              <Input value={firstName} type="text" placeholder="" onChange={e => this.setState({ ...this.state, ... { firstName: e.target.value } })} />
             </div>
             <div className="item-wrapper">
               <span className="title item-wrapper-custom-text-title">Last Name</span>
-              <Input type="text" placeholder="" onChange={e => this.setState({ ...this.state, ... { lastName: e.target.value } })} />
+              <Input value={lastName} type="text" placeholder="" onChange={e => this.setState({ ...this.state, ... { lastName: e.target.value } })} />
             </div>
 
             <div className="item-wrapper">
               <span className="title item-wrapper-custom-text-title">Phone Number</span>
-              <Input type="number" pattern="[0-9]{10}" placeholder="" onChange={e => this.setState({ ...this.state, ...{ phoneNumber: e.target.value } })} />
+              <Input value={phone.number} type="number" pattern="[0-9]{10}" placeholder="" onChange={e => this.setState({ ...this.state, ...{ phoneNumber: e.target.value } })} />
             </div>
 
             <div className="item-wrapper">
               <span className="title item-wrapper-custom-text-title">Username</span>
-              <Input type="text" placeholder="" onChange={e => this.setState({ newStaffId: e.target.value })} />
+              <Input value={displayId} type="text" placeholder="" onChange={e => this.setState({ newStaffId: e.target.value })} />
             </div>
             <div className="button-wrapper-edit">
               <Button className="button-cancel"
