@@ -5,8 +5,6 @@ import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/i
 
 function FiveStarMatrixModalContent(props) {
 
-    console.log("FiveStarMatrixModalContent", props)
-
     const onFinish = values => {
         props.onSubmit(values, null)
     };
@@ -14,12 +12,6 @@ function FiveStarMatrixModalContent(props) {
     const onFinishFailed = errorInfo => {
         //console.info('Failed:', errorInfo);
     };
-
-    useEffect(()=>{
-        //const origin = props.data.originId;
-        //const destination = props.data.destinationId;
-        //const destinationName = props.data.destination
-    })
 
     const layout = {
         labelCol: { span: 6 },

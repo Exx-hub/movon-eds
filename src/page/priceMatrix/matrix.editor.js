@@ -72,7 +72,7 @@ function DltbMatrix(props) {
         type: undefined
     })
 
-    useEffect(() => {
+    useEffect(()=>{
         const originList = [...props.data.originList]
         setState(e => ({
             ...e,
@@ -87,9 +87,9 @@ function DltbMatrix(props) {
         return result.stationName || "";
     }
 
-    const parsePriceMatrix = (result) => {
-        const { success, data, errorCode } = result.data;
-        if (!errorCode) {
+    const parsePriceMatrix = (result) =>{
+        const{success, data, errorCode}=result.data;
+        if(!errorCode){
             let fixMatrix = [];
             let matrix = []
             if (!data) {
@@ -145,8 +145,7 @@ function DltbMatrix(props) {
         })
     }
 
-    const updateFixPriceFiveStartMatrix = (values, data) => {
-
+    const updateFixPriceFiveStartMatrix = (values, data) =>{
         let _fixMatrix = undefined;
         switch (data.type) {
             case 'add':
@@ -200,9 +199,8 @@ function DltbMatrix(props) {
 
             case "fixMatrixOriginName":
                 response = await props.data.getAllRoutesByOrigin(val);
-                setState(e => ({
-                    ...e,
-                    fixMatrixOriginId: val,
+                setState(e=>({...e,
+                    fixMatrixOriginId:val,
                     fixMatrixOriginName: getListName(val, props.data.originList),
                     fixMatrixDestinationName: "",
                     fixMatrixDestinationId: "",

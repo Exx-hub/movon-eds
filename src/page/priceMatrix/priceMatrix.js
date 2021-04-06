@@ -31,7 +31,6 @@ const getMatrix = async(originId,destinationId) =>{
 }
 
 const getEndStations = (startStationId, data) =>{
-  console.log('>>>>>data',data)
   let unique = []
     const _endStationRoutes = data
     .filter((e) => e.start === startStationId)

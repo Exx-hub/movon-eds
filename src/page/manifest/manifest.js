@@ -167,7 +167,6 @@ class Manifest extends React.Component {
         this.state.limit
       ).then((e) => this.parceData(e))
       .catch(e=>{
-        console.log('[manifest module] error: ',e);
         this.setState({fetching:false})
       })
         

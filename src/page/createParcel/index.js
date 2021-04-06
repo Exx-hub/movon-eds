@@ -207,7 +207,6 @@ class CreateParcel extends React.Component {
       page: 1,
       checkIn: false,
       isLoading: false,
-
       details: {
         billOfLading: {
           name: "billOfLading",
@@ -508,6 +507,10 @@ class CreateParcel extends React.Component {
         details.billOfLading.disabled = true
         details.length.required = false;
         break;
+
+      case "five-star": 
+        details.discount.disabled = true
+      break;
     
       default:
         break;
@@ -835,105 +838,9 @@ class CreateParcel extends React.Component {
     return true;
   };
 
-  // getConvinienceFee = (qty, declaredValue) => {
-  //   if (Boolean(this.userProfileObject.isIsarogLiners())) {
-  //     ParcelService.getConvenienceFee(qty, declaredValue).then((res) => {
-  //       this.parseSystemFeeResponse(res);
-  //     });
-  //     return;
-  //   }
-
-  //   // if (!qty) {
-  //   //   let details = { ...this.state.details };
-  //   //   let systemFee = { ...details.systemFee };
-  //   //   systemFee.value = 0;
-  //   //   details.systemFee = systemFee;
-  //   //   this.setState({ details });
-  //   //   return;
-  //   // }
-
-  //   if (this.userProfileObject.isFiveStar()) {
-  //     ParcelService.getFiveStarConvenienceFee(qty, 0).then((res) => this.parseSystemFeeResponse(res));
-  //     return;
-  //   }
-  // };
-
-  // parseSystemFeeResponse = (res) => {
-  //   const { success, data, errorCode } = res.data;
-  //   if (!success) {
-  //     this.handleErrorNotification(errorCode);
-  //   }
-  //   let details = { ...this.state.details };
-  //   let systemFee = { ...this.state.details.systemFee };
-  //   systemFee = Object.assign({}, systemFee, { value: data.convenienceFee });
-  //   this.setState({ details: Object.assign(details, { systemFee }) }, () =>
-  //     this.updateTotalShippingCost()
-  //   );
-  // };
-
-  // computePrice = (callback) => {
-  //   if (
-  //     this.state.details.fixMatrix.value &&
-  //     this.state.details.fixMatrix.value !== "none"
-  //   ) {
-  //     return;
-  //   }
-
-  //   const { destination, declaredValue, paxs, packageWeight, type, length } = this.state.details;
-
-  //   const busCompanyId = this.userProfileObject.getBusCompanyId();
-  //   const startStation = this.userProfileObject.getAssignedStationId();
-  //   const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
-  //   const endStation = selectedOption.endStation || undefined;
-  //   const parcel_length = length.value || 0;
-  //   const weight = packageWeight.value ? parseFloat(packageWeight.value).toFixed(2) : undefined;
-  //   const pax = paxs.value || 0;
-  //   let decValue =  Number(declaredValue.value || 0) 
-
-  //   if((Number(type.value) === 3)){
-  //     if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight) || isNull(decValue)) {
-  //       return
-  //     }
-  //   }else{
-  //     if (isNull(busCompanyId) || isNull(startStation) || isNull(endStation) || isNull(weight)) {
-  //       return
-  //     }
-  //   }
-
-  //   ParcelService.getDynamicPrice(
-  //     busCompanyId,
-  //     decValue,
-  //     endStation,
-  //     type.value,
-  //     pax,
-  //     startStation,
-  //     weight,
-  //     parcel_length
-  //   )
-  //     .then((e) => {
-  //       const { data, success, errorCode } = e.data;
-  //       if (errorCode) {
-  //         this.handleErrorNotification(errorCode);
-  //         return;
-  //       }
-  //       callback(data);
-  //     });
-
-  // }
-
   fixPriceComputation = () => {
-    let d = { ...this.state.details }
-    const{ fixMatrix, packageWeight, sticker_quantity, declaredValue, type}=d
 
-    if(Number(type.value || 0) !== CARGO_TYPES.CARGO_PADALA){
-      const option = fixMatrix.options.find(e=>e.name === fixMatrix.value);
-      if(Number(option.declaredValue) !== 0 && Number(declaredValue.value || 0) === 0){
-        return
-      }
-      if(Number(packageWeight.value || 0) === 0 || Number(sticker_quantity.value || 0) === 0){
-        return
-      }
-    }
+    let d = { ...this.state.details }
 
     const options = {
       origin: UserProfile.getAssignedStationId(),
@@ -950,6 +857,7 @@ class CreateParcel extends React.Component {
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
         const { data, errorCode } = e.data;
+
         console.info('getDefaultFixMatrixComputation',e)
         if (!errorCode) {
 
@@ -981,65 +889,10 @@ class CreateParcel extends React.Component {
       })
   }
 
-  // addFixMatrixFee = (_qty, addrate) => {
-  //   let d = { ...this.state.details }
-  //   let total = (Number(d.packageInsurance.value || 0) + Number(d.shippingCost.value || 0))
-  //   let qty = Number(_qty || 0)
-  //   let quantity = qty < 1 ? 1 : qty;
-  //   total = total * quantity;
-  //   total += Number(d.systemFee.value || 0)
-  //   total += addrate
-  //   d.totalShippingCost.value = total
-  //   return total;
-  // }
-
   onInputChange = (name, value) => {
     let details = { ...this.state.details };
-    let state = {...this.state}
-
-    let item = {
-      ...details[name],
-      ...{ value, accepted: true, hasError: false },
-    };
-
-    this.setState({...state, details: { ...details, ...{ [name]: item } } }, () => {
-
-      switch (UserProfile.getBusCompanyTag()) {
-        case "isarog-liner": 
-        const{fixMatrix}=this.state.details;
-
-        if (fixMatrix.value && fixMatrix.value.toLowerCase() !== 'none') {
-
-          if( name === "additionalFee" || name ==="quantity" ||  name === 'declaredValue' || name === "sticker_quantity") {
-            this.fixPriceComputation()
-            return;
-          }
-         
-        }else{
-          if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
-            this.computeV2()
-          }
-        }
-       
-        break;
-        case "five-star":
-        case "dltb":
-          if (details.fixMatrix.value && details.fixMatrix.value.toLowerCase() !== 'none') {
-            if( name === "additionalFee" || name ==="quantity" ||  name === 'declaredValue' || name === "sticker_quantity") {
-              this.fixPriceComputation()
-              return;
-            }
-          }
-
-          if (name === 'declaredValue' || name == 'sticker_quantity' || name == 'length' || name === 'packageWeight') {
-            this.computeV2()
-          }
-          break
-
-        default:
-          break;
-      }
-    });
+    details[name] = {...details[name], ...{ value, accepted: true, hasError: false }};
+    this.handleView("input-change",details,()=>{})
   };
 
   getMatrixValue = (busCompanyId, origin, destination) => {
@@ -1104,6 +957,8 @@ class CreateParcel extends React.Component {
 
   fetchFixMatrix = ()=>{
 
+    console.info('[fetchFixMatrix] passsss')
+
     let details = {...this.state.details};
 
     const options={
@@ -1142,10 +997,7 @@ class CreateParcel extends React.Component {
             return {...e, disabled}
           })
           details.type = {...details.type, ...{options:typeOptions}}
-
-          this.setState({enabledExcessCargo, details}, ()=>{
-            this.releasePaymentBreakDownValue();
-          })
+          this.setState({enabledExcessCargo, details})
           
         })
   }
@@ -1153,7 +1005,6 @@ class CreateParcel extends React.Component {
   onSelectChange = async (value, name) => {
 
     let details = { ...this.state.details };
-    let state = {...this.state}
 
     if (name === "connectingCompany") {
       if (value.toLowerCase() === "none") {
@@ -1242,124 +1093,20 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "destination") {
-      const selectedDestination = details.destination.options.filter(
-        (e) => e.value === value
-      )[0];
+      //const selectedDestination = details.destination.options.find((e) => e.value === value);
+      details.destination = {...details.destination,...{ value, accepted: true }};
 
-      let destination = {
-        ...details.destination,
-        ...{ value, accepted: true },
-      };
-
-      let fixMatrix = { ...details.fixMatrix }
-      fixMatrix.value = "";
-      fixMatrix.options = []
-      details.fixMatrix = fixMatrix;
-
-      details.discount.value = undefined;
-
-      let description = { ...details.description }
-      description.value = undefined;
-      details.description = description;
-
-      details = { ...details, ...{ destination } };
-
-      let state = {
-        ...this.state,
-        lengthFee: Number(0).toFixed(2),
-        portersFee: Number(0).toFixed(2),
-        weightFee: Number(0).toFixed(2),
-        handlingFee: Number(0).toFixed(2),
-        isShortHaul: undefined,
-        isFixedPrice: false,
-        basePrice: Number(0).toFixed(2),
-        declaredValueFee: Number(0).toFixed(2),
-        insuranceFee: Number(0).toFixed(2),
-        lengthRate: Number(0).toFixed(2),
-        discountFee: Number(0).toFixed(2),
-      }
-
-      this.setState({ ...state, details, selectedDestination, details },()=>{
+      this.handleView("destination-change",details,()=>{
         this.fetchFixMatrix()
-      });
-
-
-      // MatrixService.getMatrix({
-      //   busCompanyId: this.userProfileObject.getBusCompanyId(),
-      //   origin: this.userProfileObject.getAssignedStationId(),
-      //   destination: value,
-      // }).then((e) => {
-      //   const { data, success, errorCode } = e.data;
-      //   if (success) {
-      //     let result = (data &&
-      //       data.stringValues &&
-      //       JSON.parse(data.stringValues)) || { matrix: [], fixMatrix: [] };
-      //     let details = { ...this.state.details };
-
-      //     if (!result.fixMatrix) {
-      //       result.fixMatrix = []
-      //     }
-
-      //     if (Array.isArray(result)) {
-      //       details.fixMatrix = {
-      //         ...details.fixMatrix,
-      //         ...{
-      //           options: [
-      //             ...[{ name: "none", price: 0, declaredValue: 0 }],
-      //             ...result,
-      //           ],
-      //         },
-      //       };
-      //       this.setState({ details });
-      //     } else {
-      //       details.fixMatrix = {
-      //         ...details.fixMatrix,
-      //         ...{
-      //           options: [
-      //             ...[{ name: "none", price: 0, declaredValue: 0 }],
-      //             ...result.fixMatrix,
-      //           ],
-      //         },
-      //       };
-      //       this.setState({ details }, () => {
-      //         switch (UserProfile.getBusCompanyTag()) {
-      //           //case 'isarog-liner':
-      //             //this.updateTotalShippingCost()
-      //           //break;
-      //           default:
-      //             this.computeV2();
-      //           break;
-      //         }
-             
-      //       });
-      //     }
-      //   } else {
-      //     this.handleErrorNotification(errorCode);
-      //   }
-      // });
+      })
     }
 
     if (name === "discount") {
-     
-      let additionNote = { ...details.additionNote };
-      additionNote.value = value.toLowerCase() === "none" ? undefined : value
-      additionNote.accepted = true;
-
-      let discount = { ...details.discount };
-      discount.value = value;
-      discount.accepted = true;
-
-      details.discount = discount;
-      details.additionNote = additionNote;
-
-      this.setState({ ...state, details },()=>{
-        if(details.fixMatrix.value === undefined || details.fixMatrix.value.toLowerCase() === 'none'){
-          this.requestComputation()
-        }else{
-          this.fixPriceComputation()
-        }
-      });
-      return;
+      details.additionNote.value = value.toLowerCase() === "none" ? undefined : value;
+      details.additionNote.accepted = true;;
+      details.discount.value = value;
+      details.discount.accepted = true;
+      this.handleView('discount-change', details, ()=>{})
     }
 
     if (name === "associateFixPrice") {
@@ -1382,149 +1129,339 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "fixMatrix") {
-      let details = { ...this.state.details };
-      details.additionalFee.enabled = false
-      details.quantity.value = 1;
-      details.additionalFee.value = undefined;
-      details.sticker_quantity.value = 0;
-      details.totalShippingCost.value = 0
-      details.additionNote.value = ""
-      details.systemFee.value = 0;
-      details.discount.value = undefined;
-
-      details.packageInsurance.value = undefined;
-      details.packageInsurance.disabled = false;
-      details.declaredValue.value = undefined;
-      details.declaredValue.disabled = false;
-
-      let state = {
-        ...this.state,
-        lengthFee: Number(0).toFixed(2),
-        portersFee: Number(0).toFixed(2),
-        weightFee: Number(0).toFixed(2),
-        handlingFee: Number(0).toFixed(2),
-        isShortHaul: undefined,
-        isFixedPrice: false,
-        basePrice: Number(0).toFixed(2),
-        declaredValueFee: Number(0).toFixed(2),
-        insuranceFee: Number(0).toFixed(2),
-        lengthRate: Number(0).toFixed(2),
-        discountFee: Number(0).toFixed(2),
-      }
-
-      if (value !== "none") {
-        let postponeComputation = false;
-        const isCargoPadala = CARGO_TYPES.CARGO_PADALA === Number(details.type.value || 3);
-        let option = details.fixMatrix.options.find((e) => e.name === value);
-        let price = Number(option.price).toFixed(2);
-        let declaredValue = Number(option.declaredValue);
-
-        details.additionalFee.enabled = Boolean(option.additionalFee);
-        declaredValue = declaredValue / 100;
-        details.fixMatrix.value = value;
-
-        if (Number(declaredValue) === Number(0)) {
-          details.packageInsurance.disabled = true;
-          details.declaredValue.disabled = true;
-        }
-
-        //details.length.value = undefined;
-        //details.quantity.value = 1;
-        //details.packageWeight.value = undefined;
-        //details.description.value = option.name;
-        details.quantity.disabled = false;
-
-        if(isCargoPadala){
-          details.packageWeight.disabled = true;
-          details.length.disabled = true;
-          postponeComputation = option && Number(option.price) === 0
-          postponeComputation = postponeComputation || (Number(details.sticker_quantity.value) === 0)
-
-        }else{
-          details.length.disabled = true
-          postponeComputation = option && option.declaredValue > 0;
-          postponeComputation = postponeComputation && (Number(details.packageWeight.value || 0) === 0)
-          
-        }
-
-        switch (UserProfile.getBusCompanyTag()) {
-          case 'isarog-liner':
-            this.setState({ ...state, isFixedPrice: true, details }, () => {
-              if (postponeComputation) {
-                return;
-              }
-              this.fixPriceComputation()
-            });
-            break;
-          case 'five-star':
-          case "dltb":
-            this.setState({ ...state, isFixedPrice: true, details }, () => {
-              if (option && Number(option.price) === 0 && Number(option.declaredValue) !== 0) {
-                return;
-              }
-              this.fixPriceComputation()
-            });
-            break;
-
-          default:
-            //this.setState({ ...state, basePrice: price, isFixedPrice: true, details }, () => {
-              // if (option && Number(option.declaredValue) > 0) {
-              //   return;
-              // }
-              //this.updateTotalShippingCost();
-            //});
-            break;
-        }
-      } else {
-
-        details.fixMatrix.value = "none";
-        details.packageInsurance.disabled = false;
-        details.declaredValue.disabled = false;
-        details.packageWeight.disabled = false;
-        details.description.value = "";
-
-        details.packageInsurance.value = undefined;
-        details.declaredValue.value = undefined;
-        details.shippingCost.value = undefined;
-        details.packageWeight.value = undefined;
-
-        if (UserProfile.getBusCompanyTag() !== "dltb") {
-          details.length.disabled = false;
-        }
-
-        details.length.value = undefined;
-        details.quantity.disabled = true;
-        details.quantity.value = 1;
-
-        this.setState({ ...state, details });
-      }
+      const details = { ...this.state.details };
+      details.fixMatrix.value = value;
+      this.handleView('fix-matrix-change', details, ()=>{})
     }
   };
 
   onTypeChange = (value) => {
     const details = { ...this.state.details };
     details.type = {...details.type, value}
-    details.packageWeight.disabled = false;
-
-    details.declaredValue = {...details.declaredValue, ...{value:undefined, disabled:false }};
-    details.fixMatrix = {...details.fixMatrix, ...{value:""}}
-   
-    this.setState({details},()=>{
-        this.fetchFixMatrix()
-        // if(fixMatrix.value)
-        //   this.fixPriceComputation()
-    });
+    this.handleView('onTypeChange', details, ()=>{
+      this.fetchFixMatrix()
+    })
   };
-
-  releasePaymentBreakDownValue = () =>{
-    let details = {...this.state.details}
-    details.totalShippingCost.value = 0;
-    this.setState({ details, basePrice:0, declaredValueFee:0, discountFee:0, systemFee:0, portersFee:0, lengthFee:0, weight:0 })
-  }
 
   onCreateNewParcel = () => {
     window.location.reload(true);
   };
+
+  getFixMatrixOption = () =>{
+    const fixMatrix = this.state.details.fixMatrix 
+    return fixMatrix.options.find((e) => e.name === (fixMatrix.value || 'none')) || undefined;
+  }
+
+  computeIsarogLiner = () =>{
+    console.info('[computeIsarogLiner]',this.getFixMatrixOption());
+    const details = {...this.state.details}
+    const option = this.getFixMatrixOption();
+    if( option && option.name === 'none'){
+      //accompanied
+      if(Number(details.type.value || 3) === 3){
+        if(Number(details.declaredValue.value||0) === 0 
+          || Number(details.sticker_quantity.value||0) === 0 
+            || Number(details.packageWeight.value||0) === 0){
+          return;
+        }
+      }
+      this.requestComputation();
+    }else{
+      if((Number(option.declaredValue || 0) > 0 && Number(details.declaredValue.value||0) === 0) || Number(details.sticker_quantity.value||0) === 0 ){
+        return;
+      }
+      this.fixPriceComputation();
+    }
+  }
+
+  computeDltb = () =>{
+    console.info('[computeDltb]',this.getFixMatrixOption());
+    const option = this.getFixMatrixOption();
+    const details = {...this.state.details}
+    if( option && option.name === 'none'){
+      //add validation
+      if(Number(details.declaredValue.value||0) === 0 || Number(details.packageWeight.value||0) === 0 || Number(details.sticker_quantity.value||0) === 0){
+        return;
+      }
+      this.requestComputation();
+    }else{
+      if((Number(option.declaredValue || 0) && Number(option.price || 0) === 0) && Number(details.additionalFee.value || 0) === 0){
+        return;
+      }
+      if(Number(details.sticker_quantity.value||0) === 0){
+        return
+      }
+      this.fixPriceComputation();
+    }
+  }
+
+  computeFiveStar = () =>{
+    console.info('[computeDltb]',this.getFixMatrixOption());
+    const option = this.getFixMatrixOption();
+    const details = {...this.state.details}
+    if( option && option.name === 'none'){
+      //add validation
+      if(Number(details.declaredValue.value||0) === 0 || Number(details.packageWeight.value||0) === 0 || Number(details.sticker_quantity.value||0) === 0){
+        return;
+      }
+      this.requestComputation();
+    }else{
+      if((Number(option.declaredValue || 0) && Number(option.price || 0) === 0) && Number(details.additionalFee.value || 0) === 0){
+        return;
+      }
+      if(Number(details.sticker_quantity.value||0) === 0){
+        return
+      }
+      this.fixPriceComputation();
+    }
+  }
+
+  onCompute = () =>{
+    console.info('[onCompute]');
+    switch (UserProfile.getBusCompanyTag()) {
+      case 'isarog-liner': this.computeIsarogLiner(); break;
+      case 'dltb': this.computeDltb(); break;
+      case 'five-star': this.computeFiveStar(); break;
+      default:
+        break;
+    }
+  }
+
+  isarogLinerHandleView = (name, _details, callback) =>{
+    const details = { ...this.state.details, ..._details };
+    const option = this.getFixMatrixOption();
+    let selectedDestination = this.state.selectedDestination; //details.destination.options.find((e) => e.value === details.destination.value);
+
+    details.quantity.disabled = true;
+    details.packageWeight.disabled = false;
+    details.declaredValue.disabled = false;
+    details.length.disabled = false
+    details.systemFee.value = 0;
+    details.totalShippingCost.value = 0;
+    details.discount.value = undefined;
+
+    //not fix price
+    switch (name) {
+      case "onTypeChange":
+        details.fixMatrix.value = "";
+        if( option && option.name === 'none'){
+          if(Number(details.type.value || 3) < 3){
+            details.packageWeight.disabled = false;
+            details.declaredValue.value = undefined;
+            details.declaredValue.disabled = true;
+            details.length.disabled = true
+            details.length.value = undefined
+          }
+        }
+        break;
+
+        case "fix-matrix-change": 
+        if( option && option.name !== 'none'){
+          details.quantity.disabled = false;
+          details.quantity.value = 1;
+          details.packageWeight.disabled = true;
+          details.packageWeight.value = 0;
+          if(option.declaredValue === 0){
+            details.declaredValue.value = undefined;
+            details.declaredValue.disabled = true;
+          }
+        }
+        break;
+
+        case 'discount-change': 
+        //todo:
+        break;
+
+        case 'input-change': 
+        //todo:
+        break;
+
+        case 'destination-change': 
+          selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+        break
+
+      default:
+        break;
+    }
+
+    this.setState({ details, selectedDestination, basePrice:0, declaredValueFee:0, discountFee:0, systemFee:0, portersFee:0, lengthFee:0, weightFee:0,  isShortHaul: undefined, }, callback)
+  }
+
+  dltbHandleView = (name, _details, callback) =>{
+    const details = { ...this.state.details, ..._details };
+    const option = this.getFixMatrixOption();
+    let selectedDestination = undefined //details.destination.options.find((e) => e.value === details.destination.value);
+    
+    details.systemFee.value = 0;
+    details.totalShippingCost.value = 0;
+
+    switch (name) {
+      case "onTypeChange":
+        details.fixMatrix.value = "";
+        if( option && option.name === 'none'){
+          if(Number(details.type.value || 3) < 3){
+            details.packageWeight.disabled = false;
+            details.declaredValue.value = undefined;
+            details.declaredValue.disabled = true;
+            details.length.disabled = true
+            details.length.value = undefined
+          }
+        }
+        break;
+
+        case "fix-matrix-change": 
+        details.description.value = option.name;
+        details.additionNote.value = option.name;
+        details.declaredValue.value = undefined;
+        details.sticker_quantity.value = undefined
+        details.quantity.disabled = true;
+        details.additionalFee.value = undefined;
+        details.additionalFee.enabled = false;
+        details.packageWeight.disabled = false;
+        details.declaredValue.disabled = false;
+
+        if(option && option.name !== 'none'){
+
+          if(option.additionalFee === true){
+            details.additionalFee.enabled = true;
+          }
+
+          details.quantity.disabled = false;
+          details.quantity.value = 1;
+          details.packageWeight.disabled = true;
+          details.packageWeight.value = undefined;
+
+          if(option.declaredValue === 0){
+            details.declaredValue.value = undefined;
+            details.declaredValue.disabled = true;
+          }
+        }
+        break;
+
+        case 'discount-change': 
+        //todo:
+        break;
+
+        case 'input-change': 
+        //todo:
+        break;
+
+        case 'destination-change': 
+          selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+        break
+
+      default:
+        break;
+    }
+    this.setState({ details, selectedDestination, 
+      basePrice:0, 
+      declaredValueFee:0, 
+      discountFee:0, 
+      systemFee:0, 
+      portersFee:0, 
+      lengthFee:0, 
+      weightFee:0,
+      isShortHaul: undefined,
+      handlingFee:0,
+      insuranceFee:0,
+      additionalFee:0,
+      isFixedPrice:0
+    }, callback)
+  }
+
+  fiveStarHandleView = (name, _details, callback) =>{
+    const details = { ...this.state.details, ..._details };
+    const option = this.getFixMatrixOption();
+    let selectedDestination = undefined //details.destination.options.find((e) => e.value === details.destination.value);
+    
+    console.info('[fiveStarHandleView] option',option)
+
+    details.systemFee.value = 0;
+    details.totalShippingCost.value = 0;
+
+    switch (name) {
+      case "onTypeChange":
+        details.fixMatrix.value = "";
+        if( option && option.name === 'none'){
+          if(Number(details.type.value || 3) < 3){
+            details.packageWeight.disabled = false;
+            details.declaredValue.value = undefined;
+            details.declaredValue.disabled = true;
+            details.length.disabled = true
+            details.length.value = undefined
+          }
+        }
+        break;
+
+        case "fix-matrix-change": 
+        details.description.value = option.name;
+        details.additionNote.value = option.name;
+        details.declaredValue.value = undefined;
+        details.sticker_quantity.value = undefined
+        details.quantity.disabled = true;
+        details.additionalFee.value = undefined;
+        details.additionalFee.enabled = false;
+        details.packageWeight.disabled = false;
+        details.declaredValue.disabled = false;
+
+        if(option && option.name !== 'none'){
+
+          if(option.additionalFee === true){
+            details.additionalFee.enabled = true;
+          }
+
+          details.quantity.disabled = false;
+          details.quantity.value = 1;
+          details.packageWeight.disabled = true;
+          details.packageWeight.value = undefined;
+
+          if(option.declaredValue === 0){
+            details.declaredValue.value = undefined;
+            details.declaredValue.disabled = true;
+          }
+        }
+        break;
+
+        case 'discount-change': 
+        //todo:
+        break;
+
+        case 'input-change': 
+        //todo:
+        break;
+
+        case 'destination-change': 
+          selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+        break
+
+      default:
+        break;
+    }
+    this.setState({ details, selectedDestination, 
+      basePrice:0, 
+      declaredValueFee:0, 
+      discountFee:0, 
+      systemFee:0, 
+      portersFee:0, 
+      lengthFee:0, 
+      weightFee:0,
+      isShortHaul: undefined,
+      handlingFee:0,
+      insuranceFee:0,
+      additionalFee:0,
+      isFixedPrice:0
+    }, callback)
+  }
+
+  handleView = (name, details, callback) =>{
+    switch (UserProfile.getBusCompanyTag()) {
+      case 'isarog-liner': this.isarogLinerHandleView(name, details, callback); break;
+      case 'dltb': this.dltbHandleView(name, details, callback); break;
+      case 'five-star': this.fiveStarHandleView(name, details, callback); break;
+      default:
+        break;
+    }
+  }
 
   stepView = (step) => {
     let view = null;
@@ -1568,6 +1505,7 @@ class CreateParcel extends React.Component {
                   onChange={(val,name) => 
                     this.onInputChange(name, val)
                   }
+                  onCompute={()=>this.onCompute()}
                 />
                 <StepControllerView
                   width={this.state.width}
@@ -1807,8 +1745,8 @@ class CreateParcel extends React.Component {
 
     ParcelService.getDefaultComputation(option)
       .then(e => {
+        console.info('getDefaultComputation',e)
         const { data, errorCode } = e.data;
-        console.info("getDefaultComputation",e)
         if (!errorCode) {
           const {
             totalShippingCost,
@@ -1865,32 +1803,6 @@ class CreateParcel extends React.Component {
           });
         }
       })
-  }
-
-  computeV2 = () => {
-    const { declaredValue, packageWeight, sticker_quantity, length, destination, fixMatrix } = this.state.details;
-
-    switch (UserProfile.getBusCompanyTag()) {
-      case "dltb":
-        if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value) {
-          this.requestComputation()
-        }
-        break;
-
-        case "five-star":
-        case "isarog-liner":
-        if (!fixMatrix.value || fixMatrix.value === "none") {
-          if (destination.value && declaredValue.value && packageWeight.value && sticker_quantity.value && length.value !== undefined) {
-            this.requestComputation()
-          }
-        } else {
-          this.fixPriceComputation()
-        }
-        break;
-
-      default:
-        break;
-    }
   }
 
   getMatrixFare = ({ weight, declaredValue, length }) => {

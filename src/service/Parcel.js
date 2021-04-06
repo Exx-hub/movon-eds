@@ -458,7 +458,8 @@ const ParcelService = {
         fixMatrixItemName,
         quantity,
         additionalFee,
-        discountName
+        discountName,
+        cargoType
     }) => {
         return axios({
             method: 'post',
@@ -476,7 +477,8 @@ const ParcelService = {
                 fixMatrixItemName,
                 quantity,
                 additionalFee,
-                discountName
+                discountName,
+                cargoType
             }
         })
     },

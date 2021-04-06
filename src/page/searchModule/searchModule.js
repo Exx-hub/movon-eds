@@ -133,7 +133,6 @@ class SearchModule extends React.Component {
     if (remarks) {
       TransactionService.voidParcel(record._id, remarks)
         .then(e => {
-          console.log("handleVoid e", e)
           const { errorCode } = e.data;
           if (errorCode) {
             this.handleErrorNotification(errorCode);
@@ -191,7 +190,6 @@ class SearchModule extends React.Component {
         this.setState({ fetching: false, parcelList, totalRecords: data.pagination.totalRecords });
       })
       .catch(e => {
-        console.log('[search module] error: ', e);
         this.setState({ fetching: false })
       })
   };

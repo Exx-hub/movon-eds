@@ -17,9 +17,6 @@ const InputBox = (props) =>{
 }
 
 export function ReviewDetails(props){
-
-    console.log('ReviewDetails------>>>',props)
-
     return(<div className="preview-details">
         <Container title="Package Information">
             <div className="horizontal-layout">

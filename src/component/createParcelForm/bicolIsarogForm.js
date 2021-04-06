@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Row, Col, Radio, Select, AutoComplete, Space, Divider } from "antd";
+import { Row, Col, Radio, Select, AutoComplete, Space, Divider, Button } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
 import { getHeaderColor, UserProfile } from "../../utility";
@@ -569,7 +569,13 @@ function BicolIsarogForm(props) {
               <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, fontWeight:"bold" }}><label>Total Shipping Cost</label></div>
               <div style={{fontSize: 17, textAlign: 'right', fontWeight: 'bold' }}><label> ₱ {Number(totalShippingCost.value).toFixed(2)}</label></div>
             </div>
+
+            <div style={{display:'flex', marginTop:'1rem'}}>
+              <Button  onClick={()=>props.onCompute()} type="dashed" danger size="large" style={{borderRadius:5, fontWeight:'bold', width:'100%'}}>Compute Now</Button>
+              </div>
+
           </div>
+         
         </div>
 
       </div>

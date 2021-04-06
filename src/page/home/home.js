@@ -8,11 +8,6 @@ import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
-import {
-  EditUserProfileModule,
-  ViewUserProfileModule,
-} from "../userProfileModule";
-import About from "../about";
 import { PromptModal } from "../../component/modal";
 
 import moment from "moment";
@@ -21,7 +16,7 @@ import "./home.scss";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import { Layout, Row, Col, Button, Menu, Dropdown } from "antd";
+import { Layout, Button, Menu, Dropdown } from "antd";
 
 import {
   FileMarkdownOutlined,
