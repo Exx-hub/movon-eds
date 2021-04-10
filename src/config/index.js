@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.8.0(128)'
+        build: '1.8.0(129)'
     },
     environment:"staging",
     changeLogs: `Auto Fill Fields`
