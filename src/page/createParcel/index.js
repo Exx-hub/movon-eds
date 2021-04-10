@@ -294,14 +294,14 @@ class CreateParcel extends React.Component {
         },
         quantity: {
           name: "quantity",
-          value: 1,
+          value: undefined,
           isRequired: false,
           accepted: true,
           disabled: true,
         },
         sticker_quantity: {
           name: "sticker_quantity",
-          value: 0,
+          value: undefined,
           isRequired: true,
           accepted: true,
         },
@@ -320,7 +320,7 @@ class CreateParcel extends React.Component {
         },
         packageInsurance: {
           name: "packageInsurance",
-          value: 0,
+          value: undefined,
           isRequired: false,
           accepted: true,
           title: "",
@@ -377,7 +377,7 @@ class CreateParcel extends React.Component {
         },
         length: {
           name: "length",
-          value: 0,
+          value: undefined,
           isRequired: false,
           accepted: true,
           errorMessage: "Length is required!"
@@ -429,7 +429,7 @@ class CreateParcel extends React.Component {
         },
         additionalFee: {
           name: "additionalFee",
-          value: 0,
+          value: undefined,
           isRequired: false,
           accepted: true,
           enabled: false
@@ -955,16 +955,12 @@ class CreateParcel extends React.Component {
     });
   };
 
-  fetchFixMatrix = ()=>{
-
-    console.info('[fetchFixMatrix] passsss')
-
-    let details = {...this.state.details};
+  fetchFixMatrix = (_details)=>{
 
     const options={
-      destination: details.destination.value, 
+      destination: _details.destination.value, 
       origin: UserProfile.getAssignedStationId(),
-      cargoType: details.type.value
+      cargoType: _details.type.value
     }
 
     ParcelService.getExcessBaggageStatus(options)
@@ -976,28 +972,23 @@ class CreateParcel extends React.Component {
             this.handleErrorNotification(errorCode);
             return
           }
+          let details = {...this.state.details, ..._details}
+          details.fixMatrix.options = [...[{ name: "none", price: 0, declaredValue: 0 }], ...data.fixMatrix || []]
+          details.fixMatrix.accepted=true;
 
-          let enabledExcessCargo =  data.enabledExcessCargo || false
-         
-          const accepted = true;
-          const options =  [...[{ name: "none", price: 0, declaredValue: 0 }], ...data.fixMatrix || []];
-          const fixMatrix = {...details.fixMatrix, accepted, options};
-
-          details.fixMatrix = fixMatrix;
-
+          let enabledExcessCargo =  data.enabledExcessCargo || false;
           if(typeof enabledExcessCargo === 'string'){
             enabledExcessCargo = Boolean(enabledExcessCargo === "true")
           }
-
           const typeOptions = details.type.options.map(e=>{
             let disabled = false;
-            if(e.name != 'Cargo Padala'){
+            if(e.name !== 'Cargo Padala'){
               disabled = !enabledExcessCargo;
             }
             return {...e, disabled}
           })
           details.type = {...details.type, ...{options:typeOptions}}
-          this.setState({enabledExcessCargo, details})
+          this.setState({enabledExcessCargo, details},()=>console.log('state.details.fixMatrix',this.state.details.fixMatrix))
           
         })
   }
@@ -1095,9 +1086,9 @@ class CreateParcel extends React.Component {
     if (name === "destination") {
       //const selectedDestination = details.destination.options.find((e) => e.value === value);
       details.destination = {...details.destination,...{ value, accepted: true }};
-
+      details.fixMatrix.value = ""
       this.handleView("destination-change",details,()=>{
-        this.fetchFixMatrix()
+        this.fetchFixMatrix(details)
       })
     }
 
@@ -1139,7 +1130,7 @@ class CreateParcel extends React.Component {
     const details = { ...this.state.details };
     details.type = {...details.type, value}
     this.handleView('onTypeChange', details, ()=>{
-      this.fetchFixMatrix()
+      this.fetchFixMatrix(details)
     })
   };
 
@@ -1148,14 +1139,17 @@ class CreateParcel extends React.Component {
   };
 
   getFixMatrixOption = () =>{
-    const fixMatrix = this.state.details.fixMatrix 
-    return fixMatrix.options.find((e) => e.name === (fixMatrix.value || 'none')) || undefined;
+    const fixMatrix = {...this.state.details.fixMatrix} 
+    return fixMatrix.options.find((e) => e.name === (fixMatrix.value || 'none')) || [{ name: "none", price: 0, declaredValue: 0 }];
   }
 
   computeIsarogLiner = () =>{
-    console.info('[computeIsarogLiner]',this.getFixMatrixOption());
+    console.info('[computeIsarogLiner]',);
     const details = {...this.state.details}
     const option = this.getFixMatrixOption();
+
+    console.log('option',option )
+
     if( option && option.name === 'none'){
       //accompanied
       if(Number(details.type.value || 3) === 3){
@@ -1219,136 +1213,153 @@ class CreateParcel extends React.Component {
   onCompute = () =>{
     console.info('[onCompute]');
     switch (UserProfile.getBusCompanyTag()) {
-      case 'isarog-liner': this.computeIsarogLiner(); break;
       case 'dltb': this.computeDltb(); break;
       case 'five-star': this.computeFiveStar(); break;
       default:
-        break;
+        this.computeIsarogLiner(); break
     }
   }
 
   isarogLinerHandleView = (name, _details, callback) =>{
     const details = { ...this.state.details, ..._details };
     const option = this.getFixMatrixOption();
-    let selectedDestination = this.state.selectedDestination; //details.destination.options.find((e) => e.value === details.destination.value);
+    const isAccompanied = Number(details.type.value || 3) < 3;
+    const isFixPrice = option && option.name !== 'none';
 
-    details.quantity.disabled = true;
-    details.packageWeight.disabled = false;
-    details.declaredValue.disabled = false;
-    details.length.disabled = false
+    let selectedDestination = this.state.selectedDestination //details.destination.options.find((e) => e.value === details.destination.value);
+
+    console.log('option', option)
+
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
-    details.discount.value = undefined;
-
-    //not fix price
+   
     switch (name) {
       case "onTypeChange":
+        if(isAccompanied){
+          details.packageWeight.disabled = false;
+          details.declaredValue.disabled = true;
+          details.declaredValue.value = undefined;
+        }else{
+          details.declaredValue.disabled = false;
+        }
         details.fixMatrix.value = "";
-        if( option && option.name === 'none'){
-          if(Number(details.type.value || 3) < 3){
-            details.packageWeight.disabled = false;
-            details.declaredValue.value = undefined;
-            details.declaredValue.disabled = true;
-            details.length.disabled = true
+        break;
+
+      case "fix-matrix-change": 
+        if(isFixPrice){
+
+          if(!isAccompanied){
+            details.packageWeight.disabled = true;
+            details.packageWeight.value = undefined;
             details.length.value = undefined
+            details.length.disabled = true;
           }
-        }
-        break;
-
-        case "fix-matrix-change": 
-        if( option && option.name !== 'none'){
+          
           details.quantity.disabled = false;
-          details.quantity.value = 1;
-          details.packageWeight.disabled = true;
-          details.packageWeight.value = 0;
-          if(option.declaredValue === 0){
-            details.declaredValue.value = undefined;
+          details.declaredValue.disabled = false;
+          details.additionalFee.enabled = true;
+          details.quantity.value = details.quantity.value || 1
+          
+          if(Number(option.declaredValue) === 0){
             details.declaredValue.disabled = true;
+            details.declaredValue.value = undefined;
           }
+
+          if(option && (option.additionalFee || false) === false){
+            details.additionalFee.enabled = false;
+            details.additionalFee.value = undefined;
+          }
+
+        }else{
+          details.declaredValue.disabled = false;
+          details.packageWeight.disabled = false;
+          details.quantity.value = undefined;
+          details.quantity.disabled = true;
+          details.length.disabled = false;
         }
         break;
 
-        case 'discount-change': 
-        //todo:
-        break;
+      case 'discount-change': 
+      //todo:
+      break;
 
-        case 'input-change': 
-        //todo:
-        break;
+      case 'input-change': 
+      //todo:
+      break;
 
-        case 'destination-change': 
-          selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-        break
+      case 'destination-change': 
+        details.fixMatrix.value = ""
+        selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+      break
 
       default:
         break;
     }
-
-    this.setState({ details, selectedDestination, basePrice:0, declaredValueFee:0, discountFee:0, systemFee:0, portersFee:0, lengthFee:0, weightFee:0,  isShortHaul: undefined, }, callback)
+    this.setState({ details, selectedDestination, basePrice:0, declaredValueFee:0, discountFee:0, systemFee:0, portersFee:0, lengthFee:0, weightFee:0,  isShortHaul: undefined, }, callback())
   }
 
   dltbHandleView = (name, _details, callback) =>{
     const details = { ...this.state.details, ..._details };
     const option = this.getFixMatrixOption();
-    let selectedDestination = undefined //details.destination.options.find((e) => e.value === details.destination.value);
-    
+    const isAccompanied = Number(details.type.value || 3) < 3;
+    const isFixPrice = option && option.name !== 'none';
+
+    let selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+
+    console.log('option', option)
+
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
-
+   
     switch (name) {
       case "onTypeChange":
+        if(isAccompanied){
+          details.packageWeight.disabled = false;
+          details.declaredValue.disabled = true;
+          details.declaredValue.value = undefined;
+        }else{
+          details.declaredValue.disabled = false;
+        }
         details.fixMatrix.value = "";
-        if( option && option.name === 'none'){
-          if(Number(details.type.value || 3) < 3){
-            details.packageWeight.disabled = false;
-            details.declaredValue.value = undefined;
-            details.declaredValue.disabled = true;
-            details.length.disabled = true
-            details.length.value = undefined
-          }
-        }
         break;
 
-        case "fix-matrix-change": 
-        details.description.value = option.name;
-        details.additionNote.value = option.name;
-        details.declaredValue.value = undefined;
-        details.sticker_quantity.value = undefined
-        details.quantity.disabled = true;
-        details.additionalFee.value = undefined;
-        details.additionalFee.enabled = false;
-        details.packageWeight.disabled = false;
-        details.declaredValue.disabled = false;
-
-        if(option && option.name !== 'none'){
-
-          if(option.additionalFee === true){
-            details.additionalFee.enabled = true;
-          }
-
-          details.quantity.disabled = false;
-          details.quantity.value = 1;
+      case "fix-matrix-change": 
+        if(isFixPrice){
           details.packageWeight.disabled = true;
-          details.packageWeight.value = undefined;
-
-          if(option.declaredValue === 0){
-            details.declaredValue.value = undefined;
+          details.packageWeight.value = 0;
+          details.quantity.disabled = false;
+          details.declaredValue.disabled = false;
+          details.additionalFee.enabled = true;
+          
+          if(Number(option.declaredValue) === 0){
             details.declaredValue.disabled = true;
+            details.declaredValue.value = 0;
           }
+
+          if(option && option.additionalFee === false){
+            details.additionalFee.enabled = false;
+            details.additionalFee.value = undefined;
+          }
+
+        }else{
+          details.declaredValue.disabled = false;
+          details.packageWeight.disabled = false;
+          details.quantity.value = undefined;
+          details.quantity.disabled = true;
         }
         break;
 
-        case 'discount-change': 
-        //todo:
-        break;
+      case 'discount-change': 
+      //todo:
+      break;
 
-        case 'input-change': 
-        //todo:
-        break;
+      case 'input-change': 
+      //todo:
+      break;
 
-        case 'destination-change': 
-          selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-        break
+      case 'destination-change': 
+        selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+      break
 
       default:
         break;
@@ -1372,67 +1383,69 @@ class CreateParcel extends React.Component {
   fiveStarHandleView = (name, _details, callback) =>{
     const details = { ...this.state.details, ..._details };
     const option = this.getFixMatrixOption();
-    let selectedDestination = undefined //details.destination.options.find((e) => e.value === details.destination.value);
-    
-    console.info('[fiveStarHandleView] option',option)
+    const isAccompanied = Number(details.type.value || 3) < 3;
+    const isFixPrice = option && option.name !== 'none';
+
+    let selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+
+    console.log('option', option)
 
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
-
+   
     switch (name) {
       case "onTypeChange":
+        if(isAccompanied){
+          details.packageWeight.disabled = false;
+          details.declaredValue.disabled = true;
+          details.declaredValue.value = undefined;
+        }else{
+          details.declaredValue.disabled = false;
+        }
         details.fixMatrix.value = "";
-        if( option && option.name === 'none'){
-          if(Number(details.type.value || 3) < 3){
-            details.packageWeight.disabled = false;
-            details.declaredValue.value = undefined;
-            details.declaredValue.disabled = true;
-            details.length.disabled = true
-            details.length.value = undefined
-          }
-        }
         break;
 
-        case "fix-matrix-change": 
-        details.description.value = option.name;
-        details.additionNote.value = option.name;
-        details.declaredValue.value = undefined;
-        details.sticker_quantity.value = undefined
-        details.quantity.disabled = true;
-        details.additionalFee.value = undefined;
-        details.additionalFee.enabled = false;
-        details.packageWeight.disabled = false;
-        details.declaredValue.disabled = false;
-
-        if(option && option.name !== 'none'){
-
-          if(option.additionalFee === true){
-            details.additionalFee.enabled = true;
-          }
-
-          details.quantity.disabled = false;
-          details.quantity.value = 1;
+      case "fix-matrix-change": 
+        if(isFixPrice){
           details.packageWeight.disabled = true;
-          details.packageWeight.value = undefined;
-
-          if(option.declaredValue === 0){
-            details.declaredValue.value = undefined;
+          details.packageWeight.value = 0;
+          details.quantity.disabled = false;
+          details.declaredValue.disabled = false;
+          details.additionalFee.enabled = true;
+          details.length.value = 0
+          details.length.disabled = true;
+          details.quantity.value = details.quantity.value || 1
+          
+          if(Number(option.declaredValue) === 0){
             details.declaredValue.disabled = true;
+            details.declaredValue.value = 0;
           }
+
+          if(option && (option.additionalFee || false) === false){
+            details.additionalFee.enabled = false;
+            details.additionalFee.value = undefined;
+          }
+
+        }else{
+          details.declaredValue.disabled = false;
+          details.packageWeight.disabled = false;
+          details.quantity.value = undefined;
+          details.quantity.disabled = true;
+          details.length.disabled = false;
         }
         break;
 
-        case 'discount-change': 
-        //todo:
-        break;
+      case 'discount-change': 
+      //todo:
+      break;
 
-        case 'input-change': 
-        //todo:
-        break;
+      case 'input-change': 
+      //todo:
+      break;
 
-        case 'destination-change': 
-          selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-        break
+      case 'destination-change': 
+        selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
+      break
 
       default:
         break;
@@ -1455,10 +1468,10 @@ class CreateParcel extends React.Component {
 
   handleView = (name, details, callback) =>{
     switch (UserProfile.getBusCompanyTag()) {
-      case 'isarog-liner': this.isarogLinerHandleView(name, details, callback); break;
       case 'dltb': this.dltbHandleView(name, details, callback); break;
       case 'five-star': this.fiveStarHandleView(name, details, callback); break;
       default:
+        this.isarogLinerHandleView(name, details, callback)
         break;
     }
   }
@@ -1806,6 +1819,9 @@ class CreateParcel extends React.Component {
   }
 
   getMatrixFare = ({ weight, declaredValue, length }) => {
+    console.info('getMatrixFare ====>>>')
+    console.info('getMatrixFare ====>>>')
+    console.info('getMatrixFare ====>>>')
     const { details, selectedDestination } = this.state;
     MatrixService.getMatrixComputation({
       origin: this.userProfileObject.getAssignedStationId(),
