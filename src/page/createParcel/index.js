@@ -782,13 +782,14 @@ class CreateParcel extends React.Component {
     }
 
     if (currentStep === 1) {
-      if (this.isRequiredDetailsHasNull()) {
-        showNotification({
-          title: "Parcel Details Validation",
-          type: "error",
-          message: "Please fill up required fields",
-        });
 
+      if (this.isRequiredDetailsHasNull()) {
+          showNotification({
+            title: "Parcel Details Validation",
+            type: "error",
+            message: "Please fill up required fields",
+          });
+        
         let tempDetails = { ...details };
         Object.keys(tempDetails).forEach((e) => {
           if (!tempDetails[e].disabled && tempDetails[e].isRequired && isNull(tempDetails[e].value)) {
@@ -799,6 +800,16 @@ class CreateParcel extends React.Component {
         this.setState({ details: tempDetails });
         return false;
       } else {
+
+        if(!this.state.details.totalShippingCost.value){
+          showNotification({
+            title: "Missing Payment Breakdown",
+            type: "error",
+            message: "No computation have been made, please click the 'Compute Now' button",
+          });
+          return;
+        }
+
         let hasError = false;
         let tempDetails = { ...details };
         Object.keys(tempDetails).forEach((e) => {
@@ -857,8 +868,7 @@ class CreateParcel extends React.Component {
     ParcelService.getDefaultFixMatrixComputation(options)
       .then(e => {
         const { data, errorCode } = e.data;
-
-        console.info('getDefaultFixMatrixComputation',e)
+        //console.info('getDefaultFixMatrixComputation',e)
         if (!errorCode) {
 
           const {
@@ -892,7 +902,15 @@ class CreateParcel extends React.Component {
   onInputChange = (name, value) => {
     let details = { ...this.state.details };
     details[name] = {...details[name], ...{ value, accepted: true, hasError: false }};
-    this.handleView("input-change",details,()=>{})
+    
+    //do not clear the payment breakdown
+    const excludedNames = ['billOfLading','additionNote', 'description']
+    if(excludedNames.includes(name)){
+      this.setState({details})
+    }else{
+      //clear payment breakdown
+      this.handleView("input-change",details,()=>{})
+    }
   };
 
   getMatrixValue = (busCompanyId, origin, destination) => {
@@ -965,7 +983,7 @@ class CreateParcel extends React.Component {
 
     ParcelService.getExcessBaggageStatus(options)
         .then(e=>{
-          console.info("getExcessBaggageStatus",e)
+          //console.info("getExcessBaggageStatus",e)
           const{data,status,errorCode}=e.data;
 
           if(errorCode){
@@ -1143,124 +1161,89 @@ class CreateParcel extends React.Component {
     return fixMatrix.options.find((e) => e.name === (fixMatrix.value || 'none')) || [{ name: "none", price: 0, declaredValue: 0 }];
   }
 
-  computeIsarogLiner = () =>{
-    console.info('[computeIsarogLiner]',);
-    const details = {...this.state.details}
-    const option = this.getFixMatrixOption();
-
-    console.log('option',option )
-
-    if( option && option.name === 'none'){
-      //accompanied
-      if(Number(details.type.value || 3) === 3){
-        if(Number(details.declaredValue.value||0) === 0 
-          || Number(details.sticker_quantity.value||0) === 0 
-            || Number(details.packageWeight.value||0) === 0){
-          return;
-        }
-      }
-      this.requestComputation();
-    }else{
-      if((Number(option.declaredValue || 0) > 0 && Number(details.declaredValue.value||0) === 0) || Number(details.sticker_quantity.value||0) === 0 ){
-        return;
-      }
-      this.fixPriceComputation();
-    }
-  }
-
-  computeDltb = () =>{
-    console.info('[computeDltb]',this.getFixMatrixOption());
-    const option = this.getFixMatrixOption();
-    const details = {...this.state.details}
-    if( option && option.name === 'none'){
-      //add validation
-      if(Number(details.declaredValue.value||0) === 0 || Number(details.packageWeight.value||0) === 0 || Number(details.sticker_quantity.value||0) === 0){
-        return;
-      }
-      this.requestComputation();
-    }else{
-      if((Number(option.declaredValue || 0) && Number(option.price || 0) === 0) && Number(details.additionalFee.value || 0) === 0){
-        return;
-      }
-      if(Number(details.sticker_quantity.value||0) === 0){
-        return
-      }
-      this.fixPriceComputation();
-    }
-  }
-
-  computeFiveStar = () =>{
-    console.info('[computeDltb]',this.getFixMatrixOption());
-    const option = this.getFixMatrixOption();
-    const details = {...this.state.details}
-    if( option && option.name === 'none'){
-      //add validation
-      if(Number(details.declaredValue.value||0) === 0 || Number(details.packageWeight.value||0) === 0 || Number(details.sticker_quantity.value||0) === 0){
-        return;
-      }
-      this.requestComputation();
-    }else{
-      if((Number(option.declaredValue || 0) && Number(option.price || 0) === 0) && Number(details.additionalFee.value || 0) === 0){
-        return;
-      }
-      if(Number(details.sticker_quantity.value||0) === 0){
-        return
-      }
-      this.fixPriceComputation();
-    }
-  }
-
   onCompute = () =>{
-    console.info('[onCompute]');
-    switch (UserProfile.getBusCompanyTag()) {
-      case 'dltb': this.computeDltb(); break;
-      case 'five-star': this.computeFiveStar(); break;
-      default:
-        this.computeIsarogLiner(); break
+    const option = this.getFixMatrixOption();
+    const details = {...this.state.details}
+
+    let hasError = false
+    let forValidation = ['declaredValue','packageWeight','sticker_quantity','destination']
+    forValidation.forEach(e=>{
+      if(!details[e].disabled && Number(details[e].value||0)===0){
+        details[e].accepted = false;
+        hasError = true;
+      }
+    })
+
+    if(hasError){
+      this.setState({details})
+      return;
+    }
+
+    if(option && option.name === 'none'){
+      this.requestComputation();
+    }else{ 
+      this.fixPriceComputation();
     }
   }
 
-  isarogLinerHandleView = (name, _details, callback) =>{
+  releaseError = (details) =>{
+    let names=[]
+    for (var p in details) {
+      if(details[p].accepted === false){
+        names.push(p)
+        details[p].accepted = true;
+      }
+    }
+  }
+
+  defaultHandleView = (name, _details, callback) =>{
     const details = { ...this.state.details, ..._details };
     const option = this.getFixMatrixOption();
     const isAccompanied = Number(details.type.value || 3) < 3;
     const isFixPrice = option && option.name !== 'none';
 
-    let selectedDestination = this.state.selectedDestination //details.destination.options.find((e) => e.value === details.destination.value);
-
-    console.log('option', option)
-
+    let selectedDestination = this.state.selectedDestination; 
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
-   
+
+    if(isAccompanied && (name === 'onTypeChange' || name === 'fix-matrix-change')){
+      details.declaredValue.disabled = true;
+      details.packageWeight.disabled = false;
+
+      if(isFixPrice){
+        if(option && (option.declaredValue || 0) > 0){
+          details.declaredValue.disabled = false;
+          details.declaredValue.value = undefined;
+        }
+      }
+    }
+
     switch (name) {
       case "onTypeChange":
-        if(isAccompanied){
-          details.packageWeight.disabled = false;
-          details.declaredValue.disabled = true;
-          details.declaredValue.value = undefined;
-        }else{
-          details.declaredValue.disabled = false;
-        }
+        this.releaseError(details);
         details.fixMatrix.value = "";
         break;
 
       case "fix-matrix-change": 
-        if(isFixPrice){
+        this.releaseError(details)
+        console.info('options',option)
+        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
+        details.declaredValue.disabled = false;
+        details.additionalFee.enabled = (option && option.additionalFee || false);
+        details.quantity.disabled = true;
+        details.packageWeight.disabled = false;
+        details.length.disabled = false;
 
-          if(!isAccompanied){
-            details.packageWeight.disabled = true;
-            details.packageWeight.value = undefined;
-            details.length.value = undefined
-            details.length.disabled = true;
-          }
+        if(isFixPrice){
           
           details.quantity.disabled = false;
-          details.declaredValue.disabled = false;
-          details.additionalFee.enabled = true;
-          details.quantity.value = details.quantity.value || 1
+          details.quantity.value = details.quantity.value || 1;
+          details.length.disabled = true;
+          details.length.value = undefined;
+          details.packageWeight.value = undefined;
+          details.packageWeight.disabled = true;
           
-          if(Number(option.declaredValue) === 0){
+          if(Number(option.declaredValue || 0) === 0){
             details.declaredValue.disabled = true;
             details.declaredValue.value = undefined;
           }
@@ -1270,12 +1253,6 @@ class CreateParcel extends React.Component {
             details.additionalFee.value = undefined;
           }
 
-        }else{
-          details.declaredValue.disabled = false;
-          details.packageWeight.disabled = false;
-          details.quantity.value = undefined;
-          details.quantity.disabled = true;
-          details.length.disabled = false;
         }
         break;
 
@@ -1288,7 +1265,7 @@ class CreateParcel extends React.Component {
       break;
 
       case 'destination-change': 
-        details.fixMatrix.value = ""
+        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
         selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
       break
 
@@ -1304,152 +1281,67 @@ class CreateParcel extends React.Component {
     const isAccompanied = Number(details.type.value || 3) < 3;
     const isFixPrice = option && option.name !== 'none';
 
-    let selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-
-    console.log('option', option)
-
+    let selectedDestination = this.state.selectedDestination; 
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
-   
+
+    if(isAccompanied && (name === 'onTypeChange' || name === 'fix-matrix-change')){
+      details.declaredValue.disabled = true;
+      details.packageWeight.disabled = false;
+
+      if(isFixPrice){
+        if(option && (option.declaredValue || 0) > 0){
+          details.declaredValue.disabled = false;
+          details.declaredValue.value = undefined;
+        }
+      }
+    }
+
     switch (name) {
       case "onTypeChange":
-        if(isAccompanied){
-          details.packageWeight.disabled = false;
-          details.declaredValue.disabled = true;
-          details.declaredValue.value = undefined;
-        }else{
-          details.declaredValue.disabled = false;
-        }
+        this.releaseError(details);
         details.fixMatrix.value = "";
         break;
 
       case "fix-matrix-change": 
+        this.releaseError(details)
+        console.info('options',option)
+
+        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
+        details.declaredValue.disabled = false;
+        details.additionalFee.enabled = false;
+        details.quantity.disabled = true;
+        details.packageWeight.disabled = false;
+
         if(isFixPrice){
           details.packageWeight.disabled = true;
           details.packageWeight.value = 0;
           details.quantity.disabled = false;
-          details.declaredValue.disabled = false;
+          details.quantity.value = details.quantity.value || 1;
           details.additionalFee.enabled = true;
           
-          if(Number(option.declaredValue) === 0){
+          if(Number(option.declaredValue || 0) === 0){
             details.declaredValue.disabled = true;
-            details.declaredValue.value = 0;
+            details.declaredValue.value = undefined;
           }
 
           if(option && option.additionalFee === false){
             details.additionalFee.enabled = false;
             details.additionalFee.value = undefined;
           }
-
-        }else{
-          details.declaredValue.disabled = false;
-          details.packageWeight.disabled = false;
-          details.quantity.value = undefined;
-          details.quantity.disabled = true;
         }
         break;
-
-      case 'discount-change': 
-      //todo:
-      break;
-
-      case 'input-change': 
-      //todo:
-      break;
 
       case 'destination-change': 
+        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
         selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-      break
-
-      default:
-        break;
-    }
-    this.setState({ details, selectedDestination, 
-      basePrice:0, 
-      declaredValueFee:0, 
-      discountFee:0, 
-      systemFee:0, 
-      portersFee:0, 
-      lengthFee:0, 
-      weightFee:0,
-      isShortHaul: undefined,
-      handlingFee:0,
-      insuranceFee:0,
-      additionalFee:0,
-      isFixedPrice:0
-    }, callback)
-  }
-
-  fiveStarHandleView = (name, _details, callback) =>{
-    const details = { ...this.state.details, ..._details };
-    const option = this.getFixMatrixOption();
-    const isAccompanied = Number(details.type.value || 3) < 3;
-    const isFixPrice = option && option.name !== 'none';
-
-    let selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-
-    console.log('option', option)
-
-    details.systemFee.value = 0;
-    details.totalShippingCost.value = 0;
-   
-    switch (name) {
-      case "onTypeChange":
-        if(isAccompanied){
-          details.packageWeight.disabled = false;
-          details.declaredValue.disabled = true;
-          details.declaredValue.value = undefined;
-        }else{
-          details.declaredValue.disabled = false;
-        }
-        details.fixMatrix.value = "";
-        break;
-
-      case "fix-matrix-change": 
-        if(isFixPrice){
-          details.packageWeight.disabled = true;
-          details.packageWeight.value = 0;
-          details.quantity.disabled = false;
-          details.declaredValue.disabled = false;
-          details.additionalFee.enabled = true;
-          details.length.value = 0
-          details.length.disabled = true;
-          details.quantity.value = details.quantity.value || 1
-          
-          if(Number(option.declaredValue) === 0){
-            details.declaredValue.disabled = true;
-            details.declaredValue.value = 0;
-          }
-
-          if(option && (option.additionalFee || false) === false){
-            details.additionalFee.enabled = false;
-            details.additionalFee.value = undefined;
-          }
-
-        }else{
-          details.declaredValue.disabled = false;
-          details.packageWeight.disabled = false;
-          details.quantity.value = undefined;
-          details.quantity.disabled = true;
-          details.length.disabled = false;
-        }
-        break;
-
-      case 'discount-change': 
-      //todo:
       break;
 
-      case 'input-change': 
-      //todo:
-      break;
-
-      case 'destination-change': 
-        selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-      break
-
       default:
+        //todo: discount-change, input-change
         break;
     }
+
     this.setState({ details, selectedDestination, 
       basePrice:0, 
       declaredValueFee:0, 
@@ -1469,10 +1361,7 @@ class CreateParcel extends React.Component {
   handleView = (name, details, callback) =>{
     switch (UserProfile.getBusCompanyTag()) {
       case 'dltb': this.dltbHandleView(name, details, callback); break;
-      case 'five-star': this.fiveStarHandleView(name, details, callback); break;
-      default:
-        this.isarogLinerHandleView(name, details, callback)
-        break;
+      default: this.defaultHandleView(name, details, callback); break;
     }
   }
 
@@ -1588,6 +1477,7 @@ class CreateParcel extends React.Component {
           <>
             <ScheduledTrips
               onSelect={(selectedTrip) => {
+                console.info('ScheduledTrips selectedTrip', selectedTrip)
                 this.setState({ selectedTrip }, () => {
                   if (this.validateStep()) {
                     this.gotoNextStep();
@@ -1758,7 +1648,7 @@ class CreateParcel extends React.Component {
 
     ParcelService.getDefaultComputation(option)
       .then(e => {
-        console.info('getDefaultComputation',e)
+        //console.info('getDefaultComputation',e)
         const { data, errorCode } = e.data;
         if (!errorCode) {
           const {
@@ -1819,9 +1709,6 @@ class CreateParcel extends React.Component {
   }
 
   getMatrixFare = ({ weight, declaredValue, length }) => {
-    console.info('getMatrixFare ====>>>')
-    console.info('getMatrixFare ====>>>')
-    console.info('getMatrixFare ====>>>')
     const { details, selectedDestination } = this.state;
     MatrixService.getMatrixComputation({
       origin: this.userProfileObject.getAssignedStationId(),

@@ -78,10 +78,10 @@ const ParcelService = {
             totalShippingCost,
             associateORNumber,
             busNumber,
-            tripCode,
+            //tripCode,
             driverFullName,
             conductorFullName,
-            additionalFee
+            additionalFee,
         } = details;
 
         const associatedTariffRate = tariffRate || undefined;
@@ -91,7 +91,7 @@ const ParcelService = {
         const associatedAmount = connectingCompanyComputation;
 
         const COUNTRY_CODE= "PH";
-        const CARGO_PADALA= 3;
+        const isAccompanied = Number(type.value || 3) !== 3;
         const PACKAGE_INSURANCE = 0;
 
         const bodyFormData = new FormData();
@@ -106,12 +106,12 @@ const ParcelService = {
         bodyFormData.set('packageName', description.value )
         bodyFormData.set('packageWeight',packageWeight.value || 0)
         bodyFormData.set('estimatedValue', declaredValue.value||0)
-        bodyFormData.set('accompanied', type.value !== CARGO_PADALA)
+        bodyFormData.set('accompanied', isAccompanied)
         bodyFormData.set('packageInsurance', PACKAGE_INSURANCE)
         bodyFormData.set('sticker_quantity', sticker_quantity.value || 0)
         bodyFormData.set('quantity', quantity.value || 0)
         bodyFormData.set('price', shippingCost.value || 0)
-        bodyFormData.set('additionalNote', additionNote.value)
+        bodyFormData.set('additionalNote', additionNote.value || "" )
         bodyFormData.append('packageImage', packageImagePreview)
         bodyFormData.set('busId', selectedTrip.busId)
         bodyFormData.set('busCompanyId', selectedTrip.companyId)
@@ -131,7 +131,7 @@ const ParcelService = {
         bodyFormData.set('lengthRate', lengthRate || 0)
         bodyFormData.set('totalShippingCost',totalShippingCost.value || 0)
         bodyFormData.set('busNumber',busNumber.value)
-        bodyFormData.set('tripCode',tripCode.value)
+        //bodyFormData.set('tripCode',tripCode.value)
         bodyFormData.set('driverFullName',driverFullName.value)
         bodyFormData.set('conductorFullName',conductorFullName.value)
         bodyFormData.set('associateORNumber', associateORNumber.value)
@@ -168,6 +168,11 @@ const ParcelService = {
                 }));
                 break;
         }
+
+        // check the value first, eliminate null
+        // for (var pair of bodyFormData.entries()) {
+        //     console.log(pair[0]+ ', ' + pair[1]); 
+        // }
 
         return axios({
             method: 'post',
