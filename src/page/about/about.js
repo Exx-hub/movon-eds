@@ -13,107 +13,20 @@ import {
   PoweroffOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
+import { LogoutModal } from "../../component/modal";
+import {Header} from '../../component/header'
 
-const { Header, Content, Footer } = Layout;
+const {Content, Footer } = Layout;
 
 function About(props) {
   const [menuData, setMenuData] = React.useState([]);
   const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
-  React.useEffect(() => {
-    if (menuData.length < 1) {
-      setMenuData([
-        {
-          key: "drop-down-user-profile",
-          name: "User Profile",
-          type: "menu",
-          destination: alterPath("/user-profile"),
-          icon: () => <UserOutlined />,
-          action: () => { },
-        },
-        {
-          key: "drop-down-setting",
-          name: "About",
-          type: "menu",
-          destination: alterPath("/about"),
-          icon: () => <InfoCircleOutlined />,
-          action: () => { },
-        },
-        {
-          key: "drop-down-logout",
-          name: "Logout",
-          type: "menu",
-          destination: alterPath("/about"),
-          icon: () => <PoweroffOutlined />,
-          action: () => {
-            setVisibleLogout(true);
-          },
-        },
+  const [logoutModal, setLogoutModal] =  React.useState({visible:false});
 
-        {
-          key: "about",
-          destination: alterPath("/about"),
-          action: () => { },
-        },
-      ]);
-    }
-  }, [menuData, userProfileObject]);
-
-  const onNavigationMenuChange = (e) => {
-    for (let i = 0; i < menuData.length; i++) {
-      if (menuData[i].key === e.key) {
-        menuData[i].action();
-        props.history.push(menuData[i].destination || alterPath("/"));
-        break;
-      }
-    }
-  };
-
-  const menu = () => {
-    const menu = menuData.filter((e) => e.type === "menu");
-    return (
-      <Menu
-        onClick={(e) => {
-          onNavigationMenuChange(e);
-        }}
-      >
-        {menu.map((e) => {
-          const IconMenu = e.icon;
-          return (
-            <Menu.Item key={e.key}>
-              {" "}
-              <IconMenu /> {e.name}{" "}
-            </Menu.Item>
-          );
-        })}
-      </Menu>
-    );
-  };
   return (
     <Layout className="about-main">
-      <Header className="home-header-view" style={{background:getHeaderColor()}}>
-        <div>
-          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
-        </div>
-        <div>
-          {userProfileObject.getUser() && (
-            <div className={"header-nav"}>
-              <Dropdown overlay={menu} trigger={["click"]}>
-                <Button
-                  className={"home-nav-link"}
-                  type="link"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <span style={{color:getCashierTextColor()}}>Hi {userProfileObject.getUser().personalInfo.firstName}!</span>
-                  <UserOutlined style={{ fontSize: "24px", color:getCashierTextColor()  }} />
-                </Button>
-              </Dropdown>
-            </div>
-          )}
-        </div>
-      </Header>
-
-
+      <Header {...props} setVisibleLogout={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:true}}))} />
       <Layout>
         <div className="container">
           <div>
@@ -145,19 +58,7 @@ function About(props) {
           </div>
         </div>
 
-        <PromptModal
-          visible={visibleLogout}
-          title="Are you sure you want to log out?"
-          message="Changes you made may not be saved."
-
-          buttonType="danger"
-          action="Logout"
-          handleCancel={() => setVisibleLogout(false)}
-          handleOk={() => {
-            userProfileObject.logout(User);
-            props.history.push(alterPath("/"));
-          }}
-        />
+        <LogoutModal {...props} visible={logoutModal.visible} handleCancel={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:false}}))}/>
         <Footer className="footer">
 
         </Footer>

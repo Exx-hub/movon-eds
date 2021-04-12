@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.8.0(130)'
+        build: '1.8.0(131)'
     },
     environment:"staging",
-    changeLogs: `Auto Fill Fields`
+    changeLogs: `about page`
 }
 
 export const ERROR_CODES = {

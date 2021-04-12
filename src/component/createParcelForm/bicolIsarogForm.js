@@ -104,27 +104,25 @@ function BicolIsarogForm(props) {
     setTempList(tempParcelData);
   };
 
+  const changeView = () =>{
+    let view = undefined;
+    switch (UserProfile.getBusCompanyTag()) {
+      case 'five-star':
+        view = (<ShowFiveStarBreakDown data={{...props.priceDetails, isFixedPrice, systemFee:Number(systemFee.value).toFixed(2)}}/>)
+      break;
+      
+      case 'dltb': view = (<ShowDltbBreakDown data={{...props.priceDetails, isFixedPrice, additionalFee: Number(additionalFee.value).toFixed(2), systemFee:Number(systemFee.value).toFixed(2)}}/>); 
+      break;
+
+      default:
+        view = (<ShowBicolIsarogBreakDown data={{...props.priceDetails, isFixedPrice, systemFee:Number(systemFee.value).toFixed(2)}} />)
+        break;
+    }
+    return view;
+  }
+
   return (
     <div className="create-parcel-form">
-      {/* <div style={{background: '#fff', width:'100%', display:'flex', justifyContent:'flex-end', alignItems:'center', marginBottom:'1rem' }}>
-        <img style={{display:'none', maxHeight:'170px', maxWidth:'250px'}} src={UserProfile.getBusCompanyLogo()} />
-        <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-end', marginTop:'1rem', padding:'1rem'}}>
-          <Space direction="vertical">
-              <Space>
-                <div style={{width:90, fontSize:"14px", fontWeight:300}}>Company</div>
-                :&nbsp;<span style={{width:80, fontSize:"14px", fontWeight:300}}>{UserProfile.getBusCompanyName()}</span>
-              </Space>
-              <Space>
-              <div style={{width:90, fontSize:"14px", fontWeight:300}}>Full Name</div>
-                :&nbsp;<span style={{width:80, fontSize:"14px", fontWeight:300}}>{UserProfile.getPersonFullName()}</span>
-              </Space>
-              <Space>
-                <div style={{width:90, fontSize:"14px", fontWeight:300}}>Address</div>
-                :&nbsp;<span style={{width:80, fontSize:"14px", fontWeight:300}}>{UserProfile.getPersonAddress()}</span>
-              </Space>
-          </Space>
-        </div>
-      </div> */}
       <div className="input-container-border" style={{ padding: 0, boxShadow: "2px 5px 12px", marginBottom: '2rem' }}>
         <HeaderContainer title="Customers Information" />
         <div style={{ padding: '1rem' }}>
@@ -536,34 +534,11 @@ function BicolIsarogForm(props) {
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '35%', paddingLeft: '1.5rem', paddingRight: '1.5rem', marginLeft: '1rem', borderLeft: 'solid 1px rgba(56,56,56,.1)' }}>
             <div style={{ alignSelf:'center', fontSize: 18, fontWeight:400, marginBottom:'2.5rem'}}>Payment Breakdown</div>
 
-            
-            {UserProfile.getBusCompanyTag() === "five-star" &&
-              <ShowFiveStarBreakDown data={{
-                ...props.priceDetails, 
-                  isFixedPrice,
-                  systemFee:Number(systemFee.value).toFixed(2)
-              }}/>
-            }
-            {UserProfile.getBusCompanyTag() === "isarog-liner" &&
-              <ShowBicolIsarogBreakDown 
-                data={{
-                  ...props.priceDetails, 
-                  isFixedPrice,
-                  systemFee:Number(systemFee.value).toFixed(2)
-                }} /> 
-            }
             {
-              UserProfile.getBusCompanyTag() === "dltb" && 
-              <ShowDltbBreakDown 
-                data={{
-                  ...props.priceDetails, 
-                  isFixedPrice,
-                  additionalFee: Number(additionalFee.value).toFixed(2), 
-                  systemFee:Number(systemFee.value).toFixed(2)
-                }} 
-              />
+              changeView()
             }
-            {/* {<TextContainer title="Insurance Fee" value={Number(packageInsurance.value).toFixed(2)} />} */}
+            
+            
            
             <div style={{display:'flex', justifyContent:'space-between'}}>
               <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, fontWeight:"bold" }}><label>Total Shipping Cost</label></div>
