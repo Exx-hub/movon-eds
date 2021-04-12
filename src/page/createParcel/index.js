@@ -188,8 +188,6 @@ const parceResponseData = (data) => {
 class CreateParcel extends React.Component {
 
   constructor(props) {
-
-    console.info('Create Parcel props',props)
     super(props);
 
     this.state = {
@@ -1215,14 +1213,19 @@ class CreateParcel extends React.Component {
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
 
-    if(isAccompanied && (name === 'onTypeChange' || name === 'fix-matrix-change')){
-      details.declaredValue.disabled = true;
+    if((name === 'onTypeChange' || name === 'fix-matrix-change')){
+      details.declaredValue.disabled = false;
       details.packageWeight.disabled = false;
 
-      if(isFixPrice){
-        if(option && (option.declaredValue || 0) > 0){
-          details.declaredValue.disabled = false;
-          details.declaredValue.value = undefined;
+      if(isAccompanied){
+        details.declaredValue.disabled = true;
+        details.packageWeight.disabled = false;
+  
+        if(isFixPrice){
+          if(option && (option.declaredValue || 0) > 0){
+            details.declaredValue.disabled = false;
+            details.declaredValue.value = undefined;
+          }
         }
       }
     }
@@ -1237,14 +1240,12 @@ class CreateParcel extends React.Component {
         this.releaseError(details)
         console.info('options',option)
         details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        details.declaredValue.disabled = false;
         details.additionalFee.enabled = (option && option.additionalFee || false);
         details.quantity.disabled = true;
         details.packageWeight.disabled = false;
         details.length.disabled = false;
 
         if(isFixPrice){
-          
           details.quantity.disabled = false;
           details.quantity.value = details.quantity.value || 1;
           details.length.disabled = true;
@@ -1294,14 +1295,19 @@ class CreateParcel extends React.Component {
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
 
-    if(isAccompanied && (name === 'onTypeChange' || name === 'fix-matrix-change')){
-      details.declaredValue.disabled = true;
+    if(name === 'onTypeChange' || name === 'fix-matrix-change'){
+      details.declaredValue.disabled = false;
       details.packageWeight.disabled = false;
 
-      if(isFixPrice){
-        if(option && (option.declaredValue || 0) > 0){
-          details.declaredValue.disabled = false;
-          details.declaredValue.value = undefined;
+      if(isAccompanied){
+        details.declaredValue.disabled = true;
+        details.packageWeight.disabled = false;
+  
+        if(isFixPrice){
+          if(option && (option.declaredValue || 0) > 0){
+            details.declaredValue.disabled = false;
+            details.declaredValue.value = undefined;
+          }
         }
       }
     }
@@ -1309,15 +1315,15 @@ class CreateParcel extends React.Component {
     switch (name) {
       case "onTypeChange":
         this.releaseError(details);
+        if(!isAccompanied){
+          details.declaredValue.disabled = false;
+        }
         details.fixMatrix.value = "";
         break;
 
       case "fix-matrix-change": 
         this.releaseError(details)
-        console.info('options',option)
-
         details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        details.declaredValue.disabled = false;
         details.additionalFee.enabled = false;
         details.quantity.disabled = true;
         details.packageWeight.disabled = false;
@@ -1486,7 +1492,7 @@ class CreateParcel extends React.Component {
           <>
             <ScheduledTrips
               onSelect={(selectedTrip) => {
-                console.info('ScheduledTrips selectedTrip', selectedTrip)
+                //console.info('ScheduledTrips selectedTrip', selectedTrip)
                 this.setState({ selectedTrip }, () => {
                   if (this.validateStep()) {
                     this.gotoNextStep();
@@ -1771,7 +1777,7 @@ class CreateParcel extends React.Component {
   }
 
   render() {
-    console.info('create parcel',this.props)
+    //console.info('create parcel',this.props)
     return (
       <>
       <Layout className="create-parcelview-parent-container" style={{ background: 'white' }}>

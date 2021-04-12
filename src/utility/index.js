@@ -182,7 +182,6 @@ const getHeaderLogo = () => {
 
     default:
       logo = UserProfile.getBusCompanyLogo()
-      console.info('logo',logo)
       break;
   }
   return logo

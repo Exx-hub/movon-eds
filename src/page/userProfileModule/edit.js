@@ -99,7 +99,7 @@ function EditPassword(props) {
     if(!hasError){
       User.updatePassword({newPassword:state.newPassword, oldPassword:state.oldPassword}).
       then(e=>{
-        console.info('updatePassword',e)
+        //console.info('updatePassword',e)
         const{errorCode}=e.data;
         let hasError = false
         if(errorCode){

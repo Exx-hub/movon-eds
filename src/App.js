@@ -7,12 +7,11 @@ import About from './page/about'
 import PrinManifestDetails from './page/prinManifestDetails'
 import {alterPath, UserProfile, openNotificationWithIcon} from './utility'
 import Home from './page/home'
-import 'antd/dist/antd.css';
-import './App.scss';
-import { EditUserProfileModule, ViewUserProfileModule, UserEditProfileModule } from './page/userProfileModule';
+import {ViewUserProfileModule} from './page/userProfileModule';
 import { notification} from "antd";
 import User from "./service/User";
-
+import 'antd/dist/antd.css';
+import './App.scss';
 
 function App(props) {
   const [internetConnection, setInternetConnection] = React.useState(false)
@@ -61,8 +60,6 @@ function App(props) {
     <Router>
       <Switch>
       <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
-      <ProtectedRoute exact={true} path={alterPath("/user-profile/edit")} component={(props)=><EditUserProfileModule {...props}/>}/>
-      <ProtectedRoute exact={true} path={alterPath("/user-profile/userEdit")} component={(props)=><UserEditProfileModule {...props} action={action}/>}/>
       <ProtectedRoute exact={true} path={alterPath("/user-profile")} component={props => <ViewUserProfileModule {...props} action={action} />}/>
       <ProtectedRoute exact={true} path={alterPath("/about")} component={props => <About {...props} />}/>
       <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={props => <ManifestDetails {...props}/>}/>

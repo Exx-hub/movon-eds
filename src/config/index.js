@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.8.0(132)'
+        build: '1.8.0(133)'
     },
     environment:"staging",
-    changeLogs: `about page`
+    changeLogs: `fix issue on enabled and disbled of fields`
 }
 
 export const ERROR_CODES = {
