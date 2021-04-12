@@ -117,7 +117,7 @@ function EditPassword(props) {
     <div className="main-creds" style={{margin:0}}>
        <div className="item-wrapper">
         <span className="title item-wrapper-custom-text-title">Current Password</span>
-        <Input 
+        <Input  
           style={{width:'100%', borderColor:`${errorState.oldPassword.enabled ? "red" : '#d9d9d9'}`}}
           size="large"
           value={state.oldPassword} 
@@ -129,7 +129,7 @@ function EditPassword(props) {
 
       <div className="item-wrapper">
         <span className="title item-wrapper-custom-text-title">New Password</span>
-        <Input 
+        <Input  
           style={{width:'100%', borderColor:`${errorState.newPassword.enabled ? "red" : '#d9d9d9'}`}}
           size="large"
           onBlur={()=>onBlur('newPassword')}
@@ -141,7 +141,7 @@ function EditPassword(props) {
 
       <div className="item-wrapper">
         <span className="title item-wrapper-custom-text-title">Confirm Password</span>
-        <Input 
+        <Input  
           style={{width:'100%', borderColor:`${errorState.confirmPassword.enabled ? "red" : '#d9d9d9'}`}}
           size="large"
           onBlur={()=>onBlur('confirmPassword')}

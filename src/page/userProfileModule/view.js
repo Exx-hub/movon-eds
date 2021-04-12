@@ -62,7 +62,7 @@ function ViewUserProfileModule(props) {
                 <div className="change-pass">
                   <div>********</div>
                   <div>{displayPassword}</div>
-                  <Button type='link' onClick={()=>showModal(true, TYPE.edit_password, "Edit Password")}>Edit User Profile</Button>
+                  <Button type='link' onClick={()=>showModal(true, TYPE.edit_password, "Edit Password")}>Change Password</Button>
                 </div>
               }
             />
