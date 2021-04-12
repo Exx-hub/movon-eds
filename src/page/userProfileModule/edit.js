@@ -1,405 +1,183 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import {
-  notification,
-  Input,
-  Button,
-  Dropdown,
-  Layout,
-  Menu
-} from "antd";
-import movonLogo from "../../assets/movoncargo.png";
+import React, { useEffect } from "react";
+import {Input,Button} from "antd";
 import User from "../../service/User";
-import {
-  openNotificationWithIcon,
-  alterPath,
-  UserProfile,
-  debounce,
-  getHeaderLogo,
-  getCashierTextColor,
-  getHeaderColor
-} from "../../utility";
-import { PromptModal } from "../../component/modal";
 import "./changePassword.scss";
-import {
-  UserOutlined,
-  PoweroffOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
-import UserProfileHeader from './header'
-import TextWrapper from './textWrapper'
-import { NavLink } from "react-router-dom";
-const { Header, Content, Footer } = Layout;
-const initState = {};
-const isNull = (value) => value === null || value === undefined || value === "" || value === 0;
 
-const showNotification = (props) => {
-  notification[props.type]({
-    message: props.title || "Notification Title",
-    description: props.message || "message",
-  });
-};
+function EditPassword(props) {
+  const [state, setState] = React.useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+    fetching:false
+  })
 
-function EditUserProfileModule(props) {
-  const [updateModal, setUpdateModal] = React.useState(false);
-  class EditUserProfile extends React.Component {
+  const [errorState, setErrorState] = React.useState({
+    oldPassword:{message:"", enabled:false},
+    newPassword:{message:"", enabled:false},
+    confirmPassword:{message:"", enabled:false}
+  })
 
-    constructor(props) {
-      super(props);
-      this.state = {
-        phoneNumber: "",
-        oldPassword: "",
-        password:"",
-        newPassword: "",
-        confirmPassword: ""
-      };
+  const onChange = (name, value)=>{
+    let _state = {...state}
+    _state[name] = value
+    setState((oldState)=>({...oldState, ..._state}))
+  }
+
+  const onBlur=(name)=>{
+    let hasError = false
+    let _errorState = {...errorState}
+
+    if(!_errorState[name]){
+      return hasError;
     }
 
-    componentDidMount() {
-      const { number } = UserProfile.getPersonalInfo().phone
-      const { password } = UserProfile.getPersonalInfo()
-      this.setState({
-        phoneNumber: number,
-        oldPassword: password
+    _errorState[name].enabled = true;
+    
+    //check if empty
+    if(name === 'oldPassword' || name === 'newPassword' || name === 'confirmPassword'){
+      if(state[name] === ''){
+        _errorState[name].message=`required field`;
+        hasError = true;
+      }
+    }
+
+    if(!state[name]){
+      _errorState[name].message=`required field`;
+      hasError = true;
+    }
+
+    //check if has change
+    if( name === 'oldPassword' || name === 'newPassword' || name === 'confirmPassword'){
+      //check lenght
+      if(state[name].length < 6){
+        _errorState[name].message=`invalid length`;
+        hasError = true
+      }
+      if((name === 'newPassword' && state.confirmPassword && state[name] !== state.confirmPassword)){
+        _errorState[name].message=`password mis-match`;
+        hasError = true
+      }
+      if((name === 'confirmPassword' && state.newPassword && state[name] !== state.newPassword)){
+        _errorState[name].message=`password mis-match`;
+        hasError = true
+      }
+      if(!hasError && name !== 'oldPassword' && state[name] === state.password){
+        _errorState[name].message=`current password was replicated, please try to use another`;
+        hasError = true
+      }
+    }
+
+    setErrorState((oldState)=>({...oldState, ..._errorState}))
+
+    if(hasError){
+      return hasError;
+    }
+
+    _errorState[name].enabled = false;
+    _errorState[name].message=``;
+    setErrorState((oldState)=>({...oldState, ..._errorState}))
+
+    return hasError
+  }
+
+  useEffect(()=>{
+
+  },[state])
+
+  const updateProfile = () =>{
+    let hasError = false;
+    const option = {...state}
+
+    for(var item in option){
+      let result = onBlur(item);
+      if(result.hasError){ 
+        hasError = true;
+        break; 
+      }
+    }
+
+    if(!hasError){
+      User.updatePassword({newPassword:state.newPassword, oldPassword:state.oldPassword}).
+      then(e=>{
+        console.info('updatePassword',e)
+        const{errorCode}=e.data;
+        let hasError = false
+        if(errorCode){
+          props.action.handleErrorNotification(errorCode)
+          hasError = true;
+        }
+        props.onOk(hasError)
       })
     }
-
-    componentDidUpdate(preProps, prevState) { }
-
-    componentWillUnmount() { }
-
-    handleErrorNotification = (code) => {
-      if (isNull(code)) {
-        showNotification({
-          title: "Server Error",
-          type: "error",
-          message: "Something went wrong",
-        });
-        return;
-      }
-      if (code === 2605) {
-
-        openNotificationWithIcon("error", code);
-        this.props.history.push(alterPath("/"));
-        this.userProfileObject.clearData();
-        return;
-      }
-
-      if (code === 2606) {
-
-        openNotificationWithIcon("error", code);
-        props.history.push(alterPath("/user-profile/edit"));
-        return;
-      }
-      
-      if (code === 1000) {
-        openNotificationWithIcon("error", code);
-        this.props.history.push(alterPath("/"));
-        this.userProfileObject.clearData();
-        return;
-      }
-
-      if (code === 2604) {
-        openNotificationWithIcon("error", code);
-        this.props.history.push(alterPath("/user-profile"));
-        return
-      }
-
-      openNotificationWithIcon("error", code);
-    };
-
-    onValidation = (name) => {
-      if ((this.state['staffId'].length < 6)) {
-        showNotification({
-          title: "Input Fields Validation",
-          type: "error",
-          message: "Username should not contain spaces.",
-        });
-        return false;
-      }
-      if (name === 'newPassword' || name === 'confirmPassword') {
-        if (this.state[name].match(/[ ]/)) {
-          showNotification({
-            title: "Input Fields Validation",
-            type: "error",
-            message: "No spaces allowed in Password Field",
-          })
-          return false;
-        }
-        else if (this.state[name].length < 6) {
-          showNotification({
-            title: "Input Fields Validation",
-            type: "error",
-            message: "Username and Password should contain at least 6 characters",
-          });
-          return false;
-        }
-        else if (this.state['staffId'].match(/[ ]/)) {
-          showNotification({
-            title: "Input Fields Validation",
-            type: "error",
-            message: "Username should not contain spaces.",
-          });
-          return false;
-        }
-        return true;
-      }
-
-    }
-
-  onUpdateUserProfile = () => {
-      const { oldPassword, newPassword, confirmPassword, phoneNumber } = this.state
-      const option = {phoneNumber: phoneNumber, oldPassword: oldPassword }
-      console.log(option)
-      this.setState({ fetching: true }, () => User.updateCredential(option)
-        .then(e => {
-          const { error_code } = e.data;
-          const { errorCode } = e.data;
-            if (error_code === 2606) {
-              props.history.push(alterPath("/user-profile/edit"));
-            }
-            else if (oldPassword === "" || oldPassword === undefined || newPassword === "" || confirmPassword === "") {
-              showNotification({
-                title: "Input Validation",
-                type: "error",
-                message: "Please fill up missing fields."
-              });
-              props.history.push(alterPath("/user-profile/edit"));
-            }
-            else if (error_code === 2605 || oldPassword === newPassword || oldPassword === confirmPassword) {
-              showNotification({
-                title: "Same Old Password",
-                type: "error",
-                message: "New password cannot be the same as your current password"
-              });
-              props.history.push(alterPath("/user-profile/edit"));
-            }
-           
-            else if ( newPassword.length < 6 || confirmPassword.length <6) {
-              showNotification({
-                title: "Input Validation",
-                type: "error",
-                message: "Password should have atleast 6 characters."
-              });
-              props.history.push(alterPath("/user-profile/edit"));
-            }
-            else if (newPassword.includes(' ') || confirmPassword.includes(' ')) {
-              showNotification({
-                title: "Input Validation",
-                type: "error",
-                message: "Password should not contain spaces."
-              });
-              props.history.push(alterPath("/user-profile/edit"));
-            }
-            else if (newPassword != confirmPassword) {
-              showNotification({
-                title: "Input Validation",
-                type: "error",
-                message: "Password Mismatch."
-              });
-              props.history.push(alterPath("/user-profile/edit"));
-            }
-            else {
-              const { oldPassword, newPassword, confirmPassword, phoneNumber } = this.state
-              const option = { newPassword: newPassword, oldPassword,phoneNumber: phoneNumber }
-              console.log(option)
-              this.setState({ fetching: true }, () => User.updateCredential(option)
-                .then(e => {
-                  const { success } = e.data;               
-                  if (success != false) {
-                    props.history.push((setUpdateModal(true)));
-                  }
-                  else {
-                    this.handleErrorNotification(errorCode)
-                  }
-              }));
-            }
-        }));
-      return;
-    }
-  
-    render() {
-      const { fullName } = UserProfile.getPersonalInfo()
-      const { name, logo } = UserProfile.getBusCompany()
-      const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name
-
-      return (
-        <div className="user-profile-module">
-          <div className="company-profile">
-            <div className="profile-text">Profile</div>
-            <UserProfileHeader
-              assignedStationName={assignStationName}
-              busCompanyName={name}
-              logo={logo}
-            />
-          </div>
-
-          <div className="main-creds">
-            <div className="profile-text">Change Password</div>
-            {/* <div className="item-wrapper">
-          <span className="title item-wrapper-custom-text-title">
-            Full Name
-          </span>
-          <span className="value item-wrapper-custom-text-value">
-            {fullName}
-          </span>
-        </div> */}
-
-            <div className="item-wrapper">
-              <span className="title item-wrapper-custom-text-title">Current Password</span>
-              <Input type="password" placeholder="" onChange={e => this.setState({ ...this.state, ... { oldPassword: e.target.value } })} />
-            </div>
-
-            <div className="item-wrapper">
-              <span className="title item-wrapper-custom-text-title">New Password</span>
-              <Input type="password" placeholder="" onChange={e => this.setState({ ...this.state, ...{ newPassword: e.target.value } })} />
-            </div>
-
-            <div className="item-wrapper">
-              <span className="title item-wrapper-custom-text-title">Confirm New Password</span>
-              <Input type="password" placeholder="" onChange={e => this.setState({ confirmPassword: e.target.value })} />
-            </div>
-            <div className="button-wrapper-edit">
-              <Button className="button-cancel"
-                type="primary"
-                shape="square"
-                size="large"
-                onClick={() => props.history.push(alterPath('/user-profile'))}
-              >
-                Cancel
-        </Button>
-              <Button className="button-update"
-                disabled={this.state.fetching}
-                type="primary"
-                shape="square"
-                size="large"
-                onClick={() => this.onUpdateUserProfile()}>
-                Update
-        </Button>
-            </div>
-          </div>
-          <PromptModal
-            visible={updateModal}
-            title="Are you sure you want to save your changes?"
-            message="Your account will be logged out after saving your changes."
-            buttonType="submit"
-            action="Update"
-            handleCancel={() => setUpdateModal(false)}
-            handleOk={() => {
-              userProfileObject.logout(User);
-              props.history.push(alterPath("/"));
-            }}
-          />
-        </div>
-
-      );
-    }
   }
-  const [menuData, setMenuData] = React.useState([]);
-  const [visibleLogout, setVisibleLogout] = React.useState(false);
-  const [userProfileObject] = React.useState(UserProfile);
-  React.useEffect(() => {
-    if (menuData.length < 1) {
-      setMenuData([
-        {
-          key: "drop-down-user-profile",
-          name: "User Profile",
-          type: "menu",
-          destination: alterPath("/user-profile"),
-          icon: () => <UserOutlined />,
-          action: () => { },
-        },
-        {
-          key: "drop-down-setting",
-          name: "About",
-          type: "menu",
-          destination: alterPath("/about"),
-          icon: () => <InfoCircleOutlined />,
-          action: () => { },
-        },
-        {
-          key: "drop-down-logout",
-          name: "Logout",
-          type: "menu",
-          destination: alterPath("/user-profile/edit"),
-          icon: () => <PoweroffOutlined />,
-          action: () => {
-            setVisibleLogout(true);
-          },
-        },
-      ]);
-    }
-  }, [menuData, userProfileObject]);
 
-  const onNavigationMenuChange = (e) => {
-    for (let i = 0; i < menuData.length; i++) {
-      if (menuData[i].key === e.key) {
-        menuData[i].action();
-        props.history.push(menuData[i].destination || alterPath("/"));
-        break;
-      }
-    }
-  };
-
-  const menu = () => {
-    const menu = menuData.filter((e) => e.type === "menu");
-    return (
-      <Menu
-        onClick={(e) => {
-          onNavigationMenuChange(e);
-        }}
-      >
-        {menu.map((e) => {
-          const IconMenu = e.icon;
-          return (
-            <Menu.Item key={e.key}>
-              {" "}
-              <IconMenu /> {e.name}{" "}
-            </Menu.Item>
-          );
-        })}
-      </Menu>
-    );
-  };
   return (
-    <Layout className="about-main">
-      <Header className="home-header-view" style={{ background: getHeaderColor() }}>
-        <div>
-          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
-        </div>
-        <div>
-          {userProfileObject.getUser() && (
-            <div className={"header-nav"}>
-              <Dropdown overlay={menu} trigger={["click"]}>
-                <Button
-                  className={"home-nav-link"}
-                  type="link"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <div style={{ color: getCashierTextColor() }}>
-                    Hi {userProfileObject.getUser().personalInfo.firstName}!
-                <UserOutlined style={{ fontSize: "24px" }} />
-                  </div>
-                </Button>
-              </Dropdown>
-            </div>
-          )}
-        </div>
-      </Header>
-      <EditUserProfile />
-      <PromptModal
-        visible={visibleLogout}
-        title="Are you sure you want to log out?"
-        message="Changes you made may not be saved."
+    <div className="user-profile-module" style={{borderLeft:'none', padding:0}} >
 
-        buttonType="danger"
-        action="Logout"
-        handleCancel={() => setVisibleLogout(false)}
-        handleOk={() => {
-          userProfileObject.logout(User);
-          props.history.push(alterPath("/"));
-        }}
-      />
-    </Layout>
-  );
-} export default EditUserProfileModule;
+    <div className="main-creds" style={{margin:0}}>
+       <div className="item-wrapper">
+        <span className="title item-wrapper-custom-text-title">Current Password</span>
+        <Input 
+          style={{width:'100%', borderColor:`${errorState.oldPassword.enabled ? "red" : '#d9d9d9'}`}}
+          size="large"
+          value={state.oldPassword} 
+          onBlur={()=>onBlur('oldPassword')}
+          type="text" placeholder="" 
+          onChange={e => onChange('oldPassword', e.target.value)} />
+          <span style={{color:'red', display:`${errorState.oldPassword.enabled ? "block" : 'none'}`}}> Error: {errorState.oldPassword.message}</span>
+      </div>
+
+      <div className="item-wrapper">
+        <span className="title item-wrapper-custom-text-title">New Password</span>
+        <Input 
+          style={{width:'100%', borderColor:`${errorState.newPassword.enabled ? "red" : '#d9d9d9'}`}}
+          size="large"
+          onBlur={()=>onBlur('newPassword')}
+          value={state.newPassword} 
+          type="text" placeholder="" 
+          onChange={e => onChange('newPassword', e.target.value)} />
+        <span style={{color:'red', display:`${errorState.newPassword.enabled ? "block" : 'none'}`}}> Error: {errorState.newPassword.message}</span>
+      </div>
+
+      <div className="item-wrapper">
+        <span className="title item-wrapper-custom-text-title">Confirm Password</span>
+        <Input 
+          style={{width:'100%', borderColor:`${errorState.confirmPassword.enabled ? "red" : '#d9d9d9'}`}}
+          size="large"
+          onBlur={()=>onBlur('confirmPassword')}
+          value={state.confirmPassword} 
+          type="text" placeholder="" 
+          onChange={e => onChange('confirmPassword', e.target.value)} />
+        <span style={{color:'red', display:`${errorState.confirmPassword.enabled ? "block" : 'none'}`}}> Error: {errorState.confirmPassword.message}</span>
+      </div>
+ 
+      <div className="button-wrapper-edit" 
+        style={{ alignSelf:'center', display:'flex', width:'100%', alignItems:'center', marginLeft:0, marginTop:'2rem', marginBottom:'2rem', padding:0}}>
+
+        <Button className="button-cancel"
+          type="primary"
+          shape="square"
+          size="large"
+          onClick={() => props.onCancel() }>
+          Cancel
+        </Button>
+
+        <Button className="button-update"
+          disabled={state.fetching}
+          type="primary"
+          shape="square"
+          size="large"
+          onClick={() => {
+            updateProfile()
+          }}>
+          Update
+        </Button>
+      </div>
+
+    </div>
+  </div>)
+
+}
+
+export default EditPassword;
+

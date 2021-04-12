@@ -80,8 +80,9 @@ function Login(props) {
           <div className="login-page-logo-section">
             <img src={movoncargo} alt="logo"/>
           </div>
+
           <div className="delivery-express-section">
-            <span className="txt-delivery-express">Express Delivery | Web Portal</span>
+            <span className="txt-delivery-express">Express Delivery System</span>
           </div>
 
           <Space direction="vertical" style={{ width: '100%' }}>

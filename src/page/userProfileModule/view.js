@@ -9,6 +9,7 @@ import UserProfileHeader from './header'
 import TextWrapper from './textWrapper'
 import { Header } from '../../component/header';
 import UserEditProfileModule from './UserEdit';
+import EditPassword from './edit';
 
 
 function ViewUserProfileModule(props) {
@@ -18,11 +19,15 @@ function ViewUserProfileModule(props) {
   const { displayPassword } = UserProfile.getToken()
   const { name, logo } = UserProfile.getBusCompany()
   const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name
-  const [logoutModal, setLogoutModal] =  React.useState({visible:false});
-  const [editModal, setEditModal] = React.useState({visible:false})
+  const TYPE= {edit_password:2, edit_profile:1, none:0}
 
-  const showModal = show =>{
-    setEditModal((oldState)=>({...oldState, ...{visible:show}}))
+  const [logoutModal, setLogoutModal] =  React.useState({visible:false, type:TYPE.none, title:"NONE"});
+  const [editModal, setEditModal] = React.useState({visible:false})
+  const [editPassword, setEditPassword] = React.useState(false)
+  const [editProfile, setEditProfile] = React.useState(false)
+
+  const showModal = (show, type, title) =>{
+    setEditModal((oldState)=>({...oldState, ...{visible:show, type, title}}))
   }
 
   return (
@@ -48,7 +53,7 @@ function ViewUserProfileModule(props) {
               title="User Name" value=
               {<div className="username-edit">
               <div>{displayId}</div>
-              <Button type='link' onClick={()=>showModal(true)}>Edit User Profile</Button>
+              <Button type='link' onClick={()=>showModal(true,TYPE.edit_profile, "Edit User Profile")}>Edit User Profile</Button>
               </div>  
               } />
 
@@ -57,7 +62,7 @@ function ViewUserProfileModule(props) {
                 <div className="change-pass">
                   <div>********</div>
                   <div>{displayPassword}</div>
-                  <Link to="/user-profile/edit">Change Password</Link>
+                  <Button type='link' onClick={()=>showModal(true, TYPE.edit_password, "Edit Password")}>Edit User Profile</Button>
                 </div>
               }
             />
@@ -68,21 +73,39 @@ function ViewUserProfileModule(props) {
       <CustomModal
         width={600} 
         closable = {false}
-        title="Edit User Profile"
+        title={editModal.title}
         visible={editModal.visible} 
-        onCancel={()=>showModal(false)} >
-        <UserEditProfileModule {...props} 
-          onCancel={()=>showModal(false)} 
-          onOk={(passValidation)=>{
-            showModal(false);
-            if(passValidation === true){
-              openNotificationWithDurationV2('info', "Need to Refresh",  "You need to logout to refresh your credentials", ()=>{
-                props.action.clearCredentials()
-                props.history.push('/')
-              })
-            }
-          }}
-        />
+        onCancel={()=>showModal(false, TYPE.none)} >
+          {
+            editModal.type === TYPE.edit_profile  && <UserEditProfileModule {...props} 
+            onCancel={()=>showModal(false, TYPE.none)} 
+            onOk={(passValidation)=>{
+              showModal(false, TYPE.none);
+              if(passValidation === true){
+                openNotificationWithDurationV2('info', "Need to Refresh",  "You need to logout to refresh your credentials", ()=>{
+                  props.action.clearCredentials()
+                  props.history.push('/')
+                })
+              }
+              }}
+            />
+          }
+
+          {
+            editModal.type === TYPE.edit_password && <EditPassword {...props} 
+            onCancel={()=>showModal(false, TYPE.none)} 
+            onOk={(passValidation)=>{
+              showModal(false, TYPE.none);
+              if(passValidation === true){
+                openNotificationWithDurationV2('info', "Need to Refresh",  "You need to logout to refresh your credentials", ()=>{
+                  props.action.clearCredentials()
+                  props.history.push('/')
+                })
+              }
+              }}
+            />
+          }
+        
       </CustomModal>        
     </Layout>
   );
