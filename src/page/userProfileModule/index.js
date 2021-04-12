@@ -6,5 +6,4 @@ export {
     ViewUserProfileModule,
     EditUserProfileModule,
     UserEditProfileModule,
-  
 }

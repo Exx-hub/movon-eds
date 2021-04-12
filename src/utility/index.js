@@ -1,7 +1,7 @@
 import { notification } from 'antd';
 import { ERROR_CODES } from '../config'
 import UserProfileClass from './userprofile'
-import MovonLogo from '../assets/movoncargo.png'
+import MovonLogo from '../assets/movon.png'
 import FiveStar from './busCompanies/fivestar'
 import IsarogLogobw from '../assets/bicol-isarog-bw-png.png'
 import IsarogLogo from '../assets/bicol-isarog-png.png'
@@ -42,6 +42,14 @@ const openNotificationWithDuration = (type, code, func) => {
     onClose: func || null,
     message: ERROR_CODES[code].message || "Configure Failed",
     description: ERROR_CODES[code].description || "setup you mesage to config",
+  });
+};
+
+const openNotificationWithDurationV2 = (type, title, description, func) => {
+  notification[type]({
+    onClose: func || null,
+    message: title || "Something went wrong",
+    description: description || "setup you mesage to config",
   });
 };
 
@@ -129,11 +137,12 @@ const getHeaderColor = ()=>{
       break;
 
     default:
-      color = 'teal'
+      color = "#fff"
       break;
   }
   return color
 }
+
 const getStickerLogoBw = () => {
   let logo = undefined;
   switch (UserProfile.getBusCompanyTag()) {
@@ -172,7 +181,8 @@ const getHeaderLogo = () => {
       break;
 
     default:
-      logo = MovonLogo
+      logo = UserProfile.getBusCompanyLogo()
+      console.info('logo',logo)
       break;
   }
   return logo
@@ -188,7 +198,7 @@ const getCashierTextColor = () => {
       break;
 
     default:
-      color = '#fff'
+      color = "gray"
       break;
   }
   return color
@@ -200,6 +210,7 @@ export {
   debounce,
   openNotification,
   openNotificationWithDuration,
+  openNotificationWithDurationV2,
   openNotificationWithIcon,
   UserProfile,
   dataURLtoFile,

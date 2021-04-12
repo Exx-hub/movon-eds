@@ -14,11 +14,9 @@ const getBusPartner = () =>{
         case 'five-star':
             busCompany = new FiveStar()
             break
-        
-        case 'isarog-liner':
-            busCompany = new BicolIsarog()
     
         default:
+            busCompany = new BicolIsarog()
             break;
     }
     return busCompany

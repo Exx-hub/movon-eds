@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./create.scss";
 import {CreateForm} from "../../component/createParcelForm";
 import StepsView from "../../component/steps";
@@ -8,7 +8,6 @@ import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
 import { Button, notification, Layout, Checkbox, Input, Form } from "antd";
 import ReactToPrint from "react-to-print";
-import { UserOutlined } from "@ant-design/icons";
 import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
 import ManifestService from "../../service/Manifest";
@@ -16,16 +15,13 @@ import {
   openNotificationWithIcon,
   debounce,
   UserProfile,
-  alterPath,
-  getHeaderColor,
-  getHeaderLogo,
-  getCashierTextColor
+  alterPath
 } from "../../utility";
 
-import {CustomModal} from '../../component/modal'
-import { NavLink } from "react-router-dom";
+import {Header} from '../../component/header'
+import {CustomModal, LogoutModal} from '../../component/modal'
 
-const { Content, Sider, Header } = Layout;
+const { Content, Sider } = Layout;
 
 const CARGO_TYPES={
   CARGO_PADALA:3,
@@ -192,7 +188,10 @@ const parceResponseData = (data) => {
 class CreateParcel extends React.Component {
 
   constructor(props) {
+
+    console.info('Create Parcel props',props)
     super(props);
+
     this.state = {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -456,7 +455,8 @@ class CreateParcel extends React.Component {
         data:{},
         title:"Bill of Lading Exist!"
       },
-      enabledExcessCargo:false
+      enabledExcessCargo:false,
+      logoutModal:{visible:false}
     };
     this.userProfileObject = UserProfile;
     this.fixPriceComputation = debounce(this.fixPriceComputation, 500)
@@ -469,6 +469,7 @@ class CreateParcel extends React.Component {
   }
 
   componentDidMount() {
+
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
@@ -897,6 +898,14 @@ class CreateParcel extends React.Component {
           this.handleErrorNotification(errorCode);
         }
       })
+      .catch(()=>{
+        showNotification({
+          title: "Server Error",
+          type: "error",
+          message: "Can't process computation, please try again.",
+        });
+        this.handleView('default',this.state.details,()=>{})
+      });
   }
 
   onInputChange = (name, value) => {
@@ -1704,8 +1713,18 @@ class CreateParcel extends React.Component {
             isShortHaul: Boolean(isShortHaul),
             isFixedPrice: false
           });
+        }else{
+          this.handleErrorNotification(errorCode);
         }
       })
+      .catch(()=>{
+        showNotification({
+          title: "Server Error",
+          type: "error",
+          message: "Can't process computation, please try again.",
+        });
+        this.handleView('default',this.state.details,()=>{})
+      });
   }
 
   getMatrixFare = ({ weight, declaredValue, length }) => {
@@ -1743,21 +1762,20 @@ class CreateParcel extends React.Component {
           description: "No Matrix found",
         });
       }
-    });
+    })
   };
 
+  setLogoutModal = (params) =>{
+    const logoutModal = {...this.state.logoutModal, ...params}
+    this.setState({logoutModal})
+  }
+
   render() {
+    console.info('create parcel',this.props)
     return (
+      <>
       <Layout className="create-parcelview-parent-container" style={{ background: 'white' }}>
-        {<Header className="home-header-view" style={{ background: getHeaderColor(),  padding: 0 }}>
-          <div style={{ width:'100%', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between' }}>
-           <NavLink to="/"><img src={getHeaderLogo()} style={{height:'120px'}} /></NavLink>
-           <div style={{color: getCashierTextColor(), marginRight:'2rem'}}>
-            <span style={{fontWeight:'bold', fontSize:'14px', marginRight:'0.3rem'}}>{ UserProfile.getPersonFullName()} </span>
-            <span style={{ fontSize:'14px'}}><UserOutlined style={{ fontSize: "24px" }} /></span>
-           </div>
-          </div>
-        </Header>}
+        <Header {...this.props} setVisibleLogout={()=>this.setLogoutModal({visible:true})} />
         <Layout>
           <Sider width={200} className="create-side-bar">
             <div style={{ marginLeft: "2rem", marginTop: "1rem" }}>
@@ -1841,9 +1859,10 @@ class CreateParcel extends React.Component {
             
           </section>
         </CustomModal>
+        <LogoutModal {...this.props} visible={this.state.logoutModal.visible} handleCancel={()=>this.setLogoutModal({visible:false})}/>
       </Layout>
+      </>
     );
   }
 }
-
 export default CreateParcel;

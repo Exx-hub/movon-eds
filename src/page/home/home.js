@@ -1,14 +1,11 @@
 import React from "react";
 import Manifest from "../manifest";
-import User from "../../service/User";
-//import movonLogo from "../../assets/movoncargo.png";
-import movonLogo from "../../assets/bicol-isarog-png.png";
-import { UserProfile, alterPath, getHeaderColor, getHeaderLogo, getCashierTextColor } from "../../utility";
+import { UserProfile, alterPath } from "../../utility";
 import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
 import Transaction from "../transactionModule";
-import { PromptModal } from "../../component/modal";
+import { LogoutModal } from "../../component/modal";
 
 import moment from "moment";
 
@@ -16,24 +13,20 @@ import "./home.scss";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import { Layout, Button, Menu, Dropdown } from "antd";
+import { Layout, Menu } from "antd";
 
 import {
   FileMarkdownOutlined,
-  UserOutlined,
-  PoweroffOutlined,
-  SettingOutlined,
   SnippetsOutlined,
-  FileSearchOutlined,
   AppstoreAddOutlined,
   BarChartOutlined,
   SearchOutlined,
   InboxOutlined,
-  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { config } from "../../config";
+import {Header} from '../../component/header'
 
-const { Header, Content, Sider } = Layout;
+const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const tableSourceVliBitsi = [
@@ -179,10 +172,11 @@ const tableSourceBitsi = [
 ];
 
 function Home(props) {
-  //const [state, setState] = React.useState({});
   const [menuData, setMenuData] = React.useState([]);
-  const [visibleLogout, setVisibleLogout] = React.useState(false);
   const [userProfileObject] = React.useState(UserProfile);
+  const [logoutModal, setLogoutModal] =  React.useState({visible:false});
+
+  console.log('HOME props',props)
 
   React.useEffect(() => {
     if (menuData.length < 1) {
@@ -226,39 +220,7 @@ function Home(props) {
           key: "sales-cargo",
           destination: alterPath("/report/sales/cargo"),
           action: () => {},
-        },
-        {
-          key: "drop-down-user-profile",
-          name: "User Profile",
-          type: "menu",
-          destination: alterPath("/user-profile"),
-          icon: () => <UserOutlined />,
-          action: () => {},
-        },
-        {
-          key: "drop-down-setting",
-          name: "About",
-          type: "menu",
-          destination: alterPath("/about"),
-          icon: () => <InfoCircleOutlined />,
-          action: () => {},
-        },
-        {
-          key: "drop-down-logout",
-          name: "Logout",
-          type: "menu",
-          destination: alterPath("/drop-down-logout"),
-          icon: () => <PoweroffOutlined />,
-          // action: () => userProfileObject.logout(User),
-          action: () => {
-            setVisibleLogout(true);
-          },
-        },
-        // {
-        //   key: "about",
-        //   destination: alterPath("/about"),
-        //   action: () => {},
-        // },
+        }
       ]);
     }
   }, [menuData, userProfileObject]);
@@ -273,50 +235,9 @@ function Home(props) {
     }
   };
 
-  const menu = () => {
-    const menu = menuData.filter((e) => e.type === "menu");
-    return (
-      <Menu
-        onClick={(e) => {
-          onNavigationMenuChange(e);
-        }}
-      >
-        {menu.map((e) => {
-          const IconMenu = e.icon;
-          return (
-            <Menu.Item key={e.key}>
-              {" "}
-              <IconMenu /> {e.name}{" "}
-            </Menu.Item>
-          );
-        })}
-      </Menu>
-    );
-  };
-
   return (
     <Layout className="home-page-container">
-      <Header className="home-header-view" style={{background:getHeaderColor()}}>
-        <div>
-          <a href="home.js"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></a>
-        </div>
-        <div>
-          {userProfileObject.getUser() && (
-            <div className={"header-nav"} style={{color:'black'}}>
-              <Dropdown overlay={menu} trigger={["click"]}>
-                <Button
-                  className={"home-nav-link"}
-                  type="link"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <span style={{color:getCashierTextColor()}}>Hi {userProfileObject.getUser().personalInfo.firstName}!</span>
-                  <UserOutlined style={{ fontSize: "24px", color:getCashierTextColor() }} />
-                </Button>
-              </Dropdown>
-            </div>
-          )}
-        </div>
-      </Header>
+      <Header {...props} setVisibleLogout={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:true}}))} />
       <Layout className="home-body">
         <Sider width={250} className="home-sider">
           <div className="slider-container">
@@ -383,7 +304,6 @@ function Home(props) {
         <Layout>
           <Content className={"home-content"}>
             <Switch>
-
               <Route path={alterPath("/transaction-parcel")}>
                 <Transaction {...props} />
               </Route>
@@ -426,18 +346,7 @@ function Home(props) {
           </Content>
         </Layout>
       </Layout>
-      <PromptModal
-        visible={visibleLogout}
-        title="Are you sure you want to log out?"
-        message="Changes you made may not be saved."
-        buttonType="danger"
-        action="Logout"
-        handleCancel={() => setVisibleLogout(false)}
-        handleOk={() => {
-          userProfileObject.logout(User);
-          props.history.push(alterPath("/"));
-        }}
-      />
+      <LogoutModal {...props} visible={logoutModal.visible} handleCancel={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:false}}))}/>
     </Layout>
   );
 }

@@ -1,124 +1,33 @@
 import React from "react";
-import { Link, NavLink } from 'react-router-dom'
-import {
-  Layout,
-} from "antd";
-import { RoundedButton } from "../../component/button";
-import movon from "../../assets/movon3.png";
-import movonLogo from "../../assets/movoncargo.png";
-import User from "../../service/User";
+import { Link } from 'react-router-dom'
+import { Layout, Button } from "antd";
 import "./../about/about.scss"
-import { Dropdown, Menu, Button } from "antd";
-import { UserProfile, alterPath, getCashierTextColor, getHeaderColor, getHeaderLogo } from "../../utility";
-import { PromptModal } from "../../component/modal";
-import {
-  UserOutlined,
-  PoweroffOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
+import { openNotificationWithDurationV2, UserProfile } from "../../utility";
+import { LogoutModal, CustomModal } from "../../component/modal";
 import "./changePassword.scss";
 import UserProfileHeader from './header'
 import TextWrapper from './textWrapper'
-const { Header, Content, Footer } = Layout;
+import { Header } from '../../component/header';
+import UserEditProfileModule from './UserEdit';
+
 
 function ViewUserProfileModule(props) {
+
   const { fullName, phone } = UserProfile.getPersonalInfo()
   const { displayId } = UserProfile.getUser()
   const { displayPassword } = UserProfile.getToken()
   const { name, logo } = UserProfile.getBusCompany()
   const assignStationName = UserProfile.getAssignedStation() && UserProfile.getAssignedStation().name
-  const [menuData, setMenuData] = React.useState([]);
-  const [visibleLogout, setVisibleLogout] = React.useState(false);
-  const [userProfileObject] = React.useState(UserProfile);
-  React.useEffect(() => {
-    if (menuData.length < 1) {
-      setMenuData([
-        {
-          key: "drop-down-user-profile",
-          name: "User Profile",
-          type: "menu",
-          destination: alterPath("/user-profile"),
-          icon: () => <UserOutlined />,
-          action: () => { },
-        },
-        {
-          key: "drop-down-setting",
-          name: "About",
-          type: "menu",
-          destination: alterPath("/about"),
-          icon: () => <InfoCircleOutlined />,
-          action: () => { },
-        },
-        {
-          key: "drop-down-logout",
-          name: "Logout",
-          type: "menu",
-          destination: alterPath("/user-profile"),
-          icon: () => <PoweroffOutlined />,
-          action: () => {
-            setVisibleLogout(true);
-          },
-        },
-      ]);
-    }
-  }, [menuData, userProfileObject]);
+  const [logoutModal, setLogoutModal] =  React.useState({visible:false});
+  const [editModal, setEditModal] = React.useState({visible:false})
 
-  const onNavigationMenuChange = (e) => {
-    for (let i = 0; i < menuData.length; i++) {
-      if (menuData[i].key === e.key) {
-        menuData[i].action();
-        props.history.push(menuData[i].destination || alterPath("/"));
-        break;
-      }
-    }
-  };
+  const showModal = show =>{
+    setEditModal((oldState)=>({...oldState, ...{visible:show}}))
+  }
 
-  const menu = () => {
-    const menu = menuData.filter((e) => e.type === "menu");
-    return (
-      <Menu
-        onClick={(e) => {
-          onNavigationMenuChange(e);
-        }}
-      >
-        {menu.map((e) => {
-          const IconMenu = e.icon;
-          return (
-            <Menu.Item key={e.key}>
-              {" "}
-              <IconMenu /> {e.name}{" "}
-            </Menu.Item>
-          );
-        })}
-      </Menu>
-    );
-  };
   return (
     <Layout className="about-main">
-      <Header className="home-header-view" style={{ background: getHeaderColor() }}>
-        <div>
-          <NavLink to="/"><img src={getHeaderLogo()} style={{ height: "120px" }} alt="logo" /></NavLink>
-        </div>
-        <div>
-          {userProfileObject.getUser() && (
-            <div className={"header-nav"}>
-              <Dropdown overlay={menu} trigger={["click"]}>
-                <Button
-                  className={"home-nav-link"}
-                  type="link"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <div style={{ color: getCashierTextColor() }}>
-                    Hi {userProfileObject.getUser().personalInfo.firstName}!
-                <UserOutlined style={{ fontSize: "24px" }} />
-                  </div>
-                </Button>
-              </Dropdown>
-            </div>
-          )}
-        </div>
-      </Header>
-
+      <Header {...props} setVisibleLogout={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:true}}))} />
       <div className="user-profile-module">
         <div className="company-profile">
           <div className="profile-text">Profile</div>
@@ -128,7 +37,6 @@ function ViewUserProfileModule(props) {
             logo={logo}
           />
         </div>
-
         <div className="main-creds">
           <div className="profile-text">User Profile</div>
           <div className="creds">
@@ -136,12 +44,14 @@ function ViewUserProfileModule(props) {
             <TextWrapper title="Phone Number" value={phone.number} />
           </div>
           <div className="creds">
-            <TextWrapper title="User Name" value=
+            <TextWrapper 
+              title="User Name" value=
               {<div className="username-edit">
               <div>{displayId}</div>
-              <Link to="/user-profile/UserEdit">Edit User Profile</Link>
-              </div>
+              <Button type='link' onClick={()=>showModal(true)}>Edit User Profile</Button>
+              </div>  
               } />
+
             <TextWrapper title="Password" value=
               {
                 <div className="change-pass">
@@ -151,27 +61,29 @@ function ViewUserProfileModule(props) {
                 </div>
               }
             />
-
           </div>
-
-
         </div>
-
       </div>
-
-      <PromptModal
-        visible={visibleLogout}
-        title="Are you sure you want to log out?"
-        message="Changes you made may not be saved."
-
-        buttonType="danger"
-        action="Logout"
-        handleCancel={() => setVisibleLogout(false)}
-        handleOk={() => {
-          userProfileObject.logout(User);
-          props.history.push(alterPath("/"));
-        }}
-      />
+      <LogoutModal {...props} visible={logoutModal.visible} handleCancel={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:false}}))}/>
+      <CustomModal
+        width={600} 
+        closable = {false}
+        title="Edit User Profile"
+        visible={editModal.visible} 
+        onCancel={()=>showModal(false)} >
+        <UserEditProfileModule {...props} 
+          onCancel={()=>showModal(false)} 
+          onOk={(passValidation)=>{
+            showModal(false);
+            if(passValidation === true){
+              openNotificationWithDurationV2('info', "Need to Refresh",  "You need to logout to refresh your credentials", ()=>{
+                props.action.clearCredentials()
+                props.history.push('/')
+              })
+            }
+          }}
+        />
+      </CustomModal>        
     </Layout>
   );
 }

@@ -12,6 +12,7 @@ function MatrixModal(props){
       width={props.width || 800}
       title={props.title || "title"} 
       visible={props.visible} 
+      maskClosable={false}
       footer={null}>
       { props.children }
     </Modal>

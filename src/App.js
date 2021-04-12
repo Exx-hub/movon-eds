@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import Login from './page/login'
 import CreateParcel from './page/createParcel'
 import ManifestDetails from './page/manifestDetails'
 import About from './page/about'
 import PrinManifestDetails from './page/prinManifestDetails'
-import {alterPath,UserProfile} from './utility'
+import {alterPath, UserProfile, openNotificationWithIcon} from './utility'
 import Home from './page/home'
 import 'antd/dist/antd.css';
 import './App.scss';
 import { EditUserProfileModule, ViewUserProfileModule, UserEditProfileModule } from './page/userProfileModule';
+import { notification} from "antd";
+import User from "./service/User";
 
-function App() {
+
+function App(props) {
   const [internetConnection, setInternetConnection] = React.useState(false)
-
   window.addEventListener('online', () => setInternetConnection(true));
   window.addEventListener('offline', () => setInternetConnection(false));
 
@@ -21,24 +23,52 @@ function App() {
     setInternetConnection(navigator.onLine)
   },[])
 
-  const ProtectedRoute = (params) => {
-    return UserProfile.getCredential() ? (<Route {...params} render={props=> <params.component {...props} />} />) : (<Redirect to={alterPath("/login")} />)
+  const handleErrorNotification = (code) => {
+    if (!code) {
+      notification.error({
+        message: "Server Error",
+        description: "Something went wrong"
+      });
+      return;
+    }
+
+    if (code === 1000) {
+      openNotificationWithIcon("error", code);
+      this.userProfileObject.clearData();
+      props.history.push(alterPath("/"));
+      return;
+    }
+    openNotificationWithIcon("error", code);
+  };
+
+  const clearCredentials = (props) =>{
+    UserProfile.logout(User);
+    //props.history.push("/");
   }
 
+  const ProtectedRoute = (params) => {
+    return UserProfile.getCredential() ? (<Route {...params} render={()=><params.component/>} />) : (<Redirect to={alterPath("/login")} />)
+  }
+
+  const action ={
+    clearCredentials,
+    handleErrorNotification
+  }
+  
   return (
     <>
     {!internetConnection && <div className="no-internet-connection"/>}
     <Router>
       <Switch>
-      <Route exact={true} path={alterPath("/user-profile/edit")} render={props=> <EditUserProfileModule {...props} />} />
-      <Route exact={true} path={alterPath("/user-profile/userEdit")} render={props=> <UserEditProfileModule {...props} />} />
-      <Route exact={true} path={alterPath("/user-profile")} render={props=> <ViewUserProfileModule {...props} />} />
       <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
-      <ProtectedRoute exact={true} path={alterPath("/about")} component={About}/>
-      <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={ManifestDetails}/>
-      <ProtectedRoute exact={true} path={alterPath("/manifest/print/")} component={PrinManifestDetails} />
-      <ProtectedRoute exact={true} path={alterPath("/create-parcel")} component={CreateParcel}  /> 
-      <ProtectedRoute path={alterPath("/")} component={Home}  /> 
+      <ProtectedRoute exact={true} path={alterPath("/user-profile/edit")} component={(props)=><EditUserProfileModule {...props}/>}/>
+      <ProtectedRoute exact={true} path={alterPath("/user-profile/userEdit")} component={(props)=><UserEditProfileModule {...props} action={action}/>}/>
+      <ProtectedRoute exact={true} path={alterPath("/user-profile")} component={props => <ViewUserProfileModule {...props} action={action} />}/>
+      <ProtectedRoute exact={true} path={alterPath("/about")} component={props => <About {...props} />}/>
+      <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={props => <ManifestDetails {...props}/>}/>
+      <ProtectedRoute exact={true} path={alterPath("/manifest/print/")} component={ props => <PrinManifestDetails {...props} />} />
+      <ProtectedRoute exact={true} path={alterPath("/create-parcel")} component={props => <CreateParcel {...props}/>}  /> 
+      <ProtectedRoute path={alterPath("/")} component={(props)=><Home {...props}/>}  /> 
       </Switch>
     </Router> 
     </>
