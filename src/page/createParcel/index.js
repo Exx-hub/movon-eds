@@ -1226,6 +1226,8 @@ class CreateParcel extends React.Component {
             details.declaredValue.disabled = false;
             details.declaredValue.value = undefined;
           }
+        }else{
+          details.declaredValue.value = undefined;
         }
       }
     }
@@ -1308,6 +1310,8 @@ class CreateParcel extends React.Component {
             details.declaredValue.disabled = false;
             details.declaredValue.value = undefined;
           }
+        }else{
+          details.declaredValue.value = undefined;
         }
       }
     }
