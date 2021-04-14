@@ -13,7 +13,7 @@ import User from "./service/User";
 import 'antd/dist/antd.css';
 import './App.scss';
 
-function App(props) {
+function App() {
   const [internetConnection, setInternetConnection] = React.useState(false)
   window.addEventListener('online', () => setInternetConnection(true));
   window.addEventListener('offline', () => setInternetConnection(false));
@@ -22,7 +22,12 @@ function App(props) {
     setInternetConnection(navigator.onLine)
   },[])
 
-  const handleErrorNotification = (code) => {
+  const clearCredentials = (props) =>{
+    UserProfile.logout(User);
+    props.history.push("/");
+  }
+
+  const handleErrorNotification = (code, props) => {
     if (!code) {
       notification.error({
         message: "Server Error",
@@ -33,17 +38,11 @@ function App(props) {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      this.userProfileObject.clearData();
-      props.history.push(alterPath("/"));
+      clearCredentials(props)
       return;
     }
     openNotificationWithIcon("error", code);
   };
-
-  const clearCredentials = (props) =>{
-    UserProfile.logout(User);
-    //props.history.push("/");
-  }
 
   const ProtectedRoute = (params) => {
     return UserProfile.getCredential() ? (<Route {...params} render={()=><params.component/>} />) : (<Redirect to={alterPath("/login")} />)

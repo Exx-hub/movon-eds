@@ -81,13 +81,7 @@ function ViewUserProfileModule(props) {
             onCancel={()=>showModal(false, TYPE.none)} 
             onOk={(passValidation)=>{
               showModal(false, TYPE.none);
-              if(passValidation === true){
-                openNotificationWithDurationV2('info', "Need to Refresh",  "You need to logout to refresh your credentials", ()=>{
-                  props.action.clearCredentials()
-                  props.history.push('/')
-                })
-              }
-              }}
+            }}
             />
           }
 
@@ -95,11 +89,11 @@ function ViewUserProfileModule(props) {
             editModal.type === TYPE.edit_password && <EditPassword {...props} 
             onCancel={()=>showModal(false, TYPE.none)} 
             onOk={(passValidation)=>{
+              console.info('passValidation===>>',passValidation)
               showModal(false, TYPE.none);
               if(passValidation === true){
                 openNotificationWithDurationV2('info', "Need to Refresh",  "You need to logout to refresh your credentials", ()=>{
-                  props.action.clearCredentials()
-                  props.history.push('/')
+                  props.action.clearCredentials(props)
                 })
               }
               }}

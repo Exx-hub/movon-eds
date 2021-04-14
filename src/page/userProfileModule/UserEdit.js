@@ -34,6 +34,9 @@ function UserEditProfileModule(props) {
     let hasError = false
     let _errorState = {...errorState}
 
+    console.log('name',name)
+    console.log('state[name]',state[name])
+
     if(!_errorState[name]){
       return {hasError,hasChange};
     }
@@ -62,17 +65,17 @@ function UserEditProfileModule(props) {
           hasError = true
         }
       }
-
-      if(name === 'displayId'){
-        if(state[name] !== displayId){
-          if(state[name].length < 6){
-            _errorState[name].message=`invalid length`;
-            hasError = true
-          }
-          hasChange = true;
-        }
-      }
       hasChange = true;
+    }
+
+    if(name === 'displayId'){
+      if(state[name] !== displayId){
+        if(state[name].length < 6){
+          _errorState[name].message=`invalid length`;
+          hasError = true
+        }
+        hasChange = true;
+      }
     }
 
     setErrorState((oldState)=>({...oldState, ..._errorState}))
@@ -104,19 +107,34 @@ function UserEditProfileModule(props) {
       }
 
       if(!result.hasError && result.hasChange){
-         changeValues = {...changeValues, ...{[item]:state[item]}}
+        if(item === 'displayId'){
+          changeValues = {...changeValues, ...{'staffId':state[item]}}
+        }else{
+          changeValues = {...changeValues, ...{[item]:state[item]}}
+        }
       }
     }
 
     if(!hasError){
       User.updatePersonalInfo(changeValues).
       then(e=>{
-        const{errorCode}=e.data;
+        console.log('[updatePersonalInfo]',e)
+        const{errorCode, data}=e.data;
         let hasError = false
         if(errorCode){
-          props.action.handleErrorNotification(errorCode)
+          props.action.handleErrorNotification(errorCode,props)
           hasError = true;
+          return;
         }
+
+        let json = {...UserProfile.getCredential()};
+        console.log('json',json)
+        if(data.userName && (json.displayId !== data.userName)){
+          json.user.displayId = data.userName;
+        }
+        json.user.personalInfo = {...json.user.personalInfo, ...data.personalInfo};
+        UserProfile.setCredential(json);
+
         props.onOk(hasError)
       })
     }

@@ -91,8 +91,8 @@ export const ERROR_CODES = {
     2606:{
         module:'EDIT',
         code: "INCORRECT_OLD_PASSWORD",
-        message: "Correct the following error(s) to go on.",
-        description: "Old Password appears to be incorrect."
+        message: "Incorrect Password",
+        description: "Old password mismatch"
         
     }
     

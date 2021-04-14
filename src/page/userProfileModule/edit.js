@@ -97,16 +97,21 @@ function EditPassword(props) {
     }
 
     if(!hasError){
+      console.info('update password-------->>>')
+      console.info('update password-------->>>')
+      console.info('update password-------->>>')
       User.updatePassword({newPassword:state.newPassword, oldPassword:state.oldPassword}).
       then(e=>{
-        //console.info('updatePassword',e)
-        const{errorCode}=e.data;
+        console.info('updatePassword',e)
+        const{errorCode, data}=e.data;
         let hasError = false
         if(errorCode){
-          props.action.handleErrorNotification(errorCode)
+          props.action.handleErrorNotification(errorCode, props)
           hasError = true;
+          return
         }
-        props.onOk(hasError)
+        if(data.updated === true)
+          props.onOk(data.updated)
       })
     }
   }
