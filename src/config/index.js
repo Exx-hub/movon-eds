@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"staging",
-        build: '1.8.0(133)'
+        build: '1.8.0(134)'
     },
     environment:"staging",
     changeLogs: `fix issue on enabled and disbled of fields`

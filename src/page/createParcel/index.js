@@ -290,7 +290,7 @@ class CreateParcel extends React.Component {
         },
         quantity: {
           name: "quantity",
-          value: undefined,
+          value: 1,
           isRequired: false,
           accepted: true,
           disabled: true,
@@ -1012,7 +1012,7 @@ class CreateParcel extends React.Component {
             return {...e, disabled}
           })
           details.type = {...details.type, ...{options:typeOptions}}
-          this.setState({enabledExcessCargo, details},()=>console.log('state.details.fixMatrix',this.state.details.fixMatrix))
+          this.setState({enabledExcessCargo, details})
           
         })
   }
@@ -1212,59 +1212,79 @@ class CreateParcel extends React.Component {
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
 
-    if((name === 'onTypeChange' || name === 'fix-matrix-change')){
-      details.declaredValue.disabled = false;
-      details.packageWeight.disabled = false;
+    let hideLength = undefined;
+    let hideDeclaredValue = undefined;
+    let hideQuantity = undefined;
+    let hideWeight = undefined;
 
-      if(isAccompanied){
-        details.declaredValue.disabled = true;
-        details.packageWeight.disabled = false;
-  
-        if(isFixPrice){
-          if(option && (option.declaredValue || 0) > 0){
-            details.declaredValue.disabled = false;
-            details.declaredValue.value = undefined;
-          }
-        }else{
-          details.declaredValue.value = undefined;
-        }
-      }
-    }
-
+    console.log('options',option)
+    
     switch (name) {
       case "onTypeChange":
+        
         this.releaseError(details);
+
+        hideLength = true;
+        hideDeclaredValue = true;
+        hideQuantity = true;
+        hideWeight = false;
+
+        if(!isAccompanied){ //Cargo
+          hideLength = !hideLength;
+          hideDeclaredValue = !hideDeclaredValue;
+        }
+
+        details.declaredValue.disabled = hideDeclaredValue
+        details.quantity.disabled = hideQuantity;
+        details.length.disabled = hideLength;
+        details.packageWeight.disabled = hideWeight;
+
         details.fixMatrix.value = "";
+        details.quantity.value = 1;
         break;
 
       case "fix-matrix-change": 
+        hideLength = false;
+        hideDeclaredValue = false;
+        hideWeight = false;
+        hideQuantity = true;
+
         this.releaseError(details)
-        console.info('options',option)
         details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
         details.additionalFee.enabled = (option && (option.additionalFee || false));
-        details.quantity.disabled = true;
-        details.packageWeight.disabled = false;
-        details.length.disabled = false;
 
-        if(isFixPrice){
-          details.quantity.disabled = false;
-          details.quantity.value = details.quantity.value || 1;
-          details.length.disabled = true;
-          details.length.value = undefined;
-          details.packageWeight.value = undefined;
-          details.packageWeight.disabled = true;
-          
-          if(Number(option.declaredValue || 0) === 0){
-            details.declaredValue.disabled = true;
-            details.declaredValue.value = undefined;
+        if(!isFixPrice){ //NONE
+          if(isAccompanied){ //CARGO
+            hideLength = true;
+            hideDeclaredValue = true;
           }
+        }else{
+          hideQuantity = false;
+          hideLength = true;
+          hideDeclaredValue = true
+          hideWeight = true;
 
           if(option && (option.additionalFee || false) === false){
             details.additionalFee.enabled = false;
             details.additionalFee.value = undefined;
           }
 
+          if(option && (option.declaredValue || 0) > 0){ 
+            hideDeclaredValue = false;
+          }
         }
+
+        details.length.disabled = hideLength;
+        details.length.value = !hideLength ? details.length.value : undefined
+
+        details.declaredValue.disabled = hideDeclaredValue;
+        details.declaredValue.value = !hideDeclaredValue ? details.declaredValue.value : undefined
+
+        details.quantity.disabled = hideQuantity;
+        details.quantity.value = !hideQuantity ? details.quantity.value : 1
+
+        details.packageWeight.disabled = hideWeight;
+        details.packageWeight.value = !hideWeight ? details.packageWeight.value : undefined
         break;
 
       case 'discount-change': 
@@ -1296,67 +1316,86 @@ class CreateParcel extends React.Component {
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
 
-    if(name === 'onTypeChange' || name === 'fix-matrix-change'){
-      details.declaredValue.disabled = false;
-      details.packageWeight.disabled = false;
-
-      if(isAccompanied){
-        details.declaredValue.disabled = true;
-        details.packageWeight.disabled = false;
-  
-        if(isFixPrice){
-          if(option && (option.declaredValue || 0) > 0){
-            details.declaredValue.disabled = false;
-            details.declaredValue.value = undefined;
-          }
-        }else{
-          details.declaredValue.value = undefined;
-        }
-      }
-    }
-
+    let hideLength = undefined;
+    let hideDeclaredValue = undefined;
+    let hideQuantity = undefined;
+    let hideWeight = undefined;
+    
     switch (name) {
       case "onTypeChange":
+        
         this.releaseError(details);
-        if(!isAccompanied){
-          details.declaredValue.disabled = false;
+
+        hideDeclaredValue = true;
+        hideQuantity = true;
+        hideWeight = false;
+
+        if(!isAccompanied){ //Cargo
+          hideDeclaredValue = !hideDeclaredValue;
         }
+
+        details.declaredValue.disabled = hideDeclaredValue
+        details.quantity.disabled = hideQuantity;
+        details.packageWeight.disabled = hideWeight;
+
         details.fixMatrix.value = "";
+        details.quantity.value = 1;
         break;
 
       case "fix-matrix-change": 
+
+        hideDeclaredValue = false;
+        hideWeight = false;
+        hideQuantity = true;
+
         this.releaseError(details)
         details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        details.additionalFee.enabled = false;
-        details.quantity.disabled = true;
-        details.packageWeight.disabled = false;
+        details.additionalFee.enabled = (option && (option.additionalFee || false));
+        details.quantity.value = 1
 
-        if(isFixPrice){
-          details.packageWeight.disabled = true;
-          details.packageWeight.value = 0;
-          details.quantity.disabled = false;
-          details.quantity.value = details.quantity.value || 1;
-          details.additionalFee.enabled = true;
-          
-          if(Number(option.declaredValue || 0) === 0){
-            details.declaredValue.disabled = true;
-            details.declaredValue.value = undefined;
+        if(!isFixPrice){ //NONE
+          if(isAccompanied){ //CARGO
+            hideDeclaredValue = true;
           }
-
-          if(option && option.additionalFee === false){
+        }else{
+          hideQuantity = false;
+          hideDeclaredValue = true
+          hideWeight = true;
+          
+          if(option && (option.additionalFee || false) === false){
             details.additionalFee.enabled = false;
             details.additionalFee.value = undefined;
           }
+
+          if(option && (option.declaredValue || 0) > 0){ 
+            hideDeclaredValue = false;
+          }
         }
+
+        details.declaredValue.disabled = hideDeclaredValue;
+        details.declaredValue.value = !hideDeclaredValue ? details.declaredValue.value : undefined
+
+        details.quantity.disabled = hideQuantity;
+        details.quantity.value = !hideQuantity ? details.quantity.value : 1
+
+        details.packageWeight.disabled = hideWeight;
+        details.packageWeight.value = !hideWeight ? details.packageWeight.value : undefined
         break;
+
+      case 'discount-change': 
+      //todo:
+      break;
+
+      case 'input-change': 
+      //todo:
+      break;
 
       case 'destination-change': 
         details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
         selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-      break;
+      break
 
       default:
-        //todo: discount-change, input-change
         break;
     }
 
