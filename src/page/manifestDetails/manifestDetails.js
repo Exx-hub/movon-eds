@@ -8,14 +8,14 @@ import { TableView } from "../../component/table";
 import TicketView from "../../component/ticketView";
 import ReactToPrint from "react-to-print";
 import ManifestService from "../../service/Manifest";
-import {openNotificationWithIcon,alterPath,modifyName,UserProfile,getHeaderColor,getHeaderLogo} from "../../utility";
+import {openNotificationWithIcon,alterPath,modifyName,UserProfile} from "../../utility";
 import { notification } from "antd";
 import {CloseCircleOutlined} from "@ant-design/icons";
-import { Layout,Button, Col, Row, Input, Switch, Tooltip, Skeleton, Space } from "antd";
-import { Link } from "react-router-dom";
+import { Layout,Button, Col, Row, Input, Tooltip, Skeleton, Space, Switch} from "antd";
+import {Header} from '../../component/header'
+import {LogoutModal} from '../../component/modal'
 
 const { Search } = Input;
-const { Header } = Layout;
 
 function CardView(props) {
   const dataSource = props.dataSource || [];
@@ -127,6 +127,7 @@ class ManifestDetails extends React.Component {
       date: undefined,
       startStationId: undefined,
       endStationId: undefined,
+      logoutModal:{visible:false}
     };
     this.printEl = React.createRef();
     this.userProfileObject = UserProfile;
@@ -380,6 +381,14 @@ class ManifestDetails extends React.Component {
           <div className="right-content-section">
             <Row>
               <Col span={24}>
+                <div style={{display:'flex', justifyContent:'center'}}>
+                  <Switch
+                    checkedChildren="Card View"
+                    unCheckedChildren="Table View"
+                    checked={this.state.isCardView}
+                    onChange={(e) => this.setState({ isCardView: e })}
+                  />
+                </div>
                 <div className="search-container">
                 <Search
                   value={this.state.searchValue}
@@ -497,10 +506,15 @@ class ManifestDetails extends React.Component {
 
   doSorting = () => {};
 
+  setLogoutModal = (params) =>{
+    const logoutModal = {...this.state.logoutModal, ...params}
+    this.setState({logoutModal})
+  }
+
   render() {
     return (
       <Layout className="manifest-details-page">
-        <Header className="home-header-view" style={{background:getHeaderColor()}}>
+        {/* <Header className="home-header-view" style={{background:getHeaderColor()}}>
           <Link to="/manifest/list"><img tag="logo" src={getHeaderLogo()} alt="logo" style={{height:120}} /></Link>
 
           {this.state.currentView !== TICKET &&
@@ -516,11 +530,12 @@ class ManifestDetails extends React.Component {
                 </div>
               </>
             )}
-        </Header>
-
+        </Header> */}
+        <Header {...this.props} setVisibleLogout={()=>this.setLogoutModal({visible:true})} />
         <Layout className="manifest-details-page-body">
           {this.SwitchView()}
         </Layout>
+        <LogoutModal {...this.props} visible={this.state.logoutModal.visible} handleCancel={()=>this.setLogoutModal({visible:false})}/>
       </Layout>
     );
   }
