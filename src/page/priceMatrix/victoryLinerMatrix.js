@@ -1,30 +1,11 @@
 import React from "react";
-import {
-  Layout,
-  Button,
-  Select,
-  Col,
-  Row,
-  notification,
-  Input,
-  Skeleton,
-  Divider,
-  AutoComplete,
-} from "antd";
-
-import { PlusOutlined, SaveOutlined, DeleteFilled } from "@ant-design/icons";
+import {Layout, Button, Select, Col, Row, notification, Input, AutoComplete} from "antd";
+import { PlusOutlined, SaveOutlined } from "@ant-design/icons";
 import MatrixService from "../../service/Matrix";
 import ParcelService from "../../service/Parcel";
-import {
-  openNotificationWithIcon,
-  UserProfile,
-  alterPath,
-} from "../../utility";
+import {openNotificationWithIcon,UserProfile,alterPath} from "../../utility";
 import FixPriceMatrix from "./fixMatrix";
-
 import "./priceMatrix.css";
-import RoutesService from "../../service/Routes";
-import { config } from "../../config";
 
 const { Option } = Select;
 
@@ -60,13 +41,6 @@ export default class VictoryLinerMatrix extends React.Component {
     selectedRoute: undefined,
     routesList: [],
     startStation: undefined,
-    // destinationRoutes: {
-    //   name: "destinationRoutes",
-    //   value: undefined,
-    //   isRequired: true,
-    //   accepted: true,
-    //   options: [],
-    // },
     connectingCompany: {
       name: "connectingCompany",
       value: undefined,

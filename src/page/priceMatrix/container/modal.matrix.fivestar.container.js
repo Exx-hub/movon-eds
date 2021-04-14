@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { Button, Form, Input, InputNumber, Space } from "antd";
+import React from "react";
+import { Button, Form, Input, InputNumber} from "antd";
 import FooterModal from './modal.footer'
-import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function FiveStarMatrixModalContent(props) {
 
@@ -16,10 +16,6 @@ function FiveStarMatrixModalContent(props) {
     const layout = {
         labelCol: { span: 6 },
         wrapperCol: { span: 20 },
-    };
-
-    const tailLayout = {
-        wrapperCol: { offset: 8, span: 16 },
     };
 
     const validateAmount = ({ getFieldValue }) => ({

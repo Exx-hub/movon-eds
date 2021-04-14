@@ -1,20 +1,7 @@
 import React from "react";
-import {
-  Layout,
-  Button,
-  Select,
-  Col,
-  Row,
-  notification,
-  Input,
-  Skeleton,
-  Divider,
-  AutoComplete
-} from "antd";
-
-import { PlusOutlined, SaveOutlined, DeleteFilled } from "@ant-design/icons";
+import {Layout,Button,Select,Col,Row,notification,Input,AutoComplete} from "antd";
+import { SaveOutlined } from "@ant-design/icons";
 import MatrixService from "../../service/Matrix";
-import ParcelService from "../../service/Parcel";
 import {openNotificationWithIcon, UserProfile, alterPath} from "../../utility";
 import FixPriceMatrix from './fixMatrix'
 import "./priceMatrix.css";

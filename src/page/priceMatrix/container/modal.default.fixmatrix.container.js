@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Collapse, Table, Space, Button, Select, Switch, Form, Input, InputNumber } from "antd";
+import React from "react";
+import { Form, Input, InputNumber } from "antd";
 import FooterModal from './modal.footer'
 
 function AddFixMatrixModalContent(props) {

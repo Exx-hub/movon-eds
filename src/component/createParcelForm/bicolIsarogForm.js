@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Row, Col, Radio, Select, AutoComplete, Space, Divider, Button } from "antd";
+import React from "react";
+import { Row, Col, Radio, Select, AutoComplete, Divider, Button } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
 import { getHeaderColor, UserProfile } from "../../utility";
@@ -52,17 +52,14 @@ function BicolIsarogForm(props) {
     quantity,
     systemFee,
     additionNote,
-    packageInsurance,
     type,
     packageWeight,
-    shippingCost,
     totalShippingCost,
     paxs,
     length,
     connectingCompany,
     connectingRoutes,
     fixMatrix,
-    associateORNumber,
     busNumber,
     tripCode,
     driverFullName,
@@ -72,17 +69,9 @@ function BicolIsarogForm(props) {
     associateFixPrice,
     billOfLading,
     additionalFee,
-    discountFee,
   } = props.details;
 
   const {
-    lengthFee,
-    portersFee,
-    weightFee,
-    handlingFee,
-    basePrice,
-    isShortHaul,
-    declaredValueFee,
     isFixedPrice,
   } = props.priceDetails
 

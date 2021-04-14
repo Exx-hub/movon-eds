@@ -43,7 +43,7 @@ function DltbMatrix(props) {
         tempFixMatrixObject: { matrix: [], fixMatrix: [] },
     })
 
-    const [busPartner, setBusPartner] = useState(getBusPartner())
+    const [busPartner] = useState(getBusPartner())
 
     const [fixPriceModal, setFixPriceModal] = useState({
         visible: false,
@@ -88,7 +88,7 @@ function DltbMatrix(props) {
     }
 
     const parsePriceMatrix = (result) =>{
-        const{success, data, errorCode}=result.data;
+        const{data, errorCode}=result.data;
         if(!errorCode){
             let fixMatrix = [];
             let matrix = []
@@ -113,7 +113,7 @@ function DltbMatrix(props) {
             destination: destinationId,
             stringValues,
         }).then(async (e) => {
-            const { success, errorCode } = e.data;
+            const { errorCode } = e.data;
             if (!errorCode) {
                 notification["success"]({
                     message: "Updated Successfuly",
@@ -312,9 +312,9 @@ function DltbMatrix(props) {
                 }))
                 break;
 
-            case "update-click":
-                setMatrixModal(e => ({ ...e, visible: true, data: { ...data, index } }))
-                break;
+            // case "update-click":
+            //     setMatrixModal(e => ({ ...e, visible: true, data: { ...data, index } }))
+            //     break;
 
             default:
                 break;

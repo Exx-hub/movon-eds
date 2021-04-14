@@ -24,10 +24,6 @@ function BicolIsarogMatrixModalContent(props) {
         wrapperCol: { span: 20 },
     };
 
-    const tailLayout = {
-        wrapperCol: { offset: 8, span: 16 },
-    };
-
     const validateAmount = ({ getFieldValue }) => ({
         validator(rule, value) {
             const reg = /^-{0,1}\d*\.{0,1}\d+$/;
@@ -62,7 +58,6 @@ function BicolIsarogMatrixModalContent(props) {
                     destination: props.data.destination || "no data",
                     weightRange: props.data.weightRange || [{weight1:undefined, weight2:undefined, amount:undefined}],
                     lengthRange: props.data.lengthRange || [{meter:undefined, percentage:undefined}],
-                    price: props.data.price || 0.00,
                     accompaniedBaggage : props.data.accompaniedBaggage || 0,
                     accompaniedBaggageFee : props.data.accompaniedBaggageFee || 0,
                     declaredValueRate : props.data.declaredValueRate || 0,

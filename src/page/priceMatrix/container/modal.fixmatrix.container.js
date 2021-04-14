@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {Collapse,Table,Space,Button,Select, Switch, Form, Input, InputNumber} from "antd";
+import React from "react";
+import {Switch, Form, Input, InputNumber} from "antd";
 import FooterModal from './modal.footer'
 
 function AddFixMatrixModalContent(props){
@@ -48,7 +48,7 @@ function AddFixMatrixModalContent(props){
                     'declaredValue': (props.data && props.data.declaredValue) || ((props.data && props.data.dvRate) || 0),
                     'price': (props.data && props.data.price) || 0,
                     'additionalFee': (props.data && props.data.additionalFee) || true,
-                    'name': (props.data && props.data.name) || (props.data && props.data.description || undefined)
+                    'name': (props.data && props.data.name) || (props.data && (props.data.description || undefined))
                   }}
                 >
 

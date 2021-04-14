@@ -2,26 +2,13 @@ import React from "react";
 import "./about.scss";
 import logo from "../../assets/movon.png";
 import { config } from "../../config";
-import User from "../../service/User";
-import { Layout, Dropdown, Menu, Button } from "antd";
-import movonLogo from "../../assets/movoncargo.png";
-import { UserProfile, alterPath, getHeaderLogo, getHeaderColor,getCashierTextColor } from "../../utility";
-import { PromptModal } from "../../component/modal";
-import { Switch, Route, Redirect, NavLink } from "react-router-dom";
-import {
-  UserOutlined,
-  PoweroffOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
+import { Layout} from "antd";
 import { LogoutModal } from "../../component/modal";
 import {Header} from '../../component/header'
 
-const {Content, Footer } = Layout;
+const { Footer } = Layout;
 
 function About(props) {
-  const [menuData, setMenuData] = React.useState([]);
-  const [visibleLogout, setVisibleLogout] = React.useState(false);
-  const [userProfileObject] = React.useState(UserProfile);
   const [logoutModal, setLogoutModal] =  React.useState({visible:false});
 
   return (

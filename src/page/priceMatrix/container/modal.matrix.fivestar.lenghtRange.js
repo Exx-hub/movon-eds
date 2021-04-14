@@ -1,7 +1,6 @@
 import React from "react";
-import { Button, Form, Input, InputNumber, Space, List } from "antd";
+import {  List } from "antd";
 import FooterModal from './modal.footer'
-import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function MatrixModalContent(props) {
 

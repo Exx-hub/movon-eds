@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {Collapse,Table,Space,Button,Select, Form, Input, InputNumber, Switch} from "antd";
+import React from "react";
+import {Form, Input, InputNumber, Switch} from "antd";
 import FooterModal from './modal.footer'
-import userEvent from "@testing-library/user-event";
 
 function MatrixModalContent(props){
 

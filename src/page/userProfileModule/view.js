@@ -1,16 +1,52 @@
 import React from "react";
-import { Link } from 'react-router-dom'
 import { Layout, Button } from "antd";
 import "./../about/about.scss"
 import { openNotificationWithDurationV2, UserProfile } from "../../utility";
 import { LogoutModal, CustomModal } from "../../component/modal";
 import "./changePassword.scss";
-import UserProfileHeader from './header'
-import TextWrapper from './textWrapper'
 import { Header } from '../../component/header';
-import UserEditProfileModule from './UserEdit';
-import EditPassword from './edit';
+import UserEditProfileModule from './editProfileView';
+import EditPassword from './editPasswordView';
 
+
+function TextWrapper(props){
+  return ( <div className="item-wrapper wrapper-margin-top">
+  <span className="title item-wrapper-custom-text-title">
+    {props.title}
+  </span>
+  <span className="value item-wrapper-custom-text-value">
+    {props.value}
+  </span>
+</div>)
+}
+
+function UserProfileHeader(props) {
+ 
+  return (
+      <div className="main-profile">
+        <div className="profile">
+          <div className="avatar-container">
+            <img
+              alt="avatar-img"
+              src={props.logo}
+            />
+          </div>
+        </div>
+
+        <div className="bus-profile">
+          <div className="item-wrapper">
+            <span className="title remove-span-gap">Bus Company</span>
+            <span className="value">{props.busCompanyName}</span>
+          </div>
+
+          <div className="item-wrapper">
+            <span className="title remove-span-gap">Assigned Station</span>
+            <span className="value">{props.assignedStationName}</span>
+          </div>
+        </div>
+      </div>
+  );
+}
 
 function ViewUserProfileModule(props) {
 
@@ -23,8 +59,6 @@ function ViewUserProfileModule(props) {
 
   const [logoutModal, setLogoutModal] =  React.useState({visible:false, type:TYPE.none, title:"NONE"});
   const [editModal, setEditModal] = React.useState({visible:false})
-  const [editPassword, setEditPassword] = React.useState(false)
-  const [editProfile, setEditProfile] = React.useState(false)
 
   const showModal = (show, type, title) =>{
     setEditModal((oldState)=>({...oldState, ...{visible:show, type, title}}))
@@ -89,7 +123,6 @@ function ViewUserProfileModule(props) {
             editModal.type === TYPE.edit_password && <EditPassword {...props} 
             onCancel={()=>showModal(false, TYPE.none)} 
             onOk={(passValidation)=>{
-              console.info('passValidation===>>',passValidation)
               showModal(false, TYPE.none);
               if(passValidation === true){
                 openNotificationWithDurationV2('info', "Need to Refresh",  "You need to logout to refresh your credentials", ()=>{

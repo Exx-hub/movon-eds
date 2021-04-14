@@ -6,7 +6,6 @@ import RoutesService from "../../service/Routes";
 import MatrixService from "../../service/Matrix";
 import { UserProfile, openNotificationWithIcon } from "../../utility";
 
-
 const getStartStations = (data) =>{
     let clean = []; 
     const _startStationRoutes = data
@@ -60,7 +59,7 @@ const getEndStations = (startStationId, data) =>{
 const getAllRoutesByOrigin = async(originId) =>{
   try {
     const result = await RoutesService.getAllRoutesByOrigin(originId);
-    const{data,success,errorCode}=result.data;
+    const{data,errorCode}=result.data;
     if(!errorCode){
       let unique=[]
       let _data = data.filter(e=>{
@@ -144,44 +143,38 @@ function PriceMatrix(props){
     openNotificationWithIcon("error", code);
   };
 
-    const [state,setState] = useState({
-      MatrixObjects,
-      FIX_PRICE_FORMAT,
-      originList:[],
-      getEndStations,
-      getMatrix,
-      getAllRoutesByOrigin,
-      handleErrorNotification
+  const [state,setState] = useState({
+    MatrixObjects,
+    FIX_PRICE_FORMAT,
+    originList:[],
+    getEndStations,
+    getMatrix,
+    getAllRoutesByOrigin,
+    handleErrorNotification
+  })
+
+  useEffect(()=>{
+    RoutesService.getAllRoutes()
+    .then((e) => {
+      const { data, errorCode } = e.data;
+      if (errorCode) {
+        handleErrorNotification(errorCode)
+      }else{
+        setState( prevState =>{
+          return {...prevState, routes:data, originList: getStartStations(data)}
+        });
+      }
     })
+  },[])
 
-    useEffect(()=>{
-        RoutesService.getAllRoutes()
-        .then((e) => {
-            const { data, errorCode } = e.data;
-            if (errorCode) {
-              handleErrorNotification(errorCode)
-              return;
-            }
-            setState( prevState =>{
-                return {
-                    ...prevState,
-                    routes:data,
-                    originList: getStartStations(data)
-                }
-            })
-          })
-    },[])
-
-    const getContainer = () =>{
-        let  view = <DefaultMatrix {...props} />;
-        switch(UserProfile.getBusCompanyTag()){
-          default: 
-            view = <MatrixEditor data={{...state}} {...props} />
-          break
-        }
-        return view
-    }
-    return(<> {getContainer()}</>)
+  const getContainer = () =>{
+      let  view = <DefaultMatrix {...props} />;
+      switch(UserProfile.getBusCompanyTag()){
+        default: view = <MatrixEditor data={{...state}} {...props} />; break;
+      }
+      return view
+  }
+  return(<> {getContainer()}</>)
 }
 
 export default PriceMatrix;

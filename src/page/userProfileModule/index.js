@@ -1,6 +1,6 @@
 import ViewUserProfileModule from './view';
-import EditUserProfileModule from './edit';
-import UserEditProfileModule from './UserEdit';
+import EditUserProfileModule from './editPasswordView';
+import UserEditProfileModule from './editProfileView';
 
 export {
     ViewUserProfileModule,

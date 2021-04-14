@@ -1,20 +1,7 @@
 import React from 'react';
 import './reviewdetails.scss';
-import {Row, Col, Input, Space, Divider} from 'antd'
-import {InputView} from '../input'
 import defaultImage from '../../assets/movoncargo.png'
 import { UserProfile } from '../../utility';
-
-const InputBox = (props) =>{
-    return <div style={{
-        display:"flex",
-        flexDirection:"column",
-        marginBottom:'.5rem'
-        }}>
-        <span>{props.title}</span>
-        <Input value={props.value} disabled/>
-    </div>
-}
 
 export function ReviewDetails(props){
     return(<div className="preview-details">
@@ -22,7 +9,7 @@ export function ReviewDetails(props){
             <div className="horizontal-layout">
                 <PackageInformationSection {...props} className="horizontal-layout" style={{width:'60%', marginLeft:'2rem'}} />
                 <div className="horizontal-layout image-section" style={{width:'40%'}}>
-                    <img className="parcel-image" src={props.value.packageImages[0] || defaultImage} alt="parcel-image"/>
+                    <img className="parcel-image" src={props.value.packageImages[0] || defaultImage} alt="parcel"/>
                 </div>
             </div>
         </Container>

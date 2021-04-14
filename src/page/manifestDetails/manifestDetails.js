@@ -8,117 +8,14 @@ import { TableView } from "../../component/table";
 import TicketView from "../../component/ticketView";
 import ReactToPrint from "react-to-print";
 import ManifestService from "../../service/Manifest";
-import {
-  openNotificationWithIcon,
-  alterPath,
-  modifyName,
-  UserProfile,
-  getHeaderColor,
-  getHeaderLogo,
-} from "../../utility";
+import {openNotificationWithIcon,alterPath,modifyName,UserProfile,getHeaderColor,getHeaderLogo} from "../../utility";
 import { notification } from "antd";
-
-import {
-  FilterOutlined,
-  ArrowLeftOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
-
-import {
-  Layout,
-  Button,
-  Divider,
-  Col,
-  Row,
-  Select,
-  Input,
-  Switch,
-  Tooltip,
-  Skeleton,
-  Space,
-} from "antd";
+import {CloseCircleOutlined} from "@ant-design/icons";
+import { Layout,Button, Col, Row, Input, Switch, Tooltip, Skeleton, Space } from "antd";
 import { Link } from "react-router-dom";
 
 const { Search } = Input;
-const { Option } = Select;
 const { Header } = Layout;
-
-const InputBox = (props) => {
-  return (
-    <div className="input-box" style={{ margin: ".5rem" }}>
-      <span>{props.title}</span>
-      <Input
-        className="input-box-item"
-        placeholder={props.placeholder}
-        disabled
-        value={props.value}
-      />
-    </div>
-  );
-};
-
-function SiderContent(props) {
-  return (
-    <section>
-      {!props.hidden && (
-        <>
-          <div className="filter-section">
-            <FilterOutlined style={{ color: "teal" }} />
-            <span> Filter</span>
-          </div>
-
-          <div className="view-toggle-section">
-            <span>View</span>
-            <Switch
-              checkedChildren="Card"
-              unCheckedChildren="Table"
-              checked={props.isCardView}
-              onChange={(e) =>
-                props.onChange({ name: "switch-view", value: e })
-              }
-            />
-          </div>
-          <Row>
-            <Col span={24} className="sider-content-col">
-              <div className="manifest-details-select">
-                <span>Parcel Status</span>
-                <Select
-                  defaultValue="all"
-                  style={{ width: "100%" }}
-                  onChange={(e) =>
-                    props.onChange({ name: "parcelStatus", value: e })
-                  }
-                >
-                  <Option value={0}>All</Option>
-                  <Option value={1}>Created</Option>
-                  <Option value={2}>Intransit</Option>
-                  <Option value={3}>Received</Option>
-                  <Option value={4}>Claimed</Option>
-                  <Option value={5}>Delivered</Option>
-                </Select>
-              </div>
-            </Col>
-          </Row>
-          <Divider />
-        </>
-      )}
-      <Row>
-        <Col span={24} style={{ padding: ".25rem" }}>
-          <InputBox title="Routes" value={props.state.routes} />
-          <InputBox title="Parcel Code" value={props.state.movonBillOfLading} />
-          <InputBox
-            title="Bill of Lading"
-            value={props.state.coyBillOfLading}
-          />
-          <InputBox
-            title="Transaction Date"
-            value={props.state.departureTime}
-          />
-        </Col>
-      </Row>
-    </section>
-  );
-}
 
 function CardView(props) {
   const dataSource = props.dataSource || [];
@@ -284,8 +181,6 @@ class ManifestDetails extends React.Component {
         const movonBillOfLading = data[0].displayId;
         const cashier = data[0].deliveryPersonInfo;
         const coyBillOfLading = data[0].billOfLading;
-        const routes1 = data[0].trips.startStationName;
-        const routes2 = data[0].trips.endStationName;
 
         this.setState({
           date,
@@ -606,7 +501,7 @@ class ManifestDetails extends React.Component {
     return (
       <Layout className="manifest-details-page">
         <Header className="home-header-view" style={{background:getHeaderColor()}}>
-          <Link to="/manifest/list"><img tag="logo" src={getHeaderLogo()} style={{height:120}} /></Link>
+          <Link to="/manifest/list"><img tag="logo" src={getHeaderLogo()} alt="logo" style={{height:120}} /></Link>
 
           {this.state.currentView !== TICKET &&
             this.state.currentView !== PREVIEW && (

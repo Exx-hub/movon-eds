@@ -54,7 +54,7 @@ function _Header(props){
     };
 
     return <Header className="home-header-view" style={{ display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', background:getHeaderColor()}}>
-       <NavLink to="/"><img src={getHeaderLogo()} style={{height:'7vh'}}/></NavLink> 
+       <NavLink to="/"><img alt="logo" src={getHeaderLogo()} style={{height:'7vh'}}/></NavLink> 
         <div>
           {UserProfile.getUser() && (
             <div className={"header-nav"} style={{color:'black'}}>

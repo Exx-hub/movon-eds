@@ -2,10 +2,8 @@ import React from "react";
 import "./ticketview.scss";
 import { QRCode } from "react-qr-svg";
 import { Row, Col } from "antd";
-import movon from "../../assets/movon3.png";
 import moment from "moment";
 import { modifyName, UserProfile, getStickerLogoBw } from "../../utility";
-import { PrintContextConsumer } from "react-to-print";
 
 function TextItem(props) {
   return (
@@ -129,8 +127,6 @@ const PCopy = (props) => {
       senderName,
       senderPhone,
       startStationName,
-      totalPrice,
-      noOfSticker,
       scanCode
     } = props.value;
 
@@ -172,7 +168,6 @@ const MCopy = (props) => {
           senderName,
           senderPhone,
           startStationName,
-          totalPrice,
           noOfSticker,
           scanCode
         } = props.value;

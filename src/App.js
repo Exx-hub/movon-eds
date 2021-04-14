@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import Login from './page/login'
 import CreateParcel from './page/createParcel'
@@ -58,13 +58,13 @@ function App() {
     {!internetConnection && <div className="no-internet-connection"/>}
     <Router>
       <Switch>
-      <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
-      <ProtectedRoute exact={true} path={alterPath("/user-profile")} component={props => <ViewUserProfileModule {...props} action={action} />}/>
-      <ProtectedRoute exact={true} path={alterPath("/about")} component={props => <About {...props} />}/>
-      <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={props => <ManifestDetails {...props}/>}/>
-      <ProtectedRoute exact={true} path={alterPath("/manifest/print/")} component={ props => <PrinManifestDetails {...props} />} />
-      <ProtectedRoute exact={true} path={alterPath("/create-parcel")} component={props => <CreateParcel {...props}/>}  /> 
-      <ProtectedRoute path={alterPath("/")} component={(props)=><Home {...props}/>}  /> 
+        <Route exact={true} path={alterPath("/login")} render={props=> <Login {...props} />} />
+        <ProtectedRoute exact={true} path={alterPath("/user-profile")} component={props => <ViewUserProfileModule {...props} action={action} />}/>
+        <ProtectedRoute exact={true} path={alterPath("/about")} component={props => <About {...props} />}/>
+        <ProtectedRoute exact={true} path={alterPath("/manifest/details")} component={props => <ManifestDetails {...props}/>}/>
+        <ProtectedRoute exact={true} path={alterPath("/manifest/print/")} component={ props => <PrinManifestDetails {...props} />} />
+        <ProtectedRoute exact={true} path={alterPath("/create-parcel")} component={props => <CreateParcel {...props}/>}  /> 
+        <ProtectedRoute path={alterPath("/")} component={(props)=><Home {...props}/>}  /> 
       </Switch>
     </Router> 
     </>

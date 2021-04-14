@@ -23,13 +23,12 @@ import {CustomModal, LogoutModal} from '../../component/modal'
 
 const { Content, Sider } = Layout;
 
-const CARGO_TYPES={
-  CARGO_PADALA:3,
-  EXCESS_NON_AC:2,
-  EXCESS_AC:1
-}
+// const CARGO_TYPES={
+//   CARGO_PADALA:3,
+//   EXCESS_NON_AC:2,
+//   EXCESS_AC:1
+// }
 
-const MIN_WIDTH = 800;
 const STEPS_LIST = [
   {
     title: "Parcel Image",
@@ -523,7 +522,7 @@ class CreateParcel extends React.Component {
 
     ManifestService.getRoutes()
       .then((e) => {
-        const { data, success, errorCode } = e.data;
+        const { data, errorCode } = e.data;
         if (!errorCode) {
           if (data) {
             const details = { ...this.state.details };
@@ -991,7 +990,7 @@ class CreateParcel extends React.Component {
     ParcelService.getExcessBaggageStatus(options)
         .then(e=>{
           //console.info("getExcessBaggageStatus",e)
-          const{data,status,errorCode}=e.data;
+          const{data,errorCode}=e.data;
 
           if(errorCode){
             this.handleErrorNotification(errorCode);
@@ -1242,7 +1241,7 @@ class CreateParcel extends React.Component {
         this.releaseError(details)
         console.info('options',option)
         details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        details.additionalFee.enabled = (option && option.additionalFee || false);
+        details.additionalFee.enabled = (option && (option.additionalFee || false));
         details.quantity.disabled = true;
         details.packageWeight.disabled = false;
         details.length.disabled = false;
