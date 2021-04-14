@@ -154,18 +154,20 @@ function PriceMatrix(props){
   })
 
   useEffect(()=>{
-    RoutesService.getAllRoutes()
-    .then((e) => {
-      const { data, errorCode } = e.data;
-      if (errorCode) {
-        handleErrorNotification(errorCode)
-      }else{
-        setState( prevState =>{
-          return {...prevState, routes:data, originList: getStartStations(data)}
-        });
-      }
-    })
-  },[])
+    if(state.originList.length === 0){
+      RoutesService.getAllRoutes()
+      .then((e) => {
+        const { data, errorCode } = e.data;
+        if (errorCode) {
+          handleErrorNotification(errorCode)
+        }else{
+          setState( prevState =>{
+            return {...prevState, routes:data, originList: getStartStations(data)}
+          });
+        }
+      })
+    }
+  })
 
   const getContainer = () =>{
       let  view = <DefaultMatrix {...props} />;

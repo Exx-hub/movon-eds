@@ -9,20 +9,20 @@ import "./priceMatrix.css";
 
 const { Option } = Select;
 
-const initMatrix = {
-  price: 0,
-  pricePerKilo: 0,
-  declaredValueRate: 0,
-  maxAllowedWeight: 0,
-  maxAllowedLengthRate1: 0,
-  maxAllowedLengthRate2: 0,
-  maxAllowedLength1: 0,
-  maxAllowedLength2: 0,
-  exceededPerKilo: 0,
-  tariffRate: 0,
-  excessOneMeter: 0,
-  excessTwoMeter: 0,
-};
+// const initMatrix = {
+//   price: 0,
+//   pricePerKilo: 0,
+//   declaredValueRate: 0,
+//   maxAllowedWeight: 0,
+//   maxAllowedLengthRate1: 0,
+//   maxAllowedLengthRate2: 0,
+//   maxAllowedLength1: 0,
+//   maxAllowedLength2: 0,
+//   exceededPerKilo: 0,
+//   tariffRate: 0,
+//   excessOneMeter: 0,
+//   excessTwoMeter: 0,
+// };
 
 const initConnectingMatrix = {
   price: 0,

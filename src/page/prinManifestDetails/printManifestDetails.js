@@ -3,12 +3,9 @@ import ReactToPrint from "react-to-print";
 import moment from "moment";
 import { Layout, Button, Table, Col, Row, Tooltip } from "antd";
 import { ArrowLeftOutlined, PrinterOutlined } from "@ant-design/icons";
-import "./printManifestDetails.css";
 import ManifestService from "../../service/Manifest";
-import ParcelService from "../../service/Parcel";
-
-import { alterPath, getUser, UserProfile } from "../../utility";
-
+import { alterPath, UserProfile } from "../../utility";
+import "./printManifestDetails.css";
 const { Header } = Layout;
 
 function TableView(props) {

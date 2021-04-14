@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {config} from '../config';
-import {getToken, UserProfile} from '../utility'
+import {UserProfile} from '../utility'
 
 const BASE_URL = config.BASE_URL;
 const userProfileObject = UserProfile

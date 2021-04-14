@@ -116,8 +116,8 @@ function UserEditProfileModule(props) {
     }
 
     if(!hasError){
-      User.updatePersonalInfo(changeValues).
-      then(e=>{
+      User.updatePersonalInfo(changeValues)
+      .then(e=>{
         console.log('[updatePersonalInfo]',e)
         const{errorCode, data}=e.data;
         let hasError = false

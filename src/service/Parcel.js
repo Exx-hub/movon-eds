@@ -2,8 +2,6 @@ import axios from 'axios';
 import moment from 'moment';
 import { config } from '../config';
 import {UserProfile} from '../utility'
-import { ConfigConsumer } from 'antd/lib/config-provider';
-
 const BASE_URL = config.BASE_URL;
 const userProfileObject = UserProfile;
 

@@ -1,30 +1,18 @@
 import React from "react";
 import {Table,DatePicker,Select,Button,Row,Col,Space,notification,Skeleton,Layout,Tag,AutoComplete,Pagination,Menu, Dropdown} from "antd";
-import { PrinterOutlined, DownOutlined } from "@ant-design/icons";
-
-import {
-  openNotificationWithIcon,
-  alterPath,
-  UserProfile,
-} from "../../utility";
-
+import {DownOutlined} from "@ant-design/icons";
+import {openNotificationWithIcon,alterPath,UserProfile} from "../../utility";
 import ParcelService from "../../service/Parcel";
 import RoutesService from "../../service/Routes";
-
 import moment from "moment-timezone";
 import "./salesReport.scss";
-import ReactToPrint from "react-to-print";
 import { config } from "../../config";
 import { FilePdfOutlined, ProfileOutlined } from '@ant-design/icons';
 
-
 const dateFormat = "MMM DD, YYYY hh:mm";
-
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-
-
 
 class SalesReport extends React.Component {
   constructor() {

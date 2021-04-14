@@ -1,26 +1,16 @@
 import React from "react";
-import {
-  Table,
-  Button,
-  Space,
-  notification,
-  Pagination,
-  Tag,
-  Input,
-  Skeleton
-} from "antd";
+import {Table,notification,Pagination,Tag,Input,Skeleton} from "antd";
 import {openNotificationWithIcon, alterPath, UserProfile, debounce} from "../../utility";
-import "./transaction.scss";
 import TransactionService from '../../service/VoidTransaction';
 import moment from 'moment'
 import { config } from "../../config";
+import "./transaction.scss";
 
 const { Search } = Input;
 
 const getTag = (props) => {
   let color = "";
   let caption = ""
-
   switch(props) {
     case 1:
       color = "green"
@@ -39,7 +29,6 @@ const getTag = (props) => {
         caption= "unknown status"
         break
   }
-
   return <Tag color={color}>{caption}</Tag>
 }
 
@@ -72,7 +61,7 @@ const columns=[
     render: (text)=> getTag(text)
   }
 ];
-//(config.voidStatus[text].toUpperCase())
+
 class Transaction extends React.Component {
 
   constructor(props){
