@@ -79,6 +79,13 @@ function UserEditProfileModule(props) {
         }
         hasChange = true;
       }
+
+      let noSpace = /\s/g;
+      if(noSpace.test(state[name])){
+        _errorState[name].message=`user name must not have white space`;
+        hasError=true;
+      }
+
     }
 
     setErrorState((oldState)=>({...oldState, ..._errorState}))
@@ -120,9 +127,6 @@ function UserEditProfileModule(props) {
         size ++;
       }
     }
-
-    console.info('changeValues',changeValues)
-    console.info('size',size)
 
     if(!hasError && size > 0){
       User.updatePersonalInfo(changeValues)
