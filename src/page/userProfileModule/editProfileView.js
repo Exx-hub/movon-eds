@@ -46,6 +46,13 @@ function UserEditProfileModule(props) {
         _errorState[name].message=`required field`;
         hasError = true;
       }
+
+      if(name === 'firstName' || name === 'lastName'){
+        if(data[name] !== state[name]){
+            hasChange = true;
+        }
+      }
+      
     }
 
     //check if has change
@@ -113,6 +120,9 @@ function UserEditProfileModule(props) {
         size ++;
       }
     }
+
+    console.info('changeValues',changeValues)
+    console.info('size',size)
 
     if(!hasError && size > 0){
       User.updatePersonalInfo(changeValues)
