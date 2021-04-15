@@ -31,10 +31,10 @@ export const config = {
         deviceType: '3'
     }, 
     version: {
-        environment:"staging",
+        environment:"",
         build: '1.8.0(134)'
     },
-    environment:"staging",
+    environment:"",
     changeLogs: `fix issue on enabled and disbled of fields`
 }
 
