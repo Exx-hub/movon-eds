@@ -166,7 +166,14 @@ class SalesReport extends React.Component {
       this.state.page - 1,
       this.state.limit
     )
-      .then((e) => this.parseParcel(e))
+      .then((e) => {
+        const { errorCode } = e.data;
+        if (errorCode) {
+          this.handleErrorNotification(errorCode);
+          return;
+        }
+        this.parseParcel(e)
+      })
       .catch((e) => {
         this.setState({ fetching: false });
       });

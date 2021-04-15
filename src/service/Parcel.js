@@ -394,7 +394,7 @@ const ParcelService = {
                 destination,
                 totalAmount,
                 fullName,
-                date: `${dateFrom }+ " - " + ${dateTo}`,
+                date: `${dateFrom } - ${dateTo}`,
                 isP2P: isP2P ? 1 : 0,
                 filename
              }
