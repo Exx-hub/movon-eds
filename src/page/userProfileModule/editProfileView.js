@@ -34,9 +34,6 @@ function UserEditProfileModule(props) {
     let hasError = false
     let _errorState = {...errorState}
 
-    console.log('name',name)
-    console.log('state[name]',state[name])
-
     if(!_errorState[name]){
       return {hasError,hasChange};
     }
@@ -117,14 +114,9 @@ function UserEditProfileModule(props) {
       }
     }
 
-    console.info('hasError',hasError)
-    console.info('size',size)
-    console.info('changeValues',changeValues)
-
     if(!hasError && size > 0){
       User.updatePersonalInfo(changeValues)
       .then(e=>{
-        console.log('[updatePersonalInfo]',e)
         const{errorCode, data}=e.data;
         let hasError = false
         if(errorCode){
@@ -134,7 +126,6 @@ function UserEditProfileModule(props) {
         }
 
         let json = {...UserProfile.getCredential()};
-        console.log('json',json)
         if(data.userName && (json.displayId !== data.userName)){
           json.user.displayId = data.userName;
         }

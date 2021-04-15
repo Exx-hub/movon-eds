@@ -330,14 +330,14 @@ class CreateParcel extends React.Component {
           options: [
             {
               value: 1,
-              name: "Excess AC",
+              name: "Excess Baggage",
               disabled: true,
             },
-            {
-              value: 2,
-              name: "Excess Non AC",
-              disabled: true,
-            },
+            // {
+            //   value: 2,
+            //   name: "Excess Non AC",
+            //   disabled: true,
+            // },
             {
               value: 3,
               name: "Cargo Padala",
@@ -1216,8 +1216,6 @@ class CreateParcel extends React.Component {
     let hideDeclaredValue = undefined;
     let hideQuantity = undefined;
     let hideWeight = undefined;
-
-    console.log('options',option)
     
     switch (name) {
       case "onTypeChange":

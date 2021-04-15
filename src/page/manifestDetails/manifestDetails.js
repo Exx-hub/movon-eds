@@ -514,23 +514,6 @@ class ManifestDetails extends React.Component {
   render() {
     return (
       <Layout className="manifest-details-page">
-        {/* <Header className="home-header-view" style={{background:getHeaderColor()}}>
-          <Link to="/manifest/list"><img tag="logo" src={getHeaderLogo()} alt="logo" style={{height:120}} /></Link>
-
-          {this.state.currentView !== TICKET &&
-            this.state.currentView !== PREVIEW && (
-              <>
-                <div>
-                  <Switch
-                    checkedChildren="Card View"
-                    unCheckedChildren="Table View"
-                    checked={this.state.isCardView}
-                    onChange={(e) => this.setState({ isCardView: e })}
-                  />
-                </div>
-              </>
-            )}
-        </Header> */}
         <Header {...this.props} setVisibleLogout={()=>this.setLogoutModal({visible:true})} />
         <Layout className="manifest-details-page-body">
           {this.SwitchView()}

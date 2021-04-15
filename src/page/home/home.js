@@ -176,8 +176,6 @@ function Home(props) {
   const [userProfileObject] = React.useState(UserProfile);
   const [logoutModal, setLogoutModal] =  React.useState({visible:false});
 
-  console.log('HOME props',props)
-
   React.useEffect(() => {
     if (menuData.length < 1) {
       setMenuData([
