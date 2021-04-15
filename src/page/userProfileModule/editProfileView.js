@@ -52,10 +52,9 @@ function UserEditProfileModule(props) {
     }
 
     //check if has change
-    if(data[name] && data[name] !== state[name]){
-      //check phone number if valid
-      if(name === 'phoneNumber'){
-        if(state[name].length !== 11){
+    if(name === 'phoneNumber'){
+      if(state[name] !== phone.number){
+        if(state[name].length !== 10){
           _errorState[name].message=`invalid length`;
           hasError = true
         }
@@ -64,8 +63,8 @@ function UserEditProfileModule(props) {
           _errorState[name].message=`invalid number`;
           hasError = true
         }
+        hasChange = true
       }
-      hasChange = true;
     }
 
     if(name === 'displayId'){
@@ -97,10 +96,12 @@ function UserEditProfileModule(props) {
   const updateProfile = () =>{
     let hasError = false;
     let changeValues = {}
+    let size = 0;
     const option = {...state}
 
     for(var item in option){
       let result = onBlur(item);
+
       if(result.hasError){ 
         hasError = true;
         break; 
@@ -112,10 +113,15 @@ function UserEditProfileModule(props) {
         }else{
           changeValues = {...changeValues, ...{[item]:state[item]}}
         }
+        size ++;
       }
     }
 
-    if(!hasError){
+    console.info('hasError',hasError)
+    console.info('size',size)
+    console.info('changeValues',changeValues)
+
+    if(!hasError && size > 0){
       User.updatePersonalInfo(changeValues)
       .then(e=>{
         console.log('[updatePersonalInfo]',e)

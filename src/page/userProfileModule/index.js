@@ -1,4 +1,4 @@
-import ViewUserProfileModule from './view';
+import ViewUserProfileModule from './userProfileModule';
 import EditUserProfileModule from './editPasswordView';
 import UserEditProfileModule from './editProfileView';
 
