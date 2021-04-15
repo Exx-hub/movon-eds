@@ -119,10 +119,11 @@ function UserEditProfileModule(props) {
       }
 
       if(!result.hasError && result.hasChange){
+        let value = state[item].trim();
         if(item === 'displayId'){
-          changeValues = {...changeValues, ...{'staffId':state[item]}}
+          changeValues = {...changeValues, ...{'staffId':value}}
         }else{
-          changeValues = {...changeValues, ...{[item]:state[item]}}
+          changeValues = {...changeValues, ...{[item]:value}}
         }
         size ++;
       }
