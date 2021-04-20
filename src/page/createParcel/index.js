@@ -487,12 +487,12 @@ class CreateParcel extends React.Component {
       }
     });
 
-    let discount = { ...details.discount };
-    discount.options = [
-      ...this.userProfileObject.getBusCompanyDiscount(),
-      ...[{ name: "None", rate: "None" }],
-    ];
-    details.discount = discount;
+    // let discount = { ...details.discount };
+    // discount.options = [
+    //   ...this.userProfileObject.getBusCompanyDiscount(),
+    //   ...[{ name: "None", rate: "None" }],
+    // ];
+    // details.discount = discount;
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
@@ -755,8 +755,6 @@ class CreateParcel extends React.Component {
 
   validateStep = () => {
 
-    console.info('discount',this.state.details.discount)
-
     let {
       currentStep,
       verifiedSteps,
@@ -997,7 +995,7 @@ class CreateParcel extends React.Component {
 
     ParcelService.getExcessBaggageStatus(options)
         .then(e=>{
-          //console.info("getExcessBaggageStatus",e)
+          console.info("getExcessBaggageStatus",e)
           const{data,errorCode}=e.data;
 
           if(errorCode){
@@ -1005,8 +1003,8 @@ class CreateParcel extends React.Component {
             return
           }
           let details = {...this.state.details, ..._details}
-          details.fixMatrix.options = [...[{ name: "none", price: 0, declaredValue: 0 }], ...data.fixMatrix || []]
-          details.fixMatrix.accepted=true;
+          details.fixMatrix = Object.assign({}, details.fixMatrix, {accepted:true, options : [...[{ name: "none", price: 0, declaredValue: 0 }], ...data.fixMatrix || []]})
+          details.discount = Object.assign({},details.discount, {value:"", options: data.discountOption || []});
 
           let enabledExcessCargo =  data.enabledExcessCargo || false;
           if(typeof enabledExcessCargo === 'string'){
