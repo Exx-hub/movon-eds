@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(134)'
+        build: '1.8.0(135)'
     },
     environment:"",
-    changeLogs: `fix issue on enabled and disbled of fields`
+    changeLogs: `fix issue on validation on FOC`
 }
 
 export const ERROR_CODES = {
