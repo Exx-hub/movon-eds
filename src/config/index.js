@@ -34,7 +34,7 @@ export const config = {
         environment:"",
         build: '1.8.0(136)'
     },
-    environment:"staging",
+    environment:"",
     changeLogs: `fix issue on validation on FOC`
 }
 
