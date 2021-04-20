@@ -754,6 +754,9 @@ class CreateParcel extends React.Component {
   };
 
   validateStep = () => {
+
+    console.info('discount',this.state.details.discount)
+
     let {
       currentStep,
       verifiedSteps,
@@ -798,8 +801,13 @@ class CreateParcel extends React.Component {
         this.setState({ details: tempDetails });
         return false;
       } else {
+        const totalShippingCost = Number(this.state.details.totalShippingCost.value)
+        const discountFee = Number(this.state.discountFee)
+        let _option = this.getDiscountOption();
+        let foc = (_option && _option.foc || 0)
+        let hasMissingValue =  Number(foc || 0) === 1 ? (discountFee === 0) : (totalShippingCost === 0);
 
-        if(!this.state.details.totalShippingCost.value){
+        if(hasMissingValue){
           showNotification({
             title: "Missing Payment Breakdown",
             type: "error",
@@ -1202,6 +1210,12 @@ class CreateParcel extends React.Component {
     }
   }
 
+  getDiscountOption = () =>{
+    let discount = {...this.state.details.discount};
+    let _option = discount.options.find(e=>e.name === discount.value)
+    return _option
+  }
+
   defaultHandleView = (name, _details, callback) =>{
     const details = { ...this.state.details, ..._details };
     const option = this.getFixMatrixOption();
@@ -1286,6 +1300,8 @@ class CreateParcel extends React.Component {
         break;
 
       case 'discount-change': 
+        let _option = this.getDiscountOption();
+        details.discount.foc = (_option && _option.foc) || 0
       //todo:
       break;
 
