@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(137)'
+        build: '1.8.0(138)'
     },
     environment:"staging",
     changeLogs: `fixed dltb gma issue in manifest`
