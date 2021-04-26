@@ -117,6 +117,7 @@ function FeeSection(props){
             <div className="feeSection-left"> 
                 <TextContainer label="Declared Value" value={declaredValue} />
                 <TextContainer label="Package Count" value={stickerCount}/>
+                <TextContainer label="Weight Fee" value={weightFee}/>
                 <TextContainer label="Quantity" value={packageQty } />
                 <TextContainer label="Weight" value={weight} />
                 {inputSection}
@@ -125,6 +126,7 @@ function FeeSection(props){
             <div className="feeSection-right"> 
                 <p className="paymentBreakdownText">Payment Breakdown</p>
                 <NumberContainer label="Base Price" value={basePrice} />
+                <NumberContainer label="Weight Fee" value={weightFee} />
                 {feesSection}
                 <NumberContainer label="System Fee" value={convenienceFee} />
                 <NumberContainer label="Total Shipping Cost" value={totalPrice} />
