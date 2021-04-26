@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(136)'
+        build: '1.8.0(137)'
     },
     environment:"staging",
-    changeLogs: `fix issue on validation on FOC`
+    changeLogs: `Add Weight Fee in Price Details , Manifest Module`
 }
 
 export const ERROR_CODES = {
