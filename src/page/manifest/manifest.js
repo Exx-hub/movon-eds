@@ -1,6 +1,6 @@
 import React from "react";
-import {Table,DatePicker,Button,Row,Col,Select,Skeleton,notification,AutoComplete,Pagination} from "antd";
-import {openNotificationWithIcon,openNotificationWithDuration,alterPath,UserProfile} from "../../utility";
+import { Table, DatePicker, Button, Row, Col, Select, Skeleton, notification, AutoComplete, Pagination } from "antd";
+import { openNotificationWithIcon, openNotificationWithDuration, alterPath, UserProfile } from "../../utility";
 import ManifestService from "../../service/Manifest";
 import RoutesService from "../../service/Routes";
 import { PromptModal } from '../../component/modal';
@@ -46,14 +46,14 @@ const TableRoutesView = (props) => {
       key: "action",
       render: (text, record) => (
         <div>
-        {
-          record.status && <>
-          <Button style={{fontSize:'10px'}} onClick={()=>props.onViewClick(record)}>View</Button>
-          <Button style={{fontSize:'10px'}} onClick={()=>props.onPrint(record)}>Print</Button>
-          {(record && (record.status.filter(e => e === 1 )).length > 0) && <Button disabled={record.disabled} style={{fontSize:'10px'}} onClick={()=>props.onCheckIn(record)}>Check-In</Button>}
-          {(record.status.filter(e => e === 2 && e !== 1).length > 0) && <Button disabled={record.disabled} style={{fontSize:'10px'}} onClick={()=>props.onArrived(record)} >Arrived</Button>}
-          </>
-        }
+          {
+            record.status && <>
+              <Button style={{ fontSize: '10px' }} onClick={() => props.onViewClick(record)}>View</Button>
+              <Button style={{ fontSize: '10px' }} onClick={() => props.onPrint(record)}>Print</Button>
+              {(record && (record.status.filter(e => e === 1)).length > 0) && <Button disabled={record.disabled} style={{ fontSize: '10px' }} onClick={() => props.onCheckIn(record)}>Check-In</Button>}
+              {(record.status.filter(e => e === 2 && e !== 1).length > 0) && <Button disabled={record.disabled} style={{ fontSize: '10px' }} onClick={() => props.onArrived(record)} >Arrived</Button>}
+            </>
+          }
         </div>
       ),
     },
@@ -89,9 +89,9 @@ class Manifest extends React.Component {
     destinationId: null,
     startStationRoutes: [],
     endStationRoutes: [],
-    startStationRoutesTemp:[],
-    endStationRoutesTemp:[],
-    dataSource:[]
+    startStationRoutesTemp: [],
+    endStationRoutesTemp: [],
+    dataSource: []
   };
 
   componentDidMount() {
@@ -103,29 +103,29 @@ class Manifest extends React.Component {
           this.handleErrorNotification(errorCode);
           return;
         }
-        let state = { allRoutes: data, page:1 };
+        let state = { allRoutes: data, page: 1 };
         let clean = [];
 
-        if(Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+        if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
           const _startStationRoutes = data
-          .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
-          .filter((e) => {
-            if (!clean.includes(e.stationName)) {
-              clean.push(e.stationName);
-              return true;
-            }
-            return false;
-          });
-          const startStationRoutes = [...[{stationId:'null', stationName:'-- All --' }], ..._startStationRoutes]
+            .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
+            .filter((e) => {
+              if (!clean.includes(e.stationName)) {
+                clean.push(e.stationName);
+                return true;
+              }
+              return false;
+            });
+          const startStationRoutes = [...[{ stationId: 'null', stationName: '-- All --' }], ..._startStationRoutes]
           state.startStationRoutes = startStationRoutes;
           state.startStationRoutesTemp = startStationRoutes;
-        }else{
-          state.originId =  UserProfile.getAssignedStationId()
+        } else {
+          state.originId = UserProfile.getAssignedStationId()
           const endStationRoutes = this.getEndDestination(data, state.originId);
           state.endStationRoutesTemp = endStationRoutes
           state.endStationRoutes = endStationRoutes
         }
-        this.setState(state,()=>this.getManifestByDestination(null));
+        this.setState(state, () => this.getManifestByDestination(null));
 
       });
     } catch (error) {
@@ -158,46 +158,47 @@ class Manifest extends React.Component {
     }
 
     this.setState({ fetching: true });
-      ManifestService.getManifestDateRange(
-        moment(this.state.startDay).format("YYYY-MM-DD"),
-        moment(this.state.endDay).format("YYYY-MM-DD"),
-        startStationId,
-        endStationId,
-        this.state.page -1,
-        this.state.limit
-      ).then((e) => this.parceData(e))
-      .catch(e=>{
-        this.setState({fetching:false})
+    ManifestService.getManifestDateRange(
+      moment(this.state.startDay).format("YYYY-MM-DD"),
+      moment(this.state.endDay).format("YYYY-MM-DD"),
+      startStationId,
+      endStationId,
+      this.state.page - 1,
+      this.state.limit
+    ).then((e) => this.parceData(e))
+      .catch(e => {
+        this.setState({ fetching: false })
       })
-        
+
   };
 
-  parceData = (response) =>{
+  parceData = (response) => {
     const { data, errorCode } = response.data;
 
-    if(errorCode){
-      this.setState({fetching:false})
+    if (errorCode) {
+      this.setState({ fetching: false })
       this.handleErrorNotification(errorCode)
       return;
     }
 
-    const hasData = data && Array.isArray(data) &&  data.length > 0;
-    let listOfTripDates = (hasData && data[0].data)  || []
-    let totalRecords = (hasData && data[0].pageInfo && data[0].pageInfo.length > 0 && data[0].pageInfo[0].count ) || 0
+    const hasData = data && Array.isArray(data) && data.length > 0;
+    let listOfTripDates = (hasData && data[0].data) || []
+    let totalRecords = (hasData && data[0].pageInfo && data[0].pageInfo.length > 0 && data[0].pageInfo[0].count) || 0
 
-    this.setState({listOfTripDates, totalRecords, fetching:false},
-      ()=>this.setDataSource())
+    this.setState({ listOfTripDates, totalRecords, fetching: false },
+      () => this.setDataSource())
   };
 
-  setDataSource = () =>{
+  setDataSource = () => {
+
     let dataSource = this.state.listOfTripDates.map((e, i) => {
       return {
         key: i,
         tripId: e._id,
-        date: moment.tz(e.tripStartDateTime,"Asia/Manila").subtract(8,'hours').format('MMM DD, YYYY'), //moment(e.tripStartDateTime).format("MMM DD, YYYY"),
-        date2: moment.tz(e.tripEndDateTime,"Asia/Manila").subtract(8,'hours').format('MMM DD, YYYY'), //moment(e.tripEndDateTime).format("MMM DD, YYYY"),
+        date: moment.tz(e.tripStartDateTime, "Asia/Manila").subtract(8, 'hours').format('MMM DD, YYYY'), //moment(e.tripStartDateTime).format("MMM DD, YYYY"),
+        date2: moment.tz(e.tripEndDateTime, "Asia/Manila").subtract(8, 'hours').format('MMM DD, YYYY'), //moment(e.tripEndDateTime).format("MMM DD, YYYY"),
         count: e.count,
-        startStationName: e.startStationName,
+        startStationName: e.startStationName === "DLTB Cubao" ? "DLTB GMA" : e.startStationName,
         cluster: e.cluster,
         endStationName: e.endStationName,
         startStationId: e.startStation,
@@ -208,7 +209,7 @@ class Manifest extends React.Component {
         disabled: false,
       };
     });
-    this.setState({dataSource});
+    this.setState({ dataSource });
   }
 
   onForceLogout = (errorCode) => {
@@ -217,38 +218,38 @@ class Manifest extends React.Component {
     this.props.history.push(alterPath("/login"));
   };
 
-  onChangeTable = (pagination, filters, sorter, extra) => {};
+  onChangeTable = (pagination, filters, sorter, extra) => { };
 
   onChangeDatePicker = (date) => {
     const startDay = date[0];
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay, page:1 }, () => this.getManifestByDestination(this.state.destinationId));
+      this.setState({ startDay, endDay, page: 1 }, () => this.getManifestByDestination(this.state.destinationId));
     }
   };
 
-  doSearch = (name,el) => {
+  doSearch = (name, el) => {
     const toSearch = el.toLowerCase();
-    switch(name){
-      case 'origin': 
-        let startStationRoutesTemp = this.state.startStationRoutes.map(e=>({stationName:e.stationName}))
-        .filter((e) => e.stationName.toLowerCase().includes(toSearch))
+    switch (name) {
+      case 'origin':
+        let startStationRoutesTemp = this.state.startStationRoutes.map(e => ({ stationName: e.stationName }))
+          .filter((e) => e.stationName.toLowerCase().includes(toSearch))
         this.setState({ startStationRoutesTemp });
         break;
       case 'destination':
-        let endStationRoutesTemp = this.state.endStationRoutes.map(e=>({endStationName:e.endStationName}))
-        .filter((e) => e.endStationName.toLowerCase().includes(toSearch))
+        let endStationRoutesTemp = this.state.endStationRoutes.map(e => ({ endStationName: e.endStationName }))
+          .filter((e) => e.endStationName.toLowerCase().includes(toSearch))
         this.setState({ endStationRoutesTemp });
-      break;
+        break;
       default: break;
     }
   };
-   
 
-  getEndDestination = (data,stationId) => {
-    if(!stationId)
-    return;
+
+  getEndDestination = (data, stationId) => {
+    if (!stationId)
+      return;
 
     let clean = [];
     const destinations = data
@@ -259,8 +260,8 @@ class Manifest extends React.Component {
           return true;
         }
         return false;
-      }).map(e=>({endStationName:e.endStationName, end:e.end}));
-      return [...[{end:'null', endStationName:"-- All --"}], ...destinations]
+      }).map(e => ({ endStationName: e.endStationName, end: e.end }));
+    return [...[{ end: 'null', endStationName: "-- All --" }], ...destinations]
   };
 
   onSelectAutoComplete = (name, value) => {
@@ -269,18 +270,18 @@ class Manifest extends React.Component {
     switch (name) {
       case "origin":
         selected = this.state.startStationRoutes
-        .find((e) => e.stationName === value) || null;
-        if(selected){
+          .find((e) => e.stationName === value) || null;
+        if (selected) {
           const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
-          this.setState({ page:1, originId: selected.stationId, endStationRoutes, endStationRoutesTemp:endStationRoutes },
-            ()=>this.getManifestByDestination(null));
+          this.setState({ page: 1, originId: selected.stationId, endStationRoutes, endStationRoutesTemp: endStationRoutes },
+            () => this.getManifestByDestination(null));
         }
         break;
       case "destination":
         selected = this.state.endStationRoutes
-        .find((e) => e.endStationName === value) || null;
-        if(selected){
-          this.setState({page:1, destinationId:selected.end},()=>this.getManifestByDestination(selected.end))
+          .find((e) => e.endStationName === value) || null;
+        if (selected) {
+          this.setState({ page: 1, destinationId: selected.end }, () => this.getManifestByDestination(selected.end))
         }
         break;
       default:
@@ -288,7 +289,7 @@ class Manifest extends React.Component {
     }
   };
 
-  onCheckIn = (data) =>{
+  onCheckIn = (data) => {
     const selectedRecord = { ...data };
     selectedRecord.showModalCheckIn = true;
     selectedRecord.disabled = false;
@@ -302,21 +303,21 @@ class Manifest extends React.Component {
     this.setState({ selectedRecord });
   }
 
-  onPrint = (data)=>{
+  onPrint = (data) => {
     this.props.history.push(alterPath("/manifest/print"), {
       date: data.date,
       selected: data,
     })
   }
 
-  onViewClick = (data) =>{
+  onViewClick = (data) => {
     this.props.history.push(alterPath("/manifest/details"), {
       date: data.date,
       selected: data,
     })
   }
 
-  onModalArriveOkCLick = () =>{
+  onModalArriveOkCLick = () => {
     let selectedRecord = { ...this.state.selectedRecord };
     let dataSource = [...this.state.dataSource];
 
@@ -327,20 +328,20 @@ class Manifest extends React.Component {
     selectedRecord.disabled = true;
     dataSource[index] = selectedRecord;
 
-    this.setState({ selectedRecord, dataSource },()=>{
+    this.setState({ selectedRecord, dataSource }, () => {
       const tripId = selectedRecord.tripId;
       ManifestService.arriveAllParcel(tripId)
-      .then((e) => {
-        this.setState({
-          visibleArrive: false,
-          disabledArrive: true,
-          selectedRecord: undefined,
-        },()=>this.getManifestByDestination(this.state.destinationId));
-      })
+        .then((e) => {
+          this.setState({
+            visibleArrive: false,
+            disabledArrive: true,
+            selectedRecord: undefined,
+          }, () => this.getManifestByDestination(this.state.destinationId));
+        })
     });
   }
 
-  onModalCheckinClick = () =>{
+  onModalCheckinClick = () => {
     let selectedRecord = { ...this.state.selectedRecord };
     let dataSource = [...this.state.dataSource];
 
@@ -348,7 +349,7 @@ class Manifest extends React.Component {
     selectedRecord.showModalCheckIn = false;
     selectedRecord.disabled = true;
     dataSource[index] = selectedRecord;
-    
+
     const tripId = selectedRecord.tripId;
     this.setState({ selectedRecord, dataSource });
     ManifestService.checkInAllParcel(tripId).then((e) => {
@@ -356,14 +357,14 @@ class Manifest extends React.Component {
         visibleCheckIn: false,
         disabledCheckIn: false,
         selectedRecord: undefined,
-      },()=>this.getManifestByDestination(this.state.destinationId));
+      }, () => this.getManifestByDestination(this.state.destinationId));
     });
   }
 
-  onPageChange = (page) =>{
-    if(page !== this.state.page)
-        this.setState({ page, fetching:true }, 
-          () => this.getManifestByDestination(this.state.destinationId))
+  onPageChange = (page) => {
+    if (page !== this.state.page)
+      this.setState({ page, fetching: true },
+        () => this.getManifestByDestination(this.state.destinationId))
   }
 
   render() {
@@ -371,14 +372,14 @@ class Manifest extends React.Component {
     return (
       <div className="manifest-page">
         <Row style={{ marginTop: "2rem", marginBottom: "1rem" }}>
-          
+
           {
             isAdmin && <Col span={6}>
               <AutoComplete
                 size="large"
                 style={{ width: "100%" }}
                 onSelect={(item) => this.onSelectAutoComplete("origin", item)}
-                onSearch={(e) => this.doSearch('origin',e)}
+                onSearch={(e) => this.doSearch('origin', e)}
                 placeholder="Origin Stations"
               >
                 {this.state.startStationRoutesTemp.map((e, i) => (
@@ -393,7 +394,7 @@ class Manifest extends React.Component {
               size="large"
               style={{ width: "100%", marginLeft: "0.5rem" }}
               onChange={(item) => this.onSelectAutoComplete("destination", item)}
-              onSearch={(e) => this.doSearch('destination',e)}
+              onSearch={(e) => this.doSearch('destination', e)}
               placeholder="Destination">
               {this.state.endStationRoutesTemp.map((e, i) => (
                 <Option value={e.endStationName}>{e.endStationName}</Option>
@@ -415,15 +416,15 @@ class Manifest extends React.Component {
         </Row>
         {
           !this.state.fetching ? <TableRoutesView
-              pagination={false}
-              dataSource={this.state.dataSource}
-              onChange={this.onChangeTable}
-              onCheckIn={(data) => this.onCheckIn(data)}
-              onArrived={(data)=>this.onArrived(data)}
-              onPrint={(data) => this.onPrint(data)}
-              onViewClick={(data) => this.onViewClick(data)}
-            /> 
-            : 
+            pagination={false}
+            dataSource={this.state.dataSource}
+            onChange={this.onChangeTable}
+            onCheckIn={(data) => this.onCheckIn(data)}
+            onArrived={(data) => this.onArrived(data)}
+            onPrint={(data) => this.onPrint(data)}
+            onViewClick={(data) => this.onViewClick(data)}
+          />
+            :
             (<Skeleton active />)
         }
         {this.state.dataSource && this.state.dataSource.length > 0 && (
@@ -442,8 +443,8 @@ class Manifest extends React.Component {
           disabled={Boolean((this.state.selectedRecord && this.state.selectedRecord.disabled) || false)}
           buttonType="primary"
           action="Arrive"
-          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalArrived) || false }
-          handleCancel={() =>this.setState({ selectedRecord: undefined, visibleArrive: false })}
+          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalArrived) || false}
+          handleCancel={() => this.setState({ selectedRecord: undefined, visibleArrive: false })}
           handleOk={() => this.onModalArriveOkCLick()}
         />
 
@@ -464,7 +465,7 @@ class Manifest extends React.Component {
           handleOk={() => this.onModalCheckinClick()}
           disabled={Boolean(
             (this.state.selectedRecord && this.state.selectedRecord.disabled) ||
-              false
+            false
           )}
         />
       </div>
