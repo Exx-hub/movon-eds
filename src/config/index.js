@@ -34,8 +34,8 @@ export const config = {
         environment:"",
         build: '1.8.0(137)'
     },
-    environment:"staging",
-    changeLogs: `Add Weight Fee in Price Details , Manifest Module`
+    environment:"",
+    changeLogs: `fix issue on validation on FOC`
 }
 
 export const ERROR_CODES = {
