@@ -94,7 +94,7 @@ const DetailsView = (props) =>{
                 <div className="pin-origin-destination">
                     <img className="pin-icon" src={pin} alt="pin-icon"/>
                     <div className="origin-destination">
-                        <span style={{flexGrow:1}}>{startStationName}</span>
+                        <span style={{flexGrow:1}}>{startStationName === "DLTB Cubao" ? "DLTB GMA" : startStationName}</span>
                         <span>{name}</span>
                     </div>
                 </div>
