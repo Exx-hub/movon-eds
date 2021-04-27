@@ -35,7 +35,7 @@ export const config = {
         build: '1.8.0(139)'
     },
     environment:"",
-    changeLogs: `fixed dltb gma issue in manifest`
+    changeLogs: `fixed dltb gma issue in createparcel`
 }
 
 export const ERROR_CODES = {
