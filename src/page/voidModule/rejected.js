@@ -50,9 +50,9 @@ const columns=[
     key: 'deliveryPersonId',
   },
   {
-    title: 'Remarks',
-    dataIndex: 'remarks',
-    key: 'remarks',
+    title: 'Reason',
+    dataIndex: 'rejectReason',
+    key: 'rejectReason',
   },
   {
     title: 'Status',
@@ -93,7 +93,6 @@ class Rejected extends React.Component {
         const{list,pagination}=data
         const{ totalRecords }=pagination;
         this.setState({data:list, totalRecords, fetching:false})
-        console.log('sheesh', this.state)
       }
     }) 
     .catch(e=>{

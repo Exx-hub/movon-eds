@@ -39,11 +39,10 @@ const TransactionService = {
             }
         })
     },
-    voidParcel: (parcelId,remarks) => {
-        const deliveryPersonId = UserProfile.getUser()._id
+    voidParcel: ( billOfLading, parcelId, remarks) => {
         return axios({
             method: 'post',
-            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/cargo-transaction/update/status
+            url: `${BASE_URL}/api/v1/account/delivery-person/transaction/
             `,
             headers: {
                 'x-auth-deviceid' : config.header.deviceId,
@@ -51,11 +50,45 @@ const TransactionService = {
                 'x-auth-token' : userProfileObject.getToken()
             },
             data:{
-                "status":2,
-                "deliveryPersonId": deliveryPersonId,
-                "parcelId": parcelId,
-                "remarks": remarks,
-                "type": 1
+                deliveryPersonId: UserProfile.getUser()._id,
+                status: 2,
+                billOfLading,
+                parcelId,
+                remarks,
+                type: 1
+             }
+             
+        })
+    },
+    acceptVoid: (parcelId) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/transaction/approve
+            `,
+            headers: {
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
+            },
+            data:{
+                parcelId
+             }
+             
+        })
+    },
+    rejectVoid: (parcelId,rejectReason) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/transaction/reject
+            `,
+            headers: {
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
+            },
+            data:{
+                parcelId,
+                rejectReason
              }
              
         })

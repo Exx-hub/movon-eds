@@ -125,7 +125,7 @@ class SearchModule extends React.Component {
     let remarks = this.state.remarks;
 
     if (remarks) {
-      TransactionService.voidParcel(record._id, remarks)
+      TransactionService.voidParcel( record.billOfLading, record._id, remarks)
         .then(e => {
           const { errorCode } = e.data;
           if (errorCode) {

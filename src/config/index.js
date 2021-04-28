@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(139)'
+        build: '1.8.0(140)'
     },
     environment:"staging",
-    changeLogs: `updated void transaction menu`
+    changeLogs: `added accept/rejected void features`
 }
 
 export const ERROR_CODES = {
