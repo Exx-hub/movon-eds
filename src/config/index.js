@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(138)'
+        build: '1.8.0(139)'
     },
     environment:"staging",
-    changeLogs: `fixed dltb gma issue in manifest`
+    changeLogs: `updated void transaction menu`
 }
 
 export const ERROR_CODES = {
