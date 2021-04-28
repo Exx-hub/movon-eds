@@ -4,7 +4,7 @@ import { UserProfile, alterPath } from "../../utility";
 import { PriceMatrix, VictoryLinerMatrix } from "../priceMatrix";
 import SalesReport from "../salesReport";
 import SearchModule from "../searchModule";
-import Transaction from "../transactionModule";
+import { Approved, Pending, Rejected } from "../voidModule";
 import { LogoutModal } from "../../component/modal";
 
 import moment from "moment";
@@ -22,9 +22,12 @@ import {
   BarChartOutlined,
   SearchOutlined,
   InboxOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import { config } from "../../config";
-import {Header} from '../../component/header'
+import { Header } from '../../component/header'
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -99,7 +102,7 @@ const tableSourceBitsi = [
     dataIndex: "billOfLading",
     key: "billOfLading",
     fixed: 'left',
-    width:100
+    width: 100
   },
   {
     title: "DATE",
@@ -174,7 +177,7 @@ const tableSourceBitsi = [
 function Home(props) {
   const [menuData, setMenuData] = React.useState([]);
   const [userProfileObject] = React.useState(UserProfile);
-  const [logoutModal, setLogoutModal] =  React.useState({visible:false});
+  const [logoutModal, setLogoutModal] = React.useState({ visible: false });
 
   React.useEffect(() => {
     if (menuData.length < 1) {
@@ -182,42 +185,52 @@ function Home(props) {
         {
           key: "create-parcel",
           destination: alterPath("/create-parcel"),
-          action: () => {},
+          action: () => { },
         },
         {
-          key: "transaction-parcel",
-          destination: alterPath("/transaction-parcel"),
-          action: () => {},
+          key: "approved-list",
+          destination: alterPath("/transaction/approved-void"),
+          action: () => { },
+        },
+        {
+          key: "pending-list",
+          destination: alterPath("/transaction/pending"),
+          action: () => { },
+        },
+        {
+          key: "rejected-list",
+          destination: alterPath("/transaction/rejected-void"),
+          action: () => { },
         },
         {
           key: "search-parcel",
           destination: alterPath("/search-parcel"),
-          action: () => {},
+          action: () => { },
         },
         {
           key: "manifest-report",
           destination: alterPath("/manifest/list"),
-          action: () => {},
+          action: () => { },
         },
         {
           key: "matrix-own",
           destination: alterPath("/matrix/own"),
-          action: () => {},
+          action: () => { },
         },
         {
           key: "matrix-vli",
           destination: alterPath("/matrix/victory-liners"),
-          action: () => {},
+          action: () => { },
         },
         {
           key: "sales-vli-bitsi",
           destination: alterPath("/report/sales/vli-bitsi"),
-          action: () => {},
+          action: () => { },
         },
         {
           key: "sales-cargo",
           destination: alterPath("/report/sales/cargo"),
-          action: () => {},
+          action: () => { },
         }
       ]);
     }
@@ -235,75 +248,97 @@ function Home(props) {
 
   return (
     <Layout className="home-page-container">
-      <Header {...props} setVisibleLogout={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:true}}))} />
+      <Header {...props} setVisibleLogout={() => setLogoutModal((oldState) => ({ ...oldState, ...{ visible: true } }))} />
       <Layout className="home-body">
         <Sider width={250} className="home-sider">
           <div className="slider-container">
-          <Menu
-            style={{ marginTop: "1rem" }}
-            theme="light"
-            defaultOpenKeys={[]}
-            mode="inline"
-            onClick={(e) => {
-              onNavigationMenuChange(e);
-            }}
-          >
-            <Menu.Item key="search-parcel" icon={<SearchOutlined style={{fontSize:'17px'}}/>}>
-              Search
-            </Menu.Item>
-
-            <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined style={{fontSize:'17px'}}/>}>
-              Create Parcel
-            </Menu.Item>
-
-            <Menu.Item key="manifest-report" icon={<InboxOutlined style={{fontSize:'17px'}}/>}>
-              Manifest
-            </Menu.Item>
-
-            <Menu.Item key="transaction-parcel" icon={<SnippetsOutlined style={{fontSize:'17px'}}/>}>
-              Void Transactions
-            </Menu.Item>
-
-            <SubMenu
-              key="sales-report"
-              icon={<BarChartOutlined />}
-              title="Reports"
+            <Menu
+              style={{ marginTop: "1rem" }}
+              theme="light"
+              defaultOpenKeys={[]}
+              mode="inline"
+              onClick={(e) => {
+                onNavigationMenuChange(e);
+              }}
             >
-              <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>
-                Daily Sales
-              </Menu.Item>
-              {Boolean(false && userProfileObject.isIsarogLiners()) && (
-                <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>
-                  VLI - BITSI Sales
-                </Menu.Item>
-              )}
-            </SubMenu>
+              <Menu.Item key="search-parcel" icon={<SearchOutlined style={{ fontSize: '17px' }} />}>
+                Search
+            </Menu.Item>
 
-            {Number(UserProfile.getRole()) === 2 && (
+              <Menu.Item key="create-parcel" icon={<AppstoreAddOutlined style={{ fontSize: '17px' }} />}>
+                Create Parcel
+            </Menu.Item>
+
+              <Menu.Item key="manifest-report" icon={<InboxOutlined style={{ fontSize: '17px' }} />}>
+                Manifest
+            </Menu.Item>
+
               <SubMenu
-                key="matrix"
-                icon={<FileMarkdownOutlined />}
-                title="Matrix"
+                key="void-transactions"
+                icon={<SnippetsOutlined />}
+                title="Void Transactions"
               >
-                <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
-                  {UserProfile.getBusCompany() && UserProfile.getBusCompany().name}
+                <Menu.Item key="pending-list" icon={<ClockCircleOutlined />}>
+                  Pending
                 </Menu.Item>
-                {Boolean(UserProfile.isIsarogLiners()) && (
-                  <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
-                    Victory Liners
+
+                <Menu.Item key="approved-list" icon={<CheckCircleOutlined />}>
+                  Approved
+                </Menu.Item>
+
+                <Menu.Item key="rejected-list" icon={<CloseCircleOutlined />}>
+                  Rejected
+                </Menu.Item>
+              </SubMenu>
+
+              <SubMenu
+                key="sales-report"
+                icon={<BarChartOutlined />}
+                title="Reports"
+              >
+                <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>
+                  Daily Sales
+              </Menu.Item>
+                {Boolean(false && userProfileObject.isIsarogLiners()) && (
+                  <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>
+                    VLI - BITSI Sales
                   </Menu.Item>
                 )}
               </SubMenu>
-            )}
-          </Menu>
-          <div className="version"><p>{config.version.environment} build {config.version.build}</p></div>
+
+              {Number(UserProfile.getRole()) === 2 && (
+                <SubMenu
+                  key="matrix"
+                  icon={<FileMarkdownOutlined />}
+                  title="Matrix"
+                >
+                  <Menu.Item key="matrix-own" icon={<FileMarkdownOutlined />}>
+                    {UserProfile.getBusCompany() && UserProfile.getBusCompany().name}
+                  </Menu.Item>
+                  {Boolean(UserProfile.isIsarogLiners()) && (
+                    <Menu.Item key="matrix-vli" icon={<FileMarkdownOutlined />}>
+                      Victory Liners
+                    </Menu.Item>
+                  )}
+                </SubMenu>
+              )}
+            </Menu>
+            <div className="version"><p>{config.version.environment} build {config.version.build}</p></div>
           </div>
         </Sider>
         <Layout>
           <Content className={"home-content"}>
             <Switch>
-              <Route path={alterPath("/transaction-parcel")}>
-                <Transaction {...props} />
+              <Route path={alterPath("/transaction/approved-void")}>
+                <Approved {...props} />
+              </Route>
+
+              <Route path={alterPath("/transaction/pending")}>
+                <Pending {...props} />
+              </Route>
+
+              <Route path={alterPath("/transaction/rejected-void")}>
+                <Rejected {...props} />
               </Route>
 
               <Route path={alterPath("/manifest/list")}>
@@ -329,22 +364,22 @@ function Home(props) {
                   title="SUMMARY OF CARGO SALES"
                 />
               </Route>
-              
+
               <Route path={alterPath("/search-parcel")}>
                 <SearchModule {...props} />
               </Route>
 
-              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/own")}><PriceMatrix {...props} /></Route>) }
-              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/victory-liners")}><VictoryLinerMatrix {...props} /></Route>) }
-              { Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/report/sales/vli-bitsi")}><SalesReport source={tableSourceVliBitsi} isP2P={true} {...props} title="SUMMARY OF VLI-BITSI SALES" /></Route>) }
-          
+              {Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/own")}><PriceMatrix {...props} /></Route>)}
+              {Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/matrix/victory-liners")}><VictoryLinerMatrix {...props} /></Route>)}
+              {Number(UserProfile.getRole()) === Number(config.role["staff-admin"]) && (<Route path={alterPath("/report/sales/vli-bitsi")}><SalesReport source={tableSourceVliBitsi} isP2P={true} {...props} title="SUMMARY OF VLI-BITSI SALES" /></Route>)}
+
               <Redirect from="/" to={alterPath("/search-parcel")} />
 
             </Switch>
           </Content>
         </Layout>
       </Layout>
-      <LogoutModal {...props} visible={logoutModal.visible} handleCancel={()=>setLogoutModal((oldState)=>({...oldState, ...{visible:false}}))}/>
+      <LogoutModal {...props} visible={logoutModal.visible} handleCancel={() => setLogoutModal((oldState) => ({ ...oldState, ...{ visible: false } }))} />
     </Layout>
   );
 }

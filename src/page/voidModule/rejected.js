@@ -62,13 +62,13 @@ const columns=[
   }
 ];
 
-class Transaction extends React.Component {
+class Rejected extends React.Component {
 
   constructor(props){
     super(props);
     this.state={
       data:[],
-      search:null,
+      search:'',
       page:1,
       limit:10,
       totalRecords:0,
@@ -84,7 +84,7 @@ class Transaction extends React.Component {
 
   getVoidReport = () =>{
     const{limit,page,search}=this.state;
-    TransactionService.getAllTransaction(search,page-1,limit).then(e=>{
+    TransactionService.getTransactionsByStatus(search,page-1,limit,3).then(e=>{
       const{data,errorCode}=e.data
     
       if(errorCode){
@@ -93,6 +93,7 @@ class Transaction extends React.Component {
         const{list,pagination}=data
         const{ totalRecords }=pagination;
         this.setState({data:list, totalRecords, fetching:false})
+        console.log('sheesh', this.state)
       }
     }) 
     .catch(e=>{
@@ -169,4 +170,4 @@ class Transaction extends React.Component {
   }
 }
 
-export default Transaction;
+export default Rejected;

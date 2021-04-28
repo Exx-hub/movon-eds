@@ -34,8 +34,8 @@ export const config = {
         environment:"",
         build: '1.8.0(139)'
     },
-    environment:"",
-    changeLogs: `fixed dltb gma issue in createparcel`
+    environment:"staging",
+    changeLogs: `updated void transaction menu`
 }
 
 export const ERROR_CODES = {
