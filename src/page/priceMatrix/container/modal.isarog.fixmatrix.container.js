@@ -50,6 +50,7 @@ function AddFixMatrixModalContent(props) {
                     'name': (props.data && props.data.name) || "no-data",
                     'enablePortersFee': (props.data && props.data.enablePortersFee) || true,
                     'enabledAccompaniedBaggage': (props.data && props.data.enabledAccompaniedBaggage) || false,
+                    'additionalFee': (props.data && props.data.additionalFee) || true,
                 }}
             >
 
@@ -95,6 +96,13 @@ function AddFixMatrixModalContent(props) {
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <Switch defaultChecked={props.data.enabledAccompaniedBaggage === undefined ? false : props.data.enabledAccompaniedBaggage} /> 
                 </Form.Item> 
+
+                <Form.Item
+                    label="Enable Additional Fee"
+                    name="additionalFee"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <Switch disabled={Boolean(props.type === 'delete')} defaultChecked={props.data.additionalFee} /> 
+                </Form.Item>
 
                 <Form.Item {...tailLayout}>
                     <div style={{ display: "flex", justifyContent: 'center' }}>
