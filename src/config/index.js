@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(142)'
+        build: '1.8.0(143)'
     },
     environment:"staging",
-    changeLogs: `removed void action column for staff`
+    changeLogs: `renamed dltb gma in sales report`
 }
 
 export const ERROR_CODES = {
