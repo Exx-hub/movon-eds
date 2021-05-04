@@ -5,7 +5,7 @@ import { config } from "../../config";
 import Parcel from "../../service/Parcel";
 import { PromptModal } from '../../component/modal';
 import { DefaultMatrixModal } from '../../component/modal'
-import {openNotificationWithIcon,debounce,UserProfile,alterPath,modifyName} from "../../utility";
+import { openNotificationWithIcon, debounce, UserProfile, alterPath, modifyName } from "../../utility";
 import { notification, Space, Table } from "antd";
 import { Layout, Button, Row, Input, Pagination } from "antd";
 import TransactionService from '../../service/VoidTransaction'
@@ -50,6 +50,7 @@ class SearchModule extends React.Component {
 
   componentDidMount() {
     //this.fetchParcelList();
+
     this.setState({
       columns: [
         {
@@ -105,13 +106,13 @@ class SearchModule extends React.Component {
               }}>
                 Void
               </Button>
-            {UserProfile.getBusCompanyTag() === 'dltb' && <Button disabled={!Boolean(record.travelStatus === 1)} size="small" style={{ fontSize: '0.65rem', background: `${record.travelStatus === 1 ? 'teal' : ""}`, color: `${record.travelStatus === 1 ? 'white' : ""}` }} onClick={() => {
-              const checkInModal = { ...this.state.checkInModal }
-              checkInModal.visible = true;
-              checkInModal.data = record;
-              this.setState({ checkInModal })
-            }}>
-              Check-In
+              {UserProfile.getBusCompanyTag() === 'dltb' && <Button disabled={!Boolean(record.travelStatus === 1)} size="small" style={{ fontSize: '0.65rem', background: `${record.travelStatus === 1 ? 'teal' : ""}`, color: `${record.travelStatus === 1 ? 'white' : ""}` }} onClick={() => {
+                const checkInModal = { ...this.state.checkInModal }
+                checkInModal.visible = true;
+                checkInModal.data = record;
+                this.setState({ checkInModal })
+              }}>
+                Check-In
             </Button>}
             </div>
           ),
@@ -125,7 +126,7 @@ class SearchModule extends React.Component {
     let remarks = this.state.remarks;
 
     if (remarks) {
-      TransactionService.voidParcel( record.billOfLading, record._id, remarks)
+      TransactionService.voidParcel(record.billOfLading, record._id, remarks)
         .then(e => {
           const { errorCode } = e.data;
           if (errorCode) {
@@ -235,12 +236,21 @@ class SearchModule extends React.Component {
 
         const checkInModal = { ...this.state.checkInModal }
         checkInModal.visible = false;
-        checkInModal.data=undefined;
+        checkInModal.data = undefined;
         this.setState({
           parcelList,
           checkInModal
         })
       })
+  }
+
+  tableColumns = () => {
+    if (UserProfile.user.role === "1") {
+      this.state.columns.pop();
+      return this.state.columns;
+    } else {
+      return this.state.columns
+    };
   }
 
   render() {
@@ -265,7 +275,7 @@ class SearchModule extends React.Component {
                 scroll={{ x: true }}
                 pagination={false}
                 className="table"
-                columns={this.state.columns}
+                columns={this.tableColumns()}
                 dataSource={this.state.parcelList}
                 onSelect={(record) => this.onSelect(record)}
               />
@@ -305,8 +315,8 @@ class SearchModule extends React.Component {
         >
           <Space direction="vertical">
             {
-              this.state.checkInModal.data && <p style={{fontSize:"16px",fontStyle:'italic' }}>Are you sure you would like to check-in this parcel with bill of lading no. 
-                <span style={{fontSize:"16px", fontWeight:'bold'}}>&nbsp;{this.state.checkInModal.data.billOfLading}</span>?</p>
+              this.state.checkInModal.data && <p style={{ fontSize: "16px", fontStyle: 'italic' }}>Are you sure you would like to check-in this parcel with bill of lading no.
+                <span style={{ fontSize: "16px", fontWeight: 'bold' }}>&nbsp;{this.state.checkInModal.data.billOfLading}</span>?</p>
             }
           </Space>
         </DefaultMatrixModal>
