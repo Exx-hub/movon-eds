@@ -37,6 +37,9 @@ class Pending extends React.Component {
 
   constructor(props) {
     super(props);
+
+    UserProfile.user.role === "1" && this.columns.pop();
+
     this.state = {
       data: [],
       search: '',
