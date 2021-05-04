@@ -104,6 +104,7 @@ function FeeSection(props){
         default:
             inputSection = (<TextContainer label="Length" value={length} />)
             feesSection = (<>
+                <NumberContainer label="Additional Fee" value={additionalFee} />
                 <NumberContainer label="Porter's Fee" value={portersFee}/>
                 <NumberContainer label="Length Fee" value={lengthFee}/>
                 <NumberContainer label="Insurance Fee" value={declaredValueFee} />
