@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(140)'
+        build: '1.8.0(141)'
     },
     environment:"staging",
-    changeLogs: `added accept/rejected void features`
+    changeLogs: `added additional fee in BI`
 }
 
 export const ERROR_CODES = {
