@@ -104,7 +104,7 @@ function BicolIsarogForm(props) {
       break;
 
       default:
-        view = (<ShowBicolIsarogBreakDown data={{...props.priceDetails, isFixedPrice, systemFee:Number(systemFee.value).toFixed(2)}} />)
+        view = (<ShowBicolIsarogBreakDown data={{...props.priceDetails, isFixedPrice, additionalFee: Number(additionalFee.value).toFixed(2), systemFee:Number(systemFee.value).toFixed(2)}} />)
         break;
     }
     return view;
@@ -620,15 +620,17 @@ function ShowBicolIsarogBreakDown(props){
       declaredValueFee,
       systemFee,
       isFixedPrice,
+      additionalFee,
       lengthFee,
       discountFee,
       portersFee,
       weightFee,
     }=props.data;
-
+    
     if(isFixedPrice){
       view=(<>
         <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
+        <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} />
         <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
         <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
         <TextContainer title="System Fee" value={translateNumber(systemFee)} />
