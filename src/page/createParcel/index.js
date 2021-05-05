@@ -998,13 +998,16 @@ class CreateParcel extends React.Component {
           console.info("getExcessBaggageStatus",e)
           const{data,errorCode}=e.data;
 
+          console.info('data.discountOption',data.discountOption)
+
           if(errorCode){
             this.handleErrorNotification(errorCode);
             return
           }
+
           let details = {...this.state.details, ..._details}
           details.fixMatrix = Object.assign({}, details.fixMatrix, {accepted:true, options : [...[{ name: "none", price: 0, declaredValue: 0 }], ...data.fixMatrix || []]})
-          details.discount = Object.assign({},details.discount, {value:"", options: data.discountOption || []});
+          details.discount = Object.assign({},details.discount, {value:"", options: [...[{name:'none', rate:0}], ...data.discountOption || []]});
 
           let enabledExcessCargo =  data.enabledExcessCargo || false;
           if(typeof enabledExcessCargo === 'string'){
@@ -1298,9 +1301,16 @@ class CreateParcel extends React.Component {
         break;
 
       case 'discount-change': 
-        let _option = this.getDiscountOption();
+      details.additionNote.disabled = false;
+      details.additionNote.value = "";
+
+      let _option = this.getDiscountOption();
+        console.info('_option',_option)
+        if(_option.name !== 'none'){
+          details.additionNote.disabled = true;
+          details.additionNote.value = _option.name;
+        }
         details.discount.foc = (_option && _option.foc) || 0
-      //todo:
       break;
 
       case 'input-change': 
@@ -1395,7 +1405,15 @@ class CreateParcel extends React.Component {
         break;
 
       case 'discount-change': 
-      //todo:
+      details.additionNote.disabled = false;
+      details.additionNote.value = "";
+
+      let _option = this.getDiscountOption();
+        console.info('_option',_option)
+        if(_option.name !== 'none'){
+          details.additionNote.disabled = true;
+          details.additionNote.value = _option.name;
+        }
       break;
 
       case 'input-change': 
