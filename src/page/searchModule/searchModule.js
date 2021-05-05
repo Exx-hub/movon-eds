@@ -244,15 +244,6 @@ class SearchModule extends React.Component {
       })
   }
 
-  tableColumns = () => {
-    if (UserProfile.user.role === "1") {
-      this.state.columns.pop();
-      return this.state.columns;
-    } else {
-      return this.state.columns
-    };
-  }
-
   render() {
     return (
       <Layout className="SearchModule">
@@ -275,7 +266,7 @@ class SearchModule extends React.Component {
                 scroll={{ x: true }}
                 pagination={false}
                 className="table"
-                columns={this.tableColumns()}
+                columns={this.state.columns}
                 dataSource={this.state.parcelList}
                 onSelect={(record) => this.onSelect(record)}
               />
