@@ -32,10 +32,10 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(143)'
+        build: '1.8.0(144)'
     },
     environment:"staging",
-    changeLogs: `reverted void action column for staff`
+    changeLogs: `added requestedBy column`
 }
 
 export const ERROR_CODES = {

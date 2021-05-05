@@ -48,6 +48,7 @@ const columns=[
     title: 'Requested By',
     dataIndex: 'deliveryPersonId',
     key: 'deliveryPersonId',
+    render: (e) => e.personalInfo.fullName
   },
   {
     title: 'Remarks',
