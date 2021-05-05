@@ -34,8 +34,8 @@ export const config = {
         environment:"",
         build: '1.8.0(143)'
     },
-    environment:"staging",
-    changeLogs: `renamed dltb gma in sales report`
+    environment:"",
+    changeLogs: ``
 }
 
 export const ERROR_CODES = {
