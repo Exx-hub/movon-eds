@@ -188,6 +188,7 @@ class SalesReport extends React.Component {
     }
 
     const records = data.map((e, i) => {
+      console.log(e)
       return {
         key: i,
         associatedAmount: e.associatedAmount,
@@ -198,7 +199,7 @@ class SalesReport extends React.Component {
         billOfLading: e.billOfLading,
         declaredValue: `₱ ${Number(e.declaredValue || 0).toFixed(2)}`,
         destination: e.destination,
-        origin: e.origin,
+        origin: e.origin === "DLTB Cubao" ? "DLTB GMA" : e.origin,
         packageName: e.packageName,
         packageWeight: `${e.packageWeight} kg`,
         price: `₱ ${Number(e.price || 0).toFixed(2)}`,
