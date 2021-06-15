@@ -41,6 +41,10 @@ class SearchModule extends React.Component {
       checkInModal: {
         visible: false,
         data: undefined
+      },
+      arrivedModal: {
+        visible: false,
+        data: undefined
       }
     };
     this.printEl = React.createRef();
@@ -106,14 +110,22 @@ class SearchModule extends React.Component {
               }}>
                 Void
               </Button>
-              {UserProfile.getBusCompanyTag() === 'dltb' && <Button disabled={!Boolean(record.travelStatus === 1)} size="small" style={{ fontSize: '0.65rem', background: `${record.travelStatus === 1 ? 'teal' : ""}`, color: `${record.travelStatus === 1 ? 'white' : ""}` }} onClick={() => {
+              {(record.travelStatus === 1) && UserProfile.getBusCompanyTag() === 'dltb' && <Button disabled={!Boolean(record.travelStatus === 1)} size="small" style={{ fontSize: '0.65rem', background: `${record.travelStatus === 1 ? 'teal' : ""}`, color: `${record.travelStatus === 1 ? 'white' : ""}` }} onClick={() => {
                 const checkInModal = { ...this.state.checkInModal }
                 checkInModal.visible = true;
                 checkInModal.data = record;
                 this.setState({ checkInModal })
               }}>
                 Check-In
-            </Button>}
+              </Button>}
+              {(record.travelStatus === 2) && UserProfile.getBusCompanyTag() === 'dltb' && <Button disabled={!Boolean(record.travelStatus === 2)} size="small" style={{ fontSize: '0.65rem', background: `${record.travelStatus === 2 ? 'teal' : ""}`, color: `${record.travelStatus === 2 ? 'white' : ""}` }} onClick={() => {
+                const arrivedModal = { ...this.state.arrivedModal }
+                arrivedModal.visible = true;
+                arrivedModal.data = record;
+                this.setState({ arrivedModal })
+              }}>
+                Arrived
+              </Button>}
             </div>
           ),
         },
@@ -244,6 +256,39 @@ class SearchModule extends React.Component {
       })
   }
 
+  //Arrived
+  onNegativeArrived = () => {
+    const arrivedModal = { ...this.state.arrivedModal }
+    arrivedModal.visible = false;
+    arrivedModal.data = undefined;
+    this.setState({ arrivedModal })
+  }
+
+  onPositiveArrived = () => {
+    const data = this.state.arrivedModal.data
+    const parcelId = data._id;
+    ManifestService.arrivedByParcel(parcelId)
+      .then(e => {
+        const { data } = e.data
+        let parcelList = [...this.state.parcelList]
+        if (data) {
+          let index = parcelList.findIndex(e => e._id === data._id)
+          if (index > -1) {
+            parcelList[index] = { ...parcelList[index], ...{ travelStatus: data.status } }
+          }
+        }
+
+        const arrivedModal = { ...this.state.arrivedModal }
+        arrivedModal.visible = false;
+        arrivedModal.data = undefined;
+        this.setState({
+          parcelList,
+          arrivedModal
+        })
+        this.fetchParcelList()
+      })
+  }
+
   render() {
     return (
       <Layout className="SearchModule">
@@ -308,6 +353,20 @@ class SearchModule extends React.Component {
             {
               this.state.checkInModal.data && <p style={{ fontSize: "16px", fontStyle: 'italic' }}>Are you sure you would like to check-in this parcel with bill of lading no.
                 <span style={{ fontSize: "16px", fontWeight: 'bold' }}>&nbsp;{this.state.checkInModal.data.billOfLading}</span>?</p>
+            }
+          </Space>
+        </DefaultMatrixModal>
+        <DefaultMatrixModal
+          onCancel={() => this.onNegativeArrived()}
+          visible={this.state.arrivedModal.visible}
+          title="Parcel Arrived"
+          width={500}
+          onNegativeEvent={() => this.onNegativeArrived()}
+          onPositiveEvent={() => this.onPositiveArrived()}
+        >
+          <Space direction="vertical">
+            {
+              this.state.arrivedModal.data && <p style={{ fontSize: "16px", fontStyle: 'italic' }}>Press OK to change the status to received</p>
             }
           </Space>
         </DefaultMatrixModal>

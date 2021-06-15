@@ -117,6 +117,18 @@ const ManifestService = {
             }
         })
     },
+    arrivedByParcel: (parcelId) => {
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/api/v1/account/delivery-person/parcel/arrived/by-id`,
+            headers: {
+                'x-auth-deviceid' : config.header.deviceId,
+                'x-auth-devicetype' : config.header.deviceType,
+                'x-auth-token' : userProfileObject.getToken()
+            },
+            data:{ parcelId }
+        })
+    },
     checkInByParcel: (parcelId) => {
         return axios({
             method: 'post',
