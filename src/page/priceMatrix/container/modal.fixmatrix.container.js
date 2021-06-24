@@ -88,7 +88,13 @@ function AddFixMatrixModalContent(props){
                     <Switch disabled={Boolean(props.type === 'delete')} defaultChecked={props.data.additionalFee} /> 
                 </Form.Item>
 
-                
+                <Form.Item
+                    label="Enable Accompanied Baggage"
+                    name="enabledAccompaniedBaggage"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <Switch defaultChecked={props.data.enabledAccompaniedBaggage === undefined ? false : props.data.enabledAccompaniedBaggage} /> 
+                </Form.Item> 
+
                 <Form.Item {...tailLayout}>
                     <div style={{display:"flex", justifyContent:'center'}}>
                         <FooterModal 

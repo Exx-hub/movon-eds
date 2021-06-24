@@ -48,6 +48,13 @@ class Dltb{
                 
                 if(temp.matrix && temp.matrix.length > 0){
                     _value = temp.matrix[0]
+
+                    if (!_value.accompaniedBaggage) {
+                        _value.accompaniedBaggage = 0;
+                    }
+                    if (!_value.accompaniedBaggageFee) {
+                        _value.accompaniedBaggageFee = 0
+                    }
                 }
 
                 if(temp.fixMatrix && temp.fixMatrix.length > 0){
@@ -156,6 +163,20 @@ class Dltb{
                 key: 'basePrice'
             },
             {
+                title: 'Min Accompanied Baggage',
+                dataIndex: 'accompaniedBaggage',
+                key: 'accompaniedBaggage',
+                align: 'center',
+                render: (text) => (<span>{Number(text || 0)} kg.</span>)
+            },
+            {
+                title: 'Accompanied Baggage Fee',
+                dataIndex: 'accompaniedBaggageFee',
+                key: 'accompaniedBaggageFee',
+                align: 'right',
+                render: (text) => (<span>₱ {Number(text).toFixed(2)}</span>)
+            },
+            {
                 title: 'Short Haul',
                 dataIndex: 'isShortHaul',
                 key: 'isShortHaul',
@@ -224,6 +245,14 @@ class Dltb{
                     return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Yes" : "No") : "No" }`}</Tag>)
                 }
             }, 
+            {
+                title: 'Enabled Accompanied Baggage',
+                dataIndex: 'enabledAccompaniedBaggage',
+                key: "enabledAccompaniedBaggage",
+                render: (val) => {
+                    return (<Tag size="small" color={`${Boolean(val) ? "blue" : "red"}`}>{`${val ? (Boolean(val) ? "Enabled" : "Disabled") : "Disabled"}`}</Tag>)
+                }
+            },
         {
             title: 'Action',
             dataIndex: 'action',
@@ -296,7 +325,9 @@ class Dltb{
             weightRate: val.weightRate,
             isShortHaul: val.isShortHaul,
             insuranceFee: val.insuranceFee,
-            maxDeclaredValue: val.maxDeclaredValue
+            maxDeclaredValue: val.maxDeclaredValue,
+            accompaniedBaggage: val.accompaniedBaggage,
+            accompaniedBaggageFee: val.accompaniedBaggageFee,
         }]
         return matrix;
     }
