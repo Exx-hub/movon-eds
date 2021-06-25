@@ -1,13 +1,33 @@
 import React from "react";
-import {Table,DatePicker,Select,Button,Row,Col,Space,notification,Skeleton,Layout,Tag,AutoComplete,Pagination,Menu, Dropdown} from "antd";
-import {DownOutlined} from "@ant-design/icons";
-import {openNotificationWithIcon,alterPath,UserProfile} from "../../utility";
+import {
+  Table,
+  DatePicker,
+  Select,
+  Button,
+  Row,
+  Col,
+  Space,
+  notification,
+  Skeleton,
+  Layout,
+  Tag,
+  AutoComplete,
+  Pagination,
+  Menu,
+  Dropdown,
+} from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import {
+  openNotificationWithIcon,
+  alterPath,
+  UserProfile,
+} from "../../utility";
 import ParcelService from "../../service/Parcel";
 import RoutesService from "../../service/Routes";
 import moment from "moment-timezone";
 import "./salesReport.scss";
 import { config } from "../../config";
-import { FilePdfOutlined, ProfileOutlined } from '@ant-design/icons';
+import { FilePdfOutlined, ProfileOutlined } from "@ant-design/icons";
 
 const dateFormat = "MMM DD, YYYY hh:mm";
 const { Content } = Layout;
@@ -159,8 +179,8 @@ class SalesReport extends React.Component {
 
     ParcelService.getAllParcel(
       startStationId,
-      moment(this.state.startDay).format('YYYY-MM-DD'),
-      moment(this.state.endDay).format('YYYY-MM-DD'),
+      moment(this.state.startDay).format("YYYY-MM-DD"),
+      moment(this.state.endDay).format("YYYY-MM-DD"),
       this.state.destinationId,
       this.userProfileObject.getBusCompanyId(),
       this.state.page - 1,
@@ -172,7 +192,7 @@ class SalesReport extends React.Component {
           this.handleErrorNotification(errorCode);
           return;
         }
-        this.parseParcel(e)
+        this.parseParcel(e);
       })
       .catch((e) => {
         this.setState({ fetching: false });
@@ -188,7 +208,7 @@ class SalesReport extends React.Component {
     }
 
     const records = data.map((e, i) => {
-      console.log(e)
+      console.log(e);
       return {
         key: i,
         associatedAmount: e.associatedAmount,
@@ -207,12 +227,18 @@ class SalesReport extends React.Component {
         recipient: e.recipient,
         scanCode: e.scanCode,
         sender: e.sender,
-        sentDate: moment.tz(e.createdAt,"Asia/Manila").format('MMM DD, YYYY hh:mm:ss A'),
-        status: e.status,
+        sentDate: moment
+          .tz(e.createdAt, "Asia/Manila")
+          .format("MMM DD, YYYY hh:mm:ss A"),
+        status: config.parcelStatus[e.status],
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,
         systemFee: `₱ ${Number(e.systemFee || 0).toFixed(2)}`,
-        remarks: e.remarks ? (e.remarks !== 'undefined' ? e.remarks : "*******") : "*******",
+        remarks: e.remarks
+          ? e.remarks !== "undefined"
+            ? e.remarks
+            : "*******"
+          : "*******",
       };
     });
     const { totalRecords } = pagination;
@@ -296,19 +322,25 @@ class SalesReport extends React.Component {
     );
   };
 
-  onHandleMenu = (item) =>{
-    switch(item.key){
-      case 'downloadPdf': 
-      break;
-      case 'downloadXls': 
-      this.downloadXls(); break;
-      default: break;
+  onHandleMenu = (item) => {
+    switch (item.key) {
+      case "downloadPdf":
+        break;
+      case "downloadXls":
+        this.downloadXls();
+        break;
+      default:
+        break;
     }
-  }
+  };
 
   menu = (
-    <Menu onClick={(e)=>this.onHandleMenu(e)}>
-      <Menu.Item style={{display:'none'}} key="downloadPdf" icon={<FilePdfOutlined />}>
+    <Menu onClick={(e) => this.onHandleMenu(e)}>
+      <Menu.Item
+        style={{ display: "none" }}
+        key="downloadPdf"
+        icon={<FilePdfOutlined />}
+      >
         Download PDF
       </Menu.Item>
       <Menu.Item key="downloadXls" icon={<ProfileOutlined />}>
@@ -325,7 +357,7 @@ class SalesReport extends React.Component {
     if (!isAdmin) {
       originId = this.userProfileObject.getAssignedStationId();
     }
-    
+
     return ParcelService.exportCargoParcel(
       this.props.title || "SUMMARY OF CARGO SALES",
       moment(this.state.startDay).format("YYYY-MM-DD"),
@@ -381,61 +413,65 @@ class SalesReport extends React.Component {
 
     return (
       <Layout>
-        <Content style={{ padding: "1rem", paddingTop:'2rem' }}>
-            <Row>
-              {isAdmin && (
-                <Col span={6}>
-                  <AutoComplete
-                    size="large"
-                    style={{ width: "100%" }}
-                    onSelect={(item) =>
-                      this.onSelectAutoComplete("origin", item)
-                    }
-                    onSearch={(e) => this.doSearch("origin", e)}
-                    placeholder="Origin Stations"
-                  >
-                    {this.state.startStationRoutesTemp.map((e, i) => (
-                      <Option value={e.stationName}>{e.stationName}</Option>
-                    ))}
-                  </AutoComplete>
-                </Col>
-              )}
-
+        <Content style={{ padding: "1rem", paddingTop: "2rem" }}>
+          <Row>
+            {isAdmin && (
               <Col span={6}>
                 <AutoComplete
                   size="large"
-                  style={{ width: "100%", marginLeft: "0.5rem" }}
-                  onChange={(item) =>
-                    this.onSelectAutoComplete("destination", item)
-                  }
-                  onSearch={(e) => this.doSearch("destination", e)}
-                  placeholder="Destination"
+                  style={{ width: "100%" }}
+                  onSelect={(item) => this.onSelectAutoComplete("origin", item)}
+                  onSearch={(e) => this.doSearch("origin", e)}
+                  placeholder="Origin Stations"
                 >
-                  {this.state.endStationRoutesTemp.map((e, i) => (
-                    <Option value={e.endStationName}>{e.endStationName}</Option>
+                  {this.state.startStationRoutesTemp.map((e, i) => (
+                    <Option value={e.stationName}>{e.stationName}</Option>
                   ))}
                 </AutoComplete>
               </Col>
+            )}
 
-              <Col offset={isAdmin ? 0 : 6} span={12}>
-                {" "}
-                <RangePicker
-                  size="large"
-                  style={{ float: "right" }}
-                  defaultValue={[
-                    moment(this.state.startDay, dateFormat),
-                    moment(this.state.endDay, dateFormat),
-                  ]}
-                  onChange={(date, date2) => this.onChangeDatePicker(date2)}
-                />
-              </Col>
-            </Row>
+            <Col span={6}>
+              <AutoComplete
+                size="large"
+                style={{ width: "100%", marginLeft: "0.5rem" }}
+                onChange={(item) =>
+                  this.onSelectAutoComplete("destination", item)
+                }
+                onSearch={(e) => this.doSearch("destination", e)}
+                placeholder="Destination"
+              >
+                {this.state.endStationRoutesTemp.map((e, i) => (
+                  <Option value={e.endStationName}>{e.endStationName}</Option>
+                ))}
+              </AutoComplete>
+            </Col>
+
+            <Col offset={isAdmin ? 0 : 6} span={12}>
+              {" "}
+              <RangePicker
+                size="large"
+                style={{ float: "right" }}
+                defaultValue={[
+                  moment(this.state.startDay, dateFormat),
+                  moment(this.state.endDay, dateFormat),
+                ]}
+                onChange={(date, date2) => this.onChangeDatePicker(date2)}
+              />
+            </Col>
+          </Row>
           <Row style={{ marginTop: ".5rem" }}>
             <Col span={12}>
-              <div style={{
-                padding:'0.5rem',
-                border:"dashed 2px rgba(128,128,128,0.2)",
-                display: "flex", background:'white', minHeight:"2rem", overflow:'hidden'}}>
+              <div
+                style={{
+                  padding: "0.5rem",
+                  border: "dashed 2px rgba(128,128,128,0.2)",
+                  display: "flex",
+                  background: "white",
+                  minHeight: "2rem",
+                  overflow: "hidden",
+                }}
+              >
                 <div>
                   {this.state.tags.map((e, i) => (
                     <Tag
@@ -469,14 +505,22 @@ class SalesReport extends React.Component {
                 // <Button onClick={() => this.downloadXls()}>XLS</Button>
               }
 
-              <div style={{ display:'flex', flexDirection:'row', justifyContent:'flex-end'}}>
-              <Dropdown disabled = {(!this.state.data.length)} overlay={this.menu}>
-                <Button>
-                  <DownOutlined />  Download
-                </Button>
-              </Dropdown>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Dropdown
+                  disabled={!this.state.data.length}
+                  overlay={this.menu}
+                >
+                  <Button>
+                    <DownOutlined /> Download
+                  </Button>
+                </Dropdown>
               </div>
-              
             </Col>
           </Row>
 
@@ -503,7 +547,10 @@ class SalesReport extends React.Component {
               </div>
               <div>
                 {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
-                {this.showTextDetails("Total Number of Transaction: ",this.state.totalRecords)}
+                {this.showTextDetails(
+                  "Total Number of Transaction: ",
+                  this.state.totalRecords
+                )}
               </div>
             </div>
 
@@ -522,21 +569,21 @@ class SalesReport extends React.Component {
                   />
                 </div>
                 <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      marginTop: "1rem",
-                      marginBottom: "3rem",
-                    }}
-                  >
-                    <Pagination
-                      current={this.state.page}
-                      onChange={(page) => this.onPageChange(page)}
-                      total={this.state.totalRecords}
-                      pageSize={this.state.limit}
-                      showSizeChanger={false}
-                    />
-                  </div>
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "1rem",
+                    marginBottom: "3rem",
+                  }}
+                >
+                  <Pagination
+                    current={this.state.page}
+                    onChange={(page) => this.onPageChange(page)}
+                    total={this.state.totalRecords}
+                    pageSize={this.state.limit}
+                    showSizeChanger={false}
+                  />
+                </div>
               </>
             )}
           </div>
