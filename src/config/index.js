@@ -32,7 +32,7 @@ export const config = {
     }, 
     version: {
         environment:"",
-        build: '1.8.0(145)'
+        build: '1.8.0(146)'
     },
     environment:"",
     changeLogs: ``
