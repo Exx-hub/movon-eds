@@ -32,6 +32,7 @@ import { Header } from "../../component/header";
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
+// Data table for daily sales report table VLI-BITSI ----- UNUSED for now //
 const tableSourceVliBitsi = [
   {
     title: "DATE",
@@ -96,6 +97,7 @@ const tableSourceVliBitsi = [
   },
 ];
 
+// Data table for daily sales report table CARGO Sales//
 const tableSourceBitsi = [
   {
     title: "BL NO.",
@@ -186,8 +188,14 @@ function Home(props) {
   const [logoutModal, setLogoutModal] = React.useState({ visible: false });
 
   React.useEffect(() => {
+    // fills side menu with data like key and routes when clicked. action property has no use for now...
     if (menuData.length < 1) {
       setMenuData([
+        {
+          key: "search-parcel",
+          destination: alterPath("/search-parcel"),
+          action: () => console.log("search clicked"),
+        },
         {
           key: "create-parcel",
           destination: alterPath("/create-parcel"),
@@ -206,11 +214,6 @@ function Home(props) {
         {
           key: "rejected-list",
           destination: alterPath("/transaction/rejected-void"),
-          action: () => {},
-        },
-        {
-          key: "search-parcel",
-          destination: alterPath("/search-parcel"),
           action: () => {},
         },
         {
@@ -254,13 +257,17 @@ function Home(props) {
 
   return (
     <Layout className="home-page-container">
+      {/* HEADER -------------------------------------------- */}
       <Header
         {...props}
         setVisibleLogout={() =>
           setLogoutModal((oldState) => ({ ...oldState, ...{ visible: true } }))
         }
       />
+
+      {/* WHOLE HOME BODY -- SIDER AND HOME LAYOUt ----------------------- */}
       <Layout className="home-body">
+        {/* SIDE MENU UI AND ICONS LAYOUT HERE */}
         <Sider width={250} className="home-sider">
           <div className="slider-container">
             <Menu
@@ -351,6 +358,9 @@ function Home(props) {
             </div>
           </div>
         </Sider>
+        {/* END OF SIDE MENU------------------------------- */}
+
+        {/* ROUTES for page content depending on which side menu item is clicked -- HOME PAGE CONTENT---- */}
         <Layout>
           <Content className={"home-content"}>
             <Switch>
@@ -422,7 +432,9 @@ function Home(props) {
             </Switch>
           </Content>
         </Layout>
+        {/* END OF HOME PAGE CONTENT / ROUTES  */}
       </Layout>
+      {/* END OF WHOLE SIDE MENU AND HOME PAGE  */}
       <LogoutModal
         {...props}
         visible={logoutModal.visible}
