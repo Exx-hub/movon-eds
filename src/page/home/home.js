@@ -404,6 +404,7 @@ function Home(props) {
                 />
               </Route> */}
 
+              {/* CONDITIONAL MATRIX  ROUTES  */}
               {Number(UserProfile.getRole()) ===
                 Number(config.role["staff-admin"]) && (
                 <Route path={alterPath("/matrix/own")}>
@@ -427,7 +428,7 @@ function Home(props) {
                   />
                 </Route>
               )}
-
+              {/* THIS IS THE DEFAULT ROUTE, GOES TO SEARCH AFTER LOGIN  */}
               <Redirect from="/" to={alterPath("/search-parcel")} />
             </Switch>
           </Content>
