@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(147)",
+    build: "1.8.0(148)",
   },
   environment: "",
-  changeLogs: `feature/add-parcel-status-column`,
+  changeLogs: `feature/implement-cookie-popup`,
 };
 
 export const ERROR_CODES = {
