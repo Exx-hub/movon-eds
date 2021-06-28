@@ -59,7 +59,7 @@ function Login(props) {
         UserProfile.setCredential({ user: data.user, token: data.token });
         if (Number((data.user && data.user.status) || "0") === 0) {
           notification["error"]({
-            message: "Diabled Account",
+            message: "Disabled Account",
             description: "Unable to access your account",
           });
           UserProfile.logout(User);
