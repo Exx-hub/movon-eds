@@ -29,6 +29,8 @@ import {
 import { config } from "../../config";
 import { Header } from "../../component/header";
 
+import { IdleTimerContainer } from "../../component/idleTimer";
+
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -436,6 +438,8 @@ function Home(props) {
         {/* END OF HOME PAGE CONTENT / ROUTES  */}
       </Layout>
       {/* END OF WHOLE SIDE MENU AND HOME PAGE  */}
+
+      <IdleTimerContainer />
       <LogoutModal
         {...props}
         visible={logoutModal.visible}
