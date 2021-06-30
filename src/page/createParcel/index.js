@@ -1,6 +1,6 @@
 import React from "react";
 import "./create.scss";
-import {CreateForm} from "../../component/createParcelForm";
+import { CreateForm } from "../../component/createParcelForm";
 import StepsView from "../../component/steps";
 import WebCam from "../../component/webcam";
 import ScheduledTrips from "../../component/scheduledTrips";
@@ -15,11 +15,12 @@ import {
   openNotificationWithIcon,
   debounce,
   UserProfile,
-  alterPath
+  alterPath,
 } from "../../utility";
 
-import {Header} from '../../component/header'
-import {CustomModal, LogoutModal} from '../../component/modal'
+import { Header } from "../../component/header";
+import { CustomModal, LogoutModal } from "../../component/modal";
+import { IdleTimerContainer } from "../../component/idleTimer";
 
 const { Content, Sider } = Layout;
 
@@ -52,7 +53,8 @@ const STEPS_LIST = [
   },
 ];
 
-const isNull = (value) => value === null || value === undefined || value === "" || value === 0;
+const isNull = (value) =>
+  value === null || value === undefined || value === "" || value === 0;
 
 const showNotification = (props) => {
   notification[props.type]({
@@ -65,14 +67,15 @@ const StepControllerView = (props) => {
   return (
     <div
       className={[
-        `step-controller-container-item ${props.width < 500 ? "button-steps" : ""
+        `step-controller-container-item ${
+          props.width < 500 ? "button-steps" : ""
         }`,
       ]}
     >
       {!props.disablePreviousButton && (
         <Button
           className="create-btn btn-prev"
-          style={{ display: `${props.display}`}} 
+          style={{ display: `${props.display}` }}
           onClick={() => {
             props.onPreviousStep();
           }}
@@ -83,8 +86,9 @@ const StepControllerView = (props) => {
       {!props.disableNextButton && (
         <Button
           disabled={props.disabled}
-          className={`${props.disabled ? "create-btn disabled-btn" : "create-btn btn-next"
-            }`}
+          className={`${
+            props.disabled ? "create-btn disabled-btn" : "create-btn btn-next"
+          }`}
           onClick={() => {
             props.onNextStep();
           }}
@@ -97,10 +101,11 @@ const StepControllerView = (props) => {
 };
 
 const getReviewDetails = (state) => {
+  const destination = { ...state.details.destination };
 
-  const destination = {...state.details.destination}
-
-  const option = destination.options.find(e=>e.endStation === destination.value)
+  const option = destination.options.find(
+    (e) => e.endStation === destination.value
+  );
 
   return {
     packageName: state.details.description.value,
@@ -113,7 +118,7 @@ const getReviewDetails = (state) => {
     senderName: state.details.senderName.value,
     senderEmail: state.details.senderEmail.value,
     senderPhone: state.details.senderMobile.value,
-    
+
     totalPrice: state.details.totalShippingCost.value || 0,
     additionalNote: state.details.additionNote.value,
     billOfLading: state.details.billOfLading.value,
@@ -134,8 +139,8 @@ const getReviewDetails = (state) => {
     additionalFee: state.details.additionalFee.value || 0,
     discountFee: state.discountFee || 0,
     basePrice: state.basePrice || 0,
-    cashier:UserProfile.getPersonFullName(),
-    type:'create'
+    cashier: UserProfile.getPersonFullName(),
+    type: "create",
   };
 };
 
@@ -185,7 +190,6 @@ const parceResponseData = (data) => {
 };
 
 class CreateParcel extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -209,7 +213,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: true,
           accepted: true,
-          errorMessage: "Bill of Lading is required!"
+          errorMessage: "Bill of Lading is required!",
         },
         senderName: {
           name: "senderName",
@@ -376,7 +380,7 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          errorMessage: "Length is required!"
+          errorMessage: "Length is required!",
         },
         fixMatrix: {
           name: "fixMatrix",
@@ -428,8 +432,8 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
-          enabled: false
-        }
+          enabled: false,
+        },
       },
       enalbeBicolIsarogWays: false,
       declaredValueadditionalFee: 0.1,
@@ -446,19 +450,18 @@ class CreateParcel extends React.Component {
       insuranceFee: Number(0).toFixed(2),
       isFixedPrice: false,
       discountFee: Number(0).toFixed(2),
-      stopStep:false,
-      createModal:{
-        visible:false,
-        data:{},
-        title:"Bill of Lading Exist!"
+      stopStep: false,
+      createModal: {
+        visible: false,
+        data: {},
+        title: "Bill of Lading Exist!",
       },
-      enabledExcessCargo:false,
-      logoutModal:{visible:false}
+      enabledExcessCargo: false,
+      logoutModal: { visible: false },
     };
     this.userProfileObject = UserProfile;
-    this.fixPriceComputation = debounce(this.fixPriceComputation, 500)
+    this.fixPriceComputation = debounce(this.fixPriceComputation, 500);
     this.printEl = React.createRef();
-    
   }
 
   componentWillUnmount() {
@@ -466,7 +469,6 @@ class CreateParcel extends React.Component {
   }
 
   componentDidMount() {
-
     let { details } = { ...this.state };
     ParcelService.getConnectingBusPartners().then((e) => {
       const { success, data, errorCode } = e.data;
@@ -496,20 +498,20 @@ class CreateParcel extends React.Component {
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
-        details.length.disabled = true
-        details.length.isRequired = false
-        details.discount.disabled = true
+        details.length.disabled = true;
+        details.length.isRequired = false;
+        details.discount.disabled = true;
         break;
 
       case "isarog-liner":
-        details.billOfLading.disabled = true
+        details.billOfLading.disabled = true;
         details.length.required = false;
         break;
 
-      case "five-star": 
-        details.discount.disabled = true
-      break;
-    
+      case "five-star":
+        details.discount.disabled = true;
+        break;
+
       default:
         break;
     }
@@ -559,8 +561,7 @@ class CreateParcel extends React.Component {
           this.handleErrorNotification(errorCode);
         }
       })
-      .catch(e => console.info('error', e))
-      ;
+      .catch((e) => console.info("error", e));
   }
 
   handleErrorNotification = (code) => {
@@ -620,15 +621,15 @@ class CreateParcel extends React.Component {
           type: "success",
           message: "Your parcel is successfully created!",
         });
-        this.setState({ stopStep:true, createParcelResponseData: data }, () =>
+        this.setState({ stopStep: true, createParcelResponseData: data }, () =>
           this.gotoNextStep()
         );
       } else {
-        if(Number(errorCode) === 4012){
-          let createModal = {...this.state.createModal}
-          createModal.visible=true;
-          this.setState({createModal})
-        }else{
+        if (Number(errorCode) === 4012) {
+          let createModal = { ...this.state.createModal };
+          createModal.visible = true;
+          this.setState({ createModal });
+        } else {
           this.handleErrorNotification(errorCode);
         }
       }
@@ -641,7 +642,11 @@ class CreateParcel extends React.Component {
 
     for (let i = 0; i < Object.keys(_details).length; i++) {
       let name = Object.keys(_details)[i];
-      if (!_details[name].disabled && _details[name].isRequired && isNull(_details[name].value)) {
+      if (
+        !_details[name].disabled &&
+        _details[name].isRequired &&
+        isNull(_details[name].value)
+      ) {
         hasError = true;
         break;
       }
@@ -754,7 +759,6 @@ class CreateParcel extends React.Component {
   };
 
   validateStep = () => {
-
     let {
       currentStep,
       verifiedSteps,
@@ -765,7 +769,7 @@ class CreateParcel extends React.Component {
 
     if (verifiedSteps >= 4) {
       console.log("already created.. no more modification");
-      this.setState({stopStep:true})
+      this.setState({ stopStep: true });
       return false;
     }
 
@@ -781,17 +785,20 @@ class CreateParcel extends React.Component {
     }
 
     if (currentStep === 1) {
-
       if (this.isRequiredDetailsHasNull()) {
-          showNotification({
-            title: "Parcel Details Validation",
-            type: "error",
-            message: "Please fill up required fields",
-          });
-        
+        showNotification({
+          title: "Parcel Details Validation",
+          type: "error",
+          message: "Please fill up required fields",
+        });
+
         let tempDetails = { ...details };
         Object.keys(tempDetails).forEach((e) => {
-          if (!tempDetails[e].disabled && tempDetails[e].isRequired && isNull(tempDetails[e].value)) {
+          if (
+            !tempDetails[e].disabled &&
+            tempDetails[e].isRequired &&
+            isNull(tempDetails[e].value)
+          ) {
             const item = { ...tempDetails[e], ...{ accepted: false } };
             tempDetails = { ...tempDetails, ...{ [e]: item } };
           }
@@ -799,17 +806,21 @@ class CreateParcel extends React.Component {
         this.setState({ details: tempDetails });
         return false;
       } else {
-        const totalShippingCost = Number(this.state.details.totalShippingCost.value)
-        const discountFee = Number(this.state.discountFee)
+        const totalShippingCost = Number(
+          this.state.details.totalShippingCost.value
+        );
+        const discountFee = Number(this.state.discountFee);
         let _option = this.getDiscountOption();
-        let foc = (_option && _option.foc || 0)
-        let hasMissingValue =  Number(foc || 0) === 1 ? (discountFee === 0) : (totalShippingCost === 0);
+        let foc = (_option && _option.foc) || 0;
+        let hasMissingValue =
+          Number(foc || 0) === 1 ? discountFee === 0 : totalShippingCost === 0;
 
-        if(hasMissingValue){
+        if (hasMissingValue) {
           showNotification({
             title: "Missing Payment Breakdown",
             type: "error",
-            message: "No computation have been made, please click the 'Compute Now' button",
+            message:
+              "No computation have been made, please click the 'Compute Now' button",
           });
           return;
         }
@@ -854,8 +865,7 @@ class CreateParcel extends React.Component {
   };
 
   fixPriceComputation = () => {
-
-    let d = { ...this.state.details }
+    let d = { ...this.state.details };
 
     const options = {
       origin: UserProfile.getAssignedStationId(),
@@ -865,16 +875,16 @@ class CreateParcel extends React.Component {
       fixMatrixItemName: d.fixMatrix.value,
       quantity: d.quantity.value,
       additionalFee: d.additionalFee.value,
-      discountName : (d.discount.value && d.discount.value.toLowerCase()) || 'none',
-      cargoType: d.type.value || 3
-    }
-    
+      discountName:
+        (d.discount.value && d.discount.value.toLowerCase()) || "none",
+      cargoType: d.type.value || 3,
+    };
+
     ParcelService.getDefaultFixMatrixComputation(options)
-      .then(e => {
+      .then((e) => {
         const { data, errorCode } = e.data;
         //console.info('getDefaultFixMatrixComputation',e)
         if (!errorCode) {
-
           const {
             declaredValueFee,
             systemFee,
@@ -882,8 +892,8 @@ class CreateParcel extends React.Component {
             portersFee,
             additionalFee,
             discountFee,
-            computeTotalShippingCost
-          } = data
+            computeTotalShippingCost,
+          } = data;
 
           d.totalShippingCost.value = computeTotalShippingCost;
           d.systemFee.value = systemFee;
@@ -895,33 +905,36 @@ class CreateParcel extends React.Component {
             basePrice,
             details: d,
             portersFee,
-            additionalFee
-          })
+            additionalFee,
+          });
         } else {
           this.handleErrorNotification(errorCode);
         }
       })
-      .catch(()=>{
+      .catch(() => {
         showNotification({
           title: "Server Error",
           type: "error",
           message: "Can't process computation, please try again.",
         });
-        this.handleView('default',this.state.details,()=>{})
+        this.handleView("default", this.state.details, () => {});
       });
-  }
+  };
 
   onInputChange = (name, value) => {
     let details = { ...this.state.details };
-    details[name] = {...details[name], ...{ value, accepted: true, hasError: false }};
-    
+    details[name] = {
+      ...details[name],
+      ...{ value, accepted: true, hasError: false },
+    };
+
     //do not clear the payment breakdown
-    const excludedNames = ['billOfLading','additionNote', 'description']
-    if(excludedNames.includes(name)){
-      this.setState({details})
-    }else{
+    const excludedNames = ["billOfLading", "additionNote", "description"];
+    if (excludedNames.includes(name)) {
+      this.setState({ details });
+    } else {
       //clear payment breakdown
-      this.handleView("input-change",details,()=>{})
+      this.handleView("input-change", details, () => {});
     }
   };
 
@@ -973,61 +986,67 @@ class CreateParcel extends React.Component {
       } else {
         if (success) {
           if (data) {
-            this.setState(
-              {
-                connectingCompanyComputation: data.total,
-                tariffRate: e.tariffRate,
-              }
-            );
+            this.setState({
+              connectingCompanyComputation: data.total,
+              tariffRate: e.tariffRate,
+            });
           }
         }
       }
     });
   };
 
-  fetchFixMatrix = (_details)=>{
-
-    const options={
-      destination: _details.destination.value, 
+  fetchFixMatrix = (_details) => {
+    const options = {
+      destination: _details.destination.value,
       origin: UserProfile.getAssignedStationId(),
-      cargoType: _details.type.value
-    }
+      cargoType: _details.type.value,
+    };
 
-    ParcelService.getExcessBaggageStatus(options)
-        .then(e=>{
-          console.info("getExcessBaggageStatus",e)
-          const{data,errorCode}=e.data;
+    ParcelService.getExcessBaggageStatus(options).then((e) => {
+      console.info("getExcessBaggageStatus", e);
+      const { data, errorCode } = e.data;
 
-          console.info('data.discountOption',data.discountOption)
+      console.info("data.discountOption", data.discountOption);
 
-          if(errorCode){
-            this.handleErrorNotification(errorCode);
-            return
-          }
+      if (errorCode) {
+        this.handleErrorNotification(errorCode);
+        return;
+      }
 
-          let details = {...this.state.details, ..._details}
-          details.fixMatrix = Object.assign({}, details.fixMatrix, {accepted:true, options : [...[{ name: "none", price: 0, declaredValue: 0 }], ...data.fixMatrix || []]})
-          details.discount = Object.assign({},details.discount, {value:"", options: [...[{name:'none', rate:0}], ...data.discountOption || []]});
+      let details = { ...this.state.details, ..._details };
+      details.fixMatrix = Object.assign({}, details.fixMatrix, {
+        accepted: true,
+        options: [
+          ...[{ name: "none", price: 0, declaredValue: 0 }],
+          ...(data.fixMatrix || []),
+        ],
+      });
+      details.discount = Object.assign({}, details.discount, {
+        value: "",
+        options: [
+          ...[{ name: "none", rate: 0 }],
+          ...(data.discountOption || []),
+        ],
+      });
 
-          let enabledExcessCargo =  data.enabledExcessCargo || false;
-          if(typeof enabledExcessCargo === 'string'){
-            enabledExcessCargo = Boolean(enabledExcessCargo === "true")
-          }
-          const typeOptions = details.type.options.map(e=>{
-            let disabled = false;
-            if(e.name !== 'Cargo Padala'){
-              disabled = !enabledExcessCargo;
-            }
-            return {...e, disabled}
-          })
-          details.type = {...details.type, ...{options:typeOptions}}
-          this.setState({enabledExcessCargo, details})
-          
-        })
-  }
+      let enabledExcessCargo = data.enabledExcessCargo || false;
+      if (typeof enabledExcessCargo === "string") {
+        enabledExcessCargo = Boolean(enabledExcessCargo === "true");
+      }
+      const typeOptions = details.type.options.map((e) => {
+        let disabled = false;
+        if (e.name !== "Cargo Padala") {
+          disabled = !enabledExcessCargo;
+        }
+        return { ...e, disabled };
+      });
+      details.type = { ...details.type, ...{ options: typeOptions } };
+      this.setState({ enabledExcessCargo, details });
+    });
+  };
 
   onSelectChange = async (value, name) => {
-
     let details = { ...this.state.details };
 
     if (name === "connectingCompany") {
@@ -1077,7 +1096,6 @@ class CreateParcel extends React.Component {
     }
 
     if (name === "connectingRoutes") {
-
       const associateFixPrice = { ...details.associateFixPrice };
       associateFixPrice.value = undefined;
       associateFixPrice.options = [];
@@ -1118,19 +1136,23 @@ class CreateParcel extends React.Component {
 
     if (name === "destination") {
       //const selectedDestination = details.destination.options.find((e) => e.value === value);
-      details.destination = {...details.destination,...{ value, accepted: true }};
-      details.fixMatrix.value = ""
-      this.handleView("destination-change",details,()=>{
-        this.fetchFixMatrix(details)
-      })
+      details.destination = {
+        ...details.destination,
+        ...{ value, accepted: true },
+      };
+      details.fixMatrix.value = "";
+      this.handleView("destination-change", details, () => {
+        this.fetchFixMatrix(details);
+      });
     }
 
     if (name === "discount") {
-      details.additionNote.value = value.toLowerCase() === "none" ? undefined : value;
-      details.additionNote.accepted = true;;
+      details.additionNote.value =
+        value.toLowerCase() === "none" ? undefined : value;
+      details.additionNote.accepted = true;
       details.discount.value = value;
       details.discount.accepted = true;
-      this.handleView('discount-change', details, ()=>{})
+      this.handleView("discount-change", details, () => {});
     }
 
     if (name === "associateFixPrice") {
@@ -1155,75 +1177,84 @@ class CreateParcel extends React.Component {
     if (name === "fixMatrix") {
       const details = { ...this.state.details };
       details.fixMatrix.value = value;
-      this.handleView('fix-matrix-change', details, ()=>{})
+      this.handleView("fix-matrix-change", details, () => {});
     }
   };
 
   onTypeChange = (value) => {
     const details = { ...this.state.details };
-    details.type = {...details.type, value}
-    this.handleView('onTypeChange', details, ()=>{
-      this.fetchFixMatrix(details)
-    })
+    details.type = { ...details.type, value };
+    this.handleView("onTypeChange", details, () => {
+      this.fetchFixMatrix(details);
+    });
   };
 
   onCreateNewParcel = () => {
     window.location.reload(true);
   };
 
-  getFixMatrixOption = () =>{
-    const fixMatrix = {...this.state.details.fixMatrix} 
-    return fixMatrix.options.find((e) => e.name === (fixMatrix.value || 'none')) || [{ name: "none", price: 0, declaredValue: 0 }];
-  }
+  getFixMatrixOption = () => {
+    const fixMatrix = { ...this.state.details.fixMatrix };
+    return (
+      fixMatrix.options.find((e) => e.name === (fixMatrix.value || "none")) || [
+        { name: "none", price: 0, declaredValue: 0 },
+      ]
+    );
+  };
 
-  onCompute = () =>{
+  onCompute = () => {
     const option = this.getFixMatrixOption();
-    const details = {...this.state.details}
+    const details = { ...this.state.details };
 
-    let hasError = false
-    let forValidation = ['declaredValue','packageWeight','sticker_quantity','destination']
-    forValidation.forEach(e=>{
-      if(!details[e].disabled && Number(details[e].value||0)===0){
+    let hasError = false;
+    let forValidation = [
+      "declaredValue",
+      "packageWeight",
+      "sticker_quantity",
+      "destination",
+    ];
+    forValidation.forEach((e) => {
+      if (!details[e].disabled && Number(details[e].value || 0) === 0) {
         details[e].accepted = false;
         hasError = true;
       }
-    })
+    });
 
-    if(hasError){
-      this.setState({details})
+    if (hasError) {
+      this.setState({ details });
       return;
     }
 
-    if(option && option.name === 'none'){
+    if (option && option.name === "none") {
       this.requestComputation();
-    }else{ 
+    } else {
       this.fixPriceComputation();
     }
-  }
+  };
 
-  releaseError = (details) =>{
-    let names=[]
+  releaseError = (details) => {
+    let names = [];
     for (var p in details) {
-      if(details[p].accepted === false){
-        names.push(p)
+      if (details[p].accepted === false) {
+        names.push(p);
         details[p].accepted = true;
       }
     }
-  }
+  };
 
-  getDiscountOption = () =>{
-    let discount = {...this.state.details.discount};
-    let _option = discount.options.find(e=>e.name === discount.value)
-    return _option
-  }
+  getDiscountOption = () => {
+    let discount = { ...this.state.details.discount };
+    let _option = discount.options.find((e) => e.name === discount.value);
+    return _option;
+  };
 
-  defaultHandleView = (name, _details, callback) =>{
+  defaultHandleView = (name, _details, callback) => {
     const details = { ...this.state.details, ..._details };
     const option = this.getFixMatrixOption();
     const isAccompanied = Number(details.type.value || 3) < 3;
-    const isFixPrice = option && option.name !== 'none';
+    const isFixPrice = option && option.name !== "none";
 
-    let selectedDestination = this.state.selectedDestination; 
+    let selectedDestination = this.state.selectedDestination;
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
 
@@ -1231,10 +1262,9 @@ class CreateParcel extends React.Component {
     let hideDeclaredValue = undefined;
     let hideQuantity = undefined;
     let hideWeight = undefined;
-    
+
     switch (name) {
       case "onTypeChange":
-        
         this.releaseError(details);
 
         hideLength = true;
@@ -1242,12 +1272,13 @@ class CreateParcel extends React.Component {
         hideQuantity = true;
         hideWeight = false;
 
-        if(!isAccompanied){ //Cargo
+        if (!isAccompanied) {
+          //Cargo
           hideLength = !hideLength;
           hideDeclaredValue = !hideDeclaredValue;
         }
 
-        details.declaredValue.disabled = hideDeclaredValue
+        details.declaredValue.disabled = hideDeclaredValue;
         details.quantity.disabled = hideQuantity;
         details.length.disabled = hideLength;
         details.packageWeight.disabled = hideWeight;
@@ -1256,85 +1287,110 @@ class CreateParcel extends React.Component {
         details.quantity.value = 1;
         break;
 
-      case "fix-matrix-change": 
+      case "fix-matrix-change":
         hideLength = false;
         hideDeclaredValue = false;
         hideWeight = false;
         hideQuantity = true;
 
-        this.releaseError(details)
-        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        details.additionalFee.enabled = (option && (option.additionalFee || false));
+        this.releaseError(details);
+        details.description.value =
+          option && option.name && option.name === "none" ? "" : option.name;
+        details.additionalFee.enabled =
+          option && (option.additionalFee || false);
 
-        if(!isFixPrice){ //NONE
-          if(isAccompanied){ //CARGO
+        if (!isFixPrice) {
+          //NONE
+          if (isAccompanied) {
+            //CARGO
             hideLength = true;
             hideDeclaredValue = true;
           }
-        }else{
+        } else {
           hideQuantity = false;
           hideLength = true;
-          hideDeclaredValue = true
+          hideDeclaredValue = true;
           hideWeight = true;
 
-          if(option && (option.additionalFee || false) === false){
+          if (option && (option.additionalFee || false) === false) {
             details.additionalFee.enabled = false;
             details.additionalFee.value = undefined;
           }
 
-          if(option && (option.declaredValue || 0) > 0){ 
+          if (option && (option.declaredValue || 0) > 0) {
             hideDeclaredValue = false;
           }
         }
 
         details.length.disabled = hideLength;
-        details.length.value = !hideLength ? details.length.value : undefined
+        details.length.value = !hideLength ? details.length.value : undefined;
 
         details.declaredValue.disabled = hideDeclaredValue;
-        details.declaredValue.value = !hideDeclaredValue ? details.declaredValue.value : undefined
+        details.declaredValue.value = !hideDeclaredValue
+          ? details.declaredValue.value
+          : undefined;
 
         details.quantity.disabled = hideQuantity;
-        details.quantity.value = !hideQuantity ? details.quantity.value : 1
+        details.quantity.value = !hideQuantity ? details.quantity.value : 1;
 
         details.packageWeight.disabled = hideWeight;
-        details.packageWeight.value = !hideWeight ? details.packageWeight.value : undefined
+        details.packageWeight.value = !hideWeight
+          ? details.packageWeight.value
+          : undefined;
         break;
 
-      case 'discount-change': 
-      details.additionNote.disabled = false;
-      details.additionNote.value = "";
+      case "discount-change":
+        details.additionNote.disabled = false;
+        details.additionNote.value = "";
 
-      let _option = this.getDiscountOption();
-        console.info('_option',_option)
-        if(_option.name !== 'none'){
+        let _option = this.getDiscountOption();
+        console.info("_option", _option);
+        if (_option.name !== "none") {
           details.additionNote.disabled = true;
           details.additionNote.value = _option.name;
         }
-        details.discount.foc = (_option && _option.foc) || 0
-      break;
+        details.discount.foc = (_option && _option.foc) || 0;
+        break;
 
-      case 'input-change': 
-      //todo:
-      break;
+      case "input-change":
+        //todo:
+        break;
 
-      case 'destination-change': 
-        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-      break
+      case "destination-change":
+        details.description.value =
+          option && option.name && option.name === "none" ? "" : option.name;
+        selectedDestination = details.destination.options.find(
+          (e) => e.value === details.destination.value
+        );
+        break;
 
       default:
         break;
     }
-    this.setState({ details, selectedDestination, basePrice:0, declaredValueFee:0, discountFee:0, systemFee:0, portersFee:0, lengthFee:0, weightFee:0,  isShortHaul: undefined, }, callback())
-  }
+    this.setState(
+      {
+        details,
+        selectedDestination,
+        basePrice: 0,
+        declaredValueFee: 0,
+        discountFee: 0,
+        systemFee: 0,
+        portersFee: 0,
+        lengthFee: 0,
+        weightFee: 0,
+        isShortHaul: undefined,
+      },
+      callback()
+    );
+  };
 
-  dltbHandleView = (name, _details, callback) =>{
+  dltbHandleView = (name, _details, callback) => {
     const details = { ...this.state.details, ..._details };
     const option = this.getFixMatrixOption();
     const isAccompanied = Number(details.type.value || 3) < 3;
-    const isFixPrice = option && option.name !== 'none';
+    const isFixPrice = option && option.name !== "none";
 
-    let selectedDestination = this.state.selectedDestination; 
+    let selectedDestination = this.state.selectedDestination;
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
 
@@ -1342,21 +1398,21 @@ class CreateParcel extends React.Component {
     let hideDeclaredValue = undefined;
     let hideQuantity = undefined;
     let hideWeight = undefined;
-    
+
     switch (name) {
       case "onTypeChange":
-        
         this.releaseError(details);
 
         hideDeclaredValue = true;
         hideQuantity = true;
         hideWeight = false;
 
-        if(!isAccompanied){ //Cargo
+        if (!isAccompanied) {
+          //Cargo
           hideDeclaredValue = !hideDeclaredValue;
         }
 
-        details.declaredValue.disabled = hideDeclaredValue
+        details.declaredValue.disabled = hideDeclaredValue;
         details.quantity.disabled = hideQuantity;
         details.packageWeight.disabled = hideWeight;
 
@@ -1364,102 +1420,119 @@ class CreateParcel extends React.Component {
         details.quantity.value = 1;
         break;
 
-      case "fix-matrix-change": 
-
+      case "fix-matrix-change":
         hideDeclaredValue = false;
         hideWeight = false;
         hideQuantity = true;
 
-        this.releaseError(details)
-        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        details.additionalFee.enabled = (option && (option.additionalFee || false));
-        details.quantity.value = 1
+        this.releaseError(details);
+        details.description.value =
+          option && option.name && option.name === "none" ? "" : option.name;
+        details.additionalFee.enabled =
+          option && (option.additionalFee || false);
+        details.quantity.value = 1;
 
-        if(!isFixPrice){ //NONE
-          if(isAccompanied){ //CARGO
+        if (!isFixPrice) {
+          //NONE
+          if (isAccompanied) {
+            //CARGO
             hideDeclaredValue = true;
           }
-        }else{
+        } else {
           hideQuantity = false;
-          hideDeclaredValue = true
+          hideDeclaredValue = true;
           hideWeight = true;
-          
-          if(option && (option.additionalFee || false) === false){
+
+          if (option && (option.additionalFee || false) === false) {
             details.additionalFee.enabled = false;
             details.additionalFee.value = undefined;
           }
 
-          if(option && (option.declaredValue || 0) > 0){ 
+          if (option && (option.declaredValue || 0) > 0) {
             hideDeclaredValue = false;
           }
         }
 
         details.declaredValue.disabled = hideDeclaredValue;
-        details.declaredValue.value = !hideDeclaredValue ? details.declaredValue.value : undefined
+        details.declaredValue.value = !hideDeclaredValue
+          ? details.declaredValue.value
+          : undefined;
 
         details.quantity.disabled = hideQuantity;
-        details.quantity.value = !hideQuantity ? details.quantity.value : 1
+        details.quantity.value = !hideQuantity ? details.quantity.value : 1;
 
         details.packageWeight.disabled = hideWeight;
-        details.packageWeight.value = !hideWeight ? details.packageWeight.value : undefined
+        details.packageWeight.value = !hideWeight
+          ? details.packageWeight.value
+          : undefined;
         break;
 
-      case 'discount-change': 
-      details.additionNote.disabled = false;
-      details.additionNote.value = "";
+      case "discount-change":
+        details.additionNote.disabled = false;
+        details.additionNote.value = "";
 
-      let _option = this.getDiscountOption();
-        console.info('_option',_option)
-        if(_option.name !== 'none'){
+        let _option = this.getDiscountOption();
+        console.info("_option", _option);
+        if (_option.name !== "none") {
           details.additionNote.disabled = true;
           details.additionNote.value = _option.name;
         }
-      break;
+        break;
 
-      case 'input-change': 
-      //todo:
-      break;
+      case "input-change":
+        //todo:
+        break;
 
-      case 'destination-change': 
-        details.description.value = option && option.name && option.name === 'none' ? "" : option.name;
-        selectedDestination = details.destination.options.find((e) => e.value === details.destination.value);
-      break
+      case "destination-change":
+        details.description.value =
+          option && option.name && option.name === "none" ? "" : option.name;
+        selectedDestination = details.destination.options.find(
+          (e) => e.value === details.destination.value
+        );
+        break;
 
       default:
         break;
     }
 
-    this.setState({ details, selectedDestination, 
-      basePrice:0, 
-      declaredValueFee:0, 
-      discountFee:0, 
-      systemFee:0, 
-      portersFee:0, 
-      lengthFee:0, 
-      weightFee:0,
-      isShortHaul: undefined,
-      handlingFee:0,
-      insuranceFee:0,
-      additionalFee:0,
-      isFixedPrice:0
-    }, callback)
-  }
+    this.setState(
+      {
+        details,
+        selectedDestination,
+        basePrice: 0,
+        declaredValueFee: 0,
+        discountFee: 0,
+        systemFee: 0,
+        portersFee: 0,
+        lengthFee: 0,
+        weightFee: 0,
+        isShortHaul: undefined,
+        handlingFee: 0,
+        insuranceFee: 0,
+        additionalFee: 0,
+        isFixedPrice: 0,
+      },
+      callback
+    );
+  };
 
-  handleView = (name, details, callback) =>{
+  handleView = (name, details, callback) => {
     switch (UserProfile.getBusCompanyTag()) {
-      case 'dltb': this.dltbHandleView(name, details, callback); break;
-      default: this.defaultHandleView(name, details, callback); break;
+      case "dltb":
+        this.dltbHandleView(name, details, callback);
+        break;
+      default:
+        this.defaultHandleView(name, details, callback);
+        break;
     }
-  }
+  };
 
   stepView = (step) => {
     let view = null;
 
     switch (step) {
       case 1:
-
         switch (UserProfile.getBusCompanyTag()) {
-
           default:
             view = (
               <>
@@ -1484,17 +1557,15 @@ class CreateParcel extends React.Component {
                     insuranceFee: this.state.insuranceFee,
                     isFixedPrice: this.state.isFixedPrice,
                     discountFee: this.state.discountFee,
-                    enabledExcessCargo: this.state.enabledExcessCargo
+                    enabledExcessCargo: this.state.enabledExcessCargo,
                   }}
                   details={this.state.details}
                   onTypeChange={(e) => this.onTypeChange(e.target.value)}
                   onSelectChange={(value, name) =>
                     this.onSelectChange(value, name)
                   }
-                  onChange={(val,name) => 
-                    this.onInputChange(name, val)
-                  }
-                  onCompute={()=>this.onCompute()}
+                  onChange={(val, name) => this.onInputChange(name, val)}
+                  onCompute={() => this.onCompute()}
                 />
                 <StepControllerView
                   width={this.state.width}
@@ -1507,7 +1578,7 @@ class CreateParcel extends React.Component {
                   }}
                 />
               </>
-            )
+            );
             break;
         }
         break;
@@ -1535,19 +1606,17 @@ class CreateParcel extends React.Component {
             </div> 
             <Divider />
             */}
-            <div style={{marginTop:'3rem'}}>
-            <WebCam
-              image={
-                this.state.packageImagePreview 
-              }
-              onCapture={(packageImagePreview) =>
-                this.setState({ packageImagePreview })
-              }
-            />
+            <div style={{ marginTop: "3rem" }}>
+              <WebCam
+                image={this.state.packageImagePreview}
+                onCapture={(packageImagePreview) =>
+                  this.setState({ packageImagePreview })
+                }
+              />
             </div>
-            
+
             <StepControllerView
-            display="none"
+              display="none"
               width={this.state.width}
               onPreviousStep={() => this.onPreviousStep()}
               onNextStep={() => {
@@ -1581,7 +1650,7 @@ class CreateParcel extends React.Component {
               width={this.state.width}
               disableNextButton={true}
               onPreviousStep={() => this.onPreviousStep()}
-              onNextStep={() => { }}
+              onNextStep={() => {}}
             />
           </>
         );
@@ -1673,11 +1742,10 @@ class CreateParcel extends React.Component {
         const { value, options } = currentDetails.associateFixPrice;
         const option = options.find((e) => e.name === value) || undefined;
         let price = option ? option.price : 0;
-        this.setState(
-          {
-            connectingCompanyComputation: Number(price),
-            tariffRate: 47.5,
-          });
+        this.setState({
+          connectingCompanyComputation: Number(price),
+          tariffRate: 47.5,
+        });
         return;
       }
 
@@ -1713,14 +1781,24 @@ class CreateParcel extends React.Component {
   };
 
   requestComputation = () => {
-    const { declaredValue, packageWeight, sticker_quantity, destination, length, discount, type } = this.state.details;
-    const selectedOption = destination.options.filter((e) => e.value === destination.value)[0];
+    const {
+      declaredValue,
+      packageWeight,
+      sticker_quantity,
+      destination,
+      length,
+      discount,
+      type,
+    } = this.state.details;
+    const selectedOption = destination.options.filter(
+      (e) => e.value === destination.value
+    )[0];
     const endStation = selectedOption.endStation || undefined;
     const startStation = this.userProfileObject.getAssignedStationId();
-    const discountName = (discount.value && discount.value.toLowerCase()) || 'none'
+    const discountName =
+      (discount.value && discount.value.toLowerCase()) || "none";
 
-    if (!endStation || !startStation)
-      return
+    if (!endStation || !startStation) return;
 
     const option = {
       origin: startStation,
@@ -1730,11 +1808,11 @@ class CreateParcel extends React.Component {
       parcelCount: Number(sticker_quantity.value),
       length: Number(length.value),
       discountName,
-      cargoType: type.value || 3
-    }
+      cargoType: type.value || 3,
+    };
 
     ParcelService.getDefaultComputation(option)
-      .then(e => {
+      .then((e) => {
         //console.info('getDefaultComputation',e)
         const { data, errorCode } = e.data;
         if (!errorCode) {
@@ -1751,28 +1829,27 @@ class CreateParcel extends React.Component {
             isShortHaul,
             insuranceFee,
             portersFee,
-            discountFee
+            discountFee,
           } = data;
 
-          const _lengthFee = Number(lengthFee || 0)
-          const _weightFee = Number(weightFee || 0)
-          const _additionFee = Number(additionalFee || 0)
-          const _systemFee = Number(systemFee || 0)
-          const _declaredValueFee = Number(declaredValueFee || 0)
-          let total = Number(totalShippingCost || 0)
-
+          const _lengthFee = Number(lengthFee || 0);
+          const _weightFee = Number(weightFee || 0);
+          const _additionFee = Number(additionalFee || 0);
+          const _systemFee = Number(systemFee || 0);
+          const _declaredValueFee = Number(declaredValueFee || 0);
+          let total = Number(totalShippingCost || 0);
 
           const _shippingCost = Number(shippingCost);
-          const _data = { ...this.state.details }
+          const _data = { ...this.state.details };
 
-          let quantity = Number(_data.quantity.value || 1)
+          let quantity = Number(_data.quantity.value || 1);
           quantity = quantity > 0 ? quantity : 1;
 
           if (quantity > 1) {
-            total = shippingCost * quantity
+            total = shippingCost * quantity;
           }
 
-          _data.totalShippingCost.value = total
+          _data.totalShippingCost.value = total;
           _data.packageInsurance.value = _declaredValueFee;
           _data.additionalFee.value = _additionFee;
           _data.systemFee.value = _systemFee;
@@ -1785,25 +1862,25 @@ class CreateParcel extends React.Component {
             declaredValueFee,
             handlingFee,
             lengthFee: _lengthFee.toFixed(2),
-            weightFee:_weightFee.toFixed(2),
+            weightFee: _weightFee.toFixed(2),
             details: _data,
             basePrice,
             isShortHaul: Boolean(isShortHaul),
-            isFixedPrice: false
+            isFixedPrice: false,
           });
-        }else{
+        } else {
           this.handleErrorNotification(errorCode);
         }
       })
-      .catch(()=>{
+      .catch(() => {
         showNotification({
           title: "Server Error",
           type: "error",
           message: "Can't process computation, please try again.",
         });
-        this.handleView('default',this.state.details,()=>{})
+        this.handleView("default", this.state.details, () => {});
       });
-  }
+  };
 
   getMatrixFare = ({ weight, declaredValue, length }) => {
     const { details, selectedDestination } = this.state;
@@ -1840,105 +1917,130 @@ class CreateParcel extends React.Component {
           description: "No Matrix found",
         });
       }
-    })
+    });
   };
 
-  setLogoutModal = (params) =>{
-    const logoutModal = {...this.state.logoutModal, ...params}
-    this.setState({logoutModal})
-  }
+  setLogoutModal = (params) => {
+    const logoutModal = { ...this.state.logoutModal, ...params };
+    this.setState({ logoutModal });
+  };
 
   render() {
     //console.info('create parcel',this.props)
     return (
       <>
-      <Layout className="create-parcelview-parent-container" style={{ background: 'white' }}>
-        <Header {...this.props} setVisibleLogout={()=>this.setLogoutModal({visible:true})} />
-        <Layout>
-          <Sider width={200} className="create-side-bar">
-            <div style={{ marginLeft: "2rem", marginTop: "1rem" }}>
-              <StepsView
-                disabled={this.state.stopStep}
-                stepList={STEPS_LIST}
-                current={this.state.currentStep}
-                onchange={(s) => this.updateSteps(s)}
-                direction="vertical"
-              />
-            </div>
-          </Sider>
-          <Content>
-            <div className="create-content-container">
-              {this.stepView(this.state.currentStep)}
-            </div>
-          </Content>
-        </Layout>
+        <Layout
+          className="create-parcelview-parent-container"
+          style={{ background: "white" }}
+        >
+          <Header
+            {...this.props}
+            setVisibleLogout={() => this.setLogoutModal({ visible: true })}
+          />
 
-        <CustomModal 
-          width={500} 
-          visible={this.state.createModal.visible} 
-          title={this.state.createModal.title}>
+          <Layout>
+            <Sider width={200} className="create-side-bar">
+              <div style={{ marginLeft: "2rem", marginTop: "1rem" }}>
+                <StepsView
+                  disabled={this.state.stopStep}
+                  stepList={STEPS_LIST}
+                  current={this.state.currentStep}
+                  onchange={(s) => this.updateSteps(s)}
+                  direction="vertical"
+                />
+              </div>
+            </Sider>
+            <Content>
+              <div className="create-content-container">
+                {this.stepView(this.state.currentStep)}
+              </div>
+            </Content>
+          </Layout>
 
-          <section className="bill-of-lading-modal-section">
-          <p className="message">
-            You have entered an existing bill of lading.
-            Please replace it and continue.
-          </p>
+          {/* EXISTING BILL OF LADING MODAL ----------------------------------------- */}
+          <CustomModal
+            width={500}
+            visible={this.state.createModal.visible}
+            title={this.state.createModal.title}
+          >
+            <section className="bill-of-lading-modal-section">
+              <p className="message">
+                You have entered an existing bill of lading. Please replace it
+                and continue.
+              </p>
 
-          <Form 
-            onFinish={(value)=>{
-              let details = {...this.state.details}
-              let billOfLading = {...details.billOfLading};
-               billOfLading.value = value.billOfLading;
-               billOfLading.accepted = true;
-               details.billOfLading = billOfLading;
+              <Form
+                onFinish={(value) => {
+                  let details = { ...this.state.details };
+                  let billOfLading = { ...details.billOfLading };
+                  billOfLading.value = value.billOfLading;
+                  billOfLading.accepted = true;
+                  details.billOfLading = billOfLading;
 
-               let createModal ={ ...this.state.createModal}
-               createModal.visible = false;
-
-               this.setState({details, createModal},()=>{
-                this.createParcel()
-               });
-            }}
-            name="modal-form">
-            <section className="input-section">
-              <Form.Item 
-                name="billOfLading"
-                label="Bill of Lading"
-                rules={[{ required: true, message: 'Bill of lading is required field' }, 
-                ((field)=>({
-                  validator(rule, value){
-                    if(value && value.trim().indexOf(' ') > -1){
-                      return Promise.reject('White space is not allowed!');
-                    }
-                    return Promise.resolve()
-                  }
-                }))]}>
-                  <Input 
-                    size="large" 
-                    placeholder="Bill of Lading"/>
-              </Form.Item>
-            </section>
-          <section className='button-section'>
-              <Button 
-                onClick={()=>{
-                  let createModal = {...this.state.createModal};
+                  let createModal = { ...this.state.createModal };
                   createModal.visible = false;
-                  this.setState({createModal})
-                }}
-                shape="round" 
-                className="button-cancel">Cancel</Button>
-              <Button 
-                htmlType="submit"
-                shape="round" 
-                className="button-update">Validate</Button>
-          </section>
 
-          </Form>
-            
-          </section>
-        </CustomModal>
-        <LogoutModal {...this.props} visible={this.state.logoutModal.visible} handleCancel={()=>this.setLogoutModal({visible:false})}/>
-      </Layout>
+                  this.setState({ details, createModal }, () => {
+                    this.createParcel();
+                  });
+                }}
+                name="modal-form"
+              >
+                <section className="input-section">
+                  <Form.Item
+                    name="billOfLading"
+                    label="Bill of Lading"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Bill of lading is required field",
+                      },
+                      (field) => ({
+                        validator(rule, value) {
+                          if (value && value.trim().indexOf(" ") > -1) {
+                            return Promise.reject(
+                              "White space is not allowed!"
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input size="large" placeholder="Bill of Lading" />
+                  </Form.Item>
+                </section>
+                <section className="button-section">
+                  <Button
+                    onClick={() => {
+                      let createModal = { ...this.state.createModal };
+                      createModal.visible = false;
+                      this.setState({ createModal });
+                    }}
+                    shape="round"
+                    className="button-cancel"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    shape="round"
+                    className="button-update"
+                  >
+                    Validate
+                  </Button>
+                </section>
+              </Form>
+            </section>
+          </CustomModal>
+          <LogoutModal
+            {...this.props}
+            visible={this.state.logoutModal.visible}
+            handleCancel={() => this.setLogoutModal({ visible: false })}
+          />
+        </Layout>
+        {/* IDLE TIMER HERE ------------------- */}
+        <IdleTimerContainer />
       </>
     );
   }

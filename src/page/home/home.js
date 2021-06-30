@@ -439,7 +439,7 @@ function Home(props) {
       </Layout>
       {/* END OF WHOLE SIDE MENU AND HOME PAGE  */}
 
-      <IdleTimerContainer />
+      {/* <IdleTimerContainer /> */}
       <LogoutModal
         {...props}
         visible={logoutModal.visible}
