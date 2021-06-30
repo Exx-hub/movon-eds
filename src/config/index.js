@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(148)",
+    build: "1.8.0(149)",
   },
   environment: "",
-  changeLogs: `feature/implement-cookie-popup`,
+  changeLogs: `feature/add-session-timeout-in-createParcel`,
 };
 
 export const ERROR_CODES = {
