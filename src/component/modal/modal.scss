@@ -5,47 +5,47 @@
   padding: 0.5rem;
 }
 
-.message{
+.message {
   font-size: 0.875rem;
   font-weight: 500;
 }
 
+// MODAL TITLE
 .title {
   font-size: 1rem;
   font-weight: 700;
 }
 
-.reason-text{
+.reason-text {
   color: gray;
   font-size: 0.8rem;
   font-weight: 300;
   margin: 0;
 }
 
-.button-section{
+.button-section {
   display: flex;
   justify-content: center;
   margin-top: 3rem;
   width: 100%;
 
-  .button{
+  .button {
     font-size: 16px !important;
     height: 35px;
     min-width: 120px;
     font-weight: 200;
     color: white;
     background: teal !important;
-
   }
-  
-  .button-cancel{
+
+  .button-cancel {
     @extend .button;
-    margin-right: .2rem;
+    margin-right: 0.2rem;
     background: rgb(110, 114, 114) !important;
   }
 
-  .button-update{
+  .button-update {
     @extend .button;
-    margin-left: .2rem;
+    margin-left: 0.2rem;
   }
 }

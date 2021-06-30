@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import IdleTimer from "react-idle-timer";
 
-import { openNotificationWithIcon, UserProfile } from "../../utility";
+import { UserProfile } from "../../utility";
 import User from "../../service/User";
-import { notification, Button } from "antd";
+import { notification } from "antd";
 
 function IdleTimerContainer() {
   const idleTimerRef = useRef(null);
@@ -38,7 +38,7 @@ function IdleTimerContainer() {
     });
   };
 
-  return <IdleTimer ref={idleTimerRef} timeout={5 * 1000} onIdle={onIdle} />;
+  return <IdleTimer ref={idleTimerRef} timeout={300 * 1000} onIdle={onIdle} />;
 }
 
 export default IdleTimerContainer;

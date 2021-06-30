@@ -3,13 +3,19 @@ import "./searchModule.scss";
 import moment from "moment-timezone";
 import { config } from "../../config";
 import Parcel from "../../service/Parcel";
-import { PromptModal } from '../../component/modal';
-import { DefaultMatrixModal } from '../../component/modal'
-import { openNotificationWithIcon, debounce, UserProfile, alterPath, modifyName } from "../../utility";
+import { PromptModal } from "../../component/modal";
+import { DefaultMatrixModal } from "../../component/modal";
+import {
+  openNotificationWithIcon,
+  debounce,
+  UserProfile,
+  alterPath,
+  modifyName,
+} from "../../utility";
 import { notification, Space, Table } from "antd";
 import { Layout, Button, Row, Input, Pagination } from "antd";
-import TransactionService from '../../service/VoidTransaction'
-import ManifestService from '../../service/Manifest'
+import TransactionService from "../../service/VoidTransaction";
+import ManifestService from "../../service/Manifest";
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -40,12 +46,12 @@ class SearchModule extends React.Component {
       limit: 10,
       checkInModal: {
         visible: false,
-        data: undefined
+        data: undefined,
       },
       arrivedModal: {
         visible: false,
-        data: undefined
-      }
+        data: undefined,
+      },
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -75,17 +81,17 @@ class SearchModule extends React.Component {
         {
           title: "Destination",
           dataIndex: "endStationName",
-          key: "endStationName"
+          key: "endStationName",
         },
         {
           title: "Sender",
           dataIndex: "sender",
-          key: "sender"
+          key: "sender",
         },
         {
           title: "Receiver",
           dataIndex: "receiver",
-          key: "receiver"
+          key: "receiver",
         },
         {
           title: "Pack. Count",
@@ -98,34 +104,74 @@ class SearchModule extends React.Component {
           dataIndex: "travelStatus",
           key: "travelStatus",
           sorter: (a, b) => a.travelStatus - b.travelStatus,
-          render: (text) => (config.parcelStatus[text].toUpperCase())
+          render: (text) => config.parcelStatus[text].toUpperCase(),
         },
         {
           title: "Action",
           key: "action",
           render: (text, record) => (
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: 'space-around' }}>
-              <Button disabled={!Boolean(record.travelStatus === 1)} type="danger" size="small" style={{ fontSize: '0.65rem' }} onClick={() => {
-                this.setState({ remarks: "", selectedRecord: record, visibleVoid: true })
-              }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <Button
+                disabled={!Boolean(record.travelStatus === 1)}
+                type="danger"
+                size="small"
+                style={{ fontSize: "0.65rem" }}
+                onClick={() => {
+                  this.setState({
+                    remarks: "",
+                    selectedRecord: record,
+                    visibleVoid: true,
+                  });
+                }}
+              >
                 Void
               </Button>
-              {(record.travelStatus === 1) && UserProfile.getBusCompanyTag() === 'dltb' && <Button disabled={!Boolean(record.travelStatus === 1)} size="small" style={{ fontSize: '0.65rem', background: `${record.travelStatus === 1 ? 'teal' : ""}`, color: `${record.travelStatus === 1 ? 'white' : ""}` }} onClick={() => {
-                const checkInModal = { ...this.state.checkInModal }
-                checkInModal.visible = true;
-                checkInModal.data = record;
-                this.setState({ checkInModal })
-              }}>
-                Check-In
-              </Button>}
-              {(record.travelStatus === 2) && UserProfile.getBusCompanyTag() === 'dltb' && <Button disabled={!Boolean(record.travelStatus === 2)} size="small" style={{ fontSize: '0.65rem', background: `${record.travelStatus === 2 ? 'teal' : ""}`, color: `${record.travelStatus === 2 ? 'white' : ""}` }} onClick={() => {
-                const arrivedModal = { ...this.state.arrivedModal }
-                arrivedModal.visible = true;
-                arrivedModal.data = record;
-                this.setState({ arrivedModal })
-              }}>
-                Arrived
-              </Button>}
+              {record.travelStatus === 1 &&
+                UserProfile.getBusCompanyTag() === "dltb" && (
+                  <Button
+                    disabled={!Boolean(record.travelStatus === 1)}
+                    size="small"
+                    style={{
+                      fontSize: "0.65rem",
+                      background: `${record.travelStatus === 1 ? "teal" : ""}`,
+                      color: `${record.travelStatus === 1 ? "white" : ""}`,
+                    }}
+                    onClick={() => {
+                      const checkInModal = { ...this.state.checkInModal };
+                      checkInModal.visible = true;
+                      checkInModal.data = record;
+                      this.setState({ checkInModal });
+                    }}
+                  >
+                    Check-In
+                  </Button>
+                )}
+              {record.travelStatus === 2 &&
+                UserProfile.getBusCompanyTag() === "dltb" && (
+                  <Button
+                    disabled={!Boolean(record.travelStatus === 2)}
+                    size="small"
+                    style={{
+                      fontSize: "0.65rem",
+                      background: `${record.travelStatus === 2 ? "teal" : ""}`,
+                      color: `${record.travelStatus === 2 ? "white" : ""}`,
+                    }}
+                    onClick={() => {
+                      const arrivedModal = { ...this.state.arrivedModal };
+                      arrivedModal.visible = true;
+                      arrivedModal.data = record;
+                      this.setState({ arrivedModal });
+                    }}
+                  >
+                    Arrived
+                  </Button>
+                )}
             </div>
           ),
         },
@@ -138,17 +184,26 @@ class SearchModule extends React.Component {
     let remarks = this.state.remarks;
 
     if (remarks) {
-      TransactionService.voidParcel(record.billOfLading, record._id, remarks)
-        .then(e => {
-          const { errorCode } = e.data;
-          if (errorCode) {
-            this.handleErrorNotification(errorCode);
-            return;
-          }
-          this.setState({ page: 1, selectedRecord: undefined, remarks: "", visibleVoid: false },
-            () => this.fetchParcelList());
-          ;
-        })
+      TransactionService.voidParcel(
+        record.billOfLading,
+        record._id,
+        remarks
+      ).then((e) => {
+        const { errorCode } = e.data;
+        if (errorCode) {
+          this.handleErrorNotification(errorCode);
+          return;
+        }
+        this.setState(
+          {
+            page: 1,
+            selectedRecord: undefined,
+            remarks: "",
+            visibleVoid: false,
+          },
+          () => this.fetchParcelList()
+        );
+      });
     }
   };
 
@@ -156,7 +211,7 @@ class SearchModule extends React.Component {
     this.setState({
       selectedRecord: null,
       visibleVoid: false,
-      remarks: ""
+      remarks: "",
     });
   };
 
@@ -168,18 +223,24 @@ class SearchModule extends React.Component {
   };
 
   fetchParcelList = () => {
-    Parcel.parcelPagination(this.state.page - 1, this.state.limit, this.state.searchValue)
+    Parcel.parcelPagination(
+      this.state.page - 1,
+      this.state.limit,
+      this.state.searchValue
+    )
       .then((e) => {
         const { data, errorCode } = e.data;
         if (errorCode) {
-          this.setState({ fetching: false })
+          this.setState({ fetching: false });
           this.handleErrorNotification(errorCode);
           return;
         }
         const parcelList = data.list.map((e, i) => {
           return {
             key: i,
-            sentDate: moment.tz(e.createdAt, "Asia/Manila").format("MMM DD, YYYY"),
+            sentDate: moment
+              .tz(e.createdAt, "Asia/Manila")
+              .format("MMM DD, YYYY"),
             qrcode: e.scanCode,
             billOfLading: e.billOfLading,
             description: e.packageInfo.packageName,
@@ -191,14 +252,18 @@ class SearchModule extends React.Component {
             tripId: e.tripId,
             startStationName: e.trips.startStation.name,
             endStationName: e.trips.endStation.name,
-            _id: e._id
+            _id: e._id,
           };
         });
-        this.setState({ fetching: false, parcelList, totalRecords: data.pagination.totalRecords });
+        this.setState({
+          fetching: false,
+          parcelList,
+          totalRecords: data.pagination.totalRecords,
+        });
       })
-      .catch(e => {
-        this.setState({ fetching: false })
-      })
+      .catch((e) => {
+        this.setState({ fetching: false });
+      });
   };
 
   handleErrorNotification = (code) => {
@@ -212,7 +277,7 @@ class SearchModule extends React.Component {
 
     if (code === 1000) {
       openNotificationWithIcon("error", code);
-      this.userProfileObject.clearData()
+      this.userProfileObject.clearData();
       this.props.history.push(alterPath("/"));
       return;
     }
@@ -221,79 +286,82 @@ class SearchModule extends React.Component {
 
   onPageChange = (page) => {
     if (page !== this.state.page)
-      this.setState({ page, fetching: true },
-        () => this.fetchParcelList());
-  }
+      this.setState({ page, fetching: true }, () => this.fetchParcelList());
+  };
 
   onNegativeCheckIn = () => {
-    const checkInModal = { ...this.state.checkInModal }
+    const checkInModal = { ...this.state.checkInModal };
     checkInModal.visible = false;
     checkInModal.data = undefined;
-    this.setState({ checkInModal })
-  }
+    this.setState({ checkInModal });
+  };
 
   onPositiveCheckIn = () => {
-    const data = this.state.checkInModal.data
+    const data = this.state.checkInModal.data;
     const parcelId = data._id;
-    ManifestService.checkInByParcel(parcelId)
-      .then(e => {
-        const { data } = e.data
-        let parcelList = [...this.state.parcelList]
-        if (data) {
-          let index = parcelList.findIndex(e => e._id === data._id)
-          if (index > -1) {
-            parcelList[index] = { ...parcelList[index], ...{ travelStatus: data.status } }
-          }
+    ManifestService.checkInByParcel(parcelId).then((e) => {
+      const { data } = e.data;
+      let parcelList = [...this.state.parcelList];
+      if (data) {
+        let index = parcelList.findIndex((e) => e._id === data._id);
+        if (index > -1) {
+          parcelList[index] = {
+            ...parcelList[index],
+            ...{ travelStatus: data.status },
+          };
         }
+      }
 
-        const checkInModal = { ...this.state.checkInModal }
-        checkInModal.visible = false;
-        checkInModal.data = undefined;
-        this.setState({
-          parcelList,
-          checkInModal
-        })
-      })
-  }
+      const checkInModal = { ...this.state.checkInModal };
+      checkInModal.visible = false;
+      checkInModal.data = undefined;
+      this.setState({
+        parcelList,
+        checkInModal,
+      });
+    });
+  };
 
   //Arrived
   onNegativeArrived = () => {
-    const arrivedModal = { ...this.state.arrivedModal }
+    const arrivedModal = { ...this.state.arrivedModal };
     arrivedModal.visible = false;
     arrivedModal.data = undefined;
-    this.setState({ arrivedModal })
-  }
+    this.setState({ arrivedModal });
+  };
 
   onPositiveArrived = () => {
-    const data = this.state.arrivedModal.data
+    const data = this.state.arrivedModal.data;
     const parcelId = data._id;
-    ManifestService.arrivedByParcel(parcelId)
-      .then(e => {
-        const { data } = e.data
-        let parcelList = [...this.state.parcelList]
-        if (data) {
-          let index = parcelList.findIndex(e => e._id === data._id)
-          if (index > -1) {
-            parcelList[index] = { ...parcelList[index], ...{ travelStatus: data.status } }
-          }
+    ManifestService.arrivedByParcel(parcelId).then((e) => {
+      const { data } = e.data;
+      let parcelList = [...this.state.parcelList];
+      if (data) {
+        let index = parcelList.findIndex((e) => e._id === data._id);
+        if (index > -1) {
+          parcelList[index] = {
+            ...parcelList[index],
+            ...{ travelStatus: data.status },
+          };
         }
+      }
 
-        const arrivedModal = { ...this.state.arrivedModal }
-        arrivedModal.visible = false;
-        arrivedModal.data = undefined;
-        this.setState({
-          parcelList,
-          arrivedModal
-        })
-        this.fetchParcelList()
-      })
-  }
+      const arrivedModal = { ...this.state.arrivedModal };
+      arrivedModal.visible = false;
+      arrivedModal.data = undefined;
+      this.setState({
+        parcelList,
+        arrivedModal,
+      });
+      this.fetchParcelList();
+    });
+  };
 
   render() {
     return (
       <Layout className="SearchModule">
         <Row justify="center">
-          <div style={{ marginTop: '1rem', marginBottom: "1rem" }}>
+          <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Search
               className="manifest-details-search-box"
               placeholder="Sender | Receiver | QR Code | Bill of Lading"
@@ -303,9 +371,7 @@ class SearchModule extends React.Component {
         </Row>
         <Content>
           <>
-            <div
-              className="SearchModule-table"
-            >
+            <div className="SearchModule-table">
               <Table
                 loading={this.state.fetching}
                 scroll={{ x: true }}
@@ -332,14 +398,15 @@ class SearchModule extends React.Component {
           handleOk={() => this.handleVoid()}
           handleCancel={() => this.handleCancel()}
           visible={this.state.visibleVoid}
-          title={<span class="title"> Are you sure you want to void this transcation? </span>}
+          title="Are you sure you want to void this transaction?"
           message="Transaction will NOT be voided immediately. Request will be sent to the bus administrator for approval."
           reason="Enter reason/s:"
           buttonType="danger"
           action="Send Request"
           remarks={this.state.remarks}
           disabled={!this.state.remarks}
-          onRemarksChange={(e) => this.setState({ remarks: e.target.value })} />
+          onRemarksChange={(e) => this.setState({ remarks: e.target.value })}
+        />
 
         <DefaultMatrixModal
           onCancel={() => this.onNegativeCheckIn()}
@@ -350,10 +417,16 @@ class SearchModule extends React.Component {
           onPositiveEvent={() => this.onPositiveCheckIn()}
         >
           <Space direction="vertical">
-            {
-              this.state.checkInModal.data && <p style={{ fontSize: "16px", fontStyle: 'italic' }}>Are you sure you would like to check-in this parcel with bill of lading no.
-                <span style={{ fontSize: "16px", fontWeight: 'bold' }}>&nbsp;{this.state.checkInModal.data.billOfLading}</span>?</p>
-            }
+            {this.state.checkInModal.data && (
+              <p style={{ fontSize: "16px", fontStyle: "italic" }}>
+                Are you sure you would like to check-in this parcel with bill of
+                lading no.
+                <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+                  &nbsp;{this.state.checkInModal.data.billOfLading}
+                </span>
+                ?
+              </p>
+            )}
           </Space>
         </DefaultMatrixModal>
         <DefaultMatrixModal
@@ -365,9 +438,11 @@ class SearchModule extends React.Component {
           onPositiveEvent={() => this.onPositiveArrived()}
         >
           <Space direction="vertical">
-            {
-              this.state.arrivedModal.data && <p style={{ fontSize: "16px", fontStyle: 'italic' }}>Press OK to change the status to received</p>
-            }
+            {this.state.arrivedModal.data && (
+              <p style={{ fontSize: "16px", fontStyle: "italic" }}>
+                Press OK to change the status to received
+              </p>
+            )}
           </Space>
         </DefaultMatrixModal>
       </Layout>

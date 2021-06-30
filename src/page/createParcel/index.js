@@ -1394,7 +1394,7 @@ class CreateParcel extends React.Component {
     details.systemFee.value = 0;
     details.totalShippingCost.value = 0;
 
-    let hideLength = undefined;
+    // let hideLength = undefined;
     let hideDeclaredValue = undefined;
     let hideQuantity = undefined;
     let hideWeight = undefined;

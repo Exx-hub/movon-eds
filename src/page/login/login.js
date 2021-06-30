@@ -147,7 +147,7 @@ function Login(props) {
           <p>
             We use cookies to improve your experience and deliver personalized
             content.{" "}
-            <Link>
+            <Link to="#">
               <b>Customize Settings</b>
             </Link>
           </p>
