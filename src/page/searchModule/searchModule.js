@@ -16,6 +16,7 @@ import { notification, Space, Table } from "antd";
 import { Layout, Button, Row, Input, Pagination } from "antd";
 import TransactionService from "../../service/VoidTransaction";
 import ManifestService from "../../service/Manifest";
+import { TableOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -61,6 +62,7 @@ class SearchModule extends React.Component {
   componentDidMount() {
     //this.fetchParcelList();
 
+    // SET THE TABLE HEADER AND DETAILS -----------------
     this.setState({
       columns: [
         {
