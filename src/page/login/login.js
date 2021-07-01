@@ -24,6 +24,11 @@ function Login(props) {
   React.useEffect(() => {
     if (userProfileObject.getCredential()) {
       props.history.push(alterPath("/"));
+
+      // onFinish, userid and pass will be sent to server and if correct credentials, server will return data with the response.
+      // user data and token will be saved in localstorate with key "credential". then state will be changed to loading false,
+      // that state change will trigger this userEffect, checking if there is value for credential, will change url to "/"
+      // window.location.replace("https://www.google.com");
     }
   }, [userProfileObject, props.history, state]);
 
@@ -51,10 +56,10 @@ function Login(props) {
 
     User.login(state.staffId, state.password).then((e) => {
       const { data, success, errorCode } = e.data;
+      console.log(e.data); // check the response from the server after entering login credentials
       if (errorCode) {
         handleErrorNotification(errorCode);
       }
-      setState({ ...state, ...{ isLoading: false } });
       if (success) {
         UserProfile.setCredential({ user: data.user, token: data.token });
         if (Number((data.user && data.user.status) || "0") === 0) {
@@ -64,7 +69,8 @@ function Login(props) {
           });
           UserProfile.logout(User);
         }
-        props.history.push(alterPath("/"));
+        setState({ ...state, ...{ isLoading: false } });
+        // props.history.push(alterPath("/")); -------- i think this is redundant
       }
     });
   };
