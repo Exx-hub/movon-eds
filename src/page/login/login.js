@@ -56,7 +56,7 @@ function Login(props) {
 
     User.login(state.staffId, state.password).then((e) => {
       const { data, success, errorCode } = e.data;
-      console.log(e.data); // check the response from the server after entering login credentials
+      console.log("FRESH FROM LOGIN FETCH:", e.data); // check the response from the server after entering login credentials
       if (errorCode) {
         handleErrorNotification(errorCode);
       }

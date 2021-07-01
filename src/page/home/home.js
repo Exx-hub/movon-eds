@@ -187,6 +187,9 @@ function Home(props) {
   const [userProfileObject] = React.useState(UserProfile);
   const [logoutModal, setLogoutModal] = React.useState({ visible: false });
 
+  console.log(userProfileObject); // check if UserProfile has values already.
+
+  // Side menu labels and routes
   React.useEffect(() => {
     // fills side menu with data like key and routes when clicked. action property has no use for now...
     if (menuData.length < 1) {
@@ -194,7 +197,7 @@ function Home(props) {
         {
           key: "search-parcel",
           destination: alterPath("/search-parcel"),
-          action: () => console.log("search clicked"),
+          action: () => {},
         },
         {
           key: "create-parcel",
@@ -245,6 +248,7 @@ function Home(props) {
     }
   }, [menuData, userProfileObject]);
 
+  // Side menu navigation
   const onNavigationMenuChange = (e) => {
     for (let i = 0; i < menuData.length; i++) {
       if (menuData[i].key === e.key) {
@@ -300,6 +304,7 @@ function Home(props) {
                 Manifest
               </Menu.Item>
 
+              {/* VOID TRANSACTIONS --------------------- */}
               <SubMenu
                 key="void-transactions"
                 icon={<SnippetsOutlined />}
@@ -318,6 +323,7 @@ function Home(props) {
                 </Menu.Item>
               </SubMenu>
 
+              {/* DAILY SALES SUBMENU ------------------ */}
               <SubMenu
                 key="sales-report"
                 icon={<BarChartOutlined />}
@@ -326,6 +332,8 @@ function Home(props) {
                 <Menu.Item key="sales-cargo" icon={<BarChartOutlined />}>
                   Daily Sales
                 </Menu.Item>
+
+                {/* I THINK THIS IS UNUSED ---------------- */}
                 {Boolean(false && userProfileObject.isIsarogLiners()) && (
                   <Menu.Item key="sales-vli-bitsi" icon={<BarChartOutlined />}>
                     VLI - BITSI Sales
@@ -333,6 +341,7 @@ function Home(props) {
                 )}
               </SubMenu>
 
+              {/* MATRIX SUB MENU ------------------- */}
               {Number(UserProfile.getRole()) === 2 && (
                 <SubMenu
                   key="matrix"
