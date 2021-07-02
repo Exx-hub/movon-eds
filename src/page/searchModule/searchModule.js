@@ -61,7 +61,7 @@ class SearchModule extends React.Component {
 
   componentDidMount() {
     //this.fetchParcelList();
-
+    // console.log("PARCEL LIST:", this.state.parcelList); place this outside to be able to view
     // SET THE TABLE HEADER AND DETAILS -----------------
     this.setState({
       columns: [
@@ -224,6 +224,7 @@ class SearchModule extends React.Component {
     );
   };
 
+  // this is where it gets the parcel transactions..
   fetchParcelList = () => {
     Parcel.parcelPagination(
       this.state.page - 1,
