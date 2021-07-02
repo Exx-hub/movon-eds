@@ -90,27 +90,6 @@ const modifyName = (fullName) => {
   });
 };
 
-// const getStickerLogoBw = () =>{
-//   let logo = undefined;
-//   switch (UserProfile.getBusCompanyTag()) {
-//     case 'isarog-liner':
-//       logo = IsarogLogobw
-//       break;
-
-//     case 'five-star':
-//       logo = FiveStarLogobw
-//       break;
-
-//     case 'dltb':
-//       logo = DltbLogobw
-//       break;
-
-//     default:
-//       logo = MovonLogo
-//       break;
-//   }
-//   return logo
-// }
 const getHeaderContainer = () => {
   let color = getHeaderColor();
   switch (UserProfile.getBusCompanyTag()) {
@@ -124,6 +103,8 @@ const getHeaderContainer = () => {
   }
   return color;
 };
+
+// user bus company tag logged in to determine header color.
 const getHeaderColor = () => {
   let color = undefined;
   switch (UserProfile.getBusCompanyTag()) {
@@ -137,6 +118,11 @@ const getHeaderColor = () => {
 
     case "dltb":
       color = "#fff";
+      break;
+
+    // case for Demo-2021.. can also just use default.
+    case "tst":
+      color = "coral";
       break;
 
     default:
@@ -168,6 +154,7 @@ const getStickerLogoBw = () => {
   return logo;
 };
 
+// uses bus company tag to get which logo to use...
 const getHeaderLogo = () => {
   let logo = undefined;
   switch (UserProfile.getBusCompanyTag()) {
@@ -181,6 +168,11 @@ const getHeaderLogo = () => {
 
     case "dltb":
       logo = DltbLogo;
+      break;
+
+    // case for Demo-2021 login
+    case "tst":
+      logo = UserProfile.getBusCompanyLogo();
       break;
 
     default:
