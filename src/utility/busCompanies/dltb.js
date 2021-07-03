@@ -112,6 +112,7 @@ class Dltb {
     return this.dataSource;
   }
 
+  // SETS PRICE MATRIX TABLE
   getTableColumn(callback) {
     const dltb = [
       {
@@ -226,6 +227,7 @@ class Dltb {
     return [...dltb, ...defaultSource];
   }
 
+  // SETS PRICE MATRIX TABLE
   getMatrixTable(callback) {
     return (
       <Table
@@ -238,6 +240,7 @@ class Dltb {
     );
   }
 
+  // SETS FIX PRICE MATRIX TABLE for DLTB
   getFixMatrixTableColumn(callback) {
     return [
       {

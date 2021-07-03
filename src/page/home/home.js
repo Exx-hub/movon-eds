@@ -401,18 +401,6 @@ function Home(props) {
                 />
               </Route>
 
-              {/* <Route path={alterPath("/search-parcel")}>
-                <SearchModule {...props} />
-              </Route> */}
-
-              {/* <Route path={alterPath("/report/sales/cargo")}>
-                <SalesReport
-                  source={tableSourceBitsi}
-                  {...props}
-                  title="SUMMARY OF CARGO SALES"
-                />
-              </Route> */}
-
               {/* CONDITIONAL MATRIX  ROUTES  */}
               {Number(UserProfile.getRole()) ===
                 Number(config.role["staff-admin"]) && (
