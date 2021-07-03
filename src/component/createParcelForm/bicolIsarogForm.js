@@ -11,7 +11,9 @@ function InputBox(props) {
   const isRequired = (props.detail && props.detail.isRequired) || false;
   const name = (props.detail && props.detail.name) || null;
   const accepted = (props.detail && props.detail.accepted) || false;
-  const value = (props.detail && ( (props.detail.value === undefined) ? "" : props.detail.value))
+  const value =
+    props.detail &&
+    (props.detail.value === undefined ? "" : props.detail.value);
 
   return (
     <div style={{ marginBottom: ".4rem", minHeight: "55px" }}>
@@ -32,7 +34,7 @@ function InputBox(props) {
         showError={props.showError}
         prefix={props.prefix}
         type={props.type}
-        onChange={(e=>props.onChange(e,name))}
+        onChange={(e) => props.onChange(e, name)}
       />
     </div>
   );
@@ -71,14 +73,11 @@ function BicolIsarogForm(props) {
     additionalFee,
   } = props.details;
 
-  const {
-    isFixedPrice,
-  } = props.priceDetails
-
+  const { isFixedPrice } = props.priceDetails;
 
   //temporary disble this features
-  const enableInterConnection = false //props.enableInterConnection;
-  
+  const enableInterConnection = false; //props.enableInterConnection;
+
   const _temList = destination.options.map((e) => e.name);
   const [tempList, setTempList] = React.useState(_temList);
 
@@ -93,28 +92,71 @@ function BicolIsarogForm(props) {
     setTempList(tempParcelData);
   };
 
-  const changeView = () =>{
+  const changeView = () => {
     let view = undefined;
     switch (UserProfile.getBusCompanyTag()) {
-      case 'five-star':
-        view = (<ShowFiveStarBreakDown data={{...props.priceDetails, isFixedPrice, systemFee:Number(systemFee.value).toFixed(2)}}/>)
-      break;
-      
-      case 'dltb': view = (<ShowDltbBreakDown data={{...props.priceDetails, isFixedPrice, additionalFee: Number(additionalFee.value).toFixed(2), systemFee:Number(systemFee.value).toFixed(2)}}/>); 
-      break;
+      case "five-star":
+        view = (
+          <ShowFiveStarBreakDown
+            data={{
+              ...props.priceDetails,
+              isFixedPrice,
+              systemFee: Number(systemFee.value).toFixed(2),
+            }}
+          />
+        );
+        break;
+
+      case "dltb":
+        view = (
+          <ShowDltbBreakDown
+            data={{
+              ...props.priceDetails,
+              isFixedPrice,
+              additionalFee: Number(additionalFee.value).toFixed(2),
+              systemFee: Number(systemFee.value).toFixed(2),
+            }}
+          />
+        );
+        break;
+
+      case "tst":
+        view = (
+          <ShowDltbBreakDown
+            data={{
+              ...props.priceDetails,
+              isFixedPrice,
+              additionalFee: Number(additionalFee.value).toFixed(2),
+              systemFee: Number(systemFee.value).toFixed(2),
+            }}
+          />
+        );
+        break;
 
       default:
-        view = (<ShowBicolIsarogBreakDown data={{...props.priceDetails, isFixedPrice, additionalFee: Number(additionalFee.value).toFixed(2), systemFee:Number(systemFee.value).toFixed(2)}} />)
+        view = (
+          <ShowBicolIsarogBreakDown
+            data={{
+              ...props.priceDetails,
+              isFixedPrice,
+              additionalFee: Number(additionalFee.value).toFixed(2),
+              systemFee: Number(systemFee.value).toFixed(2),
+            }}
+          />
+        );
         break;
     }
     return view;
-  }
+  };
 
   return (
     <div className="create-parcel-form">
-      <div className="input-container-border" style={{ padding: 0, boxShadow: "2px 5px 12px", marginBottom: '2rem' }}>
+      <div
+        className="input-container-border"
+        style={{ padding: 0, boxShadow: "2px 5px 12px", marginBottom: "2rem" }}
+      >
         <HeaderContainer title="Customers Information" />
-        <div style={{ padding: '1rem' }}>
+        <div style={{ padding: "1rem" }}>
           <Row>
             <Col span={8} className="gutter-row">
               <InputBox
@@ -198,19 +240,23 @@ function BicolIsarogForm(props) {
         </div>
       </div>
 
-      <div className="calculator-container-border" style={{ padding: 0, boxShadow: "2px 5px 12px", marginBottom: '2rem' }}>
-
+      <div
+        className="calculator-container-border"
+        style={{ padding: 0, boxShadow: "2px 5px 12px", marginBottom: "2rem" }}
+      >
         <HeaderContainer title="Select Station" />
-        <div style={{ padding: '1rem' }}>
+        <div style={{ padding: "1rem" }}>
           <Row>
             <Col className="gutter-row" span={8}>
               <div className="select-destination-form-container">
                 <span className="input-placeholder-title select-placeholder">
                   Destination*
-              </span>
+                </span>
                 <AutoComplete
                   size="large"
-                  className={`${!destination.accepted ? "select-error-destination-form" : ""}`}
+                  className={`${
+                    !destination.accepted ? "select-error-destination-form" : ""
+                  }`}
                   dataSource={tempList}
                   style={{ width: "100%" }}
                   onSelect={(e) =>
@@ -245,12 +291,13 @@ function BicolIsarogForm(props) {
               <div className="select-destination-form-container">
                 <span className="input-placeholder-title select-placeholder">
                   Fixed Price
-              </span>
+                </span>
                 <Select
                   size="large"
                   onBlur={() => props.onBlur(destination.name)}
-                  className={`${!fixMatrix.accepted ? "select-error-destination-form" : ""
-                    }`}
+                  className={`${
+                    !fixMatrix.accepted ? "select-error-destination-form" : ""
+                  }`}
                   onChange={(e) => props.onSelectChange(e, fixMatrix.name)}
                   value={fixMatrix.value}
                   style={{ width: "100%" }}
@@ -274,14 +321,15 @@ function BicolIsarogForm(props) {
               <div className="select-destination-form-container">
                 <span className="input-placeholder-title select-placeholder">
                   Associate
-              </span>
+                </span>
                 <Select
                   size="default"
                   onBlur={() => props.onBlur(connectingCompany.name)}
-                  className={`${!connectingCompany.accepted
-                    ? "select-error-destination-form"
-                    : ""
-                    }`}
+                  className={`${
+                    !connectingCompany.accepted
+                      ? "select-error-destination-form"
+                      : ""
+                  }`}
                   onChange={(e) =>
                     props.onSelectChange(e, connectingCompany.name)
                   }
@@ -296,7 +344,8 @@ function BicolIsarogForm(props) {
                 </Select>
                 {!connectingCompany.accepted && (
                   <span className="select-input-error">
-                    {connectingCompany.errorMessage || "Bus Company is required"}
+                    {connectingCompany.errorMessage ||
+                      "Bus Company is required"}
                   </span>
                 )}
               </div>
@@ -306,15 +355,18 @@ function BicolIsarogForm(props) {
               <div className="select-destination-form-container">
                 <span className="input-placeholder-title select-placeholder">
                   Associate Routes
-              </span>
+                </span>
                 <Select
                   size="default"
                   onBlur={() => props.onBlur(connectingRoutes.name)}
-                  className={`${!connectingRoutes.accepted
-                    ? "select-error-destination-form"
-                    : ""
-                    }`}
-                  onChange={(e) => props.onSelectChange(e, connectingRoutes.name)}
+                  className={`${
+                    !connectingRoutes.accepted
+                      ? "select-error-destination-form"
+                      : ""
+                  }`}
+                  onChange={(e) =>
+                    props.onSelectChange(e, connectingRoutes.name)
+                  }
                   value={connectingRoutes.value}
                   style={{ width: "100%" }}
                 >
@@ -336,15 +388,18 @@ function BicolIsarogForm(props) {
               <div className="select-destination-form-container">
                 <span className="input-placeholder-title select-placeholder">
                   Associate Fix Price
-              </span>
+                </span>
                 <Select
                   size="default"
                   onBlur={() => props.onBlur(associateFixPrice.name)}
-                  className={`${!connectingRoutes.accepted
-                    ? "select-error-destination-form"
-                    : ""
-                    }`}
-                  onChange={(e) => props.onSelectChange(e, associateFixPrice.name)}
+                  className={`${
+                    !connectingRoutes.accepted
+                      ? "select-error-destination-form"
+                      : ""
+                  }`}
+                  onChange={(e) =>
+                    props.onSelectChange(e, associateFixPrice.name)
+                  }
                   value={associateFixPrice.value}
                   style={{ width: "100%" }}
                 >
@@ -362,17 +417,36 @@ function BicolIsarogForm(props) {
               </div>
             </Col>
           </Row>
-
         </div>
       </div>
 
-      <div className="calculator-container-border" style={{ padding: 0, boxShadow: "2px 5px 12px" }}>
+      <div
+        className="calculator-container-border"
+        style={{ padding: 0, boxShadow: "2px 5px 12px" }}
+      >
         <HeaderContainer title="Price Matrix" color="#1d7ab2" />
 
-        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', padding: '1rem' }}>
-          <div style={{ width: '65%' }}>
-            <div style={{ padding: '.5rem', display: 'flex', flexDirection: 'column',}}>
-              <Radio.Group value={type.value} onChange={(e)=>props.onTypeChange(e)} style={{ alignSelf: 'center' }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            padding: "1rem",
+          }}
+        >
+          <div style={{ width: "65%" }}>
+            <div
+              style={{
+                padding: ".5rem",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Radio.Group
+                value={type.value}
+                onChange={(e) => props.onTypeChange(e)}
+                style={{ alignSelf: "center" }}
+              >
                 {type.options.map((e) => (
                   <Radio key={e.value} disabled={e.disabled} value={e.value}>
                     {e.name}
@@ -408,15 +482,17 @@ function BicolIsarogForm(props) {
               </Col>
 
               <Col span={8} className="gutter-row">
-              {<InputBox
-                type="number"
-                onBlur={() => props.onBlur(length.name)}
-                detail={length}
-                onChange={props.onChange}
-                placeholder="Length (meter)"
-                errorMessage={length.errorMessage}
-                title="Length"
-              />}
+                {
+                  <InputBox
+                    type="number"
+                    onBlur={() => props.onBlur(length.name)}
+                    detail={length}
+                    onChange={props.onChange}
+                    placeholder="Length (meter)"
+                    errorMessage={length.errorMessage}
+                    title="Length"
+                  />
+                }
               </Col>
             </Row>
 
@@ -453,9 +529,7 @@ function BicolIsarogForm(props) {
                   title="Bill of Lading"
                   placeholder="Bill of Lading"
                 />
-
               </Col>
-
             </Row>
 
             <Row>
@@ -466,7 +540,6 @@ function BicolIsarogForm(props) {
                   title="Additional Note"
                   placeholder="Additional Note"
                 />
-
               </Col>
 
               <Col span={8} className="gutter-row">
@@ -479,13 +552,12 @@ function BicolIsarogForm(props) {
                   title="Number of Pax"
                   placeholder="Number of Pax"
                 />
-
               </Col>
 
               <Col span={8} className="gutter-row">
                 <span className="input-placeholder-title select-placeholder">
                   Discount Type
-                  </span>
+                </span>
                 <Select
                   size="large"
                   disabled={discount.disabled}
@@ -503,8 +575,7 @@ function BicolIsarogForm(props) {
             </Row>
 
             <Row>
-              {
-                additionalFee.enabled &&
+              {additionalFee.enabled && (
                 <Col span={8} className="gutter-row">
                   <InputBox
                     type="number"
@@ -516,35 +587,69 @@ function BicolIsarogForm(props) {
                     placeholder="Additional Fee"
                   />
                 </Col>
-              }
+              )}
             </Row>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '35%', paddingLeft: '1.5rem', paddingRight: '1.5rem', marginLeft: '1rem', borderLeft: 'solid 1px rgba(56,56,56,.1)' }}>
-            <div style={{ alignSelf:'center', fontSize: 18, fontWeight:400, marginBottom:'2.5rem'}}>Payment Breakdown</div>
-
-            {
-              changeView()
-            }
-            
-            
-           
-            <div style={{display:'flex', justifyContent:'space-between'}}>
-              <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, fontWeight:"bold" }}><label>Total Shipping Cost</label></div>
-              <div style={{fontSize: 17, textAlign: 'right', fontWeight: 'bold' }}><label> ₱ {Number(totalShippingCost.value).toFixed(2)}</label></div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              width: "35%",
+              paddingLeft: "1.5rem",
+              paddingRight: "1.5rem",
+              marginLeft: "1rem",
+              borderLeft: "solid 1px rgba(56,56,56,.1)",
+            }}
+          >
+            <div
+              style={{
+                alignSelf: "center",
+                fontSize: 18,
+                fontWeight: 400,
+                marginBottom: "2.5rem",
+              }}
+            >
+              Payment Breakdown
             </div>
 
-            <div style={{display:'flex', marginTop:'1rem'}}>
-              <Button  onClick={()=>props.onCompute()} type="dashed" danger size="large" style={{borderRadius:5, fontWeight:'bold', width:'100%'}}>Compute Now</Button>
+            {changeView()}
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div
+                style={{
+                  fontStyle: "italic",
+                  textAlign: "left",
+                  fontSize: 15,
+                  fontWeight: "bold",
+                }}
+              >
+                <label>Total Shipping Cost</label>
               </div>
+              <div
+                style={{ fontSize: 17, textAlign: "right", fontWeight: "bold" }}
+              >
+                <label> ₱ {Number(totalShippingCost.value).toFixed(2)}</label>
+              </div>
+            </div>
 
+            <div style={{ display: "flex", marginTop: "1rem" }}>
+              <Button
+                onClick={() => props.onCompute()}
+                type="dashed"
+                danger
+                size="large"
+                style={{ borderRadius: 5, fontWeight: "bold", width: "100%" }}
+              >
+                Compute Now
+              </Button>
+            </div>
           </div>
-         
         </div>
-
       </div>
 
-      <div className="input-container-border" style={{ display: 'none' }}>
+      <div className="input-container-border" style={{ display: "none" }}>
         <h4 className="create-group-title">Bus Information</h4>
 
         <Row>
@@ -560,7 +665,7 @@ function BicolIsarogForm(props) {
           </Col>
         </Row>
 
-        <Row >
+        <Row>
           <Col span={8} className="gutter-row">
             <InputBox
               type="text"
@@ -601,153 +706,259 @@ function BicolIsarogForm(props) {
           </Col>
         </Row>
       </div>
-
     </div>
   );
 }
 
-const translateNumber = (val)=>{
-  if(!val || val === undefined || val === 'NaN' || val === null){
-    return  Number(0).toFixed(2)
+const translateNumber = (val) => {
+  if (!val || val === undefined || val === "NaN" || val === null) {
+    return Number(0).toFixed(2);
   }
   return val;
-}
+};
 
-function ShowBicolIsarogBreakDown(props){
+function ShowBicolIsarogBreakDown(props) {
   let view = undefined;
-    const{
-      basePrice,
-      declaredValueFee,
-      systemFee,
-      isFixedPrice,
-      additionalFee,
-      lengthFee,
-      discountFee,
-      portersFee,
-      weightFee,
-    }=props.data;
-    
-    if(isFixedPrice){
-      view=(<>
-        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
-        <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} />
-        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
-        <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
+  const {
+    basePrice,
+    declaredValueFee,
+    systemFee,
+    isFixedPrice,
+    additionalFee,
+    lengthFee,
+    discountFee,
+    portersFee,
+    weightFee,
+  } = props.data;
+
+  if (isFixedPrice) {
+    view = (
+      <>
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} />
+        <TextContainer
+          title="Additional Fee"
+          value={translateNumber(additionalFee)}
+        />
+        <TextContainer
+          title="Declared Value Fee"
+          value={translateNumber(declaredValueFee)}
+        />
+        <TextDiscountContainer
+          title="Discount"
+          value={translateNumber(discountFee)}
+        />
         <TextContainer title="System Fee" value={translateNumber(systemFee)} />
-        <TextContainer title="Porters Fee" value={translateNumber(portersFee)} /> 
-      </>)
-    }else{
-      view=(<>
-          <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
-          <TextContainer title="Weight Fee" value={translateNumber(weightFee)} />
-          <TextContainer title="Length Fee" value={translateNumber(lengthFee)} />
-          <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
-          <TextContainer title="System Fee" value={translateNumber(systemFee)} />
-          <TextContainer title="Porters Fee" value={translateNumber(portersFee)} />
-          <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
-      </>)
-    }
-
-    return(view)
-}
-
-
-function ShowFiveStarBreakDown(props){
-  let view = undefined;
-    const{
-      weightFee,
-      basePrice,
-      declaredValueFee,
-      systemFee,
-      isFixedPrice,
-      lengthFee,
-      discountFee
-    }=props.data;
-
-    if(isFixedPrice){
-      view=(<>
-        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
-        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
-        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
-        <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
-      </>)
-    }else{
-      view=(<>
-        <TextContainer title="Weight Fee" value={translateNumber(weightFee)} /> 
+        <TextContainer
+          title="Porters Fee"
+          value={translateNumber(portersFee)}
+        />
+      </>
+    );
+  } else {
+    view = (
+      <>
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} />
+        <TextContainer title="Weight Fee" value={translateNumber(weightFee)} />
         <TextContainer title="Length Fee" value={translateNumber(lengthFee)} />
-        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} />
+        <TextContainer
+          title="Declared Value Fee"
+          value={translateNumber(declaredValueFee)}
+        />
         <TextContainer title="System Fee" value={translateNumber(systemFee)} />
-        <TextDiscountContainer title="Discount" value={translateNumber(discountFee)} /> 
-      </>)
-    }
+        <TextContainer
+          title="Porters Fee"
+          value={translateNumber(portersFee)}
+        />
+        <TextDiscountContainer
+          title="Discount"
+          value={translateNumber(discountFee)}
+        />
+      </>
+    );
+  }
 
-    return(view)
-    
+  return view;
 }
 
-function ShowDltbBreakDown(props){
+function ShowFiveStarBreakDown(props) {
   let view = undefined;
-    const{
-      weightFee,
-      handlingFee,
-      basePrice,
-      isShortHaul,
-      declaredValueFee,
-      systemFee,
-      insuranceFee,
-      additionalFee,
-      isFixedPrice
-    }=props.data;
-  
-    if(isShortHaul || isFixedPrice){
-      view = (<>
-        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
-        <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} />
-        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
-        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
-      </>)
-    }else{
-      view = (<>
-        <TextContainer title="Base Price" value={translateNumber(basePrice)} /> 
-        <TextContainer title="Weight Fee" value={translateNumber(weightFee)} /> 
-        <TextContainer title="Additional Fee" value={translateNumber(additionalFee)} /> 
-        <TextContainer title="Handling Fee" value={translateNumber(handlingFee)} /> 
-        <TextContainer title="Insurance Fee" value={translateNumber(insuranceFee)} />
-        <TextContainer title="Declared Value Fee" value={translateNumber(declaredValueFee)} /> 
-        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
-      </>)
-    }
+  const {
+    weightFee,
+    basePrice,
+    declaredValueFee,
+    systemFee,
+    isFixedPrice,
+    lengthFee,
+    discountFee,
+  } = props.data;
 
-    return(view)
+  if (isFixedPrice) {
+    view = (
+      <>
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} />
+        <TextContainer
+          title="Declared Value Fee"
+          value={translateNumber(declaredValueFee)}
+        />
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+        <TextDiscountContainer
+          title="Discount"
+          value={translateNumber(discountFee)}
+        />
+      </>
+    );
+  } else {
+    view = (
+      <>
+        <TextContainer title="Weight Fee" value={translateNumber(weightFee)} />
+        <TextContainer title="Length Fee" value={translateNumber(lengthFee)} />
+        <TextContainer
+          title="Declared Value Fee"
+          value={translateNumber(declaredValueFee)}
+        />
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+        <TextDiscountContainer
+          title="Discount"
+          value={translateNumber(discountFee)}
+        />
+      </>
+    );
+  }
+
+  return view;
+}
+
+function ShowDltbBreakDown(props) {
+  let view = undefined;
+  const {
+    weightFee,
+    handlingFee,
+    basePrice,
+    isShortHaul,
+    declaredValueFee,
+    systemFee,
+    insuranceFee,
+    additionalFee,
+    isFixedPrice,
+  } = props.data;
+
+  if (isShortHaul || isFixedPrice) {
+    view = (
+      <>
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} />
+        <TextContainer
+          title="Additional Fee"
+          value={translateNumber(additionalFee)}
+        />
+        <TextContainer
+          title="Declared Value Fee"
+          value={translateNumber(declaredValueFee)}
+        />
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+      </>
+    );
+  } else {
+    view = (
+      <>
+        <TextContainer title="Base Price" value={translateNumber(basePrice)} />
+        <TextContainer title="Weight Fee" value={translateNumber(weightFee)} />
+        <TextContainer
+          title="Additional Fee"
+          value={translateNumber(additionalFee)}
+        />
+        <TextContainer
+          title="Handling Fee"
+          value={translateNumber(handlingFee)}
+        />
+        <TextContainer
+          title="Insurance Fee"
+          value={translateNumber(insuranceFee)}
+        />
+        <TextContainer
+          title="Declared Value Fee"
+          value={translateNumber(declaredValueFee)}
+        />
+        <TextContainer title="System Fee" value={translateNumber(systemFee)} />
+      </>
+    );
+  }
+
+  return view;
 }
 
 function TextContainer(props) {
-  return (<div style={{ display:'flex', justifyContent:'space-between', borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
-    <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15 }}><label>{props.title}</label></div>
-    <div style={{ fontSize: 15, textAlign: 'right' }}><label> ₱ {props.value}</label></div>
-  </div>)
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        borderBottom: "1px solid rgba(56,56,56,0.1)",
+        marginBottom: "2px",
+      }}
+    >
+      <div style={{ fontStyle: "italic", textAlign: "left", fontSize: 15 }}>
+        <label>{props.title}</label>
+      </div>
+      <div style={{ fontSize: 15, textAlign: "right" }}>
+        <label> ₱ {props.value}</label>
+      </div>
+    </div>
+  );
 }
 
 function TextDiscountContainer(props) {
-  return (<div style={{ display:'flex', justifyContent:'space-between', borderBottom: "1px solid rgba(56,56,56,0.1)", marginBottom: '2px' }}>
-    <div style={{ fontStyle: 'italic', textAlign: 'left', fontSize: 15, width: 200 }}><label>{props.title}</label></div>
-    <div style={{ fontSize: 15, textAlign: 'right', width: 110 }}><label> - ₱ {props.value}</label></div>
-  </div>)
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        borderBottom: "1px solid rgba(56,56,56,0.1)",
+        marginBottom: "2px",
+      }}
+    >
+      <div
+        style={{
+          fontStyle: "italic",
+          textAlign: "left",
+          fontSize: 15,
+          width: 200,
+        }}
+      >
+        <label>{props.title}</label>
+      </div>
+      <div style={{ fontSize: 15, textAlign: "right", width: 110 }}>
+        <label> - ₱ {props.value}</label>
+      </div>
+    </div>
+  );
 }
 
 function HeaderContainer(props) {
   let color = getHeaderColor();
   switch (UserProfile.getBusCompanyTag()) {
-    case 'isarog-liner':
-      color = "#1d7ab2"
+    case "isarog-liner":
+      color = "#1d7ab2";
       break;
-  
+
     default:
-      color = 'rgb(204, 39, 40)'
+      color = "rgb(204, 39, 40)";
       break;
   }
-  return (<div style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', background: color, display: 'flex', width: '100%', padding: '.5rem' }}>{props.title}</div>)
+  return (
+    <div
+      style={{
+        fontSize: "20px",
+        fontWeight: "bold",
+        color: "#fff",
+        background: color,
+        display: "flex",
+        width: "100%",
+        padding: ".5rem",
+      }}
+    >
+      {props.title}
+    </div>
+  );
 }
-
 
 export default BicolIsarogForm;

@@ -122,7 +122,7 @@ const getHeaderColor = () => {
 
     // case for Demo-2021.. can also just use default.
     case "tst":
-      color = "coral";
+      color = "#fff";
       break;
 
     default:
