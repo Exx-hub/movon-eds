@@ -15,7 +15,7 @@ import { NavLink } from "react-router-dom";
 const { Header } = Layout;
 
 function _Header(props) {
-  console.log("HEADER PROPS:", props);
+  // console.log("HEADER PROPS:", props);
 
   //  LEFT DROPDOWN MENU DETAILS HERE -----------------------
   const MenuData = [

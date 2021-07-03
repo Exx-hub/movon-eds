@@ -512,6 +512,12 @@ class CreateParcel extends React.Component {
         details.discount.disabled = true;
         break;
 
+      case "tst":
+        details.length.disabled = true;
+        details.length.isRequired = false;
+        details.discount.disabled = true;
+        break;
+
       default:
         break;
     }
@@ -1203,6 +1209,8 @@ class CreateParcel extends React.Component {
   };
 
   onCompute = () => {
+    console.log("COMPUTE NOW CLICKED!!");
+
     const option = this.getFixMatrixOption();
     const details = { ...this.state.details };
 
@@ -1521,6 +1529,11 @@ class CreateParcel extends React.Component {
       case "dltb":
         this.dltbHandleView(name, details, callback);
         break;
+
+      case "tst":
+        this.dltbHandleView(name, details, callback);
+        break;
+
       default:
         this.defaultHandleView(name, details, callback);
         break;
@@ -1813,7 +1826,8 @@ class CreateParcel extends React.Component {
 
     ParcelService.getDefaultComputation(option)
       .then((e) => {
-        //console.info('getDefaultComputation',e)
+        console.log("OPTION:", option);
+        console.info("GET DEFAULT COMPUTATION", e);
         const { data, errorCode } = e.data;
         if (!errorCode) {
           const {

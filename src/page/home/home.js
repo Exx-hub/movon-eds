@@ -187,7 +187,7 @@ function Home(props) {
   const [userProfileObject] = React.useState(UserProfile);
   const [logoutModal, setLogoutModal] = React.useState({ visible: false });
 
-  console.log("LOGGED FROM HOME.JS:", userProfileObject); // check if UserProfile has values already.
+  // console.log("LOGGED FROM HOME.JS:", userProfileObject); // check if UserProfile has values already.
 
   // Side menu labels and routes
   React.useEffect(() => {

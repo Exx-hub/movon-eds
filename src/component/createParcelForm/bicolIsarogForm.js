@@ -731,6 +731,8 @@ function ShowBicolIsarogBreakDown(props) {
     weightFee,
   } = props.data;
 
+  console.log(props.data);
+
   if (isFixedPrice) {
     view = (
       <>
@@ -842,6 +844,8 @@ function ShowDltbBreakDown(props) {
     isFixedPrice,
   } = props.data;
 
+  console.log(props.data); // show data from form
+
   if (isShortHaul || isFixedPrice) {
     view = (
       <>
@@ -886,6 +890,7 @@ function ShowDltbBreakDown(props) {
   return view;
 }
 
+// PAYMENT BREAKDOWN TITLES AND VALUES -- COMPONENT PASSED WITH PROPS FROM API CALL..
 function TextContainer(props) {
   return (
     <div
@@ -933,6 +938,7 @@ function TextDiscountContainer(props) {
   );
 }
 
+// HEADER COLOR of CREATE PARCEL FORM
 function HeaderContainer(props) {
   let color = getHeaderColor();
   switch (UserProfile.getBusCompanyTag()) {
@@ -942,6 +948,7 @@ function HeaderContainer(props) {
 
     default:
       color = "rgb(204, 39, 40)";
+      // color = "teal";
       break;
   }
   return (
