@@ -948,7 +948,6 @@ function HeaderContainer(props) {
 
     default:
       color = "rgb(204, 39, 40)";
-      // color = "teal";
       break;
   }
   return (
