@@ -873,6 +873,8 @@ class CreateParcel extends React.Component {
   fixPriceComputation = () => {
     let d = { ...this.state.details };
 
+    console.log("FIX PRICE COMPUTATION:", d);
+
     const options = {
       origin: UserProfile.getAssignedStationId(),
       destination: d.destination.value,
@@ -889,7 +891,8 @@ class CreateParcel extends React.Component {
     ParcelService.getDefaultFixMatrixComputation(options)
       .then((e) => {
         const { data, errorCode } = e.data;
-        //console.info('getDefaultFixMatrixComputation',e)
+        console.log("OPTION:", options);
+        console.info("GET DEFAULT FIX MATRIX COMPUTATION", e);
         if (!errorCode) {
           const {
             declaredValueFee,

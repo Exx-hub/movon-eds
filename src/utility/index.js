@@ -97,6 +97,14 @@ const getHeaderContainer = () => {
       color = "#1d7ab2";
       break;
 
+    case "dltb":
+      color = "rgb(204, 39, 40)";
+      break;
+
+    case "tst":
+      color = "teal";
+      break;
+
     default:
       color = "rgb(204, 39, 40)";
       break;
