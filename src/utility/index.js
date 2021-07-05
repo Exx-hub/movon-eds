@@ -8,6 +8,8 @@ import IsarogLogo from "../assets/bicol-isarog-png.png";
 import FiveStarLogobw from "../assets/five-star-bw-png.png";
 import DltbLogobw from "../assets/dltb-bw-png.png";
 import DltbLogo from "../assets/dltb-png.png";
+import MovonEDSLogo from "../assets/movon-eds-png.png";
+import MovonEDSLogobw from "../assets/movon-eds-bw-png.png";
 import FiveStarLogo from "../assets/five-star-png.png";
 
 const UserProfile = new UserProfileClass();
@@ -154,6 +156,10 @@ const getStickerLogoBw = () => {
     case "dltb":
       logo = DltbLogobw;
       break;
+      
+      case "tst":
+      logo = MovonEDSLogobw;
+      break;
 
     default:
       logo = MovonLogo;
@@ -180,7 +186,7 @@ const getHeaderLogo = () => {
 
     // case for Demo-2021 login
     case "tst":
-      logo = UserProfile.getBusCompanyLogo();
+      logo = MovonEDSLogo;
       break;
 
     default:

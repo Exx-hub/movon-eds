@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(150)",
+    build: "1.8.0(151)",
   },
   environment: "",
-  changeLogs: `feature/demo-account`,
+  changeLogs: ` Logo header / Logo in Sticker`,
 };
 
 export const ERROR_CODES = {
