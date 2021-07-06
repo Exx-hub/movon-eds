@@ -156,8 +156,8 @@ const getStickerLogoBw = () => {
     case "dltb":
       logo = DltbLogobw;
       break;
-      
-      case "tst":
+
+    case "tst":
       logo = MovonEDSLogobw;
       break;
 
@@ -196,6 +196,30 @@ const getHeaderLogo = () => {
   return logo;
 };
 
+const getManifestPreviewHeader = () => {
+  let color = undefined;
+
+  switch (UserProfile.getBusCompanyTag()) {
+    case "isarog-liner":
+      color = "#1d7ab2";
+      break;
+
+    case "dltb":
+      color = "rgb(204, 39, 40)";
+      break;
+
+    case "tst":
+      color = "teal";
+      break;
+
+    default:
+      color = "gray";
+      break;
+  }
+
+  return color;
+};
+
 const getCashierTextColor = () => {
   let color = undefined;
   switch (UserProfile.getBusCompanyTag()) {
@@ -228,4 +252,5 @@ export {
   getCashierTextColor,
   getHeaderColor,
   getHeaderContainer,
+  getManifestPreviewHeader,
 };

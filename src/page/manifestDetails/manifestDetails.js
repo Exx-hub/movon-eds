@@ -8,12 +8,27 @@ import { TableView } from "../../component/table";
 import TicketView from "../../component/ticketView";
 import ReactToPrint from "react-to-print";
 import ManifestService from "../../service/Manifest";
-import { openNotificationWithIcon, alterPath, modifyName, UserProfile } from "../../utility";
+import {
+  openNotificationWithIcon,
+  alterPath,
+  modifyName,
+  UserProfile,
+} from "../../utility";
 import { notification } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import { Layout, Button, Col, Row, Input, Tooltip, Skeleton, Space, Switch } from "antd";
-import { Header } from '../../component/header'
-import { LogoutModal } from '../../component/modal'
+import {
+  Layout,
+  Button,
+  Col,
+  Row,
+  Input,
+  Tooltip,
+  Skeleton,
+  Space,
+  Switch,
+} from "antd";
+import { Header } from "../../component/header";
+import { LogoutModal } from "../../component/modal";
 
 const { Search } = Input;
 
@@ -127,7 +142,7 @@ class ManifestDetails extends React.Component {
       date: undefined,
       startStationId: undefined,
       endStationId: undefined,
-      logoutModal: { visible: false }
+      logoutModal: { visible: false },
     };
     this.printEl = React.createRef();
     this.userProfileObject = UserProfile;
@@ -233,21 +248,21 @@ class ManifestDetails extends React.Component {
   parseParcel = () => {
     return this.state.tempParcelData
       ? this.state.tempParcelData.map((e, i) => {
-        return {
-          key: i,
-          qrcode: e.scanCode,
-          billOfLading: e.billOfLading,
-          sentDate: moment(e.sentDate).format("MMM DD, YYYY"),
-          description: e.packageInfo.packageName,
-          sender: modifyName(e.senderInfo.senderName || ""),
-          receiver: modifyName(e.recipientInfo.recipientName || ""),
-          qty: e.packageInfo.quantity,
-          travelStatus: config.parcelStatus[e.status],
-          packageImg: e.packageInfo.packageImages,
-          tripId: e.tripId,
-          _id: e._id,
-        };
-      })
+          return {
+            key: i,
+            qrcode: e.scanCode,
+            billOfLading: e.billOfLading,
+            sentDate: moment(e.sentDate).format("MMM DD, YYYY"),
+            description: e.packageInfo.packageName,
+            sender: modifyName(e.senderInfo.senderName || ""),
+            receiver: modifyName(e.recipientInfo.recipientName || ""),
+            qty: e.packageInfo.quantity,
+            travelStatus: config.parcelStatus[e.status],
+            packageImg: e.packageInfo.packageImages,
+            tripId: e.tripId,
+            _id: e._id,
+          };
+        })
       : [];
   };
 
@@ -259,18 +274,18 @@ class ManifestDetails extends React.Component {
   };
 
   getReviewDetails = (data) => {
-    const breakdown = data.paymentBreakdown || {}
-    let paymentBreakdown = {}
+    const breakdown = data.paymentBreakdown || {};
+    let paymentBreakdown = {};
 
     switch (UserProfile.getBusCompanyTag()) {
-      case 'dltb':
+      case "dltb":
         paymentBreakdown = {
           weightFee: Number(breakdown.weightFee || 0).toFixed(2),
           declaredValueFee: Number(breakdown.declaredvalueFee || 0).toFixed(2),
           additionalFee: Number(breakdown.additionalFee || 0).toFixed(2),
           handlingFee: Number(breakdown.handlingFee || 0).toFixed(2),
-          basePrice: Number(breakdown.basePrice || 0).toFixed(2)
-        }
+          basePrice: Number(breakdown.basePrice || 0).toFixed(2),
+        };
         break;
 
       case "five-star":
@@ -279,8 +294,8 @@ class ManifestDetails extends React.Component {
           weightFee: Number(breakdown.weightFee || 0).toFixed(2),
           declaredValueFee: Number(breakdown.declaredvalueFee || 0).toFixed(2),
           discountFee: Number(breakdown.discountFee || 0).toFixed(2),
-          basePrice: Number(breakdown.basePrice || 0).toFixed(2)
-        }
+          basePrice: Number(breakdown.basePrice || 0).toFixed(2),
+        };
         break;
 
       default:
@@ -289,11 +304,10 @@ class ManifestDetails extends React.Component {
           portersFee: Number(breakdown.portersFee || 0).toFixed(2),
           declaredValueFee: Number(breakdown.declaredvalueFee || 0).toFixed(2),
           discountFee: Number(breakdown.discountFee || 0).toFixed(2),
-          basePrice: Number(breakdown.basePrice || 0).toFixed(2)
-        }
+          basePrice: Number(breakdown.basePrice || 0).toFixed(2),
+        };
         break;
     }
-
 
     return {
       noOfSticker: this.userProfileObject.getStickerCount(),
@@ -316,7 +330,10 @@ class ManifestDetails extends React.Component {
       busCompanyName: data.busCompanyName,
       busCompanyLogo: data.busCompanyLogo,
       endStationName: data.trips.endStationName,
-      startStationName: data.trips.startStationName === "DLTB Cubao" ? "DLTB GMA" : data.trips.startStationName,
+      startStationName:
+        data.trips.startStationName === "DLTB Cubao"
+          ? "DLTB GMA"
+          : data.trips.startStationName,
       tripCode: data.trips.displayId,
       tripDate: data.trips.tripStartDateTime,
       scanCode: data.scanCode,
@@ -325,7 +342,7 @@ class ManifestDetails extends React.Component {
       subParcels: data.subParcels,
       length: data.packageInfo.length,
       declaredValue: data.packageInfo.estimatedValue,
-      ...paymentBreakdown
+      ...paymentBreakdown,
     };
   };
 
@@ -381,7 +398,7 @@ class ManifestDetails extends React.Component {
           <div className="right-content-section">
             <Row>
               <Col span={24}>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ display: "flex", justifyContent: "center" }}>
                   <Switch
                     checkedChildren="Card View"
                     unCheckedChildren="Table View"
@@ -504,21 +521,28 @@ class ManifestDetails extends React.Component {
     return View;
   };
 
-  doSorting = () => { };
+  doSorting = () => {};
 
   setLogoutModal = (params) => {
-    const logoutModal = { ...this.state.logoutModal, ...params }
-    this.setState({ logoutModal })
-  }
+    const logoutModal = { ...this.state.logoutModal, ...params };
+    this.setState({ logoutModal });
+  };
 
   render() {
     return (
       <Layout className="manifest-details-page">
-        <Header {...this.props} setVisibleLogout={() => this.setLogoutModal({ visible: true })} />
+        <Header
+          {...this.props}
+          setVisibleLogout={() => this.setLogoutModal({ visible: true })}
+        />
         <Layout className="manifest-details-page-body">
           {this.SwitchView()}
         </Layout>
-        <LogoutModal {...this.props} visible={this.state.logoutModal.visible} handleCancel={() => this.setLogoutModal({ visible: false })} />
+        <LogoutModal
+          {...this.props}
+          visible={this.state.logoutModal.visible}
+          handleCancel={() => this.setLogoutModal({ visible: false })}
+        />
       </Layout>
     );
   }
