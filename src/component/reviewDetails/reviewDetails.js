@@ -135,7 +135,21 @@ function FeeSection(props) {
       feesSection = (
         <>
           <NumberContainer label="Additional Fee" value={additionalFee} />
-          <NumberContainer label="Weight Fee" value={weightFee} />
+          {/* <NumberContainer label="Weight Fee" value={weightFee} /> */}
+          <NumberContainer label="Handling Fee" value={handlingFee} />
+          <NumberContainer label="Insurance Fee" value={insuranceFee} />
+          <NumberContainer
+            label="Declared Value Fee"
+            value={declaredValueFee}
+          />
+        </>
+      );
+      break;
+
+    case "tst":
+      feesSection = (
+        <>
+          <NumberContainer label="Additional Fee" value={additionalFee} />
           <NumberContainer label="Handling Fee" value={handlingFee} />
           <NumberContainer label="Insurance Fee" value={insuranceFee} />
           <NumberContainer

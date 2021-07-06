@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(152)",
+    build: "1.8.0(153)",
   },
   environment: "",
-  changeLogs: `feature/manifest-preview-ui-color`,
+  changeLogs: `update/duplicate-weightFee-in-manifest`,
 };
 
 export const ERROR_CODES = {
