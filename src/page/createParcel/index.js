@@ -817,9 +817,14 @@ class CreateParcel extends React.Component {
         );
         const discountFee = Number(this.state.discountFee);
         let _option = this.getDiscountOption();
-        let foc = (_option && _option.foc) || 0;
+        // let foc = (_option && _option.foc) || 0; -- not working / replaced with below
+        let foc = (_option && this.state.details.discount.foc) || 0;
         let hasMissingValue =
           Number(foc || 0) === 1 ? discountFee === 0 : totalShippingCost === 0;
+
+        // console.log("FOC:", foc);
+        // console.log("option:", _option);
+        // console.log("hasMissingValue:", hasMissingValue);
 
         if (hasMissingValue) {
           showNotification({
@@ -1255,6 +1260,7 @@ class CreateParcel extends React.Component {
 
   getDiscountOption = () => {
     let discount = { ...this.state.details.discount };
+    console.log("value before select - DISCOUNT.:", discount);
     let _option = discount.options.find((e) => e.name === discount.value);
     return _option;
   };
@@ -1360,7 +1366,10 @@ class CreateParcel extends React.Component {
           details.additionNote.disabled = true;
           details.additionNote.value = _option.name;
         }
-        details.discount.foc = (_option && _option.foc) || 0;
+        // details.discount.foc = (_option && _option.foc) || 0; -- not working / replaced with below
+        details.discount.foc =
+          (_option && _option.name === "For Donation (FOC 100%)") || 0;
+        console.log("Updated foc value - Discount:", details.discount);
         break;
 
       case "input-change":

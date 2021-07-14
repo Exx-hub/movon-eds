@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(153)",
+    build: "1.8.0(154)",
   },
   environment: "",
-  changeLogs: `update/duplicate-weightFee-in-manifest`,
+  changeLogs: `bugFix/FOC-transaction-createParcel`,
 };
 
 export const ERROR_CODES = {
