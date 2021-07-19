@@ -1368,7 +1368,7 @@ class CreateParcel extends React.Component {
         }
         // details.discount.foc = (_option && _option.foc) || 0; -- not working / replaced with below
         details.discount.foc =
-          (_option && _option.name === "For Donation (FOC 100%)") || 0;
+          (_option && _option.name === "For Donation (FOC - 100%)") || 0;
         console.log("Updated foc value - Discount:", details.discount);
         break;
 
