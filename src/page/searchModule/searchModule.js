@@ -134,46 +134,44 @@ class SearchModule extends React.Component {
               >
                 Void
               </Button>
-              {record.travelStatus === 1 &&
-                UserProfile.getBusCompanyTag() === "dltb" && (
-                  <Button
-                    disabled={!Boolean(record.travelStatus === 1)}
-                    size="small"
-                    style={{
-                      fontSize: "0.65rem",
-                      background: `${record.travelStatus === 1 ? "teal" : ""}`,
-                      color: `${record.travelStatus === 1 ? "white" : ""}`,
-                    }}
-                    onClick={() => {
-                      const checkInModal = { ...this.state.checkInModal };
-                      checkInModal.visible = true;
-                      checkInModal.data = record;
-                      this.setState({ checkInModal });
-                    }}
-                  >
-                    Check-In
-                  </Button>
-                )}
-              {record.travelStatus === 2 &&
-                UserProfile.getBusCompanyTag() === "dltb" && (
-                  <Button
-                    disabled={!Boolean(record.travelStatus === 2)}
-                    size="small"
-                    style={{
-                      fontSize: "0.65rem",
-                      background: `${record.travelStatus === 2 ? "teal" : ""}`,
-                      color: `${record.travelStatus === 2 ? "white" : ""}`,
-                    }}
-                    onClick={() => {
-                      const arrivedModal = { ...this.state.arrivedModal };
-                      arrivedModal.visible = true;
-                      arrivedModal.data = record;
-                      this.setState({ arrivedModal });
-                    }}
-                  >
-                    Arrived
-                  </Button>
-                )}
+              {record.travelStatus === 1 && (
+                <Button
+                  disabled={!Boolean(record.travelStatus === 1)}
+                  size="small"
+                  style={{
+                    fontSize: "0.65rem",
+                    background: `${record.travelStatus === 1 ? "teal" : ""}`,
+                    color: `${record.travelStatus === 1 ? "white" : ""}`,
+                  }}
+                  onClick={() => {
+                    const checkInModal = { ...this.state.checkInModal };
+                    checkInModal.visible = true;
+                    checkInModal.data = record;
+                    this.setState({ checkInModal });
+                  }}
+                >
+                  Check-In
+                </Button>
+              )}
+              {record.travelStatus === 2 && (
+                <Button
+                  disabled={!Boolean(record.travelStatus === 2)}
+                  size="small"
+                  style={{
+                    fontSize: "0.65rem",
+                    background: `${record.travelStatus === 2 ? "teal" : ""}`,
+                    color: `${record.travelStatus === 2 ? "white" : ""}`,
+                  }}
+                  onClick={() => {
+                    const arrivedModal = { ...this.state.arrivedModal };
+                    arrivedModal.visible = true;
+                    arrivedModal.data = record;
+                    this.setState({ arrivedModal });
+                  }}
+                >
+                  Arrived
+                </Button>
+              )}
             </div>
           ),
         },

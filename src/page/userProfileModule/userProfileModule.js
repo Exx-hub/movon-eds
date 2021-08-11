@@ -68,6 +68,8 @@ function ViewUserProfileModule(props) {
     }));
   };
 
+  console.log("modal:", editModal);
+
   return (
     <Layout className="about-main">
       <Header
