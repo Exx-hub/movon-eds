@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(154)",
+    build: "1.8.0(155)",
   },
   environment: "",
-  changeLogs: `bugFix/FOC-transaction-createParcel`,
+  changeLogs: `update/check-in-arrived-buttons-bitsi`,
 };
 
 export const ERROR_CODES = {
