@@ -456,9 +456,10 @@ const ParcelService = {
     busCompanyId
   ) => {
     const filename = "Cargo.PDF";
+
     return axios({
       method: "get",
-      url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list/export`,
+      url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list/export-pdf`,
       headers: {
         "x-auth-deviceid": config.header.deviceId,
         "x-auth-devicetype": config.header.deviceType,
