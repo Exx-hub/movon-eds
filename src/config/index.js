@@ -34,7 +34,7 @@ export const config = {
     build: "1.8.0(156)",
   },
   environment: "",
-  changeLogs: `feature/add-pdf-report-download`,
+  changeLogs: `update/change-url-to-export-pdf`,
 };
 
 export const ERROR_CODES = {
