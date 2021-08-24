@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(155)",
+    build: "1.8.0(156)",
   },
   environment: "",
-  changeLogs: `update/check-in-arrived-buttons-bitsi`,
+  changeLogs: `feature/add-pdf-report-download`,
 };
 
 export const ERROR_CODES = {

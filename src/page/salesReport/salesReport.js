@@ -325,6 +325,7 @@ class SalesReport extends React.Component {
   onHandleMenu = (item) => {
     switch (item.key) {
       case "downloadPdf":
+        this.downloadPdf();
         break;
       case "downloadXls":
         this.downloadXls();
@@ -337,7 +338,7 @@ class SalesReport extends React.Component {
   menu = (
     <Menu onClick={(e) => this.onHandleMenu(e)}>
       <Menu.Item
-        style={{ display: "none" }}
+        // style={{ display: "none" }}
         key="downloadPdf"
         icon={<FilePdfOutlined />}
       >
@@ -348,6 +349,29 @@ class SalesReport extends React.Component {
       </Menu.Item>
     </Menu>
   );
+
+  downloadPdf = () => {
+    const isP2P = this.props.isP2P || false;
+    let originId = this.state.originId;
+    const isAdmin =
+      Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
+    if (!isAdmin) {
+      originId = this.userProfileObject.getAssignedStationId();
+    }
+
+    return ParcelService.exportCargoParcelPDF(
+      this.props.title || "SUMMARY OF CARGO SALES",
+      moment(this.state.startDay).format("YYYY-MM-DD"),
+      moment(this.state.endDay).format("YYYY-MM-DD"),
+      originId,
+      this.state.tags.map((e) => e.end),
+      this.userProfileObject.getPersonFullName(),
+      this.state.totalAmount,
+      this.getDestination(),
+      isP2P,
+      this.userProfileObject.getBusCompanyId()
+    );
+  };
 
   downloadXls = () => {
     const isP2P = this.props.isP2P || false;
