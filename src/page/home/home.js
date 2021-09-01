@@ -193,7 +193,7 @@ const tableSourceBitsi = [
   },
   {
     title: "CASHIER",
-    dataIndex: "sender",
+    dataIndex: "cashier",
     key: "cashier",
     align: "center",
   },

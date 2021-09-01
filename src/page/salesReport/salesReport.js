@@ -67,6 +67,7 @@ class SalesReport extends React.Component {
       startStationRoutesTemp: [],
       endStationRoutesTemp: [],
       parcelStatusVisible: false,
+      parcelStatusFilter: [],
     };
     this.userProfileObject = UserProfile;
   }
@@ -182,6 +183,7 @@ class SalesReport extends React.Component {
         quantity: e.quantity,
         recipient: e.recipient,
         scanCode: e.scanCode,
+        cashier: e.cashier,
         sender: e.sender,
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
@@ -464,6 +466,11 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="Created"
+          onChange={() =>
+            this.setState({
+              parcelStatusFilter: [...this.state.parcelStatusFilter, "created"],
+            })
+          }
         />
         Created
       </div>
