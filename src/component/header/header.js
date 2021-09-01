@@ -17,7 +17,7 @@ const { Header } = Layout;
 function _Header(props) {
   // console.log("HEADER PROPS:", props);
 
-  //  LEFT DROPDOWN MENU DETAILS HERE -----------------------
+  //  RIGHT DROPDOWN MENU DETAILS HERE -----------------------
   const MenuData = [
     {
       key: "drop-down-user-profile",

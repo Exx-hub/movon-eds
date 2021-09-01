@@ -66,6 +66,7 @@ class SalesReport extends React.Component {
       endStationRoutes: [],
       startStationRoutesTemp: [],
       endStationRoutesTemp: [],
+      parcelStatusVisible: false,
     };
     this.userProfileObject = UserProfile;
   }
@@ -108,51 +109,6 @@ class SalesReport extends React.Component {
       this.setState(state, () => this.getParcel());
     });
   }
-
-  onSelectAutoComplete = (name, value) => {
-    let selected = [];
-
-    switch (name) {
-      case "origin":
-        selected =
-          this.state.startStationRoutes.find((e) => e.stationName === value) ||
-          null;
-        if (selected) {
-          const isAllIn = selected.stationId === "null"; //all
-          let state = {};
-          state.page = 1;
-          state.originId = isAllIn ? null : selected.stationId;
-          state.endStationRoutes = isAllIn
-            ? []
-            : this.getEndDestination(this.state.allRoutes, selected.stationId);
-          state.endStationRoutesTemp = isAllIn ? [] : state.endStationRoutes;
-          state.tags = isAllIn ? [] : [...this.state.tags];
-          this.setState(state, () => this.getParcel());
-        }
-        break;
-      case "destination":
-        selected =
-          this.state.endStationRoutes.find((e) => e.endStationName === value) ||
-          null;
-        if (selected) {
-          let tags = [];
-          if (selected.end !== "null") {
-            tags = [...this.state.tags];
-            let exist = tags.find((e) => e.end === selected.end);
-            if (!exist) {
-              tags.push({ end: selected.end, name: selected.endStationName });
-            }
-          }
-          this.setState(
-            { page: 1, destinationId: tags.map((e) => e.end), tags },
-            () => this.getParcel()
-          );
-        }
-        break;
-      default:
-        break;
-    }
-  };
 
   getEndDestination = (data, stationId) => {
     if (!stationId) return;
@@ -349,6 +305,20 @@ class SalesReport extends React.Component {
       </Menu.Item>
     </Menu>
   );
+  menu = (
+    <Menu onClick={(e) => this.onHandleMenu(e)}>
+      <Menu.Item
+        // style={{ display: "none" }}
+        key="downloadPdf"
+        icon={<FilePdfOutlined />}
+      >
+        Download PDF
+      </Menu.Item>
+      <Menu.Item key="downloadXls" icon={<ProfileOutlined />}>
+        Download XLS
+      </Menu.Item>
+    </Menu>
+  );
 
   downloadPdf = () => {
     const isP2P = this.props.isP2P || false;
@@ -431,16 +401,148 @@ class SalesReport extends React.Component {
     );
   };
 
+  onSelectAutoComplete = (name, value) => {
+    let selected = [];
+
+    switch (name) {
+      case "origin":
+        selected =
+          this.state.startStationRoutes.find((e) => e.stationName === value) ||
+          null;
+        if (selected) {
+          const isAllIn = selected.stationId === "null"; //all
+          let state = {};
+          state.page = 1;
+          state.originId = isAllIn ? null : selected.stationId;
+          state.endStationRoutes = isAllIn
+            ? []
+            : this.getEndDestination(this.state.allRoutes, selected.stationId);
+          state.endStationRoutesTemp = isAllIn ? [] : state.endStationRoutes;
+          state.tags = isAllIn ? [] : [...this.state.tags];
+          this.setState(state, () => this.getParcel());
+        }
+        break;
+      case "destination":
+        selected =
+          this.state.endStationRoutes.find((e) => e.endStationName === value) ||
+          null;
+        if (selected) {
+          let tags = [];
+          if (selected.end !== "null") {
+            tags = [...this.state.tags];
+            let exist = tags.find((e) => e.end === selected.end);
+            if (!exist) {
+              tags.push({ end: selected.end, name: selected.endStationName });
+            }
+          }
+          this.setState(
+            { page: 1, destinationId: tags.map((e) => e.end), tags },
+            () => this.getParcel()
+          );
+        }
+        break;
+      case "parcelStatus":
+        return;
+        break;
+      default:
+        break;
+    }
+  };
+
+  // PARCEL STATUS DROP DOWN MENU ITEMS
+  parcelStatuses = (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "white",
+        marginTop: ".3rem",
+      }}
+    >
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
+          name="Created"
+        />
+        Created
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
+          name="In-Transit"
+        />
+        In-transit
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
+          name="Received"
+        />
+        Received
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
+          name="Claimed"
+        />
+        Claimed
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
+          name="Delivered"
+        />
+        Delivered
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
+          name="Voided"
+        />
+        Voided
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
+          name="Modified"
+        />
+        Modified
+      </div>
+    </div>
+  );
+
+  // PARCEL STATUS VISIBILITY TOGGLER
+  handleVisibleChange = (flag) => {
+    this.setState({ parcelStatusVisible: flag });
+  };
+
+  // filterParcelStatus = (name) => {
+  //   const filtered = this.state.data.filter((e) => e.status === name);
+  //   this.setState({ data: filtered });
+  // };
+
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
+    // const filtered = this.state.data.filter((e) => e.status === "received");
+    // console.log("DATA:", this.state.data);
+    // console.log("FILTERED:", filtered);
+
+    console.log(this.state);
 
     return (
       <Layout>
         <Content style={{ padding: "1rem", paddingTop: "2rem" }}>
-          <Row>
+          <Row style={{ display: "flex", justifyContent: "space-evenly" }}>
             {isAdmin && (
-              <Col span={6}>
+              <Col style={{ flex: 1 }}>
                 <AutoComplete
                   size="large"
                   style={{ width: "100%" }}
@@ -455,7 +557,7 @@ class SalesReport extends React.Component {
               </Col>
             )}
 
-            <Col span={6}>
+            <Col style={{ flex: 1 }}>
               <AutoComplete
                 size="large"
                 style={{ width: "100%", marginLeft: "0.5rem" }}
@@ -471,7 +573,19 @@ class SalesReport extends React.Component {
               </AutoComplete>
             </Col>
 
-            <Col offset={isAdmin ? 0 : 6} span={12}>
+            <Col style={{ flex: 1, marginLeft: "1rem" }}>
+              <Dropdown
+                onVisibleChange={this.handleVisibleChange}
+                visible={this.state.parcelStatusVisible}
+                overlay={this.parcelStatuses}
+              >
+                <Button>
+                  Parcel Status <DownOutlined />
+                </Button>
+              </Dropdown>
+            </Col>
+
+            <Col style={{ flex: 1 }}>
               {" "}
               <RangePicker
                 size="large"
@@ -494,6 +608,7 @@ class SalesReport extends React.Component {
                   background: "white",
                   minHeight: "2rem",
                   overflow: "hidden",
+                  marginLeft: isAdmin ? "" : ".5rem",
                 }}
               >
                 <div>
