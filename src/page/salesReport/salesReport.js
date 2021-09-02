@@ -134,6 +134,8 @@ class SalesReport extends React.Component {
         ? this.state.originId
         : UserProfile.getAssignedStationId();
 
+        console.log("GET PARCEL API")
+
     ParcelService.getAllParcel(
       startStationId,
       moment(this.state.startDay).format("YYYY-MM-DD"),
@@ -141,7 +143,8 @@ class SalesReport extends React.Component {
       this.state.destinationId,
       this.userProfileObject.getBusCompanyId(),
       this.state.page - 1,
-      this.state.limit
+      this.state.limit,
+      // this.state.parcelStatusFilter
     )
       .then((e) => {
         const { errorCode } = e.data;
@@ -307,20 +310,6 @@ class SalesReport extends React.Component {
       </Menu.Item>
     </Menu>
   );
-  menu = (
-    <Menu onClick={(e) => this.onHandleMenu(e)}>
-      <Menu.Item
-        // style={{ display: "none" }}
-        key="downloadPdf"
-        icon={<FilePdfOutlined />}
-      >
-        Download PDF
-      </Menu.Item>
-      <Menu.Item key="downloadXls" icon={<ProfileOutlined />}>
-        Download XLS
-      </Menu.Item>
-    </Menu>
-  );
 
   downloadPdf = () => {
     const isP2P = this.props.isP2P || false;
@@ -451,6 +440,89 @@ class SalesReport extends React.Component {
     }
   };
 
+  // PARCEL STATUS VISIBILITY TOGGLER
+  handleVisibleChange = (flag) => {
+    this.setState({ parcelStatusVisible: flag });
+  };
+
+
+  // Includes checked status checkbox in filter array then call api, also removes item from array
+  handleFilter = (status) => {
+    let filtered;
+    switch (status) {
+      case "Created":
+        if(!this.state.parcelStatusFilter.includes(1)){
+          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 1] }, () => this.getFilteredParcels() )
+        } else {
+          console.log("Already exists!")
+          filtered = this.state.parcelStatusFilter.filter(num => num !== 1)
+          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+        }
+        break;
+      case "In-Transit":
+        if(!this.state.parcelStatusFilter.includes(2)){
+          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 2] }, () => this.getFilteredParcels() )
+        } else {
+          console.log("UNCHECKED and REMOVED")
+          filtered = this.state.parcelStatusFilter.filter(num => num !== 2)
+          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+        }
+        break;
+      case "Received":
+        if(!this.state.parcelStatusFilter.includes(3)){
+            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 3] }, () => this.getFilteredParcels() )
+        } else {
+          console.log("UNCHECKED and REMOVED")
+          filtered = this.state.parcelStatusFilter.filter(num => num !== 3)
+          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+        }
+        break;
+      case "Claimed":
+        if(!this.state.parcelStatusFilter.includes(4)){
+            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 4] }, () => this.getFilteredParcels() )
+            } else {
+            console.log("UNCHECKED and REMOVED")
+            filtered = this.state.parcelStatusFilter.filter(num => num !== 4)
+            this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+          }
+        break;
+      case "Delivered":
+        if(!this.state.parcelStatusFilter.includes(5)){
+            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 5] }, () => this.getFilteredParcels() )
+          } else {
+            console.log("UNCHECKED and REMOVED")
+            filtered = this.state.parcelStatusFilter.filter(num => num !== 5)
+            this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+          }
+        break;
+      case "Voided":
+        if(!this.state.parcelStatusFilter.includes(6)){
+          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 6] }, () => this.getFilteredParcels() )
+          } else {
+            console.log("UNCHECKED and REMOVED")
+            filtered = this.state.parcelStatusFilter.filter(num => num !== 6)
+            this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+          }
+          break;
+      case "Modified":
+        if(!this.state.parcelStatusFilter.includes(7)){
+          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 7] }, () => this.getFilteredParcels() )
+        } else {
+          console.log("UNCHECKED and REMOVED")
+          filtered = this.state.parcelStatusFilter.filter(num => num !== 7)
+          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+        }
+      default:
+        break;
+    }
+    console.log(status, "checked");
+  };
+
+  getFilteredParcels = () => {
+    console.log("CALL GETPARCEL API:", this.state.parcelStatusFilter);
+    this.getParcel()
+  };
+
   // PARCEL STATUS DROP DOWN MENU ITEMS
   parcelStatuses = (
     <div
@@ -466,11 +538,7 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="Created"
-          onChange={() =>
-            this.setState({
-              parcelStatusFilter: [...this.state.parcelStatusFilter, "created"],
-            })
-          }
+          onChange={(e) => this.handleFilter(e.target.name)}
         />
         Created
       </div>
@@ -479,6 +547,7 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="In-Transit"
+          onChange={(e) => this.handleFilter(e.target.name)}
         />
         In-transit
       </div>
@@ -487,6 +556,7 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="Received"
+          onChange={(e) => this.handleFilter(e.target.name)}
         />
         Received
       </div>
@@ -495,6 +565,7 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="Claimed"
+          onChange={(e) => this.handleFilter(e.target.name)}
         />
         Claimed
       </div>
@@ -503,6 +574,7 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="Delivered"
+          onChange={(e) => this.handleFilter(e.target.name)}
         />
         Delivered
       </div>
@@ -511,6 +583,7 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="Voided"
+          onChange={(e) => this.handleFilter(e.target.name)}
         />
         Voided
       </div>
@@ -519,21 +592,13 @@ class SalesReport extends React.Component {
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
           name="Modified"
+          onChange={(e) => this.handleFilter(e.target.name)}
         />
         Modified
       </div>
+      {/* <Button onClick={this.handleFilter}>Filter</Button> */}
     </div>
   );
-
-  // PARCEL STATUS VISIBILITY TOGGLER
-  handleVisibleChange = (flag) => {
-    this.setState({ parcelStatusVisible: flag });
-  };
-
-  // filterParcelStatus = (name) => {
-  //   const filtered = this.state.data.filter((e) => e.status === name);
-  //   this.setState({ data: filtered });
-  // };
 
   render() {
     const isAdmin =
@@ -585,6 +650,7 @@ class SalesReport extends React.Component {
                 onVisibleChange={this.handleVisibleChange}
                 visible={this.state.parcelStatusVisible}
                 overlay={this.parcelStatuses}
+                // trigger="click"
               >
                 <Button>
                   Parcel Status <DownOutlined />

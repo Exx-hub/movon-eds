@@ -372,6 +372,7 @@ const ParcelService = {
     busCompanyId,
     page,
     limit
+    // filterArray
   ) => {
     return axios({
       method: "get",
@@ -388,9 +389,40 @@ const ParcelService = {
         endStation,
         page,
         limit,
+        // filterArray
       },
     });
   },
+
+  // getFilteredParcels: (
+  //   startStation,
+  //   dateFrom,
+  //   dateTo,
+  //   endStation,
+  //   busCompanyId,
+  //   page,
+  //   limit,
+  //   filterArray
+  // ) => {
+  //   return axios({
+  //     method: "get",
+  //     url: `${BASE_URL}/api/v1/account/delivery-person/parcel/${busCompanyId}/list`,
+  //     headers: {
+  //       "x-auth-deviceid": config.header.deviceId,
+  //       "x-auth-devicetype": config.header.deviceType,
+  //       "x-auth-token": userProfileObject.getToken(),
+  //     },
+  //     params: {
+  //       dateFrom,
+  //       dateTo,
+  //       startStation,
+  //       endStation,
+  //       page,
+  //       limit,
+  //       filterArray
+  //     },
+  //   });
+  // },
 
   exportCargoParcel: (
     title,
