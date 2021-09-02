@@ -371,7 +371,7 @@ const ParcelService = {
     endStation,
     busCompanyId,
     page,
-    limit
+    limit,
     // filterArray
   ) => {
     return axios({

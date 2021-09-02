@@ -134,7 +134,7 @@ class SalesReport extends React.Component {
         ? this.state.originId
         : UserProfile.getAssignedStationId();
 
-        console.log("GET PARCEL API")
+        console.log("GET PARCEL API CALLING...")
 
     ParcelService.getAllParcel(
       startStationId,
@@ -153,6 +153,7 @@ class SalesReport extends React.Component {
           return;
         }
         this.parseParcel(e);
+        console.log("SUCCESS CALLING API")
       })
       .catch((e) => {
         this.setState({ fetching: false });
@@ -519,7 +520,7 @@ class SalesReport extends React.Component {
   };
 
   getFilteredParcels = () => {
-    console.log("CALL GETPARCEL API:", this.state.parcelStatusFilter);
+    console.log("CALL GET PARCEL API:", this.state.parcelStatusFilter);
     this.getParcel()
   };
 
