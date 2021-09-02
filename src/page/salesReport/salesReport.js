@@ -519,6 +519,7 @@ class SalesReport extends React.Component {
     console.log(status, "checked");
   };
 
+  // Function to call getParcel API everytime a filter checkbox is checked or unchecked to display filtered/unfiltered data
   getFilteredParcels = () => {
     console.log("CALL GET PARCEL API:", this.state.parcelStatusFilter);
     this.getParcel()
@@ -604,10 +605,7 @@ class SalesReport extends React.Component {
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
-    // const filtered = this.state.data.filter((e) => e.status === "received");
-    // console.log("DATA:", this.state.data);
-    // console.log("FILTERED:", filtered);
-
+ 
     console.log(this.state);
 
     return (
