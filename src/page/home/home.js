@@ -97,107 +97,6 @@ const tableSourceVliBitsi = [
   },
 ];
 
-// Data table for daily sales report table CARGO Sales//
-const tableSourceBitsi = [
-  {
-    title: "BL NO.",
-    dataIndex: "billOfLading",
-    key: "billOfLading",
-    fixed: "left",
-    align: "center",
-  },
-  {
-    title: "DATE",
-    dataIndex: "sentDate",
-    key: "sentDate",
-    align: "center",
-  },
-  {
-    title: "ORIGIN",
-    dataIndex: "origin",
-    key: "origin",
-    align: "center",
-  },
-  {
-    title: "DESTINATION",
-    dataIndex: "destination",
-    key: "destination",
-    align: "center",
-  },
-  {
-    title: "SENDER",
-    dataIndex: "sender",
-    key: "sender",
-    align: "center",
-  },
-  {
-    title: "SENDER PHONE#.",
-    dataIndex: "senderPhoneNo",
-    key: "senderPhoneNo",
-    align: "center",
-  },
-  {
-    title: "RECEIVER",
-    dataIndex: "recipient",
-    key: "recipient",
-    align: "center",
-  },
-  {
-    title: "RECEIVER PHONE#",
-    dataIndex: "recipientPhoneNo",
-    key: "recipientPhoneNo,",
-    align: "center",
-  },
-  {
-    title: "WEIGHT",
-    dataIndex: "packageWeight",
-    key: "packageWeight",
-    align: "center",
-  },
-  {
-    title: "DESCRIPTION",
-    dataIndex: "packageName",
-    key: "packageName",
-    align: "center",
-  },
-  {
-    title: "PARCEL STATUS",
-    dataIndex: "status",
-    key: "status",
-    align: "center",
-  },
-  {
-    title: "REMARKS",
-    dataIndex: "remarks",
-    key: "remarks",
-    align: "center",
-  },
-
-  {
-    title: "DECLARED VALUE",
-    dataIndex: "declaredValue",
-    key: "declaredValue",
-    align: "center",
-  },
-  {
-    title: "SYSTEM FEE",
-    dataIndex: "systemFee",
-    key: "systemFee",
-    align: "center",
-  },
-  {
-    title: "AMOUNT",
-    dataIndex: "price",
-    key: "price",
-    align: "center",
-  },
-  {
-    title: "CASHIER",
-    dataIndex: "cashier",
-    key: "cashier",
-    align: "center",
-  },
-];
 
 function Home(props) {
   const [menuData, setMenuData] = React.useState([]);
@@ -412,7 +311,7 @@ function Home(props) {
 
               <Route path={alterPath("/report/sales/cargo")}>
                 <SalesReport
-                  source={tableSourceBitsi}
+                  // source={tableSourceBitsi}
                   {...props}
                   title="SUMMARY OF CARGO SALES"
                 />
@@ -435,7 +334,7 @@ function Home(props) {
                 Number(config.role["staff-admin"]) && (
                 <Route path={alterPath("/report/sales/vli-bitsi")}>
                   <SalesReport
-                    source={tableSourceVliBitsi}
+                    // source={tableSourceVliBitsi} moved to salesReport.js
                     isP2P={true}
                     {...props}
                     title="SUMMARY OF VLI-BITSI SALES"

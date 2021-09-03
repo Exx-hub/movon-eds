@@ -34,6 +34,142 @@ const { Content } = Layout;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
+
+const getTag = (props) => {
+  let color = "";
+  let caption = ""
+  switch(props) {
+    case "created":
+      color = "success"
+      caption= "Active"
+      break;
+    case "in-transit":
+      color = "success"
+      caption= "Active"
+      break;
+    case "received":
+      color = "default"
+      caption= "Closed"
+      break;
+    case "void": 
+      color = "default";
+      caption= "Closed"
+      break;
+    default:
+        break
+  }
+  return <Tag color={color} >{caption}</Tag>
+}
+
+// Data table for daily sales report table CARGO Sales//
+const tableSourceBitsi = [
+  {
+    title: "BL NO.",
+    dataIndex: "billOfLading",
+    key: "billOfLading",
+    fixed: "left",
+    align: "center",
+  },
+  {
+    title: "DATE",
+    dataIndex: "sentDate",
+    key: "sentDate",
+    align: "center",
+  },
+  {
+    title: "ORIGIN",
+    dataIndex: "origin",
+    key: "origin",
+    align: "center",
+  },
+  {
+    title: "DESTINATION",
+    dataIndex: "destination",
+    key: "destination",
+    align: "center",
+  },
+  {
+    title: "SENDER",
+    dataIndex: "sender",
+    key: "sender",
+    align: "center",
+  },
+  {
+    title: "SENDER PHONE#.",
+    dataIndex: "senderPhoneNo",
+    key: "senderPhoneNo",
+    align: "center",
+  },
+  {
+    title: "RECEIVER",
+    dataIndex: "recipient",
+    key: "recipient",
+    align: "center",
+  },
+  {
+    title: "RECEIVER PHONE#",
+    dataIndex: "recipientPhoneNo",
+    key: "recipientPhoneNo,",
+    align: "center",
+  },
+  {
+    title: "WEIGHT",
+    dataIndex: "packageWeight",
+    key: "packageWeight",
+    align: "center",
+  },
+  {
+    title: "DESCRIPTION",
+    dataIndex: "packageName",
+    key: "packageName",
+    align: "center",
+  },
+  {
+    title: "PARCEL STATUS",
+    dataIndex: "status",
+    key: "status",
+    align: "center",
+  },
+  {
+    title: "REMARKS",
+    dataIndex: "remarks",
+    key: "remarks",
+    align: "center",
+  },
+
+  {
+    title: "DECLARED VALUE",
+    dataIndex: "declaredValue",
+    key: "declaredValue",
+    align: "center",
+  },
+  {
+    title: "SYSTEM FEE",
+    dataIndex: "systemFee",
+    key: "systemFee",
+    align: "center",
+  },
+  {
+    title: "AMOUNT",
+    dataIndex: "price",
+    key: "price",
+    align: "center",
+  },
+  {
+    title: "CASHIER",
+    dataIndex: "cashier",
+    key: "cashier",
+    align: "center",
+  },
+  {
+    title: "STATUS",
+    dataIndex: "status",
+    key: "status",
+    align: "center",
+    render: (text)=> getTag(text)
+  },
+];
+
 class SalesReport extends React.Component {
   constructor() {
     super();
@@ -478,43 +614,44 @@ class SalesReport extends React.Component {
           this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
         }
         break;
-      case "Claimed":
-        if(!this.state.parcelStatusFilter.includes(4)){
-            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 4] }, () => this.getFilteredParcels() )
-            } else {
-            console.log("UNCHECKED and REMOVED")
-            filtered = this.state.parcelStatusFilter.filter(num => num !== 4)
-            this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
-          }
-        break;
-      case "Delivered":
-        if(!this.state.parcelStatusFilter.includes(5)){
-            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 5] }, () => this.getFilteredParcels() )
-          } else {
-            console.log("UNCHECKED and REMOVED")
-            filtered = this.state.parcelStatusFilter.filter(num => num !== 5)
-            this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
-          }
-        break;
       case "Voided":
-        if(!this.state.parcelStatusFilter.includes(6)){
-          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 6] }, () => this.getFilteredParcels() )
-          } else {
-            console.log("UNCHECKED and REMOVED")
-            filtered = this.state.parcelStatusFilter.filter(num => num !== 6)
-            this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
-          }
-          break;
-      case "Modified":
-        if(!this.state.parcelStatusFilter.includes(7)){
-          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 7] }, () => this.getFilteredParcels() )
-        } else {
-          console.log("UNCHECKED and REMOVED")
-          filtered = this.state.parcelStatusFilter.filter(num => num !== 7)
-          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
-        }
-      default:
-        break;
+          if(!this.state.parcelStatusFilter.includes(6)){
+            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 6] }, () => this.getFilteredParcels() )
+            } else {
+              console.log("UNCHECKED and REMOVED")
+              filtered = this.state.parcelStatusFilter.filter(num => num !== 6)
+              this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+            }
+            break;
+      // case "Claimed":
+      //   if(!this.state.parcelStatusFilter.includes(4)){
+      //       this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 4] }, () => this.getFilteredParcels() )
+      //       } else {
+      //       console.log("UNCHECKED and REMOVED")
+      //       filtered = this.state.parcelStatusFilter.filter(num => num !== 4)
+      //       this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+      //     }
+      //   break;
+      // case "Delivered":
+      //   if(!this.state.parcelStatusFilter.includes(5)){
+      //       this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 5] }, () => this.getFilteredParcels() )
+      //     } else {
+      //       console.log("UNCHECKED and REMOVED")
+      //       filtered = this.state.parcelStatusFilter.filter(num => num !== 5)
+      //       this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+      //     }
+      //   break;
+     
+      // case "Modified":
+      //   if(!this.state.parcelStatusFilter.includes(7)){
+      //     this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 7] }, () => this.getFilteredParcels() )
+      //   } else {
+      //     console.log("UNCHECKED and REMOVED")
+      //     filtered = this.state.parcelStatusFilter.filter(num => num !== 7)
+      //     this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+      //   }
+      // default:
+      //   break;
     }
     console.log(status, "ticked/unticked");
   };
@@ -562,7 +699,7 @@ class SalesReport extends React.Component {
         />
         Received
       </div>
-      <div>
+      {/* <div>
         <input
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
@@ -570,8 +707,8 @@ class SalesReport extends React.Component {
           onChange={(e) => this.handleFilter(e.target.name)}
         />
         Claimed
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <input
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
@@ -579,7 +716,7 @@ class SalesReport extends React.Component {
           onChange={(e) => this.handleFilter(e.target.name)}
         />
         Delivered
-      </div>
+      </div> */}
       <div>
         <input
           type="checkbox"
@@ -589,7 +726,7 @@ class SalesReport extends React.Component {
         />
         Voided
       </div>
-      <div>
+      {/* <div>
         <input
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
@@ -597,7 +734,7 @@ class SalesReport extends React.Component {
           onChange={(e) => this.handleFilter(e.target.name)}
         />
         Modified
-      </div>
+      </div> */}
       {/* <Button onClick={this.handleFilter}>Filter</Button> */}
     </div>
   );
@@ -775,7 +912,8 @@ class SalesReport extends React.Component {
                     scroll={{ x: true }}
                     rowKey={(e) => e.key}
                     pagination={false}
-                    columns={this.props.source}
+                    // columns={this.props.source}
+                    columns={tableSourceBitsi}
                     dataSource={this.state.data}
                   />
                 </div>
