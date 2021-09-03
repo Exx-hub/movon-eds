@@ -433,6 +433,14 @@ class SalesReport extends React.Component {
     }
   };
 
+  isAdmin = () => {
+    if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   menu = (
     <Menu onClick={(e) => this.onHandleMenu(e)}>
       <Menu.Item
@@ -442,9 +450,15 @@ class SalesReport extends React.Component {
       >
         Download PDF
       </Menu.Item>
-      <Menu.Item key="downloadXls" icon={<ProfileOutlined />}>
+      
+      {this.isAdmin() && 
+      <Menu.Item 
+      key="downloadXls" 
+      icon={<ProfileOutlined />}
+      >
         Download XLS
-      </Menu.Item>
+      </Menu.Item>}
+      
     </Menu>
   );
 
