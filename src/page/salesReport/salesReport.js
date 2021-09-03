@@ -455,7 +455,7 @@ class SalesReport extends React.Component {
         if(!this.state.parcelStatusFilter.includes(1)){
           this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 1] }, () => this.getFilteredParcels() )
         } else {
-          console.log("Already exists!")
+          console.log("UNCHECKED and REMOVED")
           filtered = this.state.parcelStatusFilter.filter(num => num !== 1)
           this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
         }
@@ -516,12 +516,12 @@ class SalesReport extends React.Component {
       default:
         break;
     }
-    console.log(status, "checked");
+    console.log(status, "ticked/unticked");
   };
 
   // Function to call getParcel API everytime a filter checkbox is checked or unchecked to display filtered/unfiltered data
   getFilteredParcels = () => {
-    console.log("CALL GET PARCEL API:", this.state.parcelStatusFilter);
+    console.log("CALL GET PARCEL API passing status array with these values:", this.state.parcelStatusFilter);
     this.getParcel()
   };
 
