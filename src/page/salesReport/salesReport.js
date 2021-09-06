@@ -162,6 +162,20 @@ const tableSourceBitsi = [
     align: "center",
   },
   {
+    title: "CHECKED-IN",
+    dataIndex: "checkedIn",
+    key: "checkedIn",
+    align: "center",
+    className: UserProfile.getRole() === "2" ? "" : "hide"
+  },
+  {
+    title: "ARRIVED",
+    dataIndex: "arrived",
+    key: "arrived",
+    align: "center",
+    className: UserProfile.getRole() === "2" ? "" : "hide"
+  },
+  {
     title: "STATUS",
     dataIndex: "status",
     key: "status",
@@ -324,6 +338,8 @@ class SalesReport extends React.Component {
         recipient: e.recipient,
         scanCode: e.scanCode,
         cashier: e.cashier,
+        arrived: "Sep 01, 2021 08:48:39 AM", // hard-coded for now
+        checkedIn: "Aug 25, 2021 01:39:08 PM", // hard-coded for now
         sender: e.sender,
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
