@@ -676,16 +676,16 @@ class SalesReport extends React.Component {
       //     }
       //   break;
      
-      // case "Modified":
-      //   if(!this.state.parcelStatusFilter.includes(7)){
-      //     this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 7] }, () => this.getFilteredParcels() )
-      //   } else {
-      //     console.log("UNCHECKED and REMOVED")
-      //     filtered = this.state.parcelStatusFilter.filter(num => num !== 7)
-      //     this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
-      //   }
-      // default:
-      //   break;
+      case "Modified":
+        if(!this.state.parcelStatusFilter.includes(7)){
+          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 7] }, () => this.getFilteredParcels() )
+        } else {
+          console.log("UNCHECKED and REMOVED")
+          filtered = this.state.parcelStatusFilter.filter(num => num !== 7)
+          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+        }
+      default:
+        break;
     }
     console.log(status, "ticked/unticked");
   };
@@ -760,7 +760,7 @@ class SalesReport extends React.Component {
         />
         Voided
       </div>
-      {/* <div>
+      <div>
         <input
           type="checkbox"
           style={{ marginRight: ".5rem", marginLeft: ".5rem" }}
@@ -768,7 +768,7 @@ class SalesReport extends React.Component {
           onChange={(e) => this.handleFilter(e.target.name)}
         />
         Modified
-      </div> */}
+      </div>
       {/* <Button onClick={this.handleFilter}>Filter</Button> */}
     </div>
   );
