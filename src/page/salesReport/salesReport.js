@@ -170,14 +170,14 @@ const tableSourceBitsi = [
     dataIndex: "checkedIn",
     key: "checkedIn",
     align: "center",
-    className: UserProfile.getRole() === "2" ? "" : "hide"
+    // className: UserProfile.getRole() === "2" ? "" : "hide"
   },
   {
     title: "ARRIVED",
     dataIndex: "arrived",
     key: "arrived",
     align: "center",
-    className: UserProfile.getRole() === "2" ? "" : "hide"
+    // className: UserProfile.getRole() === "2" ? "" : "hide"
   },
   {
     title: "STATUS",
