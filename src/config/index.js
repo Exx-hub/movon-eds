@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(156)",
+    build: "1.8.0(157)",
   },
   environment: "",
-  changeLogs: `update/change-url-to-export-pdf`,
+  changeLogs: `filter-parcel-status/disable-staff-excel-download/active-closed-tag/checkin-arrived-columns`,
 };
 
 export const ERROR_CODES = {
