@@ -31,10 +31,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(157)",
+    build: "1.8.0(158)",
   },
   environment: "",
-  changeLogs: `filter-parcel-status/disable-staff-excel-download/active-closed-tag/checkin-arrived-columns`,
+  changeLogs: `feature/add-date-range-voided-transactions`,
 };
 
 export const ERROR_CODES = {

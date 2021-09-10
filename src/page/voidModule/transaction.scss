@@ -1,33 +1,44 @@
-.trasaction-page{
-    padding: 1rem;
+.trasaction-page {
+  padding: 1rem;
 
-    .ant-table table{
-        font-size: 14px !important;
+  .ant-table table {
+    font-size: 14px !important;
+  }
+
+  .top-row-container {
+    display: flex;
+    align-items: center;
+
+    .hidethis {
+      visibility: hidden;
     }
 
-    .search-container{
-        padding: 1rem;
-        padding-top: 1rem;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
+    .search-container {
+      padding: 1rem;
+      // padding-top: 1.5rem;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin: 0 auto;
 
-    .manifest-details-search-box{
+      .manifest-details-search-box {
         border-radius: 10px;
         font-size: 25px;
         width: 450px;
 
-        &:hover{
-            border-color: teal !important;
-            box-shadow: 0 0 3px teal;
+        &:hover {
+          border-color: teal !important;
+          box-shadow: 0 0 3px teal;
         }
-        &:focus-within{
-            border-color: teal !important;
-            box-shadow: 0 0 5px teal !important;
+        &:focus-within {
+          border-color: teal !important;
+          box-shadow: 0 0 5px teal !important;
         }
+      }
     }
 
-
-
+    .show {
+      height: 40px;
+    }
+  }
 }
