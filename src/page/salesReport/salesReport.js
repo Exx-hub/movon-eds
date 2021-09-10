@@ -289,6 +289,7 @@ class SalesReport extends React.Component {
         : UserProfile.getAssignedStationId();
 
         console.log("GET PARCEL API CALLING...")
+        console.log("STATUS FILTER TO BE PASSED:", this.state.parcelStatusFilter)
 
     ParcelService.getAllParcel(
       startStationId,
@@ -298,7 +299,7 @@ class SalesReport extends React.Component {
       this.userProfileObject.getBusCompanyId(),
       this.state.page - 1,
       this.state.limit,
-      // this.state.parcelStatusFilter
+      this.state.parcelStatusFilter
     )
       .then((e) => {
         const { errorCode } = e.data;
