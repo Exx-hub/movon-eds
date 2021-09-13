@@ -60,6 +60,7 @@ function Login(props) {
       if (errorCode) {
         handleErrorNotification(errorCode);
       }
+      setState({ ...state, ...{ isLoading: false } });
       if (success) {
         UserProfile.setCredential({ user: data.user, token: data.token });
         if (Number((data.user && data.user.status) || "0") === 0) {
@@ -68,12 +69,9 @@ function Login(props) {
             description: "Unable to access your account",
           });
           UserProfile.logout(User);
-        } 
-        setState({ ...state, ...{ isLoading: false } });
-        props.history.push(alterPath("/")); 
+        }
+        props.history.push(alterPath("/"));
       }
-      
-        setState({ ...state, ...{ isLoading: false } });
     });
   };
 
