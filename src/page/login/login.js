@@ -28,7 +28,7 @@ function Login(props) {
       // onFinish, userid and pass will be sent to server and if correct credentials, server will return data with the response.
       // user data and token will be saved in localstorate with key "credential". then state will be changed to loading false,
       // that state change will trigger this userEffect, checking if there is value for credential, will change url to "/"
-      // window.location.replace("https://www.google.com");
+      // window.location.replace("/");
     }
   }, [userProfileObject, props.history, state]);
 
@@ -68,10 +68,12 @@ function Login(props) {
             description: "Unable to access your account",
           });
           UserProfile.logout(User);
-        }
+        } 
         setState({ ...state, ...{ isLoading: false } });
-        // props.history.push(alterPath("/")); -------- i think this is redundant
+        props.history.push(alterPath("/")); 
       }
+      
+        setState({ ...state, ...{ isLoading: false } });
     });
   };
 
@@ -142,7 +144,7 @@ function Login(props) {
       </div>
 
       {/* COOKIE POPUP MODAL  */}
-      <Modal
+      {/* <Modal
         style={{ position: "absolute", left: "1rem", top: "80vh", flex: 1 }}
         visible={cookieVisible}
         footer={null}
@@ -172,7 +174,7 @@ function Login(props) {
             Accept
           </Button>
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }
