@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(159)",
+    build: "1.8.0(160)",
   },
   environment: "",
-  changeLogs: `feature/cargo-type-column`,
+  changeLogs: `feature/cargo-type-dropdown-filter`,
 };
 
 export const ERROR_CODES = {
