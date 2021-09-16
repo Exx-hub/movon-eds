@@ -372,7 +372,8 @@ const ParcelService = {
     busCompanyId,
     page,
     limit,
-    filterArray
+    filterArray,
+    cargoTypeArray
   ) => {
     return axios({
       method: "get",
@@ -389,7 +390,8 @@ const ParcelService = {
         endStation,
         page,
         limit,
-        filterArray
+        filterArray,
+        cargoTypeArray
       },
     });
   },

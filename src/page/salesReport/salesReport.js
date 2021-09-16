@@ -228,6 +228,8 @@ class SalesReport extends React.Component {
       endStationRoutesTemp: [],
       parcelStatusVisible: false,
       parcelStatusFilter: [],
+      cargoTypeVisible: false,
+      cargoTypeFilter: []
     };
     this.userProfileObject = UserProfile;
   }
@@ -296,6 +298,7 @@ class SalesReport extends React.Component {
 
         console.log("GET PARCEL API CALLING...")
         console.log("STATUS FILTER TO BE PASSED:", this.state.parcelStatusFilter)
+        console.log("CARGO TYPE FILTER TO BE PASSED:", this.state.cargoTypeFilter)
 
     ParcelService.getAllParcel(
       startStationId,
@@ -305,7 +308,8 @@ class SalesReport extends React.Component {
       this.userProfileObject.getBusCompanyId(),
       this.state.page - 1,
       this.state.limit,
-      this.state.parcelStatusFilter
+      this.state.parcelStatusFilter,
+      this.state.cargoTypeFilter
     )
       .then((e) => {
         const { errorCode } = e.data;
@@ -624,6 +628,11 @@ class SalesReport extends React.Component {
     this.setState({ parcelStatusVisible: flag });
   };
 
+   // Cargo TYPE VISIBILITY TOGGLER
+   cargoTypeVisibleChange = (flag) => {
+    this.setState({ cargoTypeVisible: flag });
+  };
+
 
   // Includes checked status checkbox in filter array then call api, also removes item from array
   handleFilter = (status) => {
@@ -695,12 +704,46 @@ class SalesReport extends React.Component {
       default:
         break;
     }
-    console.log(status, "ticked/unticked");
+    console.log(status, "parcel status filter ticked/unticked");
   };
+
+   // Includes checked status checkbox in filter array then call api, also removes item from array for caargotype
+  cargoTypeFilter = (status) => {
+    let filtered;
+    switch (status) {
+      case "Cargo":
+        if(!this.state.cargoTypeFilter.includes(1)){
+          this.setState( {cargoTypeFilter: [...this.state.cargoTypeFilter, 1] }, () => this.getCargoTypeFilteredParcels() )
+        } else {
+          console.log("UNCHECKED and REMOVED")
+          filtered = this.state.cargoTypeFilter.filter(num => num !== 1)
+          this.setState({cargoTypeFilter: filtered} , () => this.getCargoTypeFilteredParcels())
+        }
+        break;
+      case "Accompanied":
+        if(!this.state.cargoTypeFilter.includes(2)){
+          this.setState( {cargoTypeFilter: [...this.state.cargoTypeFilter, 2] }, () => this.getCargoTypeFilteredParcels() )
+        } else {
+          console.log("UNCHECKED and REMOVED")
+          filtered = this.state.cargoTypeFilter.filter(num => num !== 2)
+          this.setState({cargoTypeFilter: filtered} , () => this.getCargoTypeFilteredParcels())
+        }
+        break;
+      default:
+        break;
+    }
+    console.log(status, "cargo type ticked/unticked");
+  }
 
   // Function to call getParcel API everytime a filter checkbox is checked or unchecked to display filtered/unfiltered data
   getFilteredParcels = () => {
-    console.log("CALL GET PARCEL API passing status array with these values:", this.state.parcelStatusFilter);
+    console.log("CALL GET PARCEL API passing filter parcel status array:", this.state.parcelStatusFilter);
+    this.getParcel()
+  };
+
+   // Function to call getParcel API everytime a filter checkbox is checked or unchecked to display filtered/unfiltered data
+   getCargoTypeFilteredParcels = () => {
+    console.log("CALL GET PARCEL API passing cargo type array:", this.state.cargoTypeFilter);
     this.getParcel()
   };
 
@@ -781,6 +824,37 @@ class SalesReport extends React.Component {
     </div>
   );
 
+  // CARGO TYPE DROP DOWN MENU ITEMS
+  cargoTypes = (
+    <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      backgroundColor: "white",
+      marginTop: ".3rem",
+    }}
+  >
+    <div>
+      <input
+        type="checkbox"
+        style={{ marginRight: ".3rem", marginLeft: ".5rem" }}
+        name="Cargo"
+        onChange={(e) => this.cargoTypeFilter(e.target.name)}
+      />
+      Cargo Padala
+    </div>
+    <div>
+      <input
+        type="checkbox"
+        style={{ marginRight: ".3rem", marginLeft: ".5rem" }}
+        name="Accompanied"
+        onChange={(e) => this.cargoTypeFilter(e.target.name)}
+      />
+      Accompanied
+    </div>
+  </div>
+  )
+
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
@@ -792,7 +866,7 @@ class SalesReport extends React.Component {
         <Content style={{ padding: "1rem", paddingTop: "2rem" }}>
           <Row style={{ display: "flex", justifyContent: "space-evenly" }}>
             {isAdmin && (
-              <Col style={{ flex: 1 }}>
+              <Col style={{ flex: .5 }}>
                 <AutoComplete
                   size="large"
                   style={{ width: "100%" }}
@@ -807,7 +881,7 @@ class SalesReport extends React.Component {
               </Col>
             )}
 
-            <Col style={{ flex: 1 }}>
+            <Col style={{ flex: .5 }}>
               <AutoComplete
                 size="large"
                 style={{ width: "100%", marginLeft: "0.5rem" }}
@@ -823,18 +897,6 @@ class SalesReport extends React.Component {
               </AutoComplete>
             </Col>
 
-            <Col style={{ flex: 1, marginLeft: "1rem" }}>
-              <Dropdown
-                onVisibleChange={this.handleVisibleChange}
-                visible={this.state.parcelStatusVisible}
-                overlay={this.parcelStatuses}
-                // trigger="click"
-              >
-                <Button>
-                  Parcel Status <DownOutlined />
-                </Button>
-              </Dropdown>
-            </Col>
 
             <Col style={{ flex: 1 }}>
               {" "}
@@ -914,9 +976,37 @@ class SalesReport extends React.Component {
             </Col>
           </Row>
 
+          {/* Parcel Status and Cargo Type dropdown filters  */}
+          <Row style={{marginTop: '1rem'}}>
+            <Col style={{marginRight: '.3rem'}}>
+              <Dropdown
+                onVisibleChange={this.handleVisibleChange}
+                visible={this.state.parcelStatusVisible}
+                overlay={this.parcelStatuses}
+                // trigger="click"
+              >
+                <Button>
+                  Parcel Status <DownOutlined />
+                </Button>
+              </Dropdown>
+            </Col>
+            <Col>
+              <Dropdown
+                onVisibleChange={this.cargoTypeVisibleChange}
+                visible={this.state.cargoTypeVisible}
+                overlay={this.cargoTypes}
+                // trigger="click"
+              >
+                <Button>
+                 Cargo Type <DownOutlined />
+                </Button>
+              </Dropdown>
+            </Col>
+          </Row>
+
           <div
             style={{
-              marginTop: "2rem",
+              marginTop: "1rem",
               borderBottom: "dashed  rgba(125,125,125,0.5)  1px",
             }}
           />
