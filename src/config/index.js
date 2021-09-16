@@ -22,6 +22,10 @@ export const config = {
     staff: 1,
     "staff-admin": 2,
   },
+  cargoType: {
+    1: "Cargo",
+    2: "Accompanied",
+  },
   ticket: {
     totalCopy: 6,
   },
@@ -31,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(158)",
+    build: "1.8.0(159)",
   },
   environment: "",
-  changeLogs: `feature/add-date-range-voided-transactions`,
+  changeLogs: `feature/cargo-type-column`,
 };
 
 export const ERROR_CODES = {
