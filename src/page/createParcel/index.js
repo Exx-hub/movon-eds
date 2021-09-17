@@ -501,6 +501,7 @@ class CreateParcel extends React.Component {
         details.length.disabled = true;
         details.length.isRequired = false;
         details.discount.disabled = true;
+        details.type.options[0].name = "Accompanied Baggage"
         break;
 
       case "isarog-liner":
@@ -516,6 +517,7 @@ class CreateParcel extends React.Component {
         details.length.disabled = true;
         details.length.isRequired = false;
         details.discount.disabled = true;
+        details.type.options[0].name = "Accompanied Baggage"
         break;
 
       default:
