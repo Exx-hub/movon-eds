@@ -334,7 +334,7 @@ class SalesReport extends React.Component {
     }
 
     const records = data.map((e, i) => {
-      console.log(e);
+      console.log("RECORD:",e);
       return {
         key: i,
         associatedAmount: e.associatedAmount,

@@ -60,7 +60,7 @@ class SearchModule extends React.Component {
   }
 
   componentDidMount() {
-    //this.fetchParcelList();
+    // this.fetchParcelList();
     // console.log("PARCEL LIST:", this.state.parcelList); place this outside to be able to view
     // SET THE TABLE HEADER AND DETAILS -----------------
     this.setState({
@@ -134,14 +134,19 @@ class SearchModule extends React.Component {
               >
                 Void
               </Button>
+
+              {/* CHECK IN BUTTON visible if created only  */}
               {record.travelStatus === 1 && (
                 <Button
-                  disabled={!Boolean(record.travelStatus === 1)}
+                  // disabled={!Boolean(record.travelStatus === 1)}
+                  disabled={record.cargoType === 2}
                   size="small"
                   style={{
                     fontSize: "0.65rem",
-                    background: `${record.travelStatus === 1 ? "teal" : ""}`,
-                    color: `${record.travelStatus === 1 ? "white" : ""}`,
+                    // background: `${record.travelStatus === 1 ? "teal" : ""}`,
+                    // color: `${record.travelStatus === 1 ? "white" : ""}`,
+                    background: `${record.cargoType === 2 ? "" : "teal"}`,
+                    color: `${record.cargoType === 2 ? "" : "white"}`,
                   }}
                   onClick={() => {
                     const checkInModal = { ...this.state.checkInModal };
@@ -153,14 +158,21 @@ class SearchModule extends React.Component {
                   Check-In
                 </Button>
               )}
+
+              {/* ARRIVED BUTTON visible only if in transit  */}
+              {/* if travelStatus if 2 or in transit, arrived button will appear. if cargotype is accompanied, button will be disabled  */}
+              {/* and color and bg color will be gray. if cargoType is cargo, button will be colored and enabled. same with check in button  */}
               {record.travelStatus === 2 && (
                 <Button
-                  disabled={!Boolean(record.travelStatus === 2)}
+                  // disabled={!Boolean(record.travelStatus === 2)}
+                  disabled={record.cargoType === 2}
                   size="small"
                   style={{
                     fontSize: "0.65rem",
-                    background: `${record.travelStatus === 2 ? "teal" : ""}`,
-                    color: `${record.travelStatus === 2 ? "white" : ""}`,
+                    // background: `${record.travelStatus === 2 ? "teal" : ""}`,
+                    // color: `${record.travelStatus === 2 ? "white" : ""}`,
+                    background: `${record.cargoType === 2 ? "" : "teal"}`,
+                    color: `${record.cargoType === 2 ? "" : "white"}`,
                   }}
                   onClick={() => {
                     const arrivedModal = { ...this.state.arrivedModal };
@@ -237,6 +249,7 @@ class SearchModule extends React.Component {
           return;
         }
         const parcelList = data.list.map((e, i) => {
+          console.log("RECORD HERE:",e)
           return {
             key: i,
             sentDate: moment
@@ -254,6 +267,7 @@ class SearchModule extends React.Component {
             startStationName: e.trips.startStation.name,
             endStationName: e.trips.endStation.name,
             _id: e._id,
+            cargoType: Math.floor(Math.random() * 2) + 1 // e.cargoType -- hard-coded for now, random 1 & 2 for now
           };
         });
         this.setState({

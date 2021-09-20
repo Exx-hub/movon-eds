@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(161)",
+    build: "1.8.0(162)",
   },
   environment: "",
-  changeLogs: `feature/disable-arrived-checkin-accompanied`,
+  changeLogs: `feature/searchModule/disable-buttons-if-accompanied/build-162`,
 };
 
 export const ERROR_CODES = {
