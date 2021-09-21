@@ -66,6 +66,131 @@ const getTag = (props) => {
 }
 
 // Data table for daily sales report table CARGO Sales//
+const tableSourceDLTB = [
+  {
+    title: "BL NO.",
+    dataIndex: "billOfLading",
+    key: "billOfLading",
+    fixed: "left",
+    align: "center",
+  },
+  {
+    title: "DATE",
+    dataIndex: "sentDate",
+    key: "sentDate",
+    align: "center",
+  },
+  {
+    title: "ORIGIN",
+    dataIndex: "origin",
+    key: "origin",
+    align: "center",
+  },
+  {
+    title: "DESTINATION",
+    dataIndex: "destination",
+    key: "destination",
+    align: "center",
+  },
+  {
+    title: "SENDER",
+    dataIndex: "sender",
+    key: "sender",
+    align: "center",
+  },
+  {
+    title: "SENDER PHONE#.",
+    dataIndex: "senderPhoneNo",
+    key: "senderPhoneNo",
+    align: "center",
+  },
+  {
+    title: "RECEIVER",
+    dataIndex: "recipient",
+    key: "recipient",
+    align: "center",
+  },
+  {
+    title: "RECEIVER PHONE#",
+    dataIndex: "recipientPhoneNo",
+    key: "recipientPhoneNo,",
+    align: "center",
+  },
+  {
+    title: "WEIGHT",
+    dataIndex: "packageWeight",
+    key: "packageWeight",
+    align: "center",
+  },
+  {
+    title: "DESCRIPTION",
+    dataIndex: "packageName",
+    key: "packageName",
+    align: "center",
+  },
+  {
+    title: "PARCEL STATUS",
+    dataIndex: "status",
+    key: "status",
+    align: "center",
+  },
+  {
+    title: "REMARKS",
+    dataIndex: "remarks",
+    key: "remarks",
+    align: "center",
+  },
+  {
+    title: "DECLARED VALUE",
+    dataIndex: "declaredValue",
+    key: "declaredValue",
+    align: "center",
+  },
+  {
+    title: "SYSTEM FEE",
+    dataIndex: "systemFee",
+    key: "systemFee",
+    align: "center",
+  },
+  {
+    title: "AMOUNT",
+    dataIndex: "price",
+    key: "price",
+    align: "center",
+  },
+  {
+    title: "CASHIER",
+    dataIndex: "cashier",
+    key: "cashier",
+    align: "center",
+  },
+  {
+    title: "CHECKED-IN",
+    dataIndex: "checkedIn",
+    key: "checkedIn",
+    align: "center",
+  },
+  {
+    title: "ARRIVED",
+    dataIndex: "arrived",
+    key: "arrived",
+    align: "center",
+  },
+  {
+    title: "CARGO TYPE",
+    dataIndex: "cargoType",
+    key: "cargoType",
+    align: "center",
+  },
+  {
+    title: "STATUS",
+    dataIndex: "status",
+    key: "status",
+    align: "center",
+    render: (text)=> getTag(text)
+  },
+];
+
 const tableSourceBitsi = [
   {
     title: "BL NO.",
@@ -140,7 +265,6 @@ const tableSourceBitsi = [
     key: "remarks",
     align: "center",
   },
-
   {
     title: "DECLARED VALUE",
     dataIndex: "declaredValue",
@@ -170,19 +294,11 @@ const tableSourceBitsi = [
     dataIndex: "checkedIn",
     key: "checkedIn",
     align: "center",
-    // className: UserProfile.getRole() === "2" ? "" : "hide"
   },
   {
     title: "ARRIVED",
     dataIndex: "arrived",
     key: "arrived",
-    align: "center",
-    // className: UserProfile.getRole() === "2" ? "" : "hide"
-  },
-  {
-    title: "CARGO TYPE",
-    dataIndex: "cargoType",
-    key: "cargoType",
     align: "center",
   },
   {
@@ -859,7 +975,9 @@ class SalesReport extends React.Component {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
  
-    console.log(this.state);
+    // console.log(this.state);
+
+    console.log("BUS COMPANY:",UserProfile.getBusCompanyTag())
 
     return (
       <Layout>
@@ -1045,7 +1163,7 @@ class SalesReport extends React.Component {
                     rowKey={(e) => e.key}
                     pagination={false}
                     // columns={this.props.source}
-                    columns={tableSourceBitsi}
+                    columns={UserProfile.getBusCompanyTag() === "dltb" ? tableSourceDLTB : tableSourceBitsi}
                     dataSource={this.state.data}
                   />
                 </div>
