@@ -250,6 +250,7 @@ class SearchModule extends React.Component {
         }
         const parcelList = data.list.map((e, i) => {
           console.log("RECORD HERE:",e)
+          console.log("CARGOTYPE:", e.cargoType)
           return {
             key: i,
             sentDate: moment
@@ -267,7 +268,7 @@ class SearchModule extends React.Component {
             startStationName: e.trips.startStation.name,
             endStationName: e.trips.endStation.name,
             _id: e._id,
-            cargoType: Math.floor(Math.random() * 2) + 1 // e.cargoType -- hard-coded for now, random 1 & 2 for now
+            cargoType: e.cargoType
           };
         });
         this.setState({

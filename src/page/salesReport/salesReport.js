@@ -975,9 +975,8 @@ class SalesReport extends React.Component {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
  
-    // console.log(this.state);
+    console.log("STATE:",this.state);
 
-    console.log("BUS COMPANY:",UserProfile.getBusCompanyTag())
 
     return (
       <Layout>
