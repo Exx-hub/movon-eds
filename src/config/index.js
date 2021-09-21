@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(162)",
+    build: "1.8.0(163)",
   },
   environment: "",
-  changeLogs: `feature/searchModule/disable-buttons-if-accompanied/build-162`,
+  changeLogs: `update/display-values-backend-intergration/build163`,
 };
 
 export const ERROR_CODES = {

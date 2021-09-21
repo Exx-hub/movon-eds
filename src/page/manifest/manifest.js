@@ -55,7 +55,7 @@ const TableRoutesView = (props) => {
             </>
             
           }
-          {console.log("RECORD fetched from api:",record)}
+          {/* {console.log("RECORD fetched from api:",record)} */}
         </div>
       ),
     },
@@ -194,6 +194,7 @@ class Manifest extends React.Component {
   setDataSource = () => {
 
     let dataSource = this.state.listOfTripDates.map((e, i) => {
+      console.log("record:",e)
       return {
         key: i,
         tripId: e._id,
@@ -209,6 +210,7 @@ class Manifest extends React.Component {
         showModalCheckIn: false,
         showModalArrived: false,
         disabled: false,
+        // cargoType: 2 
       };
     });
     this.setState({ dataSource });
