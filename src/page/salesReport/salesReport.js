@@ -353,7 +353,7 @@ class SalesReport extends React.Component {
         recipient: e.recipient,
         scanCode: e.scanCode,
         cashier: e.cashier,
-        cargoType: "Accompanied", // hardcoded but 1 for Cargo 2 for Accompanied or config.cargoType[e.cargoType]
+        cargoType: e.cargoType === 2 ? "Accompanied" : "Cargo",
         arrived: "Sep 01, 2021 08:48:39 AM", // hard-coded for now
         checkedIn: "Aug 25, 2021 01:39:08 PM", // hard-coded for now
         sender: e.sender,
