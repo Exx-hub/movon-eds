@@ -111,6 +111,7 @@ class SearchModule extends React.Component {
         {
           title: "Action",
           key: "action",
+          align: "center",
           render: (text, record) => (
             <div
               style={{

@@ -470,8 +470,8 @@ class SalesReport extends React.Component {
         scanCode: e.scanCode,
         cashier: e.cashier,
         cargoType: e.cargoType === 2 ? "Accompanied" : "Cargo",
-        arrived: "Sep 01, 2021 08:48:39 AM", // hard-coded for now
-        checkedIn: "Aug 25, 2021 01:39:08 PM", // hard-coded for now
+        arrived: e.arrivedTime ? e.arrivedTime : "--", 
+        checkedIn: e.checkInTime ? e.checkInTime : "--", 
         sender: e.sender,
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
