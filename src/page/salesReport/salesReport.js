@@ -705,7 +705,7 @@ class SalesReport extends React.Component {
   menu = (
     <Menu onClick={(e) => this.onHandleMenu(e)}>
       <Menu.Item
-        // style={{ display: "none" }}
+        style={{ display: "none" }}
         key="downloadPdf"
         icon={<FilePdfOutlined />}
       >
@@ -1096,7 +1096,7 @@ class SalesReport extends React.Component {
         <Content style={{ padding: "1rem", paddingTop: "2rem" }}>
           <Row style={{ display: "flex", justifyContent: "space-evenly" }}>
             {isAdmin && (
-              <Col style={{ flex: .5 }}>
+              <Col style={{ flex: 0.5 }}>
                 <AutoComplete
                   size="large"
                   style={{ width: "100%" }}
@@ -1111,7 +1111,7 @@ class SalesReport extends React.Component {
               </Col>
             )}
 
-            <Col style={{ flex: .5 }}>
+            <Col style={{ flex: 0.5 }}>
               <AutoComplete
                 size="large"
                 style={{ width: "100%", marginLeft: "0.5rem" }}
@@ -1126,7 +1126,6 @@ class SalesReport extends React.Component {
                 ))}
               </AutoComplete>
             </Col>
-
 
             <Col style={{ flex: 1 }}>
               {" "}
@@ -1207,8 +1206,8 @@ class SalesReport extends React.Component {
           </Row>
 
           {/* Parcel Status and Cargo Type dropdown filters  */}
-          <Row style={{marginTop: '1rem'}}>
-            <Col style={{marginRight: '.3rem'}}>
+          <Row style={{ marginTop: "1rem" }}>
+            <Col style={{ marginRight: ".3rem" }}>
               <Dropdown
                 onVisibleChange={this.handleVisibleChange}
                 visible={this.state.parcelStatusVisible}
@@ -1220,18 +1219,20 @@ class SalesReport extends React.Component {
                 </Button>
               </Dropdown>
             </Col>
-            <Col>
-              <Dropdown
-                onVisibleChange={this.cargoTypeVisibleChange}
-                visible={this.state.cargoTypeVisible}
-                overlay={this.cargoTypes}
-                // trigger="click"
-              >
-                <Button>
-                 Cargo Type <DownOutlined />
-                </Button>
-              </Dropdown>
-            </Col>
+            {UserProfile.getBusCompanyTag() !== "isarog-liner" && (
+              <Col>
+                <Dropdown
+                  onVisibleChange={this.cargoTypeVisibleChange}
+                  visible={this.state.cargoTypeVisible}
+                  overlay={this.cargoTypes}
+                  // trigger="click"
+                >
+                  <Button>
+                    Cargo Type <DownOutlined />
+                  </Button>
+                </Dropdown>
+              </Col>
+            )}
           </Row>
 
           <div
