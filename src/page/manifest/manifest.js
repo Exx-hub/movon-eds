@@ -17,7 +17,7 @@ const TableRoutesView = (props) => {
     {
       title: "Trip Date",
       dataIndex: "date",
-      defaultSortOrder: 'ascend', //"descend",
+      defaultSortOrder: "ascend", //"descend",
       sorter: (a, b) => moment(a.date) - moment(b.date),
     },
     {
@@ -46,15 +46,41 @@ const TableRoutesView = (props) => {
       key: "action",
       render: (text, record) => (
         <div>
-          {
-            record.status && <>
-              <Button style={{ fontSize: '10px' }} onClick={() => props.onViewClick(record)}>View</Button>
-              <Button style={{ fontSize: '10px' }} onClick={() => props.onPrint(record)}>Print</Button>
-              {(record && (record.status.filter(e => e === 1)).length > 0) && <Button disabled={record.cargoType === 2 ? true : false} style={{ fontSize: '10px' }} onClick={() => props.onCheckIn(record)}>Check-In</Button>}
-              {(record.status.filter(e => e === 2 && e !== 1).length > 0) && <Button disabled={record.cargoType === 2 ? true : false} style={{ fontSize: '10px' }} onClick={() => props.onArrived(record)} >Arrived</Button>}
+          {record.status && (
+            <>
+              <Button
+                style={{ fontSize: "10px" }}
+                onClick={() => props.onViewClick(record)}
+              >
+                View
+              </Button>
+              <Button
+                style={{ fontSize: "10px" }}
+                onClick={() => props.onPrint(record)}
+              >
+                Print
+              </Button>
+              {record &&
+                record.status.filter((e) => e === 1).length > 0 &&
+                record.cargoType.filter((e) => e === 1).length > 0 && (
+                  <Button
+                    style={{ fontSize: "10px" }}
+                    onClick={() => props.onCheckIn(record)}
+                  >
+                    Check-In
+                  </Button>
+                )}
+              {record.status.filter((e) => e === 2 && e !== 1).length > 0 &&
+                record.cargoType.filter((e) => e === 1).length > 0 && (
+                  <Button
+                    style={{ fontSize: "10px" }}
+                    onClick={() => props.onArrived(record)}
+                  >
+                    Arrived
+                  </Button>
+                )}
             </>
-            
-          }
+          )}
           {/* {console.log("RECORD fetched from api:",record)} */}
         </div>
       ),
@@ -210,7 +236,7 @@ class Manifest extends React.Component {
         showModalCheckIn: false,
         showModalArrived: false,
         disabled: false,
-        // cargoType: 2 
+        cargoType: e.cargoType 
       };
     });
     this.setState({ dataSource });

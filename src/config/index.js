@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(163)",
+    build: "1.8.0(164)",
   },
   environment: "",
-  changeLogs: `update/display-values-backend-intergration/build163`,
+  changeLogs: `feature/display-checkin-arrived-timestamps-manifestButtons-build164`,
 };
 
 export const ERROR_CODES = {

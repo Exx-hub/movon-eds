@@ -583,8 +583,12 @@ class SalesReport extends React.Component {
         scanCode: e.scanCode,
         cashier: e.cashier,
         cargoType: e.cargoType === 2 ? "Accompanied" : "Cargo",
-        arrived: e.arrivedTime ? e.arrivedTime : "--", 
-        checkedIn: e.checkInTime ? e.checkInTime : "--", 
+        arrived: e.arrivedDate ? moment
+        .tz(e.arrivedDate, "Asia/Manila")
+        .format("MMM DD, YYYY hh:mm:ss A") : "",  
+        checkedIn: e.checkedInDate ? moment
+        .tz(e.checkedInDate, "Asia/Manila")
+        .format("MMM DD, YYYY hh:mm:ss A") : "", 
         sender: e.sender,
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
@@ -712,13 +716,14 @@ class SalesReport extends React.Component {
         Download PDF
       </Menu.Item>
       
-      {this.isAdmin() && 
+      {/* {this.isAdmin() &&  */}
       <Menu.Item 
       key="downloadXls" 
       icon={<ProfileOutlined />}
       >
         Download XLS
-      </Menu.Item>}
+      </Menu.Item>
+      {/* } */}
       
     </Menu>
   );
