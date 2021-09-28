@@ -60,25 +60,22 @@ const TableRoutesView = (props) => {
               >
                 Print
               </Button>
-              {record &&
-                record.status.filter((e) => e === 1).length > 0 &&
-                 (
-                  <Button
-                    style={{ fontSize: "10px" }}
-                    onClick={() => props.onCheckIn(record)}
-                  >
-                    Check-In
-                  </Button>
-                )}
-              {record.status.filter((e) => e === 2 && e !== 1).length > 0 &&
-               (
-                  <Button
-                    style={{ fontSize: "10px" }}
-                    onClick={() => props.onArrived(record)}
-                  >
-                    Arrived
-                  </Button>
-                )}
+              {record && record.status.filter((e) => e === 1).length > 0 && (
+                <Button
+                  style={{ fontSize: "10px" }}
+                  onClick={() => props.onCheckIn(record)}
+                >
+                  Check-In
+                </Button>
+              )}
+              {record.status.filter((e) => e === 2 && e !== 1).length > 0 && (
+                <Button
+                  style={{ fontSize: "10px" }}
+                  onClick={() => props.onArrived(record)}
+                >
+                  Arrived
+                </Button>
+              )}
             </>
           )}
           {/* {console.log("RECORD fetched from api:",record)} */}
