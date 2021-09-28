@@ -59,6 +59,10 @@ const getTag = (props) => {
       color = "default";
       caption= "Closed"
       break;
+      case "accompanied": 
+      color = "default";
+      caption= "Closed"
+      break;  
     default:
         break
   }
