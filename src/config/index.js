@@ -38,7 +38,7 @@ export const config = {
     build: "1.8.0(165)",
   },
   environment: "",
-  changeLogs: `update/tagging-of-closed-for-accompanied-build165`,
+  changeLogs: `update/tagging-of-closed-for-accompanied-timestamps-build165`,
 };
 
 export const ERROR_CODES = {
