@@ -62,7 +62,7 @@ const TableRoutesView = (props) => {
               </Button>
               {record &&
                 record.status.filter((e) => e === 1).length > 0 &&
-                record.cargoType.filter((e) => e === 1).length > 0 && (
+                 (
                   <Button
                     style={{ fontSize: "10px" }}
                     onClick={() => props.onCheckIn(record)}
@@ -71,7 +71,7 @@ const TableRoutesView = (props) => {
                   </Button>
                 )}
               {record.status.filter((e) => e === 2 && e !== 1).length > 0 &&
-                record.cargoType.filter((e) => e === 1).length > 0 && (
+               (
                   <Button
                     style={{ fontSize: "10px" }}
                     onClick={() => props.onArrived(record)}
