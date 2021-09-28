@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(164)",
+    build: "1.8.0(165)",
   },
   environment: "",
-  changeLogs: `feature/display-checkin-arrived-timestamps-manifestButtons-build164`,
+  changeLogs: `update/tagging-of-closed-for-accompanied-build165`,
 };
 
 export const ERROR_CODES = {

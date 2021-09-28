@@ -593,7 +593,7 @@ class SalesReport extends React.Component {
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
           .format("MMM DD, YYYY hh:mm:ss A"),
-        status: config.parcelStatus[e.status],
+        status: e.cargoType === 2 ? "accompanied" : config.parcelStatus[e.status],
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,
         systemFee: `₱ ${Number(e.systemFee || 0).toFixed(2)}`,
