@@ -774,7 +774,9 @@ class SalesReport extends React.Component {
       this.state.totalAmount,
       this.getDestination(),
       isP2P,
-      this.userProfileObject.getBusCompanyId()
+      this.userProfileObject.getBusCompanyId(),
+      this.state.parcelStatusFilter,
+      this.state.cargoTypeFilter
     );
   };
 

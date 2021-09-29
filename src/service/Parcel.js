@@ -436,9 +436,12 @@ const ParcelService = {
     totalAmount,
     destination,
     isP2P,
-    busCompanyId
+    busCompanyId,
+    filterArray,
+    cargoTypeArray
   ) => {
     const filename = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX";
+    
 
     return axios({
       method: "get",
@@ -461,6 +464,8 @@ const ParcelService = {
         date: `${dateFrom} - ${dateTo}`,
         isP2P: isP2P ? 1 : 0,
         filename,
+        filterArray,
+        cargoTypeArray
       },
     }).then((response) => {
       const url = window.URL.createObjectURL(
@@ -468,12 +473,12 @@ const ParcelService = {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         })
       );
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      // const link = document.createElement("a");
+      // link.href = url;
+      // link.setAttribute("download", filename);
+      // document.body.appendChild(link);
+      // link.click();
+      // link.remove();
     });
   },
 
