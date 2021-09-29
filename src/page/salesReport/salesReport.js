@@ -586,7 +586,7 @@ class SalesReport extends React.Component {
         recipient: e.recipient,
         scanCode: e.scanCode,
         cashier: e.cashier,
-        cargoType: e.cargoType === 2 ? "Accompanied" : "Cargo",
+        cargoType: e.cargoType === 2 ? "accompanied" : "cargo",
         arrived: e.arrivedDate ? moment
         .tz(e.arrivedDate, "Asia/Manila")
         .format("MMM DD, YYYY hh:mm:ss A") : "",  

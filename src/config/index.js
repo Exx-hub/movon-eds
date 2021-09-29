@@ -23,8 +23,8 @@ export const config = {
     "staff-admin": 2,
   },
   cargoType: {
-    1: "Cargo",
-    2: "Accompanied",
+    1: "cargo",
+    2: "accompanied",
   },
   ticket: {
     totalCopy: 6,
@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(165)",
+    build: "1.8.0(166)",
   },
   environment: "",
-  changeLogs: `update/tagging-of-closed-for-accompanied-timestamps-build165`,
+  changeLogs: `feature/add-cargoType-column-manifest/build166`,
 };
 
 export const ERROR_CODES = {

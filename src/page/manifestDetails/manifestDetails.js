@@ -95,6 +95,11 @@ const ManifestDetailsTable = (props) => {
       sorter: (a, b) => a.name.travelStatus - b.name.travelStatus,
     },
     {
+      title: "Cargo Type",
+      dataIndex: "cargoType",
+      key: "cargoType",
+    },
+    {
       title: "Action",
       key: "action",
       render: (text, record) => (
@@ -250,6 +255,7 @@ class ManifestDetails extends React.Component {
       ? this.state.tempParcelData.map((e, i) => {
           return {
             key: i,
+            cargoType: config.cargoType[e.cargoType],
             qrcode: e.scanCode,
             billOfLading: e.billOfLading,
             sentDate: moment(e.sentDate).format("MMM DD, YYYY"),
