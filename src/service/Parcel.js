@@ -391,7 +391,7 @@ const ParcelService = {
         page,
         limit,
         filterArray,
-        cargoTypeArray
+        cargoTypeArray,
       },
     });
   },
@@ -441,7 +441,8 @@ const ParcelService = {
     cargoTypeArray
   ) => {
     const filename = isP2P ? "VLI-BITSI-Summary.XLSX" : "Cargo.XLSX";
-    
+    console.log(filterArray);
+    console.log(cargoTypeArray);
 
     return axios({
       method: "get",
@@ -465,7 +466,7 @@ const ParcelService = {
         isP2P: isP2P ? 1 : 0,
         filename,
         filterArray,
-        cargoTypeArray
+        cargoTypeArray,
       },
     }).then((response) => {
       const url = window.URL.createObjectURL(
@@ -473,12 +474,12 @@ const ParcelService = {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         })
       );
-      // const link = document.createElement("a");
-      // link.href = url;
-      // link.setAttribute("download", filename);
-      // document.body.appendChild(link);
-      // link.click();
-      // link.remove();
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     });
   },
 
