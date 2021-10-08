@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(167)",
+    build: "1.8.0(168)",
   },
   environment: "",
-  changeLogs: `feature/add-parcelStatusArray-cargoTypeArray-excel-dl/build167`,
+  changeLogs: `bugFix/pdf-download-dailySales-report/build168`,
 };
 
 export const ERROR_CODES = {

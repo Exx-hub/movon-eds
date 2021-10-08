@@ -495,7 +495,7 @@ const ParcelService = {
     isP2P,
     busCompanyId
   ) => {
-    const filename = "Cargo.PDF";
+    const filename = "Cargo.pdf";
 
     return axios({
       method: "get",
