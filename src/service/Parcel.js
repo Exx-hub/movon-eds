@@ -493,7 +493,9 @@ const ParcelService = {
     totalAmount,
     destination,
     isP2P,
-    busCompanyId
+    busCompanyId,
+    filterArray,
+    cargoTypeArray,
   ) => {
     const filename = "Cargo.pdf";
 
@@ -518,6 +520,8 @@ const ParcelService = {
         date: `${dateFrom} - ${dateTo}`,
         isP2P: isP2P ? 1 : 0,
         filename,
+        filterArray,
+        cargoTypeArray,
       },
     }).then((response) => {
       const url = window.URL.createObjectURL(
