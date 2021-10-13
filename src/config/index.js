@@ -38,7 +38,7 @@ export const config = {
     build: "1.8.0(169)",
   },
   environment: "",
-  changeLogs: `update/remove-pdf-isarog/build169 `,
+  changeLogs: `update/revert-bicol-download-options/build169`,
 };
 
 export const ERROR_CODES = {
