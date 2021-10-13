@@ -710,17 +710,18 @@ class SalesReport extends React.Component {
     }
   }
 
+
   menu = (
     <Menu onClick={(e) => this.onHandleMenu(e)}>
       <Menu.Item
-        // style={{ display: "none" }}
+        style={{ display: UserProfile.getBusCompanyTag() === "isarog-liner" ? "none" : "" }}
         key="downloadPdf"
         icon={<FilePdfOutlined />}
       >
         Download PDF
       </Menu.Item>
-      
-      {this.isAdmin() && 
+
+      {UserProfile.getBusCompanyTag() === "isarog-liner" && 
       <Menu.Item 
       key="downloadXls" 
       icon={<ProfileOutlined />}
@@ -728,7 +729,15 @@ class SalesReport extends React.Component {
         Download XLS
       </Menu.Item>
       }
-      
+
+      {this.isAdmin() && UserProfile.getBusCompanyTag() === "dltb" &&
+      <Menu.Item 
+      key="downloadXls" 
+      icon={<ProfileOutlined />}
+      >
+        Download XLS
+      </Menu.Item>
+      }
     </Menu>
   );
 

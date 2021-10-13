@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(168)",
+    build: "1.8.0(169)",
   },
   environment: "",
-  changeLogs: `bugFix/pdf-download-dailySales-report/build168`,
+  changeLogs: `update/remove-pdf-isarog/build169 `,
 };
 
 export const ERROR_CODES = {
