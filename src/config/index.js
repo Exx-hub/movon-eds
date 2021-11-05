@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(170)",
+    build: "1.8.0(171)",
   },
   environment: "",
-  changeLogs: `feature/display-total-weight-bitsi/build170`,
+  changeLogs: `feature/add-weight-fixedMatrix-bitsi/build171`,
 };
 
 export const ERROR_CODES = {
