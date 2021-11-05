@@ -447,6 +447,7 @@ class SalesReport extends React.Component {
       data: [],
       isPrinting: false,
       totalAmount: 0,
+      totalWeight: 0,
       tags: [],
       templist: [],
       templistValue: undefined,
@@ -551,7 +552,7 @@ class SalesReport extends React.Component {
           return;
         }
         this.parseParcel(e);
-        console.log("SUCCESS CALLING API")
+        console.log("SUCCESS CALLING GET PARCELS API", e)
       })
       .catch((e) => {
         this.setState({ fetching: false });
@@ -559,7 +560,7 @@ class SalesReport extends React.Component {
   };
 
   parseParcel = (dataResult) => {
-    const { data, pagination, totalPrice, errorCode } = dataResult.data;
+    const { data, pagination, totalPrice, errorCode, totalWeight } = dataResult.data;
     if (errorCode) {
       this.setState({ fetching: false });
       this.handleErrorNotification(errorCode);
@@ -614,6 +615,7 @@ class SalesReport extends React.Component {
       fetching: false,
       data: records,
       totalAmount: totalPrice.toFixed(2),
+      totalWeight: totalWeight
     });
   };
 
@@ -646,9 +648,15 @@ class SalesReport extends React.Component {
     }
   };
 
+  
+
   getPreparedBy = () => {
     return this.userProfileObject.getPersonFullName() || "";
   };
+
+  getTotalWeight = () => {
+    return this.state.totalWeight + "kg";
+}
 
   getTotalAmount = () => {
     return this.state.totalAmount;
@@ -1279,6 +1287,7 @@ class SalesReport extends React.Component {
                 {this.showTextDetails("Prepared: ", this.getPreparedBy())}
               </div>
               <div>
+                {UserProfile.getBusCompanyTag() === 'isarog-liner' && this.showTextDetails("Total Weight: ", this.getTotalWeight())}
                 {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
                 {this.showTextDetails(
                   "Total Number of Transaction: ",

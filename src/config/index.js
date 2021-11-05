@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(169)",
+    build: "1.8.0(170)",
   },
   environment: "",
-  changeLogs: `update/revert-bicol-download-options/build169`,
+  changeLogs: `feature/display-total-weight-bitsi/build170`,
 };
 
 export const ERROR_CODES = {
