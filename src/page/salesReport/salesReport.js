@@ -603,11 +603,11 @@ class SalesReport extends React.Component {
         checkedIn: e.checkedInDate ? moment
         .tz(e.checkedInDate, "Asia/Manila")
         .format("MMM DD, YYYY hh:mm:ss A") : "", 
-        checkInCashier: "ALVIN", // e.checkedInCashier
+        checkInCashier: e.checkedInCashier,
         arrived: e.arrivedDate ? moment
         .tz(e.arrivedDate, "Asia/Manila")
         .format("MMM DD, YYYY hh:mm:ss A") : "",
-        arriveCashier: "ACOSTA",  // e.arrivedCashier
+        arriveCashier: e.arrivedCashier,
         sender: e.sender,
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
