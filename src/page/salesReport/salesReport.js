@@ -175,9 +175,21 @@ const tableSourceDLTB = [
     align: "center",
   },
   {
+    title: "CHECKED-IN BY",
+    dataIndex: "checkInCashier",
+    key: "checkInCashier",
+    align: "center",
+  },
+  {
     title: "ARRIVED",
     dataIndex: "arrived",
     key: "arrived",
+    align: "center",
+  },
+  {
+    title: "ARRIVED BY",
+    dataIndex: "arriveCashier",
+    key: "arriveCashier",
     align: "center",
   },
   {
@@ -586,14 +598,16 @@ class SalesReport extends React.Component {
         quantity: e.quantity,
         recipient: e.recipient,
         scanCode: e.scanCode,
-        cashier: e.cashier,
         cargoType: e.cargoType === 2 ? "accompanied" : "cargo",
-        arrived: e.arrivedDate ? moment
-        .tz(e.arrivedDate, "Asia/Manila")
-        .format("MMM DD, YYYY hh:mm:ss A") : "",  
+        cashier: e.cashier,
         checkedIn: e.checkedInDate ? moment
         .tz(e.checkedInDate, "Asia/Manila")
         .format("MMM DD, YYYY hh:mm:ss A") : "", 
+        checkInCashier: "ALVIN", // e.checkedInCashier
+        arrived: e.arrivedDate ? moment
+        .tz(e.arrivedDate, "Asia/Manila")
+        .format("MMM DD, YYYY hh:mm:ss A") : "",
+        arriveCashier: "ACOSTA",  // e.arrivedCashier
         sender: e.sender,
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
