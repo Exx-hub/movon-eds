@@ -5,6 +5,7 @@ import { UserProfile } from "../../utility";
 import { getManifestPreviewHeader } from "../../utility";
 
 export function ReviewDetails(props) {
+  console.log("REVIEW DETAILS PROPS:",props)
   return (
     <div className="preview-details">
       <Container title="Package Information">
@@ -99,6 +100,14 @@ function PackageInformationSection(props) {
           label="Cashier"
           value={props.value.cashier || "no assigned cashier"}
         />
+
+        {UserProfile.getAssignedStationName().includes("Ambulant") && 
+        <TextContainer
+          label="Transaction Date"
+          value={props.value.ambulantDate || ""}
+        />
+        }
+        
       </div>
     </div>
   );

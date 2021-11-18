@@ -1,8 +1,10 @@
 import React from "react";
-import { Row, Col, Radio, Select, AutoComplete, Divider, Button } from "antd";
+import { Row, Col, Radio, Select, AutoComplete, Divider, Button,DatePicker } from "antd";
 import "./createParcelForm.scss";
 import { InputView } from "../input";
 import { getHeaderColor, UserProfile } from "../../utility";
+
+const dateFormat = 'YYYY-MM-DD';
 
 const { Option } = Select;
 
@@ -71,7 +73,10 @@ function BicolIsarogForm(props) {
     associateFixPrice,
     billOfLading,
     additionalFee,
+    ambulantDate
   } = props.details;
+
+  console.log(ambulantDate)
 
   const { isFixedPrice } = props.priceDetails;
 
@@ -149,6 +154,7 @@ function BicolIsarogForm(props) {
     return view;
   };
 
+  
   return (
     <div className="create-parcel-form">
       <div
@@ -316,6 +322,16 @@ function BicolIsarogForm(props) {
               </div>
             </Col>
           </Row>
+
+          {/* ADD DATE PICKER HERE BUT HANDLE STATE TO BE INCLUDED IN DETAILS  */}
+            <Row>
+              {UserProfile.getAssignedStationName().includes("Ambulant") && (
+                <Col span={8} className="gutter-row">
+                  <DatePicker onChange={(e,date) => props.onDateChange(date)} size="large" format={dateFormat} />
+                </Col>
+              )}
+            </Row>
+
           <Row className={`${enableInterConnection ? "" : "hide"}`}>
             <Col className="gutter-row" span={8}>
               <div className="select-destination-form-container">

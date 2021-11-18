@@ -71,6 +71,13 @@ class UserProfileClass {
     return undefined;
   }
 
+  getAssignedStationName() {
+    if (this.getAssignedStation()) {
+      return this.getAssignedStation().name || undefined;
+    }
+    return undefined;
+  }
+
   getBusCompany() {
     if (this.user) {
       return this.user.busCompanyId;

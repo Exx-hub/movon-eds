@@ -82,6 +82,8 @@ const ParcelService = {
       driverFullName,
       conductorFullName,
       additionalFee,
+      // ADD AMBULANT DATE 
+      ambulantDate,
     } = details;
 
     const associatedTariffRate = tariffRate || undefined;
@@ -138,6 +140,8 @@ const ParcelService = {
     bodyFormData.set("driverFullName", driverFullName.value);
     bodyFormData.set("conductorFullName", conductorFullName.value);
     bodyFormData.set("associateORNumber", associateORNumber.value);
+    // ADD AMBULANT DATE TO PASS TO CREATE PARCEL API
+    bodyFormData.set("ambulantDate", ambulantDate.value);
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":

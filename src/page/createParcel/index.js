@@ -141,10 +141,14 @@ const getReviewDetails = (state) => {
     basePrice: state.basePrice || 0,
     cashier: UserProfile.getPersonFullName(),
     type: "create",
+
+    ambulantDate: state.details.ambulantDate.value 
   };
 };
 
 const parceResponseData = (data) => {
+  console.log("createParcelData",data)
+
   const userProfile = UserProfile;
   const logo =
     (userProfile.getBusCompany() && userProfile.getBusCompany().logo) ||
@@ -183,7 +187,8 @@ const parceResponseData = (data) => {
     tripCode: data.trips ? data.trips.displayId : data.tripCode,
     //tripDate: data.trips.tripStartDateTime,
     scanCode: data.scanCode,
-    createdAt: data.createdAt,
+    createdAt: data.createdAt, 
+    transactionDate: data.transactionDate,
     subParcels: data.subParcels,
     cashier: data.deliveryPersonInfo.deliveryPersonName,
   };
@@ -434,6 +439,12 @@ class CreateParcel extends React.Component {
           accepted: true,
           enabled: false,
         },
+        ambulantDate: {
+          name: "ambulantDate",
+          value: undefined,
+          isRequired: UserProfile.getAssignedStationName().includes("Ambulant") ? true : false,
+          accepted: true,
+        },
       },
       enalbeBicolIsarogWays: false,
       declaredValueadditionalFee: 0.1,
@@ -495,6 +506,7 @@ class CreateParcel extends React.Component {
     //   ...[{ name: "None", rate: "None" }],
     // ];
     // details.discount = discount;
+
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
@@ -571,6 +583,7 @@ class CreateParcel extends React.Component {
       })
       .catch((e) => console.info("error", e));
   }
+
 
   handleErrorNotification = (code) => {
     if (isNull(code)) {
@@ -953,6 +966,14 @@ class CreateParcel extends React.Component {
       this.handleView("input-change", details, () => {});
     }
   };
+
+  onDateChange = (date) => {
+    let details = { ...this.state.details };
+    details.ambulantDate.value = date
+      if(date){
+        this.setState({ details })
+      }
+  }
 
   getMatrixValue = (busCompanyId, origin, destination) => {
     return MatrixService.getMatrix({
@@ -1593,6 +1614,7 @@ class CreateParcel extends React.Component {
                   }
                   onChange={(val, name) => this.onInputChange(name, val)}
                   onCompute={() => this.onCompute()}
+                  onDateChange={(date) => this.onDateChange(date)}
                 />
                 <StepControllerView
                   width={this.state.width}

@@ -18,6 +18,8 @@ function TextItem(props) {
   );
 }
 
+
+// TicketDetails component 
 const TicketDetails = (props) => {
   const {
     billOfLading,
@@ -25,8 +27,11 @@ const TicketDetails = (props) => {
     totalPrice,
     endStationName,
     createdAt,
-    cashier
+    cashier,
+    transactionDate,
   } = props.value;
+
+  console.log(props)
 
   const code = props.code;
   const parcelInfo = props.parcelInfo || [];
@@ -68,6 +73,8 @@ const TicketDetails = (props) => {
           <Row justify="space-between" className="image-logo-container">
             <img src={getStickerLogoBw()} className="movon-logo" alt="Logo" />
             <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
+            {/* TRANSACTION DATE SHOULD BE THE ONE DISPLAYED regardless if ambulant or not  */}
+            {/* <Row justify="center"><span className="date-created">{moment(transactionDate).format("MMM DD, YYYY")}</span></Row> */}
           </Row>
           {parcelInfo.map((e, i) => (
             <TextItem key={i} title={e.title} value={e.value} />
@@ -242,6 +249,7 @@ const SpCopy = (props) => {
 };
 
 export const TicketView = (props) => {
+  console.log("created Parcel response:", props)
   return (
     <div className="component-ticketview-container">
       {props.value && <PCopy {...props} />}

@@ -480,6 +480,7 @@ class SalesReport extends React.Component {
     this.userProfileObject = UserProfile;
   }
 
+ 
   componentDidMount() {
     this.printEl = React.createRef();
     RoutesService.getAllRoutes().then((e) => {
