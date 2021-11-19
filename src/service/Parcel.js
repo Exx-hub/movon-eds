@@ -5,6 +5,11 @@ import { UserProfile } from "../utility";
 const BASE_URL = config.BASE_URL;
 const userProfileObject = UserProfile;
 
+
+const isAmbulant = () => {
+  return UserProfile.getAssignedStationName().includes("Ambulant") ? true : false;
+}
+
 const ParcelService = {
   getTrips: (stationId) => {
     // var currentTime = moment().utc().format('YYYY-MM-DDThh:mm:ss[Z]')
@@ -140,8 +145,9 @@ const ParcelService = {
     bodyFormData.set("driverFullName", driverFullName.value);
     bodyFormData.set("conductorFullName", conductorFullName.value);
     bodyFormData.set("associateORNumber", associateORNumber.value);
+    
     // ADD AMBULANT DATE TO PASS TO CREATE PARCEL API
-    bodyFormData.set("ambulantDate", ambulantDate.value);
+    isAmbulant() && bodyFormData.set("ambulantDate", ambulantDate.value);
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":

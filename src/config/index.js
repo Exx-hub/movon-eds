@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(173)",
+    build: "1.8.0(175)",
   },
   environment: "",
-  changeLogs: `feature/add-columns-checkin-arrived-cashier/build173`,
+  changeLogs: `feature/ambulant-station/build175`,
 };
 
 export const ERROR_CODES = {

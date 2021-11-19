@@ -72,9 +72,8 @@ const TicketDetails = (props) => {
         <Col span={17} style={{ paddingLeft: ".5rem" }}>
           <Row justify="space-between" className="image-logo-container">
             <img src={getStickerLogoBw()} className="movon-logo" alt="Logo" />
-            <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row>
-            {/* TRANSACTION DATE SHOULD BE THE ONE DISPLAYED regardless if ambulant or not  */}
-            {/* <Row justify="center"><span className="date-created">{moment(transactionDate).format("MMM DD, YYYY")}</span></Row> */}
+            {/* <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row> */}
+            <Row justify="center"><span className="date-created">{moment(transactionDate).format("MMM DD, YYYY")}</span></Row>
           </Row>
           {parcelInfo.map((e, i) => (
             <TextItem key={i} title={e.title} value={e.value} />
