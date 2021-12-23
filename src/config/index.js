@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(175)",
+    build: "1.8.0(177)",
   },
   environment: "",
-  changeLogs: `feature/ambulant-station/build175`,
+  changeLogs: `tempFix/hide-station/build177`,
 };
 
 export const ERROR_CODES = {
