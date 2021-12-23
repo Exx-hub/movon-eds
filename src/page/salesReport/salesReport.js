@@ -1149,7 +1149,13 @@ class SalesReport extends React.Component {
                   onSearch={(e) => this.doSearch("origin", e)}
                   placeholder="Origin Stations"
                 >
-                  {this.state.startStationRoutesTemp.map((e, i) => (
+                  {/* {this.state.startStationRoutesTemp.map((e, i) => (
+                    <Option value={e.stationName}>{e.stationName}</Option>
+                  ))} */}
+
+                    {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
+                  {this.state.startStationRoutesTemp.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camerines Sur")
+                  .map((e, i) => (
                     <Option value={e.stationName}>{e.stationName}</Option>
                   ))}
                 </AutoComplete>
