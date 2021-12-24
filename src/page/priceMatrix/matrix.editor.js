@@ -471,15 +471,17 @@ function DltbMatrix(props) {
                                     style={{ width: 300, marginBottom: '1rem' }}
                                     onSearch={(e) => onSelect('origin-search', e)}
                                     onSelect={(e) => onSelect("startName", e)}>
+
                                     {/* {
                                         state.tempOriginList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     } */}
 
                                     {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
                                     {
-                                        state.tempOriginList.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camerines Sur")
+                                        state.tempOriginList.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camarines Sur")
                                         .map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
+
                                 </AutoComplete>
                             </Space>
                             <Space direction="vertical" style={{ marginLeft: '1rem' }}>
@@ -507,15 +509,17 @@ function DltbMatrix(props) {
                                     style={{ width: 300, marginBottom: '1rem' }}
                                     onSearch={(e) => onSelect("search-fixMatrixOriginStation", e)}
                                     onSelect={(e) => onSelect("fixMatrixOriginName", e)}>
+
                                     {/* {
                                         state.fixPriceOriginList.map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     } */}
 
                                     {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX  */}
                                     {
-                                        state.tempOriginList.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camerines Sur")
+                                        state.tempOriginList.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camarines Sur")
                                         .map((e,i) => (<Option key={i} value={e.stationId}>{e.stationName}</Option>))
                                     }
+
                                 </AutoComplete>
                             </Space>
                             <Space direction="vertical">

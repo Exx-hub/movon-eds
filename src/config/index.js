@@ -38,7 +38,7 @@ export const config = {
     build: "1.8.0(177)",
   },
   environment: "",
-  changeLogs: `tempFix/hide-station2/build177`,
+  changeLogs: `bugFix/filter-pitx-camarines/build177`,
 };
 
 export const ERROR_CODES = {
