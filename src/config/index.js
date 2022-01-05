@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(177)",
+    build: "1.8.0(179)",
   },
   environment: "",
-  changeLogs: `bugFix/filter-pitx-camarines/build177`,
+  changeLogs: `feature/display-all-sales-summary-values/build179`,
 };
 
 export const ERROR_CODES = {
