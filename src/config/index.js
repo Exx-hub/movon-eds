@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(179)",
+    build: "1.8.0(180)",
   },
   environment: "",
-  changeLogs: `feature/display-all-sales-summary-values/build179`,
+  changeLogs: `feature/sales-summary-bitsi-dltb/build180`,
 };
 
 export const ERROR_CODES = {
