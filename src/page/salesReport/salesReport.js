@@ -460,6 +460,11 @@ class SalesReport extends React.Component {
       isPrinting: false,
       totalAmount: 0,
       totalWeight: 0,
+      voidedCount: 0, 
+      totalSystemFee: 0, 
+      totalPortersFee: 0, 
+      focCount: 0, 
+      //new summary values added above
       tags: [],
       templist: [],
       templistValue: undefined,
@@ -573,7 +578,18 @@ class SalesReport extends React.Component {
   };
 
   parseParcel = (dataResult) => {
-    const { data, pagination, totalPrice, errorCode, totalWeight } = dataResult.data;
+    const {
+      data,
+      pagination,
+      totalPrice,
+      errorCode,
+      totalWeight,
+      totalSystemFee,
+      totalPortersFee,
+      focCount,
+      voidedCount,
+    } = dataResult.data;
+
     if (errorCode) {
       this.setState({ fetching: false });
       this.handleErrorNotification(errorCode);
@@ -630,7 +646,11 @@ class SalesReport extends React.Component {
       fetching: false,
       data: records,
       totalAmount: totalPrice.toFixed(2),
-      totalWeight: totalWeight
+      totalWeight: totalWeight,
+      voidedCount: voidedCount,
+      totalSystemFee: totalSystemFee.toFixed(2),
+      totalPortersFee: totalPortersFee.toFixed(2),
+      focCount: focCount
     });
   };
 
@@ -664,17 +684,9 @@ class SalesReport extends React.Component {
   };
 
   
-
+  // for both bitsi and dltb
   getPreparedBy = () => {
     return this.userProfileObject.getPersonFullName() || "";
-  };
-
-  getTotalWeight = () => {
-    return this.state.totalWeight + "kg";
-}
-
-  getTotalAmount = () => {
-    return this.state.totalAmount;
   };
 
   getDestination = () => {
@@ -682,6 +694,42 @@ class SalesReport extends React.Component {
     const _tags = tags.map((e) => e.name);
     return (_tags.length > 0 && _tags.join(", ")) || "All";
   };
+
+  getTotalTransactions = () => {
+    return this.state.totalRecords;
+  }
+
+  getTotalAmount = () => {
+    return this.state.totalAmount;
+  };
+
+  getVoidedCount = () => {
+    return this.state.voidedCount;
+  }
+
+  
+  // for DLTB only
+  getTotalSystemFee = () => {
+    return this.state.totalSystemFee;
+  }
+
+  
+  // for BITSI only
+  getPortersFee = () => {
+    return this.state.totalPortersFee;
+  }
+
+  getFocCount = () => {
+    return this.state.focCount;
+  }
+
+  getTotalWeight = () => {
+    return this.state.totalWeight + "kg";
+  }
+
+
+
+
 
   getDate = () => {
     return this.state.startDay === this.state.endDay
@@ -1304,18 +1352,34 @@ class SalesReport extends React.Component {
                 justifyContent: "space-between",
               }}
             >
-              <div>
+              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-end'}}>
                 {this.showTextDetails("Destination: ", this.getDestination())}
                 {this.showTextDetails("Prepared: ", this.getPreparedBy())}
               </div>
-              <div>
-                {UserProfile.getBusCompanyTag() === 'isarog-liner' && this.showTextDetails("Total Weight: ", this.getTotalWeight())}
+              
+             
+              {UserProfile.getBusCompanyTag() === 'isarog-liner' ? 
+                <div style={{display: 'flex', flexDirection: 'row'}}>
+                <div style={{marginRight: '25px'}}>
+                {this.showTextDetails("FOC Count: ", this.getFocCount())}
+                {this.showTextDetails("Voided Count: ", this.getVoidedCount())}
+                {this.showTextDetails("Total Porter's Fee: ", this.getPortersFee())}
+                </div>
+                <div>
+                {this.showTextDetails("Total Weight: ", this.getTotalWeight())}
                 {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
-                {this.showTextDetails(
-                  "Total Number of Transaction: ",
-                  this.state.totalRecords
-                )}
-              </div>
+                {this.showTextDetails("Total Number of Transactions: ", this.getTotalTransactions())}
+                </div>
+                </div> 
+                :
+                <div>
+                {this.showTextDetails("Voided Count: ", this.getVoidedCount())}
+                {this.showTextDetails("Total System Fee: ", this.getTotalSystemFee())}
+                {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
+                {this.showTextDetails("Total Number of Transactions: ", this.getTotalTransactions())}
+                </div> 
+
+              }
             </div>
 
             {false ? (
