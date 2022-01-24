@@ -18,8 +18,7 @@ function TextItem(props) {
   );
 }
 
-
-// TicketDetails component 
+// TicketDetails component
 const TicketDetails = (props) => {
   const {
     billOfLading,
@@ -31,7 +30,10 @@ const TicketDetails = (props) => {
     transactionDate,
   } = props.value;
 
-  console.log(props)
+  // console.log("ticketDEtails PROPS:", props);
+  console.log("CREATED AT:", createdAt);
+  console.log("TRANSACTION DATE:", transactionDate);
+  // console.log(moment(undefined).format("MMM DD, YYYY"));
 
   const code = props.code;
   const parcelInfo = props.parcelInfo || [];
@@ -50,7 +52,9 @@ const TicketDetails = (props) => {
               value={code}
             />
           </Row>
-          <Row justify="center" className="scan-code-text">{code}</Row>
+          <Row justify="center" className="scan-code-text">
+            {code}
+          </Row>
           {/* <span>{(totalPrice || 0).toFixed(2)}</span> */}
           {/* <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row> */}
 
@@ -58,69 +62,157 @@ const TicketDetails = (props) => {
             {Boolean(props.spCopy) ? (
               <span className="package-indicator-sp">{props.parcelCount}</span>
             ) : (
-                <div className="right-text" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <span className="package-indicator">
-                    {packageQty} <span className="pkg-text">pkg.</span>
-                  </span>
-                  <Row justify="center" className="price-text"> Price:&nbsp;<b>{totalPrice.toFixed(2)}</b></Row>
-                  <span className="customer-copy-text">{copy}</span>
-
-                </div>
-              )}
+              <div
+                className="right-text"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <span className="package-indicator">
+                  {packageQty} <span className="pkg-text">pkg.</span>
+                </span>
+                <Row justify="center" className="price-text">
+                  {" "}
+                  Price:&nbsp;<b>{totalPrice.toFixed(2)}</b>
+                </Row>
+                <span className="customer-copy-text">{copy}</span>
+              </div>
+            )}
           </Row>
         </Col>
         <Col span={17} style={{ paddingLeft: ".5rem" }}>
           <Row justify="space-between" className="image-logo-container">
             <img src={getStickerLogoBw()} className="movon-logo" alt="Logo" />
-            {/* <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row> */}
-            <Row justify="center"><span className="date-created">{moment(transactionDate).format("MMM DD, YYYY")}</span></Row>
+
+            {transactionDate !== undefined ? (
+              <Row justify="center">
+                <span className="date-created">
+                  {moment(transactionDate).format("MMM DD, YYYY")}
+                </span>
+              </Row>
+            ) : (
+              <Row justify="center">
+                <span className="date-created">
+                  {moment(createdAt).format("MMM DD, YYYY")}
+                </span>
+              </Row>
+            )}
+
+            {/* <Row justify="center">
+              <span className="date-created">
+                {moment(createdAt).format("MMM DD, YYYY")}
+              </span>
+            </Row> */}
+            {/* <Row justify="center">
+              <span className="date-created">
+                {moment(transactionDate).format("MMM DD, YYYY")}
+              </span>
+            </Row>   */}
           </Row>
           {parcelInfo.map((e, i) => (
             <TextItem key={i} title={e.title} value={e.value} />
           ))}
-          {UserProfile.getBusCompanyTag() === 'dltb' &&
-            <div style={{ textAlign: 'right', marginRight: '1rem' }}>Cashier: {cashier}</div>}
+          {UserProfile.getBusCompanyTag() === "dltb" && (
+            <div style={{ textAlign: "right", marginRight: "1rem" }}>
+              Cashier: {cashier}
+            </div>
+          )}
         </Col>
       </Row>
-      { !Boolean(props.spCopy) && UserProfile.getBusCompanyTag() === 'isarog-liner' ?
-        <Row style={{
-          height: '100%',
-          width: '100%',
-          borderTop: "1px dashed gray",
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div style={{
-            display: 'flex',
-            width: '100%',
-            paddingLeft: '8px',
-            marginTop: '1rem',
-            flexDirection: 'row',
-            justifyContent: 'space-between'
-          }}>
-            <div style={{ display: "flex", flexDirection: 'column', marginTop: '2rem' }}>
-              <div style={{ fontSize: 10, borderTop: "1px solid black" }}>I hereby agree with the Terms and</div>
-              <div style={{ fontSize: 10 }}>Conditions of Bicol Isarog TSI.</div>
+      {!Boolean(props.spCopy) &&
+      UserProfile.getBusCompanyTag() === "isarog-liner" ? (
+        <Row
+          style={{
+            height: "100%",
+            width: "100%",
+            borderTop: "1px dashed gray",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              paddingLeft: "8px",
+              marginTop: "1rem",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginTop: "2rem",
+              }}
+            >
+              <div style={{ fontSize: 10, borderTop: "1px solid black" }}>
+                I hereby agree with the Terms and
+              </div>
+              <div style={{ fontSize: 10 }}>
+                Conditions of Bicol Isarog TSI.
+              </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: '5px' }}>
-              <span style={{ textAlign: 'center' }} className="bottom-destination-text">{endStationName}</span>
-              <span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                paddingRight: "5px",
+              }}
+            >
+              <span
+                style={{ textAlign: "center" }}
+                className="bottom-destination-text"
+              >
+                {endStationName}
+              </span>
+              <span className="bottom-blNo-text">
+                BL# <span className="bottom-blNo-num">{billOfLading}</span>
+              </span>
             </div>
             <div></div>
           </div>
-        </Row> :
-        <Row style={{ height: '100%', borderTop: "1px dashed gray", display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ height:'100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-            <div style={{ width: '100%', textAlign: 'center' }}>
-              <span className="bottom-destination-BL-text">{endStationName}</span>
+        </Row>
+      ) : (
+        <Row
+          style={{
+            height: "100%",
+            borderTop: "1px dashed gray",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ width: "100%", textAlign: "center" }}>
+              <span className="bottom-destination-BL-text">
+                {endStationName}
+              </span>
             </div>
-            <div style={{ width: '100%', textAlign: 'center' }}><span className="bottom-blNo-text">BL# <span className="bottom-blNo-num">{billOfLading}</span></span>
+            <div style={{ width: "100%", textAlign: "center" }}>
+              <span className="bottom-blNo-text">
+                BL# <span className="bottom-blNo-num">{billOfLading}</span>
+              </span>
             </div>
           </div>
         </Row>
-      }
+      )}
     </div>
   );
 };
@@ -133,7 +225,7 @@ const PCopy = (props) => {
       senderName,
       senderPhone,
       startStationName,
-      scanCode
+      scanCode,
     } = props.value;
 
     const parcelInfo = [
@@ -142,7 +234,6 @@ const PCopy = (props) => {
       { title: "Receiver", value: modifyName(recipientName) },
       { title: "Mobile No.", value: recipientPhone },
       { title: "Origin", value: startStationName },
-
     ];
 
     let _view = [];
@@ -165,8 +256,8 @@ const PCopy = (props) => {
 const MCopy = (props) => {
   let view = undefined;
   switch (UserProfile.getBusCompanyTag()) {
-    case 'dltb':
-    case 'isarog-liner':
+    case "dltb":
+    case "isarog-liner":
       if (props) {
         const {
           recipientName,
@@ -175,7 +266,7 @@ const MCopy = (props) => {
           senderPhone,
           startStationName,
           noOfSticker,
-          scanCode
+          scanCode,
         } = props.value;
 
         const parcelInfo = [
@@ -184,7 +275,6 @@ const MCopy = (props) => {
           { title: "Receiver", value: modifyName(recipientName) },
           { title: "Mobile No.", value: recipientPhone },
           { title: "Origin", value: startStationName },
-
         ];
 
         let _view = [];
@@ -204,7 +294,7 @@ const MCopy = (props) => {
       break;
 
     default:
-      view = null
+      view = null;
       break;
   }
   return view;
@@ -248,7 +338,7 @@ const SpCopy = (props) => {
 };
 
 export const TicketView = (props) => {
-  console.log("created Parcel response:", props)
+  console.log("created Parcel response:", props);
   return (
     <div className="component-ticketview-container">
       {props.value && <PCopy {...props} />}

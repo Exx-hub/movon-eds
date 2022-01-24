@@ -258,6 +258,8 @@ class ManifestDetails extends React.Component {
             cargoType: config.cargoType[e.cargoType],
             qrcode: e.scanCode,
             billOfLading: e.billOfLading,
+            // sentDate: moment(e.sentDate).format("MMM DD, YYYY"),
+            // change sentDate to transactionDate
             sentDate: moment(e.sentDate).format("MMM DD, YYYY"),
             description: e.packageInfo.packageName,
             sender: modifyName(e.senderInfo.senderName || ""),
@@ -282,6 +284,7 @@ class ManifestDetails extends React.Component {
   getReviewDetails = (data) => {
     const breakdown = data.paymentBreakdown || {};
     let paymentBreakdown = {};
+    console.log("DATA:", data)
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
@@ -344,6 +347,8 @@ class ManifestDetails extends React.Component {
       tripDate: data.trips.tripStartDateTime,
       scanCode: data.scanCode,
       createdAt: data.createdAt,
+      // added this to display correct transaction date if ambulant
+      transactionDate: data.sentDate,
       cashier: data.deliveryPersonInfo.deliveryPersonName,
       subParcels: data.subParcels,
       length: data.packageInfo.length,
