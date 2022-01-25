@@ -417,7 +417,7 @@ class Manifest extends React.Component {
                 {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
                 {this.state.startStationRoutesTemp.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camarines Sur")
                  .map((e, i) => (
-                   <Option value={e.stationName}>{e.stationName}</Option>
+                   <Option key={e.stationId} value={e.stationName}>{e.stationName}</Option>
                 ))}
                 
               </AutoComplete>
@@ -432,7 +432,7 @@ class Manifest extends React.Component {
               onSearch={(e) => this.doSearch('destination', e)}
               placeholder="Destination">
               {this.state.endStationRoutesTemp.map((e, i) => (
-                <Option value={e.endStationName}>{e.endStationName}</Option>
+                <Option key={e.end} value={e.endStationName}>{e.endStationName}</Option>
               ))}
             </AutoComplete>
           </Col>

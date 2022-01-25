@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Form, notification, Input, Space, Modal, Button } from "antd";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Form, notification, Input, Space } from "antd";
+// import { Link } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import { RoundedButton } from "../../component/button";
 import movoncargo from "../../assets/MovonEds.png";
@@ -9,7 +9,7 @@ import { openNotificationWithIcon, alterPath } from "../../utility";
 import "./login.scss";
 import { UserProfile } from "../../utility";
 import { config } from "../../config";
-import cookie from "../../assets/cookie.png";
+// import cookie from "../../assets/cookie.png";
 
 function Login(props) {
   const [state, setState] = React.useState({
@@ -19,7 +19,7 @@ function Login(props) {
   });
   const [userProfileObject] = React.useState(UserProfile);
 
-  const [cookieVisible, setCookieVisble] = useState(true);
+  // const [cookieVisible, setCookieVisble] = useState(true);
 
   React.useEffect(() => {
     if (userProfileObject.getCredential()) {

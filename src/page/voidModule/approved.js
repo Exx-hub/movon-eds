@@ -7,8 +7,6 @@ import {
   Input,
   Skeleton,
   DatePicker,
-  Row,
-  Col,
 } from "antd";
 import {
   openNotificationWithIcon,

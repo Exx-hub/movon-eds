@@ -937,9 +937,9 @@ class SalesReport extends React.Component {
           );
         }
         break;
-      case "parcelStatus":
-        return;
-        break;
+      // case "parcelStatus":
+      //   return;
+      //   break;
       default:
         break;
     }
@@ -1023,6 +1023,7 @@ class SalesReport extends React.Component {
           filtered = this.state.parcelStatusFilter.filter(num => num !== 7)
           this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
         }
+        break;
       default:
         break;
     }
@@ -1183,7 +1184,6 @@ class SalesReport extends React.Component {
  
     console.log("STATE:",this.state);
 
-
     return (
       <Layout>
         <Content style={{ padding: "1rem", paddingTop: "2rem" }}>
@@ -1204,7 +1204,7 @@ class SalesReport extends React.Component {
                     {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
                   {this.state.startStationRoutesTemp.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camarines Sur")
                   .map((e, i) => (
-                    <Option value={e.stationName}>{e.stationName}</Option>
+                    <Option key={e.stationId} value={e.stationName}>{e.stationName}</Option>
                   ))}
 
                 </AutoComplete>
@@ -1222,7 +1222,7 @@ class SalesReport extends React.Component {
                 placeholder="Destination"
               >
                 {this.state.endStationRoutesTemp.map((e, i) => (
-                  <Option value={e.endStationName}>{e.endStationName}</Option>
+                  <Option key={e.end} value={e.endStationName}>{e.endStationName}</Option>
                 ))}
               </AutoComplete>
             </Col>
@@ -1268,7 +1268,7 @@ class SalesReport extends React.Component {
                 </div>
               </div>
             </Col>
-            <Col offset={6} span={6} justifyContent="flex-end">
+            <Col offset={6} span={6}>
               {
                 // <span>Download: </span>
                 // <ReactToPrint
@@ -1308,7 +1308,7 @@ class SalesReport extends React.Component {
           {/* Parcel Status and Cargo Type dropdown filters  */}
           <Row style={{ marginTop: "1rem" }}>
             <Col style={{ marginRight: ".3rem" }}>
-              <Dropdown
+              {/* <Dropdown
                 onVisibleChange={this.handleVisibleChange}
                 visible={this.state.parcelStatusVisible}
                 overlay={this.parcelStatuses}
@@ -1317,11 +1317,11 @@ class SalesReport extends React.Component {
                 <Button>
                   Parcel Status <DownOutlined />
                 </Button>
-              </Dropdown>
+              </Dropdown> */}
             </Col>
             {UserProfile.getBusCompanyTag() !== "isarog-liner" && (
               <Col>
-                <Dropdown
+                {/* <Dropdown
                   onVisibleChange={this.cargoTypeVisibleChange}
                   visible={this.state.cargoTypeVisible}
                   overlay={this.cargoTypes}
@@ -1330,7 +1330,7 @@ class SalesReport extends React.Component {
                   <Button>
                     Cargo Type <DownOutlined />
                   </Button>
-                </Dropdown>
+                </Dropdown> */}
               </Col>
             )}
           </Row>
