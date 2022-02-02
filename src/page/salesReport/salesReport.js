@@ -1308,7 +1308,7 @@ class SalesReport extends React.Component {
           {/* Parcel Status and Cargo Type dropdown filters  */}
           <Row style={{ marginTop: "1rem" }}>
             <Col style={{ marginRight: ".3rem" }}>
-              {/* <Dropdown
+              <Dropdown
                 onVisibleChange={this.handleVisibleChange}
                 visible={this.state.parcelStatusVisible}
                 overlay={this.parcelStatuses}
@@ -1317,11 +1317,11 @@ class SalesReport extends React.Component {
                 <Button>
                   Parcel Status <DownOutlined />
                 </Button>
-              </Dropdown> */}
+              </Dropdown>
             </Col>
             {UserProfile.getBusCompanyTag() !== "isarog-liner" && (
               <Col>
-                {/* <Dropdown
+                <Dropdown
                   onVisibleChange={this.cargoTypeVisibleChange}
                   visible={this.state.cargoTypeVisible}
                   overlay={this.cargoTypes}
@@ -1330,7 +1330,7 @@ class SalesReport extends React.Component {
                   <Button>
                     Cargo Type <DownOutlined />
                   </Button>
-                </Dropdown> */}
+                </Dropdown>
               </Col>
             )}
           </Row>
