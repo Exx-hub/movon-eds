@@ -1,9 +1,25 @@
 import React from "react";
-import { Table, DatePicker, Button, Row, Col, Select, Skeleton, notification, AutoComplete, Pagination } from "antd";
-import { openNotificationWithIcon, openNotificationWithDuration, alterPath, UserProfile } from "../../utility";
+import {
+  Table,
+  DatePicker,
+  Button,
+  Row,
+  Col,
+  Select,
+  Skeleton,
+  notification,
+  AutoComplete,
+  Pagination,
+} from "antd";
+import {
+  openNotificationWithIcon,
+  openNotificationWithDuration,
+  alterPath,
+  UserProfile,
+} from "../../utility";
 import ManifestService from "../../service/Manifest";
 import RoutesService from "../../service/Routes";
-import { PromptModal } from '../../component/modal';
+import { PromptModal } from "../../component/modal";
 import moment from "moment";
 import "./manifest.scss";
 import { config } from "../../config";
@@ -116,7 +132,7 @@ class Manifest extends React.Component {
     endStationRoutes: [],
     startStationRoutesTemp: [],
     endStationRoutesTemp: [],
-    dataSource: []
+    dataSource: [],
   };
 
   componentDidMount() {
@@ -131,9 +147,14 @@ class Manifest extends React.Component {
         let state = { allRoutes: data, page: 1 };
         let clean = [];
 
-        if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
+        if (
+          Number(UserProfile.getRole()) === Number(config.role["staff-admin"])
+        ) {
           const _startStationRoutes = data
-            .map((e) => ({ stationId: e.start, stationName: e.startStationName }))
+            .map((e) => ({
+              stationId: e.start,
+              stationName: e.startStationName,
+            }))
             .filter((e) => {
               if (!clean.includes(e.stationName)) {
                 clean.push(e.stationName);
@@ -141,17 +162,19 @@ class Manifest extends React.Component {
               }
               return false;
             });
-          const startStationRoutes = [...[{ stationId: 'null', stationName: '-- All --' }], ..._startStationRoutes]
+          const startStationRoutes = [
+            ...[{ stationId: "null", stationName: "-- All --" }],
+            ..._startStationRoutes,
+          ];
           state.startStationRoutes = startStationRoutes;
           state.startStationRoutesTemp = startStationRoutes;
         } else {
-          state.originId = UserProfile.getAssignedStationId()
+          state.originId = UserProfile.getAssignedStationId();
           const endStationRoutes = this.getEndDestination(data, state.originId);
-          state.endStationRoutesTemp = endStationRoutes
-          state.endStationRoutes = endStationRoutes
+          state.endStationRoutesTemp = endStationRoutes;
+          state.endStationRoutes = endStationRoutes;
         }
         this.setState(state, () => this.getManifestByDestination(null));
-
       });
     } catch (error) {
       this.handleErrorNotification();
@@ -190,41 +213,53 @@ class Manifest extends React.Component {
       endStationId,
       this.state.page - 1,
       this.state.limit
-    ).then((e) => this.parceData(e))
-      .catch(e => {
-        this.setState({ fetching: false })
-      })
-
+    )
+      .then((e) => this.parceData(e))
+      .catch((e) => {
+        this.setState({ fetching: false });
+      });
   };
 
   parceData = (response) => {
     const { data, errorCode } = response.data;
 
     if (errorCode) {
-      this.setState({ fetching: false })
-      this.handleErrorNotification(errorCode)
+      this.setState({ fetching: false });
+      this.handleErrorNotification(errorCode);
       return;
     }
 
     const hasData = data && Array.isArray(data) && data.length > 0;
-    let listOfTripDates = (hasData && data[0].data) || []
-    let totalRecords = (hasData && data[0].pageInfo && data[0].pageInfo.length > 0 && data[0].pageInfo[0].count) || 0
+    let listOfTripDates = (hasData && data[0].data) || [];
+    let totalRecords =
+      (hasData &&
+        data[0].pageInfo &&
+        data[0].pageInfo.length > 0 &&
+        data[0].pageInfo[0].count) ||
+      0;
 
-    this.setState({ listOfTripDates, totalRecords, fetching: false },
-      () => this.setDataSource())
+    this.setState({ listOfTripDates, totalRecords, fetching: false }, () =>
+      this.setDataSource()
+    );
   };
 
   setDataSource = () => {
-
     let dataSource = this.state.listOfTripDates.map((e, i) => {
-      console.log("record:",e)
+      console.log("record:", e);
       return {
         key: i,
         tripId: e._id,
-        date: moment.tz(e.tripStartDateTime, "Asia/Manila").subtract(8, 'hours').format('MMM DD, YYYY'), //moment(e.tripStartDateTime).format("MMM DD, YYYY"),
-        date2: moment.tz(e.tripEndDateTime, "Asia/Manila").subtract(8, 'hours').format('MMM DD, YYYY'), //moment(e.tripEndDateTime).format("MMM DD, YYYY"),
+        date: moment
+          .tz(e.tripStartDateTime, "Asia/Manila")
+          .subtract(8, "hours")
+          .format("MMM DD, YYYY"), //moment(e.tripStartDateTime).format("MMM DD, YYYY"),
+        date2: moment
+          .tz(e.tripEndDateTime, "Asia/Manila")
+          .subtract(8, "hours")
+          .format("MMM DD, YYYY"), //moment(e.tripEndDateTime).format("MMM DD, YYYY"),
         count: e.count,
-        startStationName: e.startStationName === "DLTB Cubao" ? "DLTB GMA" : e.startStationName,
+        startStationName:
+          e.startStationName === "DLTB Cubao" ? "DLTB GMA" : e.startStationName,
         cluster: e.cluster,
         endStationName: e.endStationName,
         startStationId: e.startStation,
@@ -233,11 +268,11 @@ class Manifest extends React.Component {
         showModalCheckIn: false,
         showModalArrived: false,
         disabled: false,
-        cargoType: e.cargoType 
+        cargoType: e.cargoType,
       };
     });
     this.setState({ dataSource });
-  }
+  };
 
   onForceLogout = (errorCode) => {
     openNotificationWithDuration("error", errorCode);
@@ -245,38 +280,41 @@ class Manifest extends React.Component {
     this.props.history.push(alterPath("/login"));
   };
 
-  onChangeTable = (pagination, filters, sorter, extra) => { };
+  onChangeTable = (pagination, filters, sorter, extra) => {};
 
   onChangeDatePicker = (date) => {
     const startDay = date[0];
     const endDay = date[1];
 
     if (startDay && endDay) {
-      this.setState({ startDay, endDay, page: 1 }, () => this.getManifestByDestination(this.state.destinationId));
+      this.setState({ startDay, endDay, page: 1 }, () =>
+        this.getManifestByDestination(this.state.destinationId)
+      );
     }
   };
 
   doSearch = (name, el) => {
     const toSearch = el.toLowerCase();
     switch (name) {
-      case 'origin':
-        let startStationRoutesTemp = this.state.startStationRoutes.map(e => ({ stationName: e.stationName }))
-          .filter((e) => e.stationName.toLowerCase().includes(toSearch))
+      case "origin":
+        let startStationRoutesTemp = this.state.startStationRoutes
+          .map((e) => ({ stationName: e.stationName }))
+          .filter((e) => e.stationName.toLowerCase().includes(toSearch));
         this.setState({ startStationRoutesTemp });
         break;
-      case 'destination':
-        let endStationRoutesTemp = this.state.endStationRoutes.map(e => ({ endStationName: e.endStationName }))
-          .filter((e) => e.endStationName.toLowerCase().includes(toSearch))
+      case "destination":
+        let endStationRoutesTemp = this.state.endStationRoutes
+          .map((e) => ({ endStationName: e.endStationName }))
+          .filter((e) => e.endStationName.toLowerCase().includes(toSearch));
         this.setState({ endStationRoutesTemp });
         break;
-      default: break;
+      default:
+        break;
     }
   };
 
-
   getEndDestination = (data, stationId) => {
-    if (!stationId)
-      return;
+    if (!stationId) return;
 
     let clean = [];
     const destinations = data
@@ -287,8 +325,9 @@ class Manifest extends React.Component {
           return true;
         }
         return false;
-      }).map(e => ({ endStationName: e.endStationName, end: e.end }));
-    return [...[{ end: 'null', endStationName: "-- All --" }], ...destinations]
+      })
+      .map((e) => ({ endStationName: e.endStationName, end: e.end }));
+    return [...[{ end: "null", endStationName: "-- All --" }], ...destinations];
   };
 
   onSelectAutoComplete = (name, value) => {
@@ -296,19 +335,33 @@ class Manifest extends React.Component {
 
     switch (name) {
       case "origin":
-        selected = this.state.startStationRoutes
-          .find((e) => e.stationName === value) || null;
+        selected =
+          this.state.startStationRoutes.find((e) => e.stationName === value) ||
+          null;
         if (selected) {
-          const endStationRoutes = this.getEndDestination(this.state.allRoutes, selected.stationId);
-          this.setState({ page: 1, originId: selected.stationId, endStationRoutes, endStationRoutesTemp: endStationRoutes },
-            () => this.getManifestByDestination(null));
+          const endStationRoutes = this.getEndDestination(
+            this.state.allRoutes,
+            selected.stationId
+          );
+          this.setState(
+            {
+              page: 1,
+              originId: selected.stationId,
+              endStationRoutes,
+              endStationRoutesTemp: endStationRoutes,
+            },
+            () => this.getManifestByDestination(null)
+          );
         }
         break;
       case "destination":
-        selected = this.state.endStationRoutes
-          .find((e) => e.endStationName === value) || null;
+        selected =
+          this.state.endStationRoutes.find((e) => e.endStationName === value) ||
+          null;
         if (selected) {
-          this.setState({ page: 1, destinationId: selected.end }, () => this.getManifestByDestination(selected.end))
+          this.setState({ page: 1, destinationId: selected.end }, () =>
+            this.getManifestByDestination(selected.end)
+          );
         }
         break;
       default:
@@ -321,52 +374,52 @@ class Manifest extends React.Component {
     selectedRecord.showModalCheckIn = true;
     selectedRecord.disabled = false;
     this.setState({ selectedRecord });
-  }
+  };
 
   onArrived = (data) => {
     const selectedRecord = { ...data };
     selectedRecord.showModalArrived = true;
     selectedRecord.disabled = false;
     this.setState({ selectedRecord });
-  }
+  };
 
   onPrint = (data) => {
     this.props.history.push(alterPath("/manifest/print"), {
       date: data.date,
       selected: data,
-    })
-  }
+    });
+  };
 
   onViewClick = (data) => {
     this.props.history.push(alterPath("/manifest/details"), {
       date: data.date,
       selected: data,
-    })
-  }
+    });
+  };
 
   onModalArriveOkCLick = () => {
     let selectedRecord = { ...this.state.selectedRecord };
     let dataSource = [...this.state.dataSource];
 
-    const index = dataSource.findIndex(
-      (e) => e.key === selectedRecord.key
-    );
+    const index = dataSource.findIndex((e) => e.key === selectedRecord.key);
     selectedRecord.showModalArrived = false;
     selectedRecord.disabled = true;
     dataSource[index] = selectedRecord;
 
     this.setState({ selectedRecord, dataSource }, () => {
       const tripId = selectedRecord.tripId;
-      ManifestService.arriveAllParcel(tripId)
-        .then((e) => {
-          this.setState({
+      ManifestService.arriveAllParcel(tripId).then((e) => {
+        this.setState(
+          {
             visibleArrive: false,
             disabledArrive: true,
             selectedRecord: undefined,
-          }, () => this.getManifestByDestination(this.state.destinationId));
-        })
+          },
+          () => this.getManifestByDestination(this.state.destinationId)
+        );
+      });
     });
-  }
+  };
 
   onModalCheckinClick = () => {
     let selectedRecord = { ...this.state.selectedRecord };
@@ -380,59 +433,75 @@ class Manifest extends React.Component {
     const tripId = selectedRecord.tripId;
     this.setState({ selectedRecord, dataSource });
     ManifestService.checkInAllParcel(tripId).then((e) => {
-      this.setState({
-        visibleCheckIn: false,
-        disabledCheckIn: false,
-        selectedRecord: undefined,
-      }, () => this.getManifestByDestination(this.state.destinationId));
+      this.setState(
+        {
+          visibleCheckIn: false,
+          disabledCheckIn: false,
+          selectedRecord: undefined,
+        },
+        () => this.getManifestByDestination(this.state.destinationId)
+      );
     });
-  }
+  };
 
   onPageChange = (page) => {
     if (page !== this.state.page)
-      this.setState({ page, fetching: true },
-        () => this.getManifestByDestination(this.state.destinationId))
-  }
+      this.setState({ page, fetching: true }, () =>
+        this.getManifestByDestination(this.state.destinationId)
+      );
+  };
 
   render() {
-    const isAdmin = (Number(UserProfile.getRole()) === Number(config.role["staff-admin"]))
+    const isAdmin =
+      Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
     return (
       <div className="manifest-page">
         <Row style={{ marginTop: "2rem", marginBottom: "1rem" }}>
-
-          {
-            isAdmin && <Col span={6}>
+          {isAdmin && (
+            <Col span={6}>
               <AutoComplete
                 size="large"
                 style={{ width: "100%" }}
                 onSelect={(item) => this.onSelectAutoComplete("origin", item)}
-                onSearch={(e) => this.doSearch('origin', e)}
+                onSearch={(e) => this.doSearch("origin", e)}
                 placeholder="Origin Stations"
               >
-
                 {/* {this.state.startStationRoutesTemp.map((e, i) => (
                   <Option value={e.stationName}>{e.stationName}</Option>
                 ))} */}
-                
+
                 {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
-                {this.state.startStationRoutesTemp.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camarines Sur")
-                 .map((e, i) => (
-                   <Option value={e.stationName}>{e.stationName}</Option>
-                ))}
-                
+                {this.state.startStationRoutesTemp
+                  .filter(
+                    (e) =>
+                      e.stationName !== "PITX, Parañaque" &&
+                      e.stationName !== "Naga, Camarines Sur" &&
+                      e.stationName !== "Legazpi, Albay" &&
+                      e.stationName !== "LRT Buendia / SRIT / Turbina"
+                  )
+                  .map((e, i) => (
+                    <Option key={e.stationId} value={e.stationName}>
+                      {e.stationName}
+                    </Option>
+                  ))}
               </AutoComplete>
             </Col>
-          }
+          )}
 
           <Col span={6}>
             <AutoComplete
               size="large"
               style={{ width: "100%", marginLeft: "0.5rem" }}
-              onChange={(item) => this.onSelectAutoComplete("destination", item)}
-              onSearch={(e) => this.doSearch('destination', e)}
-              placeholder="Destination">
+              onChange={(item) =>
+                this.onSelectAutoComplete("destination", item)
+              }
+              onSearch={(e) => this.doSearch("destination", e)}
+              placeholder="Destination"
+            >
               {this.state.endStationRoutesTemp.map((e, i) => (
-                <Option value={e.endStationName}>{e.endStationName}</Option>
+                <Option key={e.end} value={e.endStationName}>
+                  {e.endStationName}
+                </Option>
               ))}
             </AutoComplete>
           </Col>
@@ -449,8 +518,8 @@ class Manifest extends React.Component {
             />
           </Col>
         </Row>
-        {
-          !this.state.fetching ? <TableRoutesView
+        {!this.state.fetching ? (
+          <TableRoutesView
             pagination={false}
             dataSource={this.state.dataSource}
             onChange={this.onChangeTable}
@@ -459,9 +528,9 @@ class Manifest extends React.Component {
             onPrint={(data) => this.onPrint(data)}
             onViewClick={(data) => this.onViewClick(data)}
           />
-            :
-            (<Skeleton active />)
-        }
+        ) : (
+          <Skeleton active />
+        )}
         {this.state.dataSource && this.state.dataSource.length > 0 && (
           <div className="pagination-container">
             <Pagination
@@ -475,11 +544,20 @@ class Manifest extends React.Component {
         <PromptModal
           title="Are you sure you want to arrived?"
           message="Press OK to change the status to received"
-          disabled={Boolean((this.state.selectedRecord && this.state.selectedRecord.disabled) || false)}
+          disabled={Boolean(
+            (this.state.selectedRecord && this.state.selectedRecord.disabled) ||
+              false
+          )}
           buttonType="primary"
           action="Arrive"
-          visible={(this.state.selectedRecord && this.state.selectedRecord.showModalArrived) || false}
-          handleCancel={() => this.setState({ selectedRecord: undefined, visibleArrive: false })}
+          visible={
+            (this.state.selectedRecord &&
+              this.state.selectedRecord.showModalArrived) ||
+            false
+          }
+          handleCancel={() =>
+            this.setState({ selectedRecord: undefined, visibleArrive: false })
+          }
           handleOk={() => this.onModalArriveOkCLick()}
         />
 
@@ -500,7 +578,7 @@ class Manifest extends React.Component {
           handleOk={() => this.onModalCheckinClick()}
           disabled={Boolean(
             (this.state.selectedRecord && this.state.selectedRecord.disabled) ||
-            false
+              false
           )}
         />
       </div>

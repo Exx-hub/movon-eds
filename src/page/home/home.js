@@ -7,7 +7,6 @@ import SearchModule from "../searchModule";
 import { Approved, Pending, Rejected } from "../voidModule";
 import { LogoutModal } from "../../component/modal";
 
-import moment from "moment";
 
 import "./home.scss";
 
@@ -33,69 +32,70 @@ const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 // Data table for daily sales report table VLI-BITSI ----- UNUSED for now //
-const tableSourceVliBitsi = [
-  {
-    title: "DATE",
-    dataIndex: "sentDate",
-    key: "sentDate",
-    render: (text) => moment(text).format("MMM DD, YYYY"),
-  },
-  {
-    title: "DESTINATION",
-    dataIndex: "destination",
-    key: "destination,",
-  },
-  {
-    title: "SENDER",
-    dataIndex: "sender",
-    key: "sender,",
-  },
-  {
-    title: "RECEIVER",
-    dataIndex: "recipient",
-    key: "recipient,",
-  },
-  {
-    title: "WEIGHT",
-    dataIndex: "packageWeight",
-    key: "packageWeight",
-  },
-  {
-    title: "DECLARED VALUE",
-    dataIndex: "declaredValue",
-    key: "declaredValue",
-  },
-  {
-    title: "BL NO.",
-    dataIndex: "billOfLading",
-    key: "billOfLading",
-  },
-  {
-    title: "OR NO.",
-    dataIndex: "associatedORNumber",
-    key: "associatedORNumber",
-  },
-  {
-    title: "TARIFF",
-    dataIndex: "associatedTariffRate",
-    key: "associatedTariffRate",
-  },
-  {
-    title: "DESCRIPTION",
-    dataIndex: "packageName",
-    key: "packageName",
-  },
-  {
-    title: "AMOUNT",
-    dataIndex: "systemFee",
-    key: "systemFee",
-  },
-  {
-    title: "AMOUNT",
-    dataIndex: "price",
-    key: "price",
-  },
-];
+
+// const tableSourceVliBitsi = [
+//   {
+//     title: "DATE",
+//     dataIndex: "sentDate",
+//     key: "sentDate",
+//     render: (text) => moment(text).format("MMM DD, YYYY"),
+//   },
+//   {
+//     title: "DESTINATION",
+//     dataIndex: "destination",
+//     key: "destination,",
+//   },
+//   {
+//     title: "SENDER",
+//     dataIndex: "sender",
+//     key: "sender,",
+//   },
+//   {
+//     title: "RECEIVER",
+//     dataIndex: "recipient",
+//     key: "recipient,",
+//   },
+//   {
+//     title: "WEIGHT",
+//     dataIndex: "packageWeight",
+//     key: "packageWeight",
+//   },
+//   {
+//     title: "DECLARED VALUE",
+//     dataIndex: "declaredValue",
+//     key: "declaredValue",
+//   },
+//   {
+//     title: "BL NO.",
+//     dataIndex: "billOfLading",
+//     key: "billOfLading",
+//   },
+//   {
+//     title: "OR NO.",
+//     dataIndex: "associatedORNumber",
+//     key: "associatedORNumber",
+//   },
+//   {
+//     title: "TARIFF",
+//     dataIndex: "associatedTariffRate",
+//     key: "associatedTariffRate",
+//   },
+//   {
+//     title: "DESCRIPTION",
+//     dataIndex: "packageName",
+//     key: "packageName",
+//   },
+//   {
+//     title: "AMOUNT",
+//     dataIndex: "systemFee",
+//     key: "systemFee",
+//   },
+//   {
+//     title: "AMOUNT",
+//     dataIndex: "price",
+//     key: "price",
+//   },
+// ];
 
 
 function Home(props) {

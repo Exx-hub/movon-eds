@@ -514,6 +514,7 @@ class CreateParcel extends React.Component {
         details.length.isRequired = false;
         details.discount.disabled = true;
         details.type.options[0].name = "Accompanied Baggage"
+        // details.declaredValue.disabled = false;
         break;
 
       case "isarog-liner":
@@ -1449,13 +1450,13 @@ class CreateParcel extends React.Component {
         hideDeclaredValue = true;
         hideQuantity = true;
         hideWeight = false;
-
+        // set declared value input to be enabled even if parcel is accompaniedS
         if (!isAccompanied) {
           //Cargo
-          hideDeclaredValue = !hideDeclaredValue;
+          // hideDeclaredValue = !hideDeclaredValue;
         }
 
-        details.declaredValue.disabled = hideDeclaredValue;
+        // details.declaredValue.disabled = hideDeclaredValue;
         details.quantity.disabled = hideQuantity;
         details.packageWeight.disabled = hideWeight;
 
@@ -1479,7 +1480,7 @@ class CreateParcel extends React.Component {
           //NONE
           if (isAccompanied) {
             //CARGO
-            hideDeclaredValue = true;
+            // hideDeclaredValue = true; // accompanied and clicked none in fix price, enable DV input
           }
         } else {
           hideQuantity = false;

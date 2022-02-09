@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(182)",
+    build: "1.8.0(184)",
   },
   environment: "",
-  changeLogs: `feature/hide-stations/fix-manifest-stickerDate/build182`,
+  changeLogs: `feature/enable-declaredValue-accompanied/build184`,
 };
 
 export const ERROR_CODES = {

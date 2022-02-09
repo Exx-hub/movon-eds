@@ -8,8 +8,6 @@ import {
   Input,
   Skeleton,
   DatePicker,
-  Row,
-  Col,
 } from "antd";
 import {
   openNotificationWithIcon,
@@ -301,7 +299,7 @@ class Pending extends React.Component {
           handleOk={() => this.handleAcceptVoid()}
           handleCancel={() => this.handleCancel()}
           visible={this.state.visibleAccept}
-          title={<span class="title"> Void Request </span>}
+          // title={<span class="title"> Void Request </span>}
           message="Are you sure you want to reject this void request?"
           buttonType="danger"
           action="Void Parcel"
@@ -310,12 +308,7 @@ class Pending extends React.Component {
           handleOk={() => this.handleRejectVoid()}
           handleCancel={() => this.handleCancel()}
           visible={this.state.visibleReject}
-          title={
-            <span class="title">
-              {" "}
-              Are you sure you want to reject this void request?{" "}
-            </span>
-          }
+          title={"Are you sure you want to reject this void request?"}
           message="Enter reason/s for rejecting the void request:"
           buttonType="danger"
           action="Send Request"
