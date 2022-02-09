@@ -38,7 +38,7 @@ export const config = {
     build: "1.8.0(184)",
   },
   environment: "",
-  changeLogs: `bugFix/hide-origin-stations/build184`,
+  changeLogs: `feature/enable-declaredValue-accompanied/build184`,
 };
 
 export const ERROR_CODES = {

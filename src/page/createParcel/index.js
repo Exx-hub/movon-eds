@@ -1450,7 +1450,7 @@ class CreateParcel extends React.Component {
         hideDeclaredValue = true;
         hideQuantity = true;
         hideWeight = false;
-
+        // set declared value input to be enabled even if parcel is accompaniedS
         if (!isAccompanied) {
           //Cargo
           // hideDeclaredValue = !hideDeclaredValue;
@@ -1480,7 +1480,7 @@ class CreateParcel extends React.Component {
           //NONE
           if (isAccompanied) {
             //CARGO
-            // hideDeclaredValue = true;
+            // hideDeclaredValue = true; // accompanied and clicked none in fix price, enable DV input
           }
         } else {
           hideQuantity = false;
