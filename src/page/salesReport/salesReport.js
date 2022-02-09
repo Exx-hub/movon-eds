@@ -1202,10 +1202,19 @@ class SalesReport extends React.Component {
                   ))} */}
 
                     {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
-                  {this.state.startStationRoutesTemp.filter((e) => e.stationName !== "PITX, Parañaque" && e.stationName !== "Naga, Camarines Sur")
-                  .map((e, i) => (
-                    <Option key={e.stationId} value={e.stationName}>{e.stationName}</Option>
-                  ))}
+                    {this.state.startStationRoutesTemp
+                    .filter(
+                      (e) =>
+                        e.stationName !== "PITX, Parañaque" &&
+                        e.stationName !== "Naga, Camarines Sur" &&
+                        e.stationName !== "Legazpi, Albay" &&
+                        e.stationName !== "LRT Buendia / SRIT / Turbina"
+                    )
+                    .map((e, i) => (
+                      <Option key={e.stationId} value={e.stationName}>
+                        {e.stationName}
+                      </Option>
+                    ))}
 
                 </AutoComplete>
               </Col>

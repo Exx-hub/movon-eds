@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(183)",
+    build: "1.8.0(184)",
   },
   environment: "",
-  changeLogs: `bugFix/remove-console-warnings/build183`,
+  changeLogs: `bugFix/hide-origin-stations/build184`,
 };
 
 export const ERROR_CODES = {
