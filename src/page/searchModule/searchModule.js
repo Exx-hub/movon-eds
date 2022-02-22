@@ -16,6 +16,7 @@ import { notification, Space, Table } from "antd";
 import { Layout, Button, Row, Input, Pagination } from "antd";
 import TransactionService from "../../service/VoidTransaction";
 import ManifestService from "../../service/Manifest";
+import getTag from "../../component/statusTag";
 
 
 const { Search } = Input;
@@ -63,6 +64,8 @@ class SearchModule extends React.Component {
     // this.fetchParcelList();
     // console.log("PARCEL LIST:", this.state.parcelList); place this outside to be able to view
     // SET THE TABLE HEADER AND DETAILS -----------------
+    UserProfile.getBusCompanyTag() === 'isarog-liner' ? 
+    // BITSI
     this.setState({
       columns: [
         {
@@ -99,6 +102,8 @@ class SearchModule extends React.Component {
           title: "Pack. Count",
           dataIndex: "qty",
           key: "qty",
+          // width: 150,
+          // align: 'center',
           sorter: (a, b) => a.qty - b.qty,
         },
         {
@@ -189,6 +194,149 @@ class SearchModule extends React.Component {
           ),
         },
       ],
+    })
+    :
+    // DLTB
+    this.setState({
+      columns: [
+        {
+          title: "Transaction Date",
+          dataIndex: "sentDate",
+          key: "sentDate",
+        },
+        {
+          title: "BL No.",
+          dataIndex: "billOfLading",
+          key: "billOfLading",
+        },
+        {
+          title: "Origin",
+          dataIndex: "startStationName",
+          key: "startStationName",
+        },
+        {
+          title: "Destination",
+          dataIndex: "endStationName",
+          key: "endStationName",
+        },
+        {
+          title: "Sender",
+          dataIndex: "sender",
+          key: "sender",
+        },
+        {
+          title: "Receiver",
+          dataIndex: "receiver",
+          key: "receiver",
+        },
+        {
+          title: "Pack. Count",
+          dataIndex: "qty",
+          key: "qty",
+          // width: 150,
+          align: 'center',
+          sorter: (a, b) => a.qty - b.qty,
+        },
+        {
+          title: "Parcel Status",
+          dataIndex: "travelStatus",
+          key: "travelStatus",
+          sorter: (a, b) => a.travelStatus - b.travelStatus,
+          render: (text) => config.parcelStatus[text].toUpperCase(),
+        },
+        {
+          title: "Cargo Type",
+          dataIndex: "cargoType",
+          key: "cargoType",
+        },
+        {
+          title: "Action",
+          key: "action",
+          align: "center",
+          render: (text, record) => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <Button
+                disabled={!Boolean(record.travelStatus === 1)}
+                type="danger"
+                size="small"
+                style={{ fontSize: "0.65rem" }}
+                onClick={() => {
+                  this.setState({
+                    remarks: "",
+                    selectedRecord: record,
+                    visibleVoid: true,
+                  });
+                }}
+              >
+                Void
+              </Button>
+
+              {/* CHECK IN BUTTON visible if created only  */}
+              {record.travelStatus === 1 && (
+                <Button
+                  // disabled={!Boolean(record.travelStatus === 1)}
+                  disabled={record.cargoType === 2}
+                  size="small"
+                  style={{
+                    fontSize: "0.65rem",
+                    // background: `${record.travelStatus === 1 ? "teal" : ""}`,
+                    // color: `${record.travelStatus === 1 ? "white" : ""}`,
+                    background: `${record.cargoType === 2 ? "" : "teal"}`,
+                    color: `${record.cargoType === 2 ? "" : "white"}`,
+                  }}
+                  onClick={() => {
+                    const checkInModal = { ...this.state.checkInModal };
+                    checkInModal.visible = true;
+                    checkInModal.data = record;
+                    this.setState({ checkInModal });
+                  }}
+                >
+                  Check-In
+                </Button>
+              )}
+
+              {/* ARRIVED BUTTON visible only if in transit  */}
+              {/* if travelStatus if 2 or in transit, arrived button will appear. if cargotype is accompanied, button will be disabled  */}
+              {/* and color and bg color will be gray. if cargoType is cargo, button will be colored and enabled. same with check in button  */}
+              {record.travelStatus === 2 && (
+                <Button
+                  // disabled={!Boolean(record.travelStatus === 2)}
+                  disabled={record.cargoType === 2}
+                  size="small"
+                  style={{
+                    fontSize: "0.65rem",
+                    // background: `${record.travelStatus === 2 ? "teal" : ""}`,
+                    // color: `${record.travelStatus === 2 ? "white" : ""}`,
+                    background: `${record.cargoType === 2 ? "" : "teal"}`,
+                    color: `${record.cargoType === 2 ? "" : "white"}`,
+                  }}
+                  onClick={() => {
+                    const arrivedModal = { ...this.state.arrivedModal };
+                    arrivedModal.visible = true;
+                    arrivedModal.data = record;
+                    this.setState({ arrivedModal });
+                  }}
+                >
+                  Arrived
+                </Button>
+              )}
+            </div>
+          ),
+        },
+        {
+          title: "Status",
+          dataIndex: "status",
+          key: "status",
+          align: "center",
+          render: (text) => getTag(text),
+        },
+      ],
     });
   }
 
@@ -269,7 +417,8 @@ class SearchModule extends React.Component {
             startStationName: e.trips.startStation.name,
             endStationName: e.trips.endStation.name,
             _id: e._id,
-            cargoType: e.cargoType
+            cargoType: e.cargoType === 2 ? "accompanied" : "cargo",
+            status: e.cargoType === 2 ? "accompanied" : config.parcelStatus[e.status],
           };
         });
         this.setState({
