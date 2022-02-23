@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(184)",
+    build: "1.8.0(185)",
   },
   environment: "",
-  changeLogs: `feature/enable-declaredValue-accompanied/build184`,
+  changeLogs: `feature/searchModule-cargoType-status-column/build185`,
 };
 
 export const ERROR_CODES = {

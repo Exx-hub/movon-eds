@@ -28,46 +28,13 @@ import moment from "moment-timezone";
 import "./salesReport.scss";
 import { config } from "../../config";
 import { FilePdfOutlined, ProfileOutlined } from "@ant-design/icons";
+import getTag from "../../component/statusTag";
 
 const dateFormat = "MMM DD, YYYY hh:mm";
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-
-const getTag = (props) => {
-  let color = "";
-  let caption = ""
-  switch(props) {
-    case "created":
-      color = "success"
-      caption= "Active"
-      break;
-    case "in-transit":
-      color = "success"
-      caption= "Active"
-      break;
-    case "received":
-      color = "default"
-      caption= "Closed"
-      break;
-    case "void": 
-      color = "default";
-      caption= "Closed"
-      break;
-      case "modified": 
-      color = "default";
-      caption= "Closed"
-      break;
-      case "accompanied": 
-      color = "default";
-      caption= "Closed"
-      break;  
-    default:
-        break
-  }
-  return <Tag color={color} >{caption}</Tag>
-}
 
 // Data table for daily sales report table CARGO Sales//
 const tableSourceDLTB = [
@@ -203,7 +170,7 @@ const tableSourceDLTB = [
     dataIndex: "status",
     key: "status",
     align: "center",
-    render: (text)=> getTag(text)
+    render: (text) => getTag(text),
   },
 ];
 
@@ -316,7 +283,7 @@ const tableSourceStaffDLTB = [
     dataIndex: "status",
     key: "status",
     align: "center",
-    render: (text)=> getTag(text)
+    render: (text) => getTag(text),
   },
 ];
 
@@ -435,7 +402,7 @@ const tableSourceBitsi = [
     dataIndex: "status",
     key: "status",
     align: "center",
-    render: (text)=> getTag(text)
+    render: (text) => getTag(text),
   },
 ];
 
@@ -460,10 +427,10 @@ class SalesReport extends React.Component {
       isPrinting: false,
       totalAmount: 0,
       totalWeight: 0,
-      voidedCount: 0, 
-      totalSystemFee: 0, 
-      totalPortersFee: 0, 
-      focCount: 0, 
+      voidedCount: 0,
+      totalSystemFee: 0,
+      totalPortersFee: 0,
+      focCount: 0,
       //new summary values added above
       tags: [],
       templist: [],
@@ -480,12 +447,11 @@ class SalesReport extends React.Component {
       parcelStatusVisible: false,
       parcelStatusFilter: [],
       cargoTypeVisible: false,
-      cargoTypeFilter: []
+      cargoTypeFilter: [],
     };
     this.userProfileObject = UserProfile;
   }
 
- 
   componentDidMount() {
     this.printEl = React.createRef();
     RoutesService.getAllRoutes().then((e) => {
@@ -548,9 +514,9 @@ class SalesReport extends React.Component {
         ? this.state.originId
         : UserProfile.getAssignedStationId();
 
-        console.log("GET PARCEL API CALLING...")
-        console.log("STATUS FILTER TO BE PASSED:", this.state.parcelStatusFilter)
-        console.log("CARGO TYPE FILTER TO BE PASSED:", this.state.cargoTypeFilter)
+    console.log("GET PARCEL API CALLING...");
+    console.log("STATUS FILTER TO BE PASSED:", this.state.parcelStatusFilter);
+    console.log("CARGO TYPE FILTER TO BE PASSED:", this.state.cargoTypeFilter);
 
     ParcelService.getAllParcel(
       startStationId,
@@ -570,7 +536,7 @@ class SalesReport extends React.Component {
           return;
         }
         this.parseParcel(e);
-        console.log("SUCCESS CALLING GET PARCELS API", e)
+        console.log("SUCCESS CALLING GET PARCELS API", e);
       })
       .catch((e) => {
         this.setState({ fetching: false });
@@ -597,7 +563,7 @@ class SalesReport extends React.Component {
     }
 
     const records = data.map((e, i) => {
-      console.log("RECORD:",e);
+      console.log("RECORD:", e);
       return {
         key: i,
         associatedAmount: e.associatedAmount,
@@ -617,19 +583,24 @@ class SalesReport extends React.Component {
         scanCode: e.scanCode,
         cargoType: e.cargoType === 2 ? "accompanied" : "cargo",
         cashier: e.cashier,
-        checkedIn: e.checkedInDate ? moment
-        .tz(e.checkedInDate, "Asia/Manila")
-        .format("MMM DD, YYYY hh:mm:ss A") : "", 
+        checkedIn: e.checkedInDate
+          ? moment
+              .tz(e.checkedInDate, "Asia/Manila")
+              .format("MMM DD, YYYY hh:mm:ss A")
+          : "",
         checkInCashier: e.checkedInCashier,
-        arrived: e.arrivedDate ? moment
-        .tz(e.arrivedDate, "Asia/Manila")
-        .format("MMM DD, YYYY hh:mm:ss A") : "",
+        arrived: e.arrivedDate
+          ? moment
+              .tz(e.arrivedDate, "Asia/Manila")
+              .format("MMM DD, YYYY hh:mm:ss A")
+          : "",
         arriveCashier: e.arrivedCashier,
         sender: e.sender,
         sentDate: moment
           .tz(e.createdAt, "Asia/Manila")
           .format("MMM DD, YYYY hh:mm:ss A"),
-        status: e.cargoType === 2 ? "accompanied" : config.parcelStatus[e.status],
+        status:
+          e.cargoType === 2 ? "accompanied" : config.parcelStatus[e.status],
         recipientPhoneNo: e.recipientPhoneNo,
         senderPhoneNo: e.senderPhoneNo,
         systemFee: `₱ ${Number(e.systemFee || 0).toFixed(2)}`,
@@ -650,7 +621,7 @@ class SalesReport extends React.Component {
       voidedCount: voidedCount,
       totalSystemFee: totalSystemFee.toFixed(2),
       totalPortersFee: totalPortersFee.toFixed(2),
-      focCount: focCount
+      focCount: focCount,
     });
   };
 
@@ -683,7 +654,6 @@ class SalesReport extends React.Component {
     }
   };
 
-  
   // for both bitsi and dltb
   getPreparedBy = () => {
     return this.userProfileObject.getPersonFullName() || "";
@@ -697,7 +667,7 @@ class SalesReport extends React.Component {
 
   getTotalTransactions = () => {
     return this.state.totalRecords;
-  }
+  };
 
   getTotalAmount = () => {
     return this.state.totalAmount;
@@ -705,31 +675,25 @@ class SalesReport extends React.Component {
 
   getVoidedCount = () => {
     return this.state.voidedCount;
-  }
+  };
 
-  
   // for DLTB only
   getTotalSystemFee = () => {
     return this.state.totalSystemFee;
-  }
+  };
 
-  
   // for BITSI only
   getPortersFee = () => {
     return this.state.totalPortersFee;
-  }
+  };
 
   getFocCount = () => {
     return this.state.focCount;
-  }
+  };
 
   getTotalWeight = () => {
     return this.state.totalWeight + "kg";
-  }
-
-
-
-
+  };
 
   getDate = () => {
     return this.state.startDay === this.state.endDay
@@ -774,41 +738,37 @@ class SalesReport extends React.Component {
   };
 
   isAdmin = () => {
-    if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])){
+    if (Number(UserProfile.getRole()) === Number(config.role["staff-admin"])) {
       return true;
     } else {
       return false;
     }
-  }
-
+  };
 
   menu = (
     <Menu onClick={(e) => this.onHandleMenu(e)}>
       <Menu.Item
-        style={{ display: UserProfile.getBusCompanyTag() === "isarog-liner" ? "none" : "" }}
+        style={{
+          display:
+            UserProfile.getBusCompanyTag() === "isarog-liner" ? "none" : "",
+        }}
         key="downloadPdf"
         icon={<FilePdfOutlined />}
       >
         Download PDF
       </Menu.Item>
 
-      {UserProfile.getBusCompanyTag() === "isarog-liner" && 
-      <Menu.Item 
-      key="downloadXls" 
-      icon={<ProfileOutlined />}
-      >
-        Download XLS
-      </Menu.Item>
-      }
+      {UserProfile.getBusCompanyTag() === "isarog-liner" && (
+        <Menu.Item key="downloadXls" icon={<ProfileOutlined />}>
+          Download XLS
+        </Menu.Item>
+      )}
 
-      {this.isAdmin() && UserProfile.getBusCompanyTag() === "dltb" &&
-      <Menu.Item 
-      key="downloadXls" 
-      icon={<ProfileOutlined />}
-      >
-        Download XLS
-      </Menu.Item>
-      }
+      {this.isAdmin() && UserProfile.getBusCompanyTag() === "dltb" && (
+        <Menu.Item key="downloadXls" icon={<ProfileOutlined />}>
+          Download XLS
+        </Menu.Item>
+      )}
     </Menu>
   );
 
@@ -950,52 +910,71 @@ class SalesReport extends React.Component {
     this.setState({ parcelStatusVisible: flag });
   };
 
-   // Cargo TYPE VISIBILITY TOGGLER
-   cargoTypeVisibleChange = (flag) => {
+  // Cargo TYPE VISIBILITY TOGGLER
+  cargoTypeVisibleChange = (flag) => {
     this.setState({ cargoTypeVisible: flag });
   };
-
 
   // Includes checked status checkbox in filter array then call api, also removes item from array
   handleFilter = (status) => {
     let filtered;
     switch (status) {
       case "Created":
-        if(!this.state.parcelStatusFilter.includes(1)){
-          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 1] }, () => this.getFilteredParcels() )
+        if (!this.state.parcelStatusFilter.includes(1)) {
+          this.setState(
+            { parcelStatusFilter: [...this.state.parcelStatusFilter, 1] },
+            () => this.getFilteredParcels()
+          );
         } else {
-          console.log("UNCHECKED and REMOVED")
-          filtered = this.state.parcelStatusFilter.filter(num => num !== 1)
-          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+          console.log("UNCHECKED and REMOVED");
+          filtered = this.state.parcelStatusFilter.filter((num) => num !== 1);
+          this.setState({ parcelStatusFilter: filtered }, () =>
+            this.getFilteredParcels()
+          );
         }
         break;
       case "In-Transit":
-        if(!this.state.parcelStatusFilter.includes(2)){
-          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 2] }, () => this.getFilteredParcels() )
+        if (!this.state.parcelStatusFilter.includes(2)) {
+          this.setState(
+            { parcelStatusFilter: [...this.state.parcelStatusFilter, 2] },
+            () => this.getFilteredParcels()
+          );
         } else {
-          console.log("UNCHECKED and REMOVED")
-          filtered = this.state.parcelStatusFilter.filter(num => num !== 2)
-          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+          console.log("UNCHECKED and REMOVED");
+          filtered = this.state.parcelStatusFilter.filter((num) => num !== 2);
+          this.setState({ parcelStatusFilter: filtered }, () =>
+            this.getFilteredParcels()
+          );
         }
         break;
       case "Received":
-        if(!this.state.parcelStatusFilter.includes(3)){
-            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 3] }, () => this.getFilteredParcels() )
+        if (!this.state.parcelStatusFilter.includes(3)) {
+          this.setState(
+            { parcelStatusFilter: [...this.state.parcelStatusFilter, 3] },
+            () => this.getFilteredParcels()
+          );
         } else {
-          console.log("UNCHECKED and REMOVED")
-          filtered = this.state.parcelStatusFilter.filter(num => num !== 3)
-          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+          console.log("UNCHECKED and REMOVED");
+          filtered = this.state.parcelStatusFilter.filter((num) => num !== 3);
+          this.setState({ parcelStatusFilter: filtered }, () =>
+            this.getFilteredParcels()
+          );
         }
         break;
       case "Voided":
-          if(!this.state.parcelStatusFilter.includes(6)){
-            this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 6] }, () => this.getFilteredParcels() )
-            } else {
-              console.log("UNCHECKED and REMOVED")
-              filtered = this.state.parcelStatusFilter.filter(num => num !== 6)
-              this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
-            }
-            break;
+        if (!this.state.parcelStatusFilter.includes(6)) {
+          this.setState(
+            { parcelStatusFilter: [...this.state.parcelStatusFilter, 6] },
+            () => this.getFilteredParcels()
+          );
+        } else {
+          console.log("UNCHECKED and REMOVED");
+          filtered = this.state.parcelStatusFilter.filter((num) => num !== 6);
+          this.setState({ parcelStatusFilter: filtered }, () =>
+            this.getFilteredParcels()
+          );
+        }
+        break;
       // case "Claimed":
       //   if(!this.state.parcelStatusFilter.includes(4)){
       //       this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 4] }, () => this.getFilteredParcels() )
@@ -1014,14 +993,19 @@ class SalesReport extends React.Component {
       //       this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
       //     }
       //   break;
-     
+
       case "Modified":
-        if(!this.state.parcelStatusFilter.includes(7)){
-          this.setState( {parcelStatusFilter: [...this.state.parcelStatusFilter, 7] }, () => this.getFilteredParcels() )
+        if (!this.state.parcelStatusFilter.includes(7)) {
+          this.setState(
+            { parcelStatusFilter: [...this.state.parcelStatusFilter, 7] },
+            () => this.getFilteredParcels()
+          );
         } else {
-          console.log("UNCHECKED and REMOVED")
-          filtered = this.state.parcelStatusFilter.filter(num => num !== 7)
-          this.setState({parcelStatusFilter: filtered} , () => this.getFilteredParcels())
+          console.log("UNCHECKED and REMOVED");
+          filtered = this.state.parcelStatusFilter.filter((num) => num !== 7);
+          this.setState({ parcelStatusFilter: filtered }, () =>
+            this.getFilteredParcels()
+          );
         }
         break;
       default:
@@ -1030,44 +1014,60 @@ class SalesReport extends React.Component {
     console.log(status, "parcel status filter ticked/unticked");
   };
 
-   // Includes checked status checkbox in filter array then call api, also removes item from array for caargotype
+  // Includes checked status checkbox in filter array then call api, also removes item from array for caargotype
   cargoTypeFilter = (status) => {
     let filtered;
     switch (status) {
       case "Cargo":
-        if(!this.state.cargoTypeFilter.includes(1)){
-          this.setState( {cargoTypeFilter: [...this.state.cargoTypeFilter, 1] }, () => this.getCargoTypeFilteredParcels() )
+        if (!this.state.cargoTypeFilter.includes(1)) {
+          this.setState(
+            { cargoTypeFilter: [...this.state.cargoTypeFilter, 1] },
+            () => this.getCargoTypeFilteredParcels()
+          );
         } else {
-          console.log("UNCHECKED and REMOVED")
-          filtered = this.state.cargoTypeFilter.filter(num => num !== 1)
-          this.setState({cargoTypeFilter: filtered} , () => this.getCargoTypeFilteredParcels())
+          console.log("UNCHECKED and REMOVED");
+          filtered = this.state.cargoTypeFilter.filter((num) => num !== 1);
+          this.setState({ cargoTypeFilter: filtered }, () =>
+            this.getCargoTypeFilteredParcels()
+          );
         }
         break;
       case "Accompanied":
-        if(!this.state.cargoTypeFilter.includes(2)){
-          this.setState( {cargoTypeFilter: [...this.state.cargoTypeFilter, 2] }, () => this.getCargoTypeFilteredParcels() )
+        if (!this.state.cargoTypeFilter.includes(2)) {
+          this.setState(
+            { cargoTypeFilter: [...this.state.cargoTypeFilter, 2] },
+            () => this.getCargoTypeFilteredParcels()
+          );
         } else {
-          console.log("UNCHECKED and REMOVED")
-          filtered = this.state.cargoTypeFilter.filter(num => num !== 2)
-          this.setState({cargoTypeFilter: filtered} , () => this.getCargoTypeFilteredParcels())
+          console.log("UNCHECKED and REMOVED");
+          filtered = this.state.cargoTypeFilter.filter((num) => num !== 2);
+          this.setState({ cargoTypeFilter: filtered }, () =>
+            this.getCargoTypeFilteredParcels()
+          );
         }
         break;
       default:
         break;
     }
     console.log(status, "cargo type ticked/unticked");
-  }
+  };
 
   // Function to call getParcel API everytime a filter checkbox is checked or unchecked to display filtered/unfiltered data
   getFilteredParcels = () => {
-    console.log("CALL GET PARCEL API passing filter parcel status array:", this.state.parcelStatusFilter);
-    this.getParcel()
+    console.log(
+      "CALL GET PARCEL API passing filter parcel status array:",
+      this.state.parcelStatusFilter
+    );
+    this.getParcel();
   };
 
-   // Function to call getParcel API everytime a filter checkbox is checked or unchecked to display filtered/unfiltered data
-   getCargoTypeFilteredParcels = () => {
-    console.log("CALL GET PARCEL API passing cargo type array:", this.state.cargoTypeFilter);
-    this.getParcel()
+  // Function to call getParcel API everytime a filter checkbox is checked or unchecked to display filtered/unfiltered data
+  getCargoTypeFilteredParcels = () => {
+    console.log(
+      "CALL GET PARCEL API passing cargo type array:",
+      this.state.cargoTypeFilter
+    );
+    this.getParcel();
   };
 
   // PARCEL STATUS DROP DOWN MENU ITEMS
@@ -1150,39 +1150,39 @@ class SalesReport extends React.Component {
   // CARGO TYPE DROP DOWN MENU ITEMS
   cargoTypes = (
     <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      backgroundColor: "white",
-      marginTop: ".3rem",
-    }}
-  >
-    <div>
-      <input
-        type="checkbox"
-        style={{ marginRight: ".3rem", marginLeft: ".5rem" }}
-        name="Cargo"
-        onChange={(e) => this.cargoTypeFilter(e.target.name)}
-      />
-      Cargo Padala
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "white",
+        marginTop: ".3rem",
+      }}
+    >
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".3rem", marginLeft: ".5rem" }}
+          name="Cargo"
+          onChange={(e) => this.cargoTypeFilter(e.target.name)}
+        />
+        Cargo Padala
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          style={{ marginRight: ".3rem", marginLeft: ".5rem" }}
+          name="Accompanied"
+          onChange={(e) => this.cargoTypeFilter(e.target.name)}
+        />
+        Accompanied
+      </div>
     </div>
-    <div>
-      <input
-        type="checkbox"
-        style={{ marginRight: ".3rem", marginLeft: ".5rem" }}
-        name="Accompanied"
-        onChange={(e) => this.cargoTypeFilter(e.target.name)}
-      />
-      Accompanied
-    </div>
-  </div>
-  )
+  );
 
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
- 
-    console.log("STATE:",this.state);
+
+    console.log("STATE:", this.state);
 
     return (
       <Layout>
@@ -1201,8 +1201,8 @@ class SalesReport extends React.Component {
                     <Option value={e.stationName}>{e.stationName}</Option>
                   ))} */}
 
-                    {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
-                    {this.state.startStationRoutesTemp
+                  {/* HIDE PITX and NAGA CAMARINES SUR TEMPORARY FIX */}
+                  {this.state.startStationRoutesTemp
                     .filter(
                       (e) =>
                         e.stationName !== "PITX, Parañaque" &&
@@ -1215,7 +1215,6 @@ class SalesReport extends React.Component {
                         {e.stationName}
                       </Option>
                     ))}
-
                 </AutoComplete>
               </Col>
             )}
@@ -1231,7 +1230,9 @@ class SalesReport extends React.Component {
                 placeholder="Destination"
               >
                 {this.state.endStationRoutesTemp.map((e, i) => (
-                  <Option key={e.end} value={e.endStationName}>{e.endStationName}</Option>
+                  <Option key={e.end} value={e.endStationName}>
+                    {e.endStationName}
+                  </Option>
                 ))}
               </AutoComplete>
             </Col>
@@ -1361,34 +1362,62 @@ class SalesReport extends React.Component {
                 justifyContent: "space-between",
               }}
             >
-              <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-end'}}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                }}
+              >
                 {this.showTextDetails("Destination: ", this.getDestination())}
                 {this.showTextDetails("Prepared: ", this.getPreparedBy())}
               </div>
-              
-             
-              {UserProfile.getBusCompanyTag() === 'isarog-liner' ? 
-                <div style={{display: 'flex', flexDirection: 'row'}}>
-                <div style={{marginRight: '25px'}}>
-                {this.showTextDetails("FOC Count: ", this.getFocCount())}
-                {this.showTextDetails("Voided Count: ", this.getVoidedCount())}
-                {this.showTextDetails("Total Porter's Fee: ", this.getPortersFee())}
-                </div>
-                <div>
-                {this.showTextDetails("Total Weight: ", this.getTotalWeight())}
-                {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
-                {this.showTextDetails("Total Number of Transactions: ", this.getTotalTransactions())}
-                </div>
-                </div> 
-                :
-                <div>
-                {this.showTextDetails("Voided Count: ", this.getVoidedCount())}
-                {this.showTextDetails("Total System Fee: ", this.getTotalSystemFee())}
-                {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
-                {this.showTextDetails("Total Number of Transactions: ", this.getTotalTransactions())}
-                </div> 
 
-              }
+              {UserProfile.getBusCompanyTag() === "isarog-liner" ? (
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ marginRight: "25px" }}>
+                    {this.showTextDetails("FOC Count: ", this.getFocCount())}
+                    {this.showTextDetails(
+                      "Voided Count: ",
+                      this.getVoidedCount()
+                    )}
+                    {this.showTextDetails(
+                      "Total Porter's Fee: ",
+                      this.getPortersFee()
+                    )}
+                  </div>
+                  <div>
+                    {this.showTextDetails(
+                      "Total Weight: ",
+                      this.getTotalWeight()
+                    )}
+                    {this.showTextDetails(
+                      "Total Sales: ",
+                      this.getTotalAmount()
+                    )}
+                    {this.showTextDetails(
+                      "Total Number of Transactions: ",
+                      this.getTotalTransactions()
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  {this.showTextDetails(
+                    "Voided Count: ",
+                    this.getVoidedCount()
+                  )}
+                  {this.showTextDetails(
+                    "Total System Fee: ",
+                    this.getTotalSystemFee()
+                  )}
+                  {this.showTextDetails("Total Sales: ", this.getTotalAmount())}
+                  {this.showTextDetails(
+                    "Total Number of Transactions: ",
+                    this.getTotalTransactions()
+                  )}
+                </div>
+              )}
             </div>
 
             {false ? (
