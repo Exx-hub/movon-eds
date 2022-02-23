@@ -248,6 +248,7 @@ class SearchModule extends React.Component {
           title: "Cargo Type",
           dataIndex: "cargoType",
           key: "cargoType",
+          render: (text) => text === 2 ? "accompanied" : "cargo",
         },
         {
           title: "Action",
@@ -277,16 +278,12 @@ class SearchModule extends React.Component {
                 Void
               </Button>
 
-              {/* CHECK IN BUTTON visible if created only  */}
               {record.travelStatus === 1 && (
                 <Button
-                  // disabled={!Boolean(record.travelStatus === 1)}
                   disabled={record.cargoType === 2}
                   size="small"
                   style={{
                     fontSize: "0.65rem",
-                    // background: `${record.travelStatus === 1 ? "teal" : ""}`,
-                    // color: `${record.travelStatus === 1 ? "white" : ""}`,
                     background: `${record.cargoType === 2 ? "" : "teal"}`,
                     color: `${record.cargoType === 2 ? "" : "white"}`,
                   }}
@@ -301,18 +298,12 @@ class SearchModule extends React.Component {
                 </Button>
               )}
 
-              {/* ARRIVED BUTTON visible only if in transit  */}
-              {/* if travelStatus if 2 or in transit, arrived button will appear. if cargotype is accompanied, button will be disabled  */}
-              {/* and color and bg color will be gray. if cargoType is cargo, button will be colored and enabled. same with check in button  */}
               {record.travelStatus === 2 && (
                 <Button
-                  // disabled={!Boolean(record.travelStatus === 2)}
                   disabled={record.cargoType === 2}
                   size="small"
                   style={{
                     fontSize: "0.65rem",
-                    // background: `${record.travelStatus === 2 ? "teal" : ""}`,
-                    // color: `${record.travelStatus === 2 ? "white" : ""}`,
                     background: `${record.cargoType === 2 ? "" : "teal"}`,
                     color: `${record.cargoType === 2 ? "" : "white"}`,
                   }}
@@ -417,7 +408,7 @@ class SearchModule extends React.Component {
             startStationName: e.trips.startStation.name,
             endStationName: e.trips.endStation.name,
             _id: e._id,
-            cargoType: e.cargoType === 2 ? "accompanied" : "cargo",
+            cargoType: e.cargoType,
             status: e.cargoType === 2 ? "accompanied" : config.parcelStatus[e.status],
           };
         });

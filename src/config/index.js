@@ -38,7 +38,7 @@ export const config = {
     build: "1.8.0(185)",
   },
   environment: "",
-  changeLogs: `feature/searchModule-cargoType-status-column/build185`,
+  changeLogs: `fix/disable-checkIn-accompanied/build185`,
 };
 
 export const ERROR_CODES = {
