@@ -3,8 +3,10 @@ import {Form, Input, InputNumber, Switch} from "antd";
 import FooterModal from './modal.footer'
 
 function MatrixModalContent(props){
+    console.log(props)
 
     const onFinish = values => {
+        console.log(values)
         props.onSubmit(values)
       };
     
@@ -44,6 +46,7 @@ function MatrixModalContent(props){
                     maxDeclaredValue: (props.data && props.data.maxDeclaredValue) || 0,
                     accompaniedBaggage : props.data.accompaniedBaggage || 0,
                     accompaniedBaggageFee : props.data.accompaniedBaggageFee || 0,
+                    accompaniedBaggageBasePrice : props.data.accompaniedBaggageBasePrice || 0,
                   }}
                 >
 
@@ -111,7 +114,8 @@ function MatrixModalContent(props){
                 </Form.Item>
 
                 <Form.Item
-                    label="Excess Weight Rate"
+                    // label="Excess Weight Rate"
+                    label="Cargo Excess Weight Rate"
                     name="weightRate"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber disabled={Boolean(props.type === 'delete')} style={{width:"100%"}} /> 
@@ -127,6 +131,13 @@ function MatrixModalContent(props){
                 <Form.Item
                     label="Accompanied Baggage Fee (Php)"
                     name="accompaniedBaggageFee"
+                    rules={[{ required: true, message: 'This is required field!' }]}>
+                    <InputNumber style={{width:'100%'}} min={0}/>
+                </Form.Item>
+
+                <Form.Item
+                    label="Accompanied Baggage Base Price"
+                    name="accompaniedBaggageBasePrice"
                     rules={[{ required: true, message: 'This is required field!' }]}>
                     <InputNumber style={{width:'100%'}} min={0}/>
                 </Form.Item>

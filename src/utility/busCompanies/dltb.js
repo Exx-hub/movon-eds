@@ -146,7 +146,7 @@ class Dltb {
         key: "allowableWeight",
       },
       {
-        title: "Excess Weight Rate",
+        title: "Cargo Excess Weight Rate",
         dataIndex: "weightRate",
         key: "weightRate",
       },
@@ -171,6 +171,12 @@ class Dltb {
         key: "accompaniedBaggage",
         align: "center",
         render: (text) => <span>{Number(text || 0)} kg.</span>,
+      },
+      {
+        title: "Accompanied Baggage Base Price",
+        dataIndex: "accompaniedBaggageBasePrice",
+        key: "accompaniedBaggageBasePrice",
+        align: "center",
       },
       {
         title: "Accompanied Baggage Fee",
@@ -391,6 +397,7 @@ class Dltb {
         maxDeclaredValue: val.maxDeclaredValue,
         accompaniedBaggage: val.accompaniedBaggage,
         accompaniedBaggageFee: val.accompaniedBaggageFee,
+        accompaniedBaggageBasePrice: val.accompaniedBaggageBasePrice,
       },
     ];
     return matrix;

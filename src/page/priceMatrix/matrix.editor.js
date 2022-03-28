@@ -55,6 +55,8 @@ function DltbMatrix(props) {
     type: undefined,
   });
 
+  // console.log(matrixModal) // cjeck values
+
   const [lenghtRangeModal, setLenghtRangeModal] = useState({
     title: "Lenght Range Details",
     visible: false,
@@ -109,6 +111,7 @@ function DltbMatrix(props) {
     { originId, destinationId, stringValues },
     callback
   ) => {
+     console.log(JSON.parse(stringValues)) // check if accompaniedBaggageBasePrice is included before api call
     MatrixService.create({
       busCompanyId: UserProfile.getBusCompanyId(),
       origin: originId,
@@ -130,6 +133,7 @@ function DltbMatrix(props) {
 
   const updateMatrix = async (val) => {
     const matrix = busPartner.processMatrixObject(val);
+    // console.log(busPartner.processMatrixObject(val)) // check values before passing to api call
     const index = matrixModal.data.index;
     let dataSource = [...busPartner.getMatrixDataSource()];
     let item = dataSource[index];
