@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(185)",
+    build: "1.8.0(186)",
   },
   environment: "",
-  changeLogs: `fix/disable-checkIn-accompanied/build185`,
+  changeLogs: `update/cargoExcessWeightRate-accompaniedBaggageBasePrice/build186`,
 };
 
 export const ERROR_CODES = {
