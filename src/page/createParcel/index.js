@@ -148,7 +148,7 @@ const getReviewDetails = (state) => {
 };
 
 const parceResponseData = (data) => {
-  console.log("createParcelData",data)
+  console.log("created parcel response data:",data)
 
   const userProfile = UserProfile;
   const logo =

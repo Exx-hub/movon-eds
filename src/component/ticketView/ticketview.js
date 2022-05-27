@@ -338,7 +338,7 @@ const SpCopy = (props) => {
 };
 
 export const TicketView = (props) => {
-  console.log("created Parcel response:", props);
+  console.log("parsed createdParcelResponseData to display in ticket", props);
   return (
     <div className="component-ticketview-container">
       {props.value && <PCopy {...props} />}

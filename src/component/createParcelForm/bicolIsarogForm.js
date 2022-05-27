@@ -64,7 +64,6 @@ function BicolIsarogForm(props) {
     connectingCompany,
     connectingRoutes,
     fixMatrix,
-    busNumber,
     tripCode,
     driverFullName,
     conductorFullName,
@@ -73,10 +72,12 @@ function BicolIsarogForm(props) {
     associateFixPrice,
     billOfLading,
     additionalFee,
-    ambulantDate
+    ambulantDate,
+    busNumber, // ADDED
   } = props.details;
 
   console.log(ambulantDate)
+  console.log("bus number:", busNumber);
 
   const { isFixedPrice } = props.priceDetails;
 
@@ -324,7 +325,21 @@ function BicolIsarogForm(props) {
           </Row>
 
           {/* ADD DATE PICKER HERE BUT HANDLE STATE TO BE INCLUDED IN DETAILS  */}
+          {/* ADD BUS NUMBER INPUT FOLLOW HOW STATE IS HANDLED to include value in state  */}
             <Row>
+              <Col className="gutter-row" span={8}>
+                <InputBox
+                  type="text"
+                  detail={busNumber}
+                  onChange={props.onChange}
+                  errorMessage={
+                    busNumber.errorMessage || "Bus Number is required"
+                  }
+                  title="Bus No."
+                  placeholder="Bus Number"
+                />
+              </Col>
+
               {UserProfile.getAssignedStationName().includes("Ambulant") && (
                 <Col span={8} className="gutter-row">
                   <DatePicker onChange={(e,date) => props.onDateChange(date)} size="large" format={dateFormat} />
