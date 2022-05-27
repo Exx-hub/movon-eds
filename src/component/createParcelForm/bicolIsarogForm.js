@@ -76,8 +76,8 @@ function BicolIsarogForm(props) {
     busNumber, // ADDED
   } = props.details;
 
-  console.log(ambulantDate)
-  console.log("bus number:", busNumber);
+  // console.log(ambulantDate)
+  // console.log("bus number:", busNumber);
 
   const { isFixedPrice } = props.priceDetails;
 
@@ -327,7 +327,9 @@ function BicolIsarogForm(props) {
           {/* ADD DATE PICKER HERE BUT HANDLE STATE TO BE INCLUDED IN DETAILS  */}
           {/* ADD BUS NUMBER INPUT FOLLOW HOW STATE IS HANDLED to include value in state  */}
             <Row>
-              <Col className="gutter-row" span={8}>
+
+              {UserProfile.getBusCompanyTag() === 'isarog-liner' && (
+                <Col className="gutter-row" span={8}>
                 <InputBox
                   type="text"
                   detail={busNumber}
@@ -339,7 +341,8 @@ function BicolIsarogForm(props) {
                   placeholder="Bus Number"
                 />
               </Col>
-
+              )}
+              
               {UserProfile.getAssignedStationName().includes("Ambulant") && (
                 <Col span={8} className="gutter-row">
                   <DatePicker onChange={(e,date) => props.onDateChange(date)} size="large" format={dateFormat} />

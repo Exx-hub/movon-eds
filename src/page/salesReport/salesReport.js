@@ -302,6 +302,12 @@ const tableSourceBitsi = [
     align: "center",
   },
   {
+    title: "BUS NO.",
+    dataIndex: "busNumber",
+    key: "busNumber",
+    align: "center",
+  },
+  {
     title: "ORIGIN",
     dataIndex: "origin",
     key: "origin",
@@ -575,6 +581,7 @@ class SalesReport extends React.Component {
         declaredValue: `₱ ${Number(e.declaredValue || 0).toFixed(2)}`,
         destination: e.destination,
         origin: e.origin === "DLTB Cubao" ? "DLTB GMA" : e.origin,
+        busNumber: e.busNumber || "HARDCODED",
         packageName: e.packageName,
         packageWeight: `${e.packageWeight} kg`,
         price: `₱ ${Number(e.price || 0).toFixed(2)}`,
@@ -1181,8 +1188,6 @@ class SalesReport extends React.Component {
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
-
-    console.log("STATE:", this.state);
 
     return (
       <Layout>
