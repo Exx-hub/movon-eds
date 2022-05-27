@@ -7,6 +7,7 @@ import ScheduledTrips from "../../component/scheduledTrips";
 import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
 import { Button, notification, Layout, Checkbox, Input, Form } from "antd";
+import { CheckCircleOutlined } from "@ant-design/icons";
 import ReactToPrint from "react-to-print";
 import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
@@ -1717,14 +1718,7 @@ class CreateParcel extends React.Component {
               viewMode={false}
             />
             <div className="center-horizontal-space-between">
-              <div style={{ display: "none" }} className="checkbox-container">
-                <Checkbox
-                  checked={this.state.checkIn}
-                  onChange={(e) => this.setState({ checkIn: e.target.checked })}
-                >
-                  Check In
-                </Checkbox>
-              </div>
+              
               <StepControllerView
                 disabled={this.state.isLoading}
                 nextButtonName="Create Parcel"
@@ -1736,6 +1730,16 @@ class CreateParcel extends React.Component {
                   }
                 }}
               />
+
+               <div style={{ display: UserProfile.getBusCompanyTag() === 'dltb' ? "none" : "" }} className="checkbox-container">
+                <Checkbox
+                  checked={this.state.checkIn}
+                  onChange={(e) => this.setState({ checkIn: e.target.checked })}
+                >
+                  Check In{" "}
+                  <CheckCircleOutlined />
+                </Checkbox>
+              </div>
             </div>
           </>
         );
