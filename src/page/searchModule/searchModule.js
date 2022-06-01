@@ -12,8 +12,8 @@ import {
   alterPath,
   modifyName,
 } from "../../utility";
-import { notification, Space, Table } from "antd";
-import { Layout, Button, Row, Input, Pagination } from "antd";
+import { Layout, Button, Row, Input, Pagination, notification, Space, Table, Modal } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import TransactionService from "../../service/VoidTransaction";
 import ManifestService from "../../service/Manifest";
 import getTag from "../../component/statusTag";
@@ -54,6 +54,8 @@ class SearchModule extends React.Component {
         visible: false,
         data: undefined,
       },
+      updateBusNumberVisible: false, // update modal
+      busNumberUpdate: "",
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -77,6 +79,31 @@ class SearchModule extends React.Component {
           title: "BL No.",
           dataIndex: "billOfLading",
           key: "billOfLading",
+        },
+        {
+          title: "Bus No.",
+          dataIndex: "busNumber",
+          key: "busNumber",
+          render: (text, item) => (
+            <>
+              {item.busNumber === "undefined" ? (
+                ""
+              ) : (
+                <>
+                  <span>{item.busNumber}</span>{" "}
+                  <EditOutlined
+                    // className="edit-busNumber-icon"
+                    onClick={() =>
+                      this.setState({
+                        updateBusNumberVisible: true,
+                        busNumberUpdate: item.busNumber,
+                      })
+                    }
+                  />
+                </>
+              )}
+            </>
+          ),
         },
         {
           title: "Origin",
@@ -410,6 +437,7 @@ class SearchModule extends React.Component {
             _id: e._id,
             cargoType: e.cargoType,
             status: e.cargoType === 2 ? "accompanied" : config.parcelStatus[e.status],
+            busNumber: e.busNumber
           };
         });
         this.setState({
@@ -514,6 +542,14 @@ class SearchModule extends React.Component {
     });
   };
 
+  // update bus number function
+  onEditConfirm = () => {
+    // add update bus number api here
+    // add notifictaion prompt for successfull update, and refresh the page?
+    alert(`bus number updated to ${this.state.busNumberUpdate}`);
+    this.setState({ busNumberUpdate: "", updateBusNumberVisible: false });
+  };
+
   render() {
     return (
       <Layout className="SearchModule">
@@ -602,6 +638,21 @@ class SearchModule extends React.Component {
             )}
           </Space>
         </DefaultMatrixModal>
+
+        <Modal
+          closable={true}
+          onOk={this.onEditConfirm}
+          onCancel={() => this.setState({ updateBusNumberVisible: false })}
+          destroyOnClose={true}
+          width={400}
+          title={"Update Bus Number"}
+          visible={this.state.updateBusNumberVisible}
+        >
+          <Input
+            value={this.state.busNumberUpdate}
+            onChange={(e) => this.setState({ busNumberUpdate: e.target.value })}
+          />
+        </Modal>
       </Layout>
     );
   }
