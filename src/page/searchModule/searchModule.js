@@ -13,7 +13,7 @@ import {
   modifyName,
 } from "../../utility";
 import { Layout, Button, Row, Input, Pagination, notification, Space, Table, Modal } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { FormOutlined } from "@ant-design/icons";
 import TransactionService from "../../service/VoidTransaction";
 import ManifestService from "../../service/Manifest";
 import getTag from "../../component/statusTag";
@@ -87,12 +87,12 @@ class SearchModule extends React.Component {
           render: (text, item) => (
             <>
               {item.busNumber === "undefined" ? (
-                ""
+                "--"
               ) : (
                 <>
                   <span>{item.busNumber}</span>{" "}
-                  <EditOutlined
-                    // className="edit-busNumber-icon"
+                  <FormOutlined
+                    className="edit-busNumber-icon"
                     onClick={() =>
                       this.setState({
                         updateBusNumberVisible: true,
