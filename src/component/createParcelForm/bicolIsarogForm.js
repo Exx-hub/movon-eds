@@ -327,9 +327,7 @@ function BicolIsarogForm(props) {
           {/* ADD DATE PICKER HERE BUT HANDLE STATE TO BE INCLUDED IN DETAILS  */}
           {/* ADD BUS NUMBER INPUT FOLLOW HOW STATE IS HANDLED to include value in state  */}
             <Row>
-
-              {UserProfile.getBusCompanyTag() === 'isarog-liner' && (
-                <Col className="gutter-row" span={8}>
+              <Col className="gutter-row" span={8}>
                 <InputBox
                   type="text"
                   detail={busNumber}
@@ -341,12 +339,14 @@ function BicolIsarogForm(props) {
                   placeholder="Bus Number"
                 />
               </Col>
-              )}
-              
+             
               {UserProfile.getAssignedStationName().includes("Ambulant") && (
-                <Col span={8} className="gutter-row">
+              <Col span={8} className="gutter-row" style={{display: 'flex', flexDirection: 'column'}}>
+                <span className="input-placeholder-title" style={{marginTop: '2.8px'}}>
+                 Ambulant Date
+                </span>
                   <DatePicker onChange={(e,date) => props.onDateChange(date)} size="large" format={dateFormat} />
-                </Col>
+              </Col>
               )}
             </Row>
 

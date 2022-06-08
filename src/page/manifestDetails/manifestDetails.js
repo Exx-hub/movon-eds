@@ -354,6 +354,7 @@ class ManifestDetails extends React.Component {
       length: data.packageInfo.length,
       declaredValue: data.packageInfo.estimatedValue,
       ...paymentBreakdown,
+      busNumber: "HARDCODED" // testing
     };
   };
 

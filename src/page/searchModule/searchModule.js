@@ -63,8 +63,6 @@ class SearchModule extends React.Component {
   }
 
   componentDidMount() {
-    // this.fetchParcelList();
-    // console.log("PARCEL LIST:", this.state.parcelList); place this outside to be able to view
     // SET THE TABLE HEADER AND DETAILS -----------------
     UserProfile.getBusCompanyTag() === 'isarog-liner' ? 
     // BITSI
@@ -86,23 +84,17 @@ class SearchModule extends React.Component {
           key: "busNumber",
           render: (text, item) => (
             <>
-              {item.busNumber === "undefined" ? (
-                "--"
-              ) : (
-                <>
-                  <span>{item.busNumber}</span>{" "}
-                  <FormOutlined
-                    className="edit-busNumber-icon"
-                    onClick={() =>
-                      this.setState({
-                        updateBusNumberVisible: true,
-                        busNumberUpdate: item.busNumber,
-                      })
-                    }
-                  />
-                </>
-              )}
-            </>
+              <span>{ item.busNumber === "undefined" ? "----" : item.busNumber}</span>{" "}
+                 <FormOutlined
+                   className="edit-busNumber-icon"
+                   onClick={() =>
+                     this.setState({
+                       updateBusNumberVisible: true,
+                       busNumberUpdate: item.busNumber === "undefined" ? undefined : item.busNumber,
+                    })
+                  }
+              />
+           </>
           ),
         },
         {
@@ -129,8 +121,6 @@ class SearchModule extends React.Component {
           title: "Pack. Count",
           dataIndex: "qty",
           key: "qty",
-          // width: 150,
-          // align: 'center',
           sorter: (a, b) => a.qty - b.qty,
         },
         {
@@ -171,13 +161,10 @@ class SearchModule extends React.Component {
               {/* CHECK IN BUTTON visible if created only  */}
               {record.travelStatus === 1 && (
                 <Button
-                  // disabled={!Boolean(record.travelStatus === 1)}
                   disabled={record.cargoType === 2}
                   size="small"
                   style={{
                     fontSize: "0.65rem",
-                    // background: `${record.travelStatus === 1 ? "teal" : ""}`,
-                    // color: `${record.travelStatus === 1 ? "white" : ""}`,
                     background: `${record.cargoType === 2 ? "" : "teal"}`,
                     color: `${record.cargoType === 2 ? "" : "white"}`,
                   }}
@@ -197,13 +184,10 @@ class SearchModule extends React.Component {
               {/* and color and bg color will be gray. if cargoType is cargo, button will be colored and enabled. same with check in button  */}
               {record.travelStatus === 2 && (
                 <Button
-                  // disabled={!Boolean(record.travelStatus === 2)}
                   disabled={record.cargoType === 2}
                   size="small"
                   style={{
                     fontSize: "0.65rem",
-                    // background: `${record.travelStatus === 2 ? "teal" : ""}`,
-                    // color: `${record.travelStatus === 2 ? "white" : ""}`,
                     background: `${record.cargoType === 2 ? "" : "teal"}`,
                     color: `${record.cargoType === 2 ? "" : "white"}`,
                   }}
@@ -235,6 +219,25 @@ class SearchModule extends React.Component {
           title: "BL No.",
           dataIndex: "billOfLading",
           key: "billOfLading",
+        },
+        {
+          title: "Bus No.",
+          dataIndex: "busNumber",
+          key: "busNumber",
+          render: (text, item) => (
+            <>
+             <span>{ item.busNumber === "undefined" ? "----" : item.busNumber}</span>{" "}
+                  <FormOutlined
+                    className="edit-busNumber-icon"
+                    onClick={() =>
+                      this.setState({
+                        updateBusNumberVisible: true,
+                        busNumberUpdate: item.busNumber === "undefined" ? undefined : item.busNumber,
+                      })
+                    }
+                  />
+            </>
+          ),
         },
         {
           title: "Origin",

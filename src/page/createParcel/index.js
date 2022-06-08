@@ -447,7 +447,7 @@ class CreateParcel extends React.Component {
         busNumber: {
           name: "busNumber",
           value: undefined,
-          isRequired: false, // confirm if needs to be required
+          isRequired: false,
           accepted: true,
         },
       },
