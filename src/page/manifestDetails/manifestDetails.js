@@ -60,6 +60,11 @@ const ManifestDetailsTable = (props) => {
       key: "billOfLading",
     },
     {
+      title: "Bus No.",
+      dataIndex: "busNumber",
+      key: "busNumber",
+    },
+    {
       title: "QR Code",
       dataIndex: "qrcode",
       key: "qr-code",
@@ -195,6 +200,9 @@ class ManifestDetails extends React.Component {
         return;
       }
 
+      // check if there is manifest returned by API
+      console.log("fetchManifest data: ", e.data)
+
       if (e.data && e.data.length > 0) {
         let data = e.data;
         const departureTime = date; //moment(date).format("MMM-DD-YYYY");
@@ -269,12 +277,15 @@ class ManifestDetails extends React.Component {
             packageImg: e.packageInfo.packageImages,
             tripId: e.tripId,
             _id: e._id,
+            busNumber: "HARDCODED", // get data from payload e.busNumber
+            ambulantDate: "HARD-CODED"
           };
         })
       : [];
   };
 
   onSelect = (value) => {
+    console.log("preview clicked: ",value) // remove this after feature done
     const selectedItem = this.state.parcelData.filter(
       (e) => e._id === value._id
     )[0];
@@ -284,7 +295,7 @@ class ManifestDetails extends React.Component {
   getReviewDetails = (data) => {
     const breakdown = data.paymentBreakdown || {};
     let paymentBreakdown = {};
-    console.log("DATA:", data)
+    console.log("getReviewDetails Data:", data)
 
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
@@ -354,7 +365,8 @@ class ManifestDetails extends React.Component {
       length: data.packageInfo.length,
       declaredValue: data.packageInfo.estimatedValue,
       ...paymentBreakdown,
-      busNumber: "HARDCODED" // testing
+      busNumber: "HARDCODED", // get data from payload e.busNumber
+      ambulantDate: "HARD-CODED" // e.ambulantDate
     };
   };
 
