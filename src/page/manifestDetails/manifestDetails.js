@@ -277,8 +277,7 @@ class ManifestDetails extends React.Component {
             packageImg: e.packageInfo.packageImages,
             tripId: e.tripId,
             _id: e._id,
-            busNumber: "HARDCODED", // get data from payload e.busNumber
-            ambulantDate: "HARD-CODED"
+            busNumber: e.busNumber === "undefined" ? "----" : e.busNumber,
           };
         })
       : [];
@@ -357,16 +356,17 @@ class ManifestDetails extends React.Component {
       tripCode: data.trips.displayId,
       tripDate: data.trips.tripStartDateTime,
       scanCode: data.scanCode,
-      createdAt: data.createdAt,
-      // added this to display correct transaction date if ambulant
-      transactionDate: data.sentDate,
       cashier: data.deliveryPersonInfo.deliveryPersonName,
       subParcels: data.subParcels,
       length: data.packageInfo.length,
       declaredValue: data.packageInfo.estimatedValue,
       ...paymentBreakdown,
-      busNumber: "HARDCODED", // get data from payload e.busNumber
-      ambulantDate: "HARD-CODED" // e.ambulantDate
+      createdAt: data.createdAt,
+      transactionDate: data.sentDate, // added this to display correct transaction date if ambulant
+      ambulantDate:  data.trips.startStationName.includes("Ambulant")
+        ? moment(data.sentDate).format("MMM DD, YYYY")
+        : undefined,
+      busNumber: data.busNumber === "undefined" ? "----" : data.busNumber,
     };
   };
 

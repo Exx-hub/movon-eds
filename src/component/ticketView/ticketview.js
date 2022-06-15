@@ -28,10 +28,11 @@ const TicketDetails = (props) => {
     createdAt,
     cashier,
     transactionDate,
-    busNumber // testing for dltb ticketview 
+    busNumber, // testing for dltb ticketview
+    startStationName
   } = props.value;
 
-  // console.log("ticketDEtails PROPS:", props);
+  console.log("ticketDEtails PROPS:", props);
   console.log("CREATED AT:", createdAt);
   console.log("TRANSACTION DATE:", transactionDate);
   // console.log(moment(undefined).format("MMM DD, YYYY"));
@@ -89,7 +90,7 @@ const TicketDetails = (props) => {
         <Col span={17} style={{ paddingLeft: ".5rem" }}>
           <Row justify="space-between" className="image-logo-container">
             <img src={getStickerLogoBw()} className="movon-logo" alt="Logo" />
-            {transactionDate !== undefined ? (
+            {startStationName.includes('Ambulant') ? (
               <Row justify="center">
                 <span className="date-created">
                   {moment(transactionDate).format("MMM DD, YYYY")}

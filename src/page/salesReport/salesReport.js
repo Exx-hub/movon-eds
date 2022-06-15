@@ -35,7 +35,6 @@ const { Content } = Layout;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-
 // Data table for daily sales report table CARGO Sales//
 const tableSourceDLTB = [
   {
@@ -56,6 +55,7 @@ const tableSourceDLTB = [
     dataIndex: "busNumber",
     key: "busNumber",
     align: "center",
+    render: (text, record) => text === "undefined" ? "----" : text
   },
   {
     title: "ORIGIN",
@@ -199,6 +199,7 @@ const tableSourceStaffDLTB = [
     dataIndex: "busNumber",
     key: "busNumber",
     align: "center",
+    render: (text, record) => text === "undefined" ? "----" : text
   },
   {
     title: "ORIGIN",
@@ -318,6 +319,7 @@ const tableSourceBitsi = [
     dataIndex: "busNumber",
     key: "busNumber",
     align: "center",
+    render: (text, record) => text === "undefined" ? "----" : text
   },
   {
     title: "ORIGIN",
@@ -627,7 +629,7 @@ class SalesReport extends React.Component {
             ? e.remarks
             : "*******"
           : "*******",
-          busNumber: e.busNumber || "HARDCODED", // "----" for undefined
+        busNumber: e.busNumber,
       };
     });
     const { totalRecords } = pagination;
