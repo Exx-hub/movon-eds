@@ -5,10 +5,11 @@ import { UserProfile } from "../utility";
 const BASE_URL = config.BASE_URL;
 const userProfileObject = UserProfile;
 
-
 const isAmbulant = () => {
-  return UserProfile.getAssignedStationName().includes("Ambulant") ? true : false;
-}
+  return UserProfile.getAssignedStationName().includes("Ambulant")
+    ? true
+    : false;
+};
 
 const ParcelService = {
   getTrips: (stationId) => {
@@ -87,7 +88,7 @@ const ParcelService = {
       driverFullName,
       conductorFullName,
       additionalFee,
-      // ADD AMBULANT DATE 
+      // ADD AMBULANT DATE
       ambulantDate,
     } = details;
 
@@ -145,7 +146,7 @@ const ParcelService = {
     bodyFormData.set("driverFullName", driverFullName.value);
     bodyFormData.set("conductorFullName", conductorFullName.value);
     bodyFormData.set("associateORNumber", associateORNumber.value);
-    
+
     // ADD AMBULANT DATE TO PASS TO CREATE PARCEL API
     isAmbulant() && bodyFormData.set("ambulantDate", ambulantDate.value);
 
@@ -505,7 +506,7 @@ const ParcelService = {
     isP2P,
     busCompanyId,
     filterArray,
-    cargoTypeArray,
+    cargoTypeArray
   ) => {
     const filename = "Cargo.pdf";
 
@@ -636,6 +637,22 @@ const ParcelService = {
         origin,
         destination,
         cargoType,
+      },
+    });
+  },
+
+  updateBusNumber: (billOfLading, busNumber) => {
+    return axios({
+      method: "post",
+      url: `${BASE_URL}/api/v1/account/delivery-person/parcel/update-bus`,
+      headers: {
+        "x-auth-deviceid": "1",
+        "x-auth-devicetype": config.header.deviceType,
+        "x-auth-token": userProfileObject.getToken(),
+      },
+      data: {
+        billOfLading,
+        busNumber,
       },
     });
   },

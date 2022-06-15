@@ -38,7 +38,7 @@ export const config = {
     build: "1.8.0(187)",
   },
   environment: "",
-  changeLogs: `update/BITSI-checkin-option-createParcel/build187`,
+  changeLogs: `newFeature/bus-number-bitsi-dltb/build187`,
 };
 
 export const ERROR_CODES = {
