@@ -96,15 +96,23 @@ function PackageInformationSection(props) {
           />
         )}
         <br />
+
+        {
+          props.value.busNumber && <TextContainer
+          label="Bus Number"
+          value={props.value.busNumber || "TBA"}
+        />
+        }
+
         <TextContainer
           label="Cashier"
           value={props.value.cashier || "no assigned cashier"}
         />
 
-        {UserProfile.getAssignedStationName().includes("Ambulant") && 
+        {props.value.startStationName.includes('Ambulant') && props.value.ambulantDate !== undefined &&
         <TextContainer
           label="Transaction Date"
-          value={props.value.ambulantDate || ""}
+          value={props.value.ambulantDate}
         />
         }
         

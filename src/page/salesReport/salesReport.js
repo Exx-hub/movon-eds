@@ -35,7 +35,6 @@ const { Content } = Layout;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-
 // Data table for daily sales report table CARGO Sales//
 const tableSourceDLTB = [
   {
@@ -50,6 +49,13 @@ const tableSourceDLTB = [
     dataIndex: "sentDate",
     key: "sentDate",
     align: "center",
+  },
+  {
+    title: "BUS NO.",
+    dataIndex: "busNumber",
+    key: "busNumber",
+    align: "center",
+    render: (text, record) => text === "undefined" ? "----" : text
   },
   {
     title: "ORIGIN",
@@ -189,6 +195,13 @@ const tableSourceStaffDLTB = [
     align: "center",
   },
   {
+    title: "BUS NO.",
+    dataIndex: "busNumber",
+    key: "busNumber",
+    align: "center",
+    render: (text, record) => text === "undefined" ? "----" : text
+  },
+  {
     title: "ORIGIN",
     dataIndex: "origin",
     key: "origin",
@@ -300,6 +313,13 @@ const tableSourceBitsi = [
     dataIndex: "sentDate",
     key: "sentDate",
     align: "center",
+  },
+  {
+    title: "BUS NO.",
+    dataIndex: "busNumber",
+    key: "busNumber",
+    align: "center",
+    render: (text, record) => text === "undefined" ? "----" : text
   },
   {
     title: "ORIGIN",
@@ -609,6 +629,7 @@ class SalesReport extends React.Component {
             ? e.remarks
             : "*******"
           : "*******",
+        busNumber: e.busNumber,
       };
     });
     const { totalRecords } = pagination;
@@ -1181,8 +1202,6 @@ class SalesReport extends React.Component {
   render() {
     const isAdmin =
       Number(UserProfile.getRole()) === Number(config.role["staff-admin"]);
-
-    console.log("STATE:", this.state);
 
     return (
       <Layout>

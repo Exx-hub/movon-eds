@@ -143,12 +143,13 @@ const getReviewDetails = (state) => {
     cashier: UserProfile.getPersonFullName(),
     type: "create",
 
-    ambulantDate: state.details.ambulantDate.value 
+    ambulantDate: state.details.ambulantDate.value,
+    busNumber: state.details.busNumber.value, // testing to pass busNumber value to review details
   };
 };
 
-const parceResponseData = (data) => {
-  console.log("createParcelData",data)
+const parseResponseData = (data) => {
+  console.log("created parcel response data:", data);
 
   const userProfile = UserProfile;
   const logo =
@@ -188,10 +189,11 @@ const parceResponseData = (data) => {
     tripCode: data.trips ? data.trips.displayId : data.tripCode,
     //tripDate: data.trips.tripStartDateTime,
     scanCode: data.scanCode,
-    createdAt: data.createdAt, 
+    createdAt: data.createdAt,
     transactionDate: data.transactionDate,
     subParcels: data.subParcels,
     cashier: data.deliveryPersonInfo.deliveryPersonName,
+    busNumber: data.busNumber, // able to display in ticketview if needed***
   };
 };
 
@@ -395,12 +397,6 @@ class CreateParcel extends React.Component {
           accepted: true,
           options: [],
         },
-        busNumber: {
-          name: "busNumber",
-          value: undefined,
-          isRequired: false,
-          accepted: true,
-        },
         tripCode: {
           name: "tripCode",
           value: undefined,
@@ -443,7 +439,15 @@ class CreateParcel extends React.Component {
         ambulantDate: {
           name: "ambulantDate",
           value: undefined,
-          isRequired: UserProfile.getAssignedStationName().includes("Ambulant") ? true : false,
+          isRequired: UserProfile.getAssignedStationName().includes("Ambulant")
+            ? true
+            : false,
+          accepted: true,
+        },
+        busNumber: {
+          name: "busNumber",
+          value: undefined,
+          isRequired: false,
           accepted: true,
         },
       },
@@ -508,13 +512,12 @@ class CreateParcel extends React.Component {
     // ];
     // details.discount = discount;
 
-
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
         details.length.disabled = true;
         details.length.isRequired = false;
         details.discount.disabled = true;
-        details.type.options[0].name = "Accompanied Baggage"
+        details.type.options[0].name = "Accompanied Baggage";
         // details.declaredValue.disabled = false;
         break;
 
@@ -531,7 +534,7 @@ class CreateParcel extends React.Component {
         details.length.disabled = true;
         details.length.isRequired = false;
         details.discount.disabled = true;
-        details.type.options[0].name = "Accompanied Baggage"
+        details.type.options[0].name = "Accompanied Baggage";
         break;
 
       default:
@@ -585,7 +588,6 @@ class CreateParcel extends React.Component {
       })
       .catch((e) => console.info("error", e));
   }
-
 
   handleErrorNotification = (code) => {
     if (isNull(code)) {
@@ -971,11 +973,11 @@ class CreateParcel extends React.Component {
 
   onDateChange = (date) => {
     let details = { ...this.state.details };
-    details.ambulantDate.value = date
-      if(date){
-        this.setState({ details })
-      }
-  }
+    details.ambulantDate.value = date;
+    if (date) {
+      this.setState({ details });
+    }
+  };
 
   getMatrixValue = (busCompanyId, origin, destination) => {
     return MatrixService.getMatrix({
@@ -1718,7 +1720,6 @@ class CreateParcel extends React.Component {
               viewMode={false}
             />
             <div className="center-horizontal-space-between">
-              
               <StepControllerView
                 disabled={this.state.isLoading}
                 nextButtonName="Create Parcel"
@@ -1731,13 +1732,18 @@ class CreateParcel extends React.Component {
                 }}
               />
 
-               <div style={{ display: UserProfile.getBusCompanyTag() === 'dltb' ? "none" : "" }} className="checkbox-container">
+              <div
+                style={{
+                  display:
+                    UserProfile.getBusCompanyTag() === "dltb" ? "none" : "",
+                }}
+                className="checkbox-container"
+              >
                 <Checkbox
                   checked={this.state.checkIn}
                   onChange={(e) => this.setState({ checkIn: e.target.checked })}
                 >
-                  Check In{" "}
-                  <CheckCircleOutlined />
+                  Check In <CheckCircleOutlined />
                 </Checkbox>
               </div>
             </div>
@@ -1749,7 +1755,7 @@ class CreateParcel extends React.Component {
           <>
             <div ref={(el) => (this.printEl = el)}>
               <TicketView
-                value={parceResponseData(this.state.createParcelResponseData)}
+                value={parseResponseData(this.state.createParcelResponseData)}
               />
             </div>
             <div className="on-step4-button-group">
