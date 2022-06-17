@@ -109,7 +109,7 @@ function PackageInformationSection(props) {
           value={props.value.cashier || "no assigned cashier"}
         />
 
-        {props.value.startStationName.includes('Ambulant') && props.value.ambulantDate !== undefined &&
+        {props.value.ambulantDate !== undefined &&
         <TextContainer
           label="Transaction Date"
           value={props.value.ambulantDate}
