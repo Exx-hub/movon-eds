@@ -38,7 +38,7 @@ export const config = {
     build: "1.8.0(187)",
   },
   environment: "",
-  changeLogs: `newFeature/bus-number-bitsi-dltb/build187`,
+  changeLogs: `api/update-bus-number/build187`,
 };
 
 export const ERROR_CODES = {
