@@ -11,6 +11,7 @@ import {
   UserProfile,
   alterPath,
   modifyName,
+  openNotification,
 } from "../../utility";
 import { Layout, Button, Row, Input, Pagination, notification, Space, Table, Modal } from "antd";
 import { FormOutlined } from "@ant-design/icons";
@@ -56,6 +57,7 @@ class SearchModule extends React.Component {
       },
       updateBusNumberVisible: false, // update modal
       busNumberUpdate: "",
+      billOfLadingToUpdate: ""
     };
     this.printEl = React.createRef();
     this.fetchParcelList = debounce(this.fetchParcelList, 1000);
@@ -91,6 +93,7 @@ class SearchModule extends React.Component {
                      this.setState({
                        updateBusNumberVisible: true,
                        busNumberUpdate: item.busNumber === "undefined" ? undefined : item.busNumber,
+                       billOfLadingToUpdate: item.billOfLading
                     })
                   }
               />
@@ -233,6 +236,7 @@ class SearchModule extends React.Component {
                       this.setState({
                         updateBusNumberVisible: true,
                         busNumberUpdate: item.busNumber === "undefined" ? undefined : item.busNumber,
+                        billOfLadingToUpdate: item.billOfLading
                       })
                     }
                   />
@@ -547,10 +551,38 @@ class SearchModule extends React.Component {
 
   // update bus number function
   onEditConfirm = () => {
+    const billOfLading = this.state.billOfLadingToUpdate
+    const busNumber = this.state.busNumberUpdate
     // add update bus number api here
-    // add notifictaion prompt for successfull update, and refresh the page?
-    alert(`bus number updated to ${this.state.busNumberUpdate}`);
-    this.setState({ busNumberUpdate: "", updateBusNumberVisible: false });
+
+    if(busNumber && billOfLading){
+
+      Parcel.updateBusNumber(billOfLading,busNumber).then(e => {
+        const {success,data,errorCode} = e.data;
+        console.log(e.data)
+        
+        if(!success || errorCode || data === "update failed"){
+         notification.error({
+          message: "Error",
+          description: "Something went wrong."
+         }) 
+
+         return;
+        }
+        
+        if(success){
+         notification.success({
+          message: "Success",
+          description: "Bus Number Updated."
+         })
+        }
+        
+      })
+      
+      
+      this.setState({ busNumberUpdate: "", updateBusNumberVisible: false });
+      this.fetchParcelList();
+    }
   };
 
   render() {
