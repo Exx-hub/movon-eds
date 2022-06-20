@@ -519,6 +519,8 @@ class CreateParcel extends React.Component {
         details.discount.disabled = true;
         details.type.options[0].name = "Accompanied Baggage";
         // details.declaredValue.disabled = false;
+        details.busNumber.disabled = true;
+        details.busNumber.value = "-to be assigned-";
         break;
 
       case "isarog-liner":
@@ -1453,13 +1455,16 @@ class CreateParcel extends React.Component {
         hideDeclaredValue = true;
         hideQuantity = true;
         hideWeight = false;
-        // set declared value input to be enabled even if parcel is accompaniedS
-        if (!isAccompanied) {
-          //Cargo
-          // hideDeclaredValue = !hideDeclaredValue;
+       
+        if (isAccompanied) {
+          details.busNumber.disabled = false;
+          details.busNumber.isRequired = true;
+          details.busNumber.value = "";
+        } else {
+          details.busNumber.disabled = true;
+          details.busNumber.value = "-to be assigned-";
         }
 
-        // details.declaredValue.disabled = hideDeclaredValue;
         details.quantity.disabled = hideQuantity;
         details.packageWeight.disabled = hideWeight;
 

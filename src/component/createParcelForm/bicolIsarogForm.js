@@ -77,7 +77,7 @@ function BicolIsarogForm(props) {
   } = props.details;
 
   // console.log(ambulantDate)
-  // console.log("bus number:", busNumber);
+  console.log("CreateForm mounted/re-rendered");
 
   const { isFixedPrice } = props.priceDetails;
 
@@ -878,7 +878,7 @@ function ShowDltbBreakDown(props) {
     isFixedPrice,
   } = props.data;
 
-  console.log(props.data); // show data from form
+  // console.log(props.data); // show data from form
 
   if (isShortHaul || isFixedPrice) {
     view = (
