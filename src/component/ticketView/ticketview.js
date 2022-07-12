@@ -28,14 +28,12 @@ const TicketDetails = (props) => {
     createdAt,
     cashier,
     transactionDate,
-    busNumber, // testing for dltb ticketview
+    busNumber, 
     startStationName
   } = props.value;
 
   console.log("ticketDEtails PROPS:", props);
-  console.log("CREATED AT:", createdAt);
-  console.log("TRANSACTION DATE:", transactionDate);
-  // console.log(moment(undefined).format("MMM DD, YYYY"));
+  
 
   const code = props.code;
   const parcelInfo = props.parcelInfo || [];

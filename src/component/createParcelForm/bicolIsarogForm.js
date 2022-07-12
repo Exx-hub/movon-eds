@@ -73,12 +73,12 @@ function BicolIsarogForm(props) {
     billOfLading,
     additionalFee,
     ambulantDate,
-    busNumber, // ADDED
+    busNumber,
+    width,
+    height
   } = props.details;
 
-  // console.log(ambulantDate)
-  console.log("CreateForm mounted/re-rendered");
-
+  
   const { isFixedPrice } = props.priceDetails;
 
   //temporary disble this features
@@ -522,12 +522,39 @@ function BicolIsarogForm(props) {
                     onBlur={() => props.onBlur(length.name)}
                     detail={length}
                     onChange={props.onChange}
-                    placeholder="Length (meter)"
+                    placeholder={type.value === 4 ? "Length (cm)" : "Length (meter)"}
                     errorMessage={length.errorMessage}
                     title="Length"
                   />
                 }
               </Col>
+            </Row>
+
+            <Row>
+              <Col span={8} className="gutter-row">
+                <InputBox
+                  type="number"
+                  onBlur={() => props.onBlur(width.name)}
+                  detail={width}
+                  onChange={props.onChange}
+                  title="Width (Volumetric)"
+                  errorMessage={width.errorMessage}
+                  placeholder="Width (cm)"
+                />
+              </Col>
+
+              <Col span={8} className="gutter-row">
+                <InputBox
+                  type="number"
+                  onBlur={() => props.onBlur(height.name)}
+                  detail={height}
+                  onChange={props.onChange}
+                  title="Height (Volumetric)"
+                  errorMessage={height.errorMessage}
+                  placeholder="Height (cm)"
+                />
+              </Col>
+
             </Row>
 
             <Row>
@@ -765,8 +792,6 @@ function ShowBicolIsarogBreakDown(props) {
     weightFee,
   } = props.data;
 
-  console.log(props.data);
-
   if (isFixedPrice) {
     view = (
       <>
@@ -785,7 +810,8 @@ function ShowBicolIsarogBreakDown(props) {
         />
         <TextContainer title="System Fee" value={translateNumber(systemFee)} />
         <TextContainer
-          title="Porters Fee"
+          title="Handling Fee"
+          // title="Porters Fee"
           value={translateNumber(portersFee)}
         />
       </>
@@ -802,7 +828,8 @@ function ShowBicolIsarogBreakDown(props) {
         />
         <TextContainer title="System Fee" value={translateNumber(systemFee)} />
         <TextContainer
-          title="Porters Fee"
+          title="Handling Fee"
+          // title="Porters Fee"
           value={translateNumber(portersFee)}
         />
         <TextDiscountContainer

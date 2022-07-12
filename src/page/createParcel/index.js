@@ -355,6 +355,11 @@ class CreateParcel extends React.Component {
               name: "Cargo Padala",
               disabled: false,
             },
+            {
+              value: 4,
+              name: "Volumetric",
+              disabled: true,
+            },
           ],
         },
         packageWeight: {
@@ -382,13 +387,6 @@ class CreateParcel extends React.Component {
           isRequired: false,
           accepted: true,
           disabled: true,
-        },
-        length: {
-          name: "length",
-          value: undefined,
-          isRequired: false,
-          accepted: true,
-          errorMessage: "Length is required!",
         },
         fixMatrix: {
           name: "fixMatrix",
@@ -440,8 +438,8 @@ class CreateParcel extends React.Component {
           name: "ambulantDate",
           value: undefined,
           isRequired: UserProfile.getAssignedStationName().includes("Ambulant")
-            ? true
-            : false,
+          ? true
+          : false,
           accepted: true,
         },
         busNumber: {
@@ -449,6 +447,27 @@ class CreateParcel extends React.Component {
           value: undefined,
           isRequired: false,
           accepted: true,
+        },
+        length: {
+          name: "length",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          errorMessage: "Length is required!",
+        },
+        width: {
+          name: "width",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          errorMessage: "Width is required!",
+        },
+        height: {
+          name: "height",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          errorMessage: "Height is required!",
         },
       },
       enalbeBicolIsarogWays: false,
@@ -526,6 +545,8 @@ class CreateParcel extends React.Component {
       case "isarog-liner":
         details.billOfLading.disabled = true;
         details.length.required = false;
+        details.width.disabled = true;
+        details.height.disabled = true;
         break;
 
       case "five-star":
@@ -1246,8 +1267,6 @@ class CreateParcel extends React.Component {
   };
 
   onCompute = () => {
-    console.log("COMPUTE NOW CLICKED!!");
-
     const option = this.getFixMatrixOption();
     const details = { ...this.state.details };
 
@@ -1299,6 +1318,7 @@ class CreateParcel extends React.Component {
     const option = this.getFixMatrixOption();
     const isAccompanied = Number(details.type.value || 3) < 3;
     const isFixPrice = option && option.name !== "none";
+    const isVolumetric = Number(details.type.value || 3) > 3;
 
     let selectedDestination = this.state.selectedDestination;
     details.systemFee.value = 0;
@@ -1308,6 +1328,8 @@ class CreateParcel extends React.Component {
     let hideDeclaredValue = undefined;
     let hideQuantity = undefined;
     let hideWeight = undefined;
+    let hideWidth = undefined;
+    let hideHeight = undefined;
 
     switch (name) {
       case "onTypeChange":
@@ -1317,6 +1339,8 @@ class CreateParcel extends React.Component {
         hideDeclaredValue = true;
         hideQuantity = true;
         hideWeight = false;
+        hideWidth = true;
+        hideHeight = true;
 
         if (!isAccompanied) {
           //Cargo
@@ -1324,10 +1348,19 @@ class CreateParcel extends React.Component {
           hideDeclaredValue = !hideDeclaredValue;
         }
 
+        if(isVolumetric){
+          //cargo
+          hideWeight = !hideWeight;
+          hideWidth = !hideWidth;
+          hideHeight = !hideHeight;
+        }
+
         details.declaredValue.disabled = hideDeclaredValue;
         details.quantity.disabled = hideQuantity;
         details.length.disabled = hideLength;
         details.packageWeight.disabled = hideWeight;
+        details.width.disabled = hideWidth;
+        details.height.disabled = hideHeight;
 
         details.fixMatrix.value = "";
         details.quantity.value = 1;
@@ -1854,6 +1887,8 @@ class CreateParcel extends React.Component {
       length,
       discount,
       type,
+      width,
+      height
     } = this.state.details;
     const selectedOption = destination.options.filter(
       (e) => e.value === destination.value
@@ -1873,13 +1908,16 @@ class CreateParcel extends React.Component {
       parcelCount: Number(sticker_quantity.value),
       length: Number(length.value),
       discountName,
-      cargoType: type.value || 3,
+      cargoType: type.value === 4 ? 3 : type.value || 3,
+      width: Number(width.value) || undefined,
+      height: Number(height.value) || undefined,
+      isVolumeMetric: type.value === 4 ? 1 : null
     };
 
     ParcelService.getDefaultComputation(option)
       .then((e) => {
         console.log("OPTION:", option);
-        console.info("GET DEFAULT COMPUTATION", e);
+        console.info("GET DEFAULT COMPUTATION", e.data.data);
         const { data, errorCode } = e.data;
         if (!errorCode) {
           const {
@@ -1896,6 +1934,7 @@ class CreateParcel extends React.Component {
             insuranceFee,
             portersFee,
             discountFee,
+            weight,
           } = data;
 
           const _lengthFee = Number(lengthFee || 0);
@@ -1904,6 +1943,8 @@ class CreateParcel extends React.Component {
           const _systemFee = Number(systemFee || 0);
           const _declaredValueFee = Number(declaredValueFee || 0);
           let total = Number(totalShippingCost || 0);
+
+          const _weight = Number(weight || 0)
 
           const _shippingCost = Number(shippingCost);
           const _data = { ...this.state.details };
@@ -1914,12 +1955,13 @@ class CreateParcel extends React.Component {
           if (quantity > 1) {
             total = shippingCost * quantity;
           }
-
+          
           _data.totalShippingCost.value = total;
           _data.packageInsurance.value = _declaredValueFee;
           _data.additionalFee.value = _additionFee;
           _data.systemFee.value = _systemFee;
           _data.shippingCost.value = _shippingCost;
+          _data.packageWeight.value = _weight.toFixed(2);
 
           this.setState({
             discountFee,

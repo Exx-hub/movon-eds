@@ -569,6 +569,9 @@ const ParcelService = {
     length,
     discountName,
     cargoType,
+    width,
+    height,
+    isVolumeMetric
   }) => {
     return axios({
       method: "post",
@@ -587,6 +590,9 @@ const ParcelService = {
         length,
         discountName,
         cargoType,
+        width,
+        height,
+        isVolumeMetric
       },
     });
   },
