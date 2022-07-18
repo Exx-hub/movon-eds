@@ -1909,8 +1909,8 @@ class CreateParcel extends React.Component {
       length: Number(length.value),
       discountName,
       cargoType: type.value === 4 ? 3 : type.value || 3,
-      width: Number(width.value) || undefined,
-      height: Number(height.value) || undefined,
+      width: width.value ? Number(width.value) : undefined,
+      height: height.value ? Number(height.value) : undefined,
       isVolumeMetric: type.value === 4 ? 1 : null
     };
 
