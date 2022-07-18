@@ -145,6 +145,7 @@ const getReviewDetails = (state) => {
 
     ambulantDate: state.details.ambulantDate.value,
     busNumber: state.details.busNumber.value, // testing to pass busNumber value to review details
+    cargoType: state.details.type.value
   };
 };
 

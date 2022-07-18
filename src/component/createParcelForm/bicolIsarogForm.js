@@ -480,12 +480,28 @@ function BicolIsarogForm(props) {
                 value={type.value}
                 onChange={(e) => props.onTypeChange(e)}
                 style={{ alignSelf: "center" }}
-              >
-                {type.options.map((e) => (
-                  <Radio key={e.value} disabled={e.disabled} value={e.value}>
-                    {e.name}
-                  </Radio>
-                ))}
+              > 
+                {UserProfile.getBusCompanyTag() === "isarog-liner"
+                  ? type.options.map((e) => (
+                      <Radio
+                        key={e.value}
+                        disabled={e.disabled}
+                        value={e.value}
+                      >
+                        {e.name}
+                      </Radio>
+                    ))
+                  : type.options
+                      .filter((e) => e.name !== "Volumetric")
+                      .map((e) => (
+                        <Radio
+                          key={e.value}
+                          disabled={e.disabled}
+                          value={e.value}
+                        >
+                          {e.name}
+                        </Radio>
+                 ))}
               </Radio.Group>
               <Divider />
             </div>
@@ -530,33 +546,34 @@ function BicolIsarogForm(props) {
               </Col>
             </Row>
 
-            <Row>
-              <Col span={8} className="gutter-row">
-                <InputBox
-                  type="number"
-                  onBlur={() => props.onBlur(width.name)}
-                  detail={width}
-                  onChange={props.onChange}
-                  title="Width (Volumetric)"
-                  errorMessage={width.errorMessage}
-                  placeholder="Width (cm)"
-                />
-              </Col>
+            {UserProfile.getBusCompanyTag() === "isarog-liner" && (
+              <Row>
+                <Col span={8} className="gutter-row">
+                  <InputBox
+                    type="number"
+                    onBlur={() => props.onBlur(width.name)}
+                    detail={width}
+                    onChange={props.onChange}
+                    title="Width (Volumetric)"
+                    errorMessage={width.errorMessage}
+                    placeholder="Width (cm)"
+                  />
+                </Col>
 
-              <Col span={8} className="gutter-row">
-                <InputBox
-                  type="number"
-                  onBlur={() => props.onBlur(height.name)}
-                  detail={height}
-                  onChange={props.onChange}
-                  title="Height (Volumetric)"
-                  errorMessage={height.errorMessage}
-                  placeholder="Height (cm)"
-                />
-              </Col>
-
-            </Row>
-
+                <Col span={8} className="gutter-row">
+                  <InputBox
+                    type="number"
+                    onBlur={() => props.onBlur(height.name)}
+                    detail={height}
+                    onChange={props.onChange}
+                    title="Height (Volumetric)"
+                    errorMessage={height.errorMessage}
+                    placeholder="Height (cm)"
+                  />
+                </Col>
+              </Row>
+            )}
+            
             <Row>
               <Col span={8} className="gutter-row">
                 <InputBox

@@ -124,7 +124,7 @@ function PackageInformationSection(props) {
 function FeeSection(props) {
   let inputSection = undefined;
   let feesSection = undefined;
-
+  
   const data = props.value;
   const length = (data.length || 0) + " m";
   const weight = (data.packageWeight || 0) + " kg";
@@ -193,11 +193,11 @@ function FeeSection(props) {
       break;
 
     default:
-      inputSection = <TextContainer label="Length" value={length} />;
+      inputSection = data.cargoType !== 4 && <TextContainer label="Length" value={length} />;
       feesSection = (
         <>
           <NumberContainer label="Additional Fee" value={additionalFee} />
-          <NumberContainer label="Porter's Fee" value={portersFee} />
+          <NumberContainer label="Handling Fee" value={portersFee} />
           <NumberContainer label="Length Fee" value={lengthFee} />
           <NumberContainer label="Insurance Fee" value={declaredValueFee} />
           <NumberContainer label="Discount" value={discountFee} />
@@ -214,7 +214,7 @@ function FeeSection(props) {
           <TextContainer label="Package Count" value={stickerCount} />
           <TextContainer label="Weight Fee" value={weightFee} />
           <TextContainer label="Quantity" value={packageQty} />
-          <TextContainer label="Weight" value={weight} />
+          <TextContainer label={data.cargoType === 4 ? "Volumetric Weight" : "Weight"} value={weight} />
           {inputSection}
         </div>
 
