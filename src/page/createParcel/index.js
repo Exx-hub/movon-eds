@@ -1771,20 +1771,19 @@ class CreateParcel extends React.Component {
                 }}
               />
 
-              <div
-                style={{
-                  display:
-                    UserProfile.getBusCompanyTag() === "dltb" ? "none" : "",
-                }}
-                className="checkbox-container"
-              >
-                <Checkbox
-                  checked={this.state.checkIn}
-                  onChange={(e) => this.setState({ checkIn: e.target.checked })}
-                >
-                  Check In <CheckCircleOutlined />
-                </Checkbox>
-              </div>
+                {UserProfile.getBusCompanyTag() === "isarog-liner" &&
+                this.state.details.type.value !== 1 && (
+                  <div className="checkbox-container">
+                    <Checkbox
+                      checked={this.state.checkIn}
+                      onChange={(e) =>
+                        this.setState({ checkIn: e.target.checked })
+                      }
+                    >
+                      Check In <CheckCircleOutlined />
+                    </Checkbox>
+                  </div>
+                  )}  
             </div>
           </>
         );
