@@ -102,7 +102,8 @@ const ParcelService = {
     const associatedAmount = connectingCompanyComputation;
 
     const COUNTRY_CODE = "PH";
-    const isAccompanied = Number(type.value || 3) !== 3;
+    // const isAccompanied = Number(type.value || 3) !== 3;
+     const isAccompanied = Number(type.value) === 1;
     const PACKAGE_INSURANCE = 0;
 
     const bodyFormData = new FormData();
