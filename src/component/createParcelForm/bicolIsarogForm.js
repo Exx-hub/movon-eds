@@ -64,7 +64,6 @@ function BicolIsarogForm(props) {
     connectingCompany,
     connectingRoutes,
     fixMatrix,
-    busNumber,
     tripCode,
     driverFullName,
     conductorFullName,
@@ -73,11 +72,13 @@ function BicolIsarogForm(props) {
     associateFixPrice,
     billOfLading,
     additionalFee,
-    ambulantDate
+    ambulantDate,
+    busNumber,
+    width,
+    height
   } = props.details;
 
-  console.log(ambulantDate)
-
+  
   const { isFixedPrice } = props.priceDetails;
 
   //temporary disble this features
@@ -324,11 +325,28 @@ function BicolIsarogForm(props) {
           </Row>
 
           {/* ADD DATE PICKER HERE BUT HANDLE STATE TO BE INCLUDED IN DETAILS  */}
+          {/* ADD BUS NUMBER INPUT FOLLOW HOW STATE IS HANDLED to include value in state  */}
             <Row>
+              <Col className="gutter-row" span={8}>
+                <InputBox
+                  type="text"
+                  detail={busNumber}
+                  onChange={props.onChange}
+                  errorMessage={
+                    busNumber.errorMessage || "Bus Number is required"
+                  }
+                  title="Bus No."
+                  placeholder="Bus Number"
+                />
+              </Col>
+             
               {UserProfile.getAssignedStationName().includes("Ambulant") && (
-                <Col span={8} className="gutter-row">
+              <Col span={8} className="gutter-row" style={{display: 'flex', flexDirection: 'column'}}>
+                <span className="input-placeholder-title" style={{marginTop: '2.8px'}}>
+                 Ambulant Date
+                </span>
                   <DatePicker onChange={(e,date) => props.onDateChange(date)} size="large" format={dateFormat} />
-                </Col>
+              </Col>
               )}
             </Row>
 
@@ -462,12 +480,28 @@ function BicolIsarogForm(props) {
                 value={type.value}
                 onChange={(e) => props.onTypeChange(e)}
                 style={{ alignSelf: "center" }}
-              >
-                {type.options.map((e) => (
-                  <Radio key={e.value} disabled={e.disabled} value={e.value}>
-                    {e.name}
-                  </Radio>
-                ))}
+              > 
+                {UserProfile.getBusCompanyTag() === "isarog-liner"
+                  ? type.options.map((e) => (
+                      <Radio
+                        key={e.value}
+                        disabled={e.disabled}
+                        value={e.value}
+                      >
+                        {e.name}
+                      </Radio>
+                    ))
+                  : type.options
+                      .filter((e) => e.name !== "Volumetric")
+                      .map((e) => (
+                        <Radio
+                          key={e.value}
+                          disabled={e.disabled}
+                          value={e.value}
+                        >
+                          {e.name}
+                        </Radio>
+                 ))}
               </Radio.Group>
               <Divider />
             </div>
@@ -504,7 +538,7 @@ function BicolIsarogForm(props) {
                     onBlur={() => props.onBlur(length.name)}
                     detail={length}
                     onChange={props.onChange}
-                    placeholder="Length (meter)"
+                    placeholder={type.value === 4 ? "Length (cm)" : "Length (meter)"}
                     errorMessage={length.errorMessage}
                     title="Length"
                   />
@@ -512,6 +546,34 @@ function BicolIsarogForm(props) {
               </Col>
             </Row>
 
+            {UserProfile.getBusCompanyTag() === "isarog-liner" && (
+              <Row>
+                <Col span={8} className="gutter-row">
+                  <InputBox
+                    type="number"
+                    onBlur={() => props.onBlur(width.name)}
+                    detail={width}
+                    onChange={props.onChange}
+                    title="Width (Volumetric)"
+                    errorMessage={width.errorMessage}
+                    placeholder="Width (cm)"
+                  />
+                </Col>
+
+                <Col span={8} className="gutter-row">
+                  <InputBox
+                    type="number"
+                    onBlur={() => props.onBlur(height.name)}
+                    detail={height}
+                    onChange={props.onChange}
+                    title="Height (Volumetric)"
+                    errorMessage={height.errorMessage}
+                    placeholder="Height (cm)"
+                  />
+                </Col>
+              </Row>
+            )}
+            
             <Row>
               <Col span={8} className="gutter-row">
                 <InputBox
@@ -747,8 +809,6 @@ function ShowBicolIsarogBreakDown(props) {
     weightFee,
   } = props.data;
 
-  console.log(props.data);
-
   if (isFixedPrice) {
     view = (
       <>
@@ -767,7 +827,8 @@ function ShowBicolIsarogBreakDown(props) {
         />
         <TextContainer title="System Fee" value={translateNumber(systemFee)} />
         <TextContainer
-          title="Porters Fee"
+          title="Handling Fee"
+          // title="Porters Fee"
           value={translateNumber(portersFee)}
         />
       </>
@@ -784,7 +845,8 @@ function ShowBicolIsarogBreakDown(props) {
         />
         <TextContainer title="System Fee" value={translateNumber(systemFee)} />
         <TextContainer
-          title="Porters Fee"
+          title="Handling Fee"
+          // title="Porters Fee"
           value={translateNumber(portersFee)}
         />
         <TextDiscountContainer
@@ -860,7 +922,7 @@ function ShowDltbBreakDown(props) {
     isFixedPrice,
   } = props.data;
 
-  console.log(props.data); // show data from form
+  // console.log(props.data); // show data from form
 
   if (isShortHaul || isFixedPrice) {
     view = (

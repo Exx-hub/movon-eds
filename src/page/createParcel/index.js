@@ -7,6 +7,7 @@ import ScheduledTrips from "../../component/scheduledTrips";
 import ReviewDetails from "../../component/reviewDetails";
 import TicketView from "../../component/ticketView";
 import { Button, notification, Layout, Checkbox, Input, Form } from "antd";
+import { CheckCircleOutlined } from "@ant-design/icons";
 import ReactToPrint from "react-to-print";
 import ParcelService from "../../service/Parcel";
 import MatrixService from "../../service/Matrix";
@@ -142,12 +143,14 @@ const getReviewDetails = (state) => {
     cashier: UserProfile.getPersonFullName(),
     type: "create",
 
-    ambulantDate: state.details.ambulantDate.value 
+    ambulantDate: state.details.ambulantDate.value,
+    busNumber: state.details.busNumber.value, // testing to pass busNumber value to review details
+    cargoType: state.details.type.value
   };
 };
 
-const parceResponseData = (data) => {
-  console.log("createParcelData",data)
+const parseResponseData = (data) => {
+  console.log("created parcel response data:", data);
 
   const userProfile = UserProfile;
   const logo =
@@ -187,10 +190,11 @@ const parceResponseData = (data) => {
     tripCode: data.trips ? data.trips.displayId : data.tripCode,
     //tripDate: data.trips.tripStartDateTime,
     scanCode: data.scanCode,
-    createdAt: data.createdAt, 
+    createdAt: data.createdAt,
     transactionDate: data.transactionDate,
     subParcels: data.subParcels,
     cashier: data.deliveryPersonInfo.deliveryPersonName,
+    busNumber: data.busNumber, // able to display in ticketview if needed***
   };
 };
 
@@ -352,6 +356,11 @@ class CreateParcel extends React.Component {
               name: "Cargo Padala",
               disabled: false,
             },
+            {
+              value: 4,
+              name: "Volumetric",
+              disabled: true,
+            },
           ],
         },
         packageWeight: {
@@ -380,25 +389,12 @@ class CreateParcel extends React.Component {
           accepted: true,
           disabled: true,
         },
-        length: {
-          name: "length",
-          value: undefined,
-          isRequired: false,
-          accepted: true,
-          errorMessage: "Length is required!",
-        },
         fixMatrix: {
           name: "fixMatrix",
           value: undefined,
           isRequired: false,
           accepted: true,
           options: [],
-        },
-        busNumber: {
-          name: "busNumber",
-          value: undefined,
-          isRequired: false,
-          accepted: true,
         },
         tripCode: {
           name: "tripCode",
@@ -442,8 +438,37 @@ class CreateParcel extends React.Component {
         ambulantDate: {
           name: "ambulantDate",
           value: undefined,
-          isRequired: UserProfile.getAssignedStationName().includes("Ambulant") ? true : false,
+          isRequired: UserProfile.getAssignedStationName().includes("Ambulant")
+          ? true
+          : false,
           accepted: true,
+        },
+        busNumber: {
+          name: "busNumber",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+        },
+        length: {
+          name: "length",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          errorMessage: "Length is required!",
+        },
+        width: {
+          name: "width",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          errorMessage: "Width is required!",
+        },
+        height: {
+          name: "height",
+          value: undefined,
+          isRequired: false,
+          accepted: true,
+          errorMessage: "Height is required!",
         },
       },
       enalbeBicolIsarogWays: false,
@@ -507,19 +532,22 @@ class CreateParcel extends React.Component {
     // ];
     // details.discount = discount;
 
-
     switch (UserProfile.getBusCompanyTag()) {
       case "dltb":
         details.length.disabled = true;
         details.length.isRequired = false;
         details.discount.disabled = true;
-        details.type.options[0].name = "Accompanied Baggage"
+        details.type.options[0].name = "Accompanied Baggage";
         // details.declaredValue.disabled = false;
+        details.busNumber.disabled = true;
+        details.busNumber.value = "-to be assigned-";
         break;
 
       case "isarog-liner":
         details.billOfLading.disabled = true;
         details.length.required = false;
+        details.width.disabled = true;
+        details.height.disabled = true;
         break;
 
       case "five-star":
@@ -530,7 +558,7 @@ class CreateParcel extends React.Component {
         details.length.disabled = true;
         details.length.isRequired = false;
         details.discount.disabled = true;
-        details.type.options[0].name = "Accompanied Baggage"
+        details.type.options[0].name = "Accompanied Baggage";
         break;
 
       default:
@@ -584,7 +612,6 @@ class CreateParcel extends React.Component {
       })
       .catch((e) => console.info("error", e));
   }
-
 
   handleErrorNotification = (code) => {
     if (isNull(code)) {
@@ -970,11 +997,11 @@ class CreateParcel extends React.Component {
 
   onDateChange = (date) => {
     let details = { ...this.state.details };
-    details.ambulantDate.value = date
-      if(date){
-        this.setState({ details })
-      }
-  }
+    details.ambulantDate.value = date;
+    if (date) {
+      this.setState({ details });
+    }
+  };
 
   getMatrixValue = (busCompanyId, origin, destination) => {
     return MatrixService.getMatrix({
@@ -1241,8 +1268,6 @@ class CreateParcel extends React.Component {
   };
 
   onCompute = () => {
-    console.log("COMPUTE NOW CLICKED!!");
-
     const option = this.getFixMatrixOption();
     const details = { ...this.state.details };
 
@@ -1294,6 +1319,7 @@ class CreateParcel extends React.Component {
     const option = this.getFixMatrixOption();
     const isAccompanied = Number(details.type.value || 3) < 3;
     const isFixPrice = option && option.name !== "none";
+    const isVolumetric = Number(details.type.value || 3) > 3;
 
     let selectedDestination = this.state.selectedDestination;
     details.systemFee.value = 0;
@@ -1303,6 +1329,8 @@ class CreateParcel extends React.Component {
     let hideDeclaredValue = undefined;
     let hideQuantity = undefined;
     let hideWeight = undefined;
+    let hideWidth = undefined;
+    let hideHeight = undefined;
 
     switch (name) {
       case "onTypeChange":
@@ -1312,6 +1340,8 @@ class CreateParcel extends React.Component {
         hideDeclaredValue = true;
         hideQuantity = true;
         hideWeight = false;
+        hideWidth = true;
+        hideHeight = true;
 
         if (!isAccompanied) {
           //Cargo
@@ -1319,10 +1349,19 @@ class CreateParcel extends React.Component {
           hideDeclaredValue = !hideDeclaredValue;
         }
 
+        if(isVolumetric){
+          //cargo
+          hideWeight = !hideWeight;
+          hideWidth = !hideWidth;
+          hideHeight = !hideHeight;
+        }
+
         details.declaredValue.disabled = hideDeclaredValue;
         details.quantity.disabled = hideQuantity;
         details.length.disabled = hideLength;
         details.packageWeight.disabled = hideWeight;
+        details.width.disabled = hideWidth;
+        details.height.disabled = hideHeight;
 
         details.fixMatrix.value = "";
         details.quantity.value = 1;
@@ -1450,13 +1489,16 @@ class CreateParcel extends React.Component {
         hideDeclaredValue = true;
         hideQuantity = true;
         hideWeight = false;
-        // set declared value input to be enabled even if parcel is accompaniedS
-        if (!isAccompanied) {
-          //Cargo
-          // hideDeclaredValue = !hideDeclaredValue;
+       
+        if (isAccompanied) {
+          details.busNumber.disabled = false;
+          details.busNumber.isRequired = true;
+          details.busNumber.value = "";
+        } else {
+          details.busNumber.disabled = true;
+          details.busNumber.value = "-to be assigned-";
         }
 
-        // details.declaredValue.disabled = hideDeclaredValue;
         details.quantity.disabled = hideQuantity;
         details.packageWeight.disabled = hideWeight;
 
@@ -1717,14 +1759,6 @@ class CreateParcel extends React.Component {
               viewMode={false}
             />
             <div className="center-horizontal-space-between">
-              <div style={{ display: "none" }} className="checkbox-container">
-                <Checkbox
-                  checked={this.state.checkIn}
-                  onChange={(e) => this.setState({ checkIn: e.target.checked })}
-                >
-                  Check In
-                </Checkbox>
-              </div>
               <StepControllerView
                 disabled={this.state.isLoading}
                 nextButtonName="Create Parcel"
@@ -1736,6 +1770,20 @@ class CreateParcel extends React.Component {
                   }
                 }}
               />
+
+                {UserProfile.getBusCompanyTag() === "isarog-liner" &&
+                this.state.details.type.value !== 1 && (
+                  <div className="checkbox-container">
+                    <Checkbox
+                      checked={this.state.checkIn}
+                      onChange={(e) =>
+                        this.setState({ checkIn: e.target.checked })
+                      }
+                    >
+                      Check In <CheckCircleOutlined />
+                    </Checkbox>
+                  </div>
+                  )}  
             </div>
           </>
         );
@@ -1745,7 +1793,7 @@ class CreateParcel extends React.Component {
           <>
             <div ref={(el) => (this.printEl = el)}>
               <TicketView
-                value={parceResponseData(this.state.createParcelResponseData)}
+                value={parseResponseData(this.state.createParcelResponseData)}
               />
             </div>
             <div className="on-step4-button-group">
@@ -1839,6 +1887,8 @@ class CreateParcel extends React.Component {
       length,
       discount,
       type,
+      width,
+      height
     } = this.state.details;
     const selectedOption = destination.options.filter(
       (e) => e.value === destination.value
@@ -1858,13 +1908,16 @@ class CreateParcel extends React.Component {
       parcelCount: Number(sticker_quantity.value),
       length: Number(length.value),
       discountName,
-      cargoType: type.value || 3,
+      cargoType: type.value === 4 ? 3 : type.value || 3,
+      width: width.value ? Number(width.value) : undefined,
+      height: height.value ? Number(height.value) : undefined,
+      isVolumeMetric: type.value === 4 ? 1 : null
     };
 
     ParcelService.getDefaultComputation(option)
       .then((e) => {
         console.log("OPTION:", option);
-        console.info("GET DEFAULT COMPUTATION", e);
+        console.info("GET DEFAULT COMPUTATION", e.data.data);
         const { data, errorCode } = e.data;
         if (!errorCode) {
           const {
@@ -1881,6 +1934,7 @@ class CreateParcel extends React.Component {
             insuranceFee,
             portersFee,
             discountFee,
+            weight,
           } = data;
 
           const _lengthFee = Number(lengthFee || 0);
@@ -1889,6 +1943,8 @@ class CreateParcel extends React.Component {
           const _systemFee = Number(systemFee || 0);
           const _declaredValueFee = Number(declaredValueFee || 0);
           let total = Number(totalShippingCost || 0);
+
+          const _weight = Number(weight || 0)
 
           const _shippingCost = Number(shippingCost);
           const _data = { ...this.state.details };
@@ -1899,12 +1955,13 @@ class CreateParcel extends React.Component {
           if (quantity > 1) {
             total = shippingCost * quantity;
           }
-
+          
           _data.totalShippingCost.value = total;
           _data.packageInsurance.value = _declaredValueFee;
           _data.additionalFee.value = _additionFee;
           _data.systemFee.value = _systemFee;
           _data.shippingCost.value = _shippingCost;
+          _data.packageWeight.value = _weight.toFixed(2);
 
           this.setState({
             discountFee,

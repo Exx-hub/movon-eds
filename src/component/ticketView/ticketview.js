@@ -28,12 +28,12 @@ const TicketDetails = (props) => {
     createdAt,
     cashier,
     transactionDate,
+    busNumber, 
+    startStationName
   } = props.value;
 
-  // console.log("ticketDEtails PROPS:", props);
-  console.log("CREATED AT:", createdAt);
-  console.log("TRANSACTION DATE:", transactionDate);
-  // console.log(moment(undefined).format("MMM DD, YYYY"));
+  console.log("ticketDEtails PROPS:", props);
+  
 
   const code = props.code;
   const parcelInfo = props.parcelInfo || [];
@@ -42,6 +42,7 @@ const TicketDetails = (props) => {
   return (
     <div className="ticket-details">
       <Row justify="space-between" style={{ width: "100%" }}>
+         {/* QRCODE AND CODE  */}
         <Col span={7} style={{ borderRight: "1px dashed gray" }}>
           <Row justify="center">
             <QRCode
@@ -55,9 +56,8 @@ const TicketDetails = (props) => {
           <Row justify="center" className="scan-code-text">
             {code}
           </Row>
-          {/* <span>{(totalPrice || 0).toFixed(2)}</span> */}
-          {/* <Row justify="center"><span className="date-created">{moment(createdAt).format("MMM DD, YYYY")}</span></Row> */}
-
+         
+         {/* DETAILS below QRCODE and CODE */}
           <Row justify="center">
             {Boolean(props.spCopy) ? (
               <span className="package-indicator-sp">{props.parcelCount}</span>
@@ -83,11 +83,12 @@ const TicketDetails = (props) => {
             )}
           </Row>
         </Col>
+
+        {/* STICKER LOGO and DATE and PARCELINFO AND BUSNO AND CASHIER  */}
         <Col span={17} style={{ paddingLeft: ".5rem" }}>
           <Row justify="space-between" className="image-logo-container">
             <img src={getStickerLogoBw()} className="movon-logo" alt="Logo" />
-
-            {transactionDate !== undefined ? (
+            {startStationName.includes('Ambulant') ? (
               <Row justify="center">
                 <span className="date-created">
                   {moment(transactionDate).format("MMM DD, YYYY")}
@@ -100,28 +101,23 @@ const TicketDetails = (props) => {
                 </span>
               </Row>
             )}
-
-            {/* <Row justify="center">
-              <span className="date-created">
-                {moment(createdAt).format("MMM DD, YYYY")}
-              </span>
-            </Row> */}
-            {/* <Row justify="center">
-              <span className="date-created">
-                {moment(transactionDate).format("MMM DD, YYYY")}
-              </span>
-            </Row>   */}
           </Row>
           {parcelInfo.map((e, i) => (
             <TextItem key={i} title={e.title} value={e.value} />
           ))}
+        
           {UserProfile.getBusCompanyTag() === "dltb" && (
-            <div style={{ textAlign: "right", marginRight: "1rem" }}>
-              Cashier: {cashier}
+            <div style={{ textAlign: "right", marginRight: "1rem", display: 'flex', justifyContent: 'space-between' }}>
+            <span>BusNo: <strong>{busNumber}</strong></span> <span>Cashier: <strong>{cashier}</strong></span>  
             </div>
           )}
         </Col>
       </Row>
+      
+      {/* BOTTOM PART OF STICKER - DESTINATION AND BL NUMBER  */}
+      {/* if dltb display bottom, destination and bl number */}
+      {/* if isarog and scopy, only bottom as well  */}
+      {/* if isarog, and if not spcopy, display signature and TC (mcopy and pcopy) */}
       {!Boolean(props.spCopy) &&
       UserProfile.getBusCompanyTag() === "isarog-liner" ? (
         <Row
@@ -338,7 +334,7 @@ const SpCopy = (props) => {
 };
 
 export const TicketView = (props) => {
-  console.log("created Parcel response:", props);
+  console.log("parsed createdParcelResponseData to display in ticket", props);
   return (
     <div className="component-ticketview-container">
       {props.value && <PCopy {...props} />}

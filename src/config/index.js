@@ -35,10 +35,10 @@ export const config = {
   },
   version: {
     environment: "",
-    build: "1.8.0(186)",
+    build: "1.8.0(187)",
   },
   environment: "",
-  changeLogs: `update/cargoExcessWeightRate-accompaniedBaggageBasePrice/build186`,
+  changeLogs: `feature/busNo-disabled-for-cargo-enabled-for-acco/build187`,
 };
 
 export const ERROR_CODES = {
